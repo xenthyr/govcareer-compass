@@ -1,0 +1,323 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-08-31",
+  "description": "Controlled vocabulary for career, recruitment, research, data, coverage and publication lifecycle states.",
+  "careerStatuses": [
+    {
+      "id": "ACTIVE_CAREER",
+      "label": {
+        "en": "Active Career",
+        "bn": "সক্রিয় ক্যারিয়ার"
+      },
+      "description": {
+        "en": "The post or career structure is considered an active career option.",
+        "bn": "পদ বা ক্যারিয়ার কাঠামোকে সক্রিয় ক্যারিয়ার বিকল্প হিসেবে বিবেচনা করা হয়।"
+      }
+    },
+    {
+      "id": "HISTORICAL",
+      "label": {
+        "en": "Historical",
+        "bn": "ঐতিহাসিক"
+      }
+    },
+    {
+      "id": "REPLACED",
+      "label": {
+        "en": "Replaced",
+        "bn": "প্রতিস্থাপিত"
+      }
+    },
+    {
+      "id": "ABOLISHED",
+      "label": {
+        "en": "Abolished",
+        "bn": "বিলুপ্ত"
+      }
+    },
+    {
+      "id": "NOT_VERIFIED",
+      "label": {
+        "en": "Not Publicly Verified",
+        "bn": "প্রকাশ্যভাবে যাচাই করা যায়নি"
+      }
+    }
+  ],
+  "recruitmentStatuses": [
+    {
+      "id": "OPEN",
+      "label": {
+        "en": "Open",
+        "bn": "চলমান"
+      }
+    },
+    {
+      "id": "CLOSED",
+      "label": {
+        "en": "Closed",
+        "bn": "বন্ধ"
+      }
+    },
+    {
+      "id": "UNDER_PROCESS",
+      "label": {
+        "en": "Under Process",
+        "bn": "প্রক্রিয়াধীন"
+      }
+    },
+    {
+      "id": "RECENTLY_COMPLETED",
+      "label": {
+        "en": "Recently Completed",
+        "bn": "সম্প্রতি সম্পন্ন"
+      }
+    },
+    {
+      "id": "EXPECTED_PERIODIC",
+      "label": {
+        "en": "Expected / Periodic",
+        "bn": "প্রত্যাশিত / পর্যায়ক্রমিক"
+      }
+    },
+    {
+      "id": "IRREGULAR",
+      "label": {
+        "en": "Irregular",
+        "bn": "অনিয়মিত"
+      }
+    },
+    {
+      "id": "HISTORICAL",
+      "label": {
+        "en": "Historical Recruitment",
+        "bn": "ঐতিহাসিক নিয়োগ"
+      }
+    },
+    {
+      "id": "CANCELLED",
+      "label": {
+        "en": "Cancelled",
+        "bn": "বাতিল"
+      }
+    },
+    {
+      "id": "NOT_VERIFIED",
+      "label": {
+        "en": "Not Publicly Verified",
+        "bn": "প্রকাশ্যভাবে যাচাই করা যায়নি"
+      }
+    }
+  ],
+  "recruitmentModes": [
+    {
+      "id": "DIRECT_RECRUITMENT",
+      "label": {
+        "en": "Direct Recruitment",
+        "bn": "সরাসরি নিয়োগ"
+      },
+      "freshEntry": true
+    },
+    {
+      "id": "PROMOTION",
+      "label": {
+        "en": "Promotion",
+        "bn": "পদোন্নতি"
+      },
+      "freshEntry": false
+    },
+    {
+      "id": "DEPUTATION",
+      "label": {
+        "en": "Deputation",
+        "bn": "ডেপুটেশন"
+      },
+      "freshEntry": false
+    },
+    {
+      "id": "TRANSFER",
+      "label": {
+        "en": "Transfer",
+        "bn": "বদলি"
+      },
+      "freshEntry": false
+    },
+    {
+      "id": "CONTRACT",
+      "label": {
+        "en": "Contract",
+        "bn": "চুক্তিভিত্তিক"
+      },
+      "freshEntry": true
+    },
+    {
+      "id": "TEMPORARY",
+      "label": {
+        "en": "Temporary",
+        "bn": "অস্থায়ী"
+      },
+      "freshEntry": true
+    },
+    {
+      "id": "SCHEME_PROJECT",
+      "label": {
+        "en": "Scheme / Project",
+        "bn": "স্কিম / প্রকল্প"
+      },
+      "freshEntry": true
+    },
+    {
+      "id": "OUTSOURCED",
+      "label": {
+        "en": "Outsourced",
+        "bn": "আউটসোর্সড"
+      },
+      "freshEntry": true
+    },
+    {
+      "id": "OTHER",
+      "label": {
+        "en": "Other",
+        "bn": "অন্যান্য"
+      }
+    }
+  ],
+  "coverageStatuses": [
+    {
+      "id": "ACTIVE",
+      "label": {
+        "en": "Active",
+        "bn": "সক্রিয়"
+      }
+    },
+    {
+      "id": "PLANNED",
+      "label": {
+        "en": "Planned",
+        "bn": "পরিকল্পিত"
+      }
+    },
+    {
+      "id": "RESEARCHING",
+      "label": {
+        "en": "Researching",
+        "bn": "গবেষণাধীন"
+      }
+    },
+    {
+      "id": "PARTIAL",
+      "label": {
+        "en": "Partially Covered",
+        "bn": "আংশিকভাবে কভার করা"
+      }
+    },
+    {
+      "id": "TEMPORARILY_DISABLED",
+      "label": {
+        "en": "Temporarily Disabled",
+        "bn": "সাময়িকভাবে নিষ্ক্রিয়"
+      }
+    }
+  ],
+  "dataStatuses": [
+    {
+      "id": "DRAFT",
+      "label": {
+        "en": "Draft",
+        "bn": "খসড়া"
+      }
+    },
+    {
+      "id": "RESEARCHING",
+      "label": {
+        "en": "Researching",
+        "bn": "গবেষণাধীন"
+      }
+    },
+    {
+      "id": "PARTIALLY_VERIFIED",
+      "label": {
+        "en": "Partially Verified",
+        "bn": "আংশিকভাবে যাচাইকৃত"
+      }
+    },
+    {
+      "id": "READY_FOR_REVIEW",
+      "label": {
+        "en": "Ready for Review",
+        "bn": "পর্যালোচনার জন্য প্রস্তুত"
+      }
+    },
+    {
+      "id": "VERIFIED",
+      "label": {
+        "en": "Verified",
+        "bn": "যাচাইকৃত"
+      }
+    },
+    {
+      "id": "PUBLISHED",
+      "label": {
+        "en": "Published",
+        "bn": "প্রকাশিত"
+      }
+    },
+    {
+      "id": "STALE",
+      "label": {
+        "en": "Stale / Review Required",
+        "bn": "পুরনো / পুনঃপর্যালোচনা প্রয়োজন"
+      }
+    }
+  ],
+  "sourceCurrentnessStatuses": [
+    {
+      "id": "CURRENT",
+      "label": {
+        "en": "Current",
+        "bn": "বর্তমান"
+      }
+    },
+    {
+      "id": "HISTORICAL",
+      "label": {
+        "en": "Historical",
+        "bn": "ঐতিহাসিক"
+      }
+    },
+    {
+      "id": "CURRENT_WITH_HISTORICAL_SUPPORT",
+      "label": {
+        "en": "Current with Historical Support",
+        "bn": "ঐতিহাসিক সমর্থনসহ বর্তমান"
+      }
+    },
+    {
+      "id": "CURRENTNESS_UNCLEAR",
+      "label": {
+        "en": "Currentness Unclear",
+        "bn": "বর্তমানতা স্পষ্ট নয়"
+      }
+    },
+    {
+      "id": "REPLACED",
+      "label": {
+        "en": "Replaced",
+        "bn": "প্রতিস্থাপিত"
+      }
+    },
+    {
+      "id": "ABOLISHED",
+      "label": {
+        "en": "Abolished",
+        "bn": "বিলুপ্ত"
+      }
+    },
+    {
+      "id": "NOT_VERIFIED",
+      "label": {
+        "en": "Not Publicly Verified",
+        "bn": "প্রকাশ্যভাবে যাচাই করা যায়নি"
+      }
+    ]
+  }
+}
