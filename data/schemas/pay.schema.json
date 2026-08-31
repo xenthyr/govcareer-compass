@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "pay.schema.json",
   "title": "GovCareer Compass Pay Profile",
-  "description": "Pay-system and salary profile referenced by government job records.",
+  "description": "Government pay-system and compensation profile.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -15,24 +15,24 @@
   ],
   "properties": {
     "id": {
-      "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9-]*$"
+      "$ref": "shared.schema.json#/$defs/id"
     },
     "governmentId": {
-      "type": "string",
-      "minLength": 1
+      "$ref": "shared.schema.json#/$defs/id"
     },
     "stateId": {
-      "type": "string"
+      "$ref": "shared.schema.json#/$defs/id"
     },
     "paySystem": {
-      "type": "string",
-      "minLength": 1
+      "type": "string"
     },
     "payCommission": {
       "type": "string"
     },
-    "level": {
+    "payLevel": {
+      "type": "string"
+    },
+    "payScale": {
       "type": "string"
     },
     "startingBasic": {
@@ -45,15 +45,29 @@
     },
     "da": {
       "type": "object",
-      "additionalProperties": true
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "PERCENTAGE",
+            "FIXED",
+            "UNKNOWN"
+          ]
+        },
+        "value": {
+          "type": "number",
+          "minimum": 0
+        },
+        "effectiveDate": {
+          "$ref": "shared.schema.json#/$defs/date"
+        }
+      }
     },
     "hra": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "object"
     },
     "transportAllowance": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "object"
     },
     "otherAllowances": {
       "type": "array",
@@ -67,9 +81,11 @@
         "type": "object"
       }
     },
-    "salaryEstimate": {
-      "type": "object",
-      "additionalProperties": true
+    "grossEstimate": {
+      "type": "object"
+    },
+    "inHandEstimate": {
+      "type": "object"
     },
     "officialStatus": {
       "type": "string",
@@ -81,30 +97,16 @@
       ]
     },
     "sourceIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
+      "$ref": "shared.schema.json#/$defs/stringArray"
     },
     "confidence": {
-      "type": "string",
-      "enum": [
-        "HIGH",
-        "MEDIUM_HIGH",
-        "MEDIUM",
-        "LOW",
-        "ESTIMATE",
-        "NOT_VERIFIED"
-      ]
+      "$ref": "shared.schema.json#/$defs/confidence"
     },
     "lastVerified": {
-      "type": "string",
-      "format": "date"
+      "$ref": "shared.schema.json#/$defs/date"
     },
     "dataVersion": {
-      "type": "string",
-      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+      "$ref": "shared.schema.json#/$defs/version"
     }
   }
 }
