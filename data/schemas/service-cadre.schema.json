@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "service-cadre.schema.json",
+  "title": "GovCareer Compass Service or Cadre",
+  "description": "Structured government service or cadre containing one or more posts or ranks.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "governmentId",
+    "name",
+    "type",
+    "status",
+    "confidence",
+    "lastVerified",
+    "dataVersion"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "shared.schema.json#/$defs/id"
+    },
+    "governmentId": {
+      "$ref": "shared.schema.json#/$defs/id"
+    },
+    "stateId": {
+      "$ref": "shared.schema.json#/$defs/id"
+    },
+    "departmentId": {
+      "$ref": "shared.schema.json#/$defs/id"
+    },
+    "organisationId": {
+      "$ref": "shared.schema.json#/$defs/id"
+    },
+    "name": {
+      "$ref": "shared.schema.json#/$defs/localizedText"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "CIVIL_SERVICE",
+        "POLICE_SERVICE",
+        "REVENUE_SERVICE",
+        "TAX_SERVICE",
+        "AUDIT_SERVICE",
+        "ACCOUNTS_SERVICE",
+        "RAILWAY_CADRE",
+        "POSTAL_CADRE",
+        "TECHNICAL_CADRE",
+        "ADMINISTRATIVE_CADRE",
+        "OTHER"
+      ]
+    },
+    "postIds": {
+      "$ref": "shared.schema.json#/$defs/stringArray"
+    },
+    "sourceIds": {
+      "$ref": "shared.schema.json#/$defs/stringArray"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "HISTORICAL",
+        "REPLACED",
+        "ABOLISHED",
+        "NOT_VERIFIED"
+      ]
+    },
+    "confidence": {
+      "$ref": "shared.schema.json#/$defs/confidence"
+    },
+    "lastVerified": {
+      "$ref": "shared.schema.json#/$defs/date"
+    },
+    "dataVersion": {
+      "$ref": "shared.schema.json#/$defs/version"
+    }
+  }
+}
