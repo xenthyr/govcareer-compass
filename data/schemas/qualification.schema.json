@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "qualification.schema.json",
+  "title": "GovCareer Compass Qualification",
+  "description": "Reusable academic, professional, technical or licensing qualification record.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "name",
+    "qualificationType",
+    "status",
+    "dataVersion"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "shared.schema.json#/$defs/id"
+    },
+    "name": {
+      "$ref": "shared.schema.json#/$defs/localizedText"
+    },
+    "qualificationType": {
+      "type": "string",
+      "enum": [
+        "ACADEMIC",
+        "PROFESSIONAL",
+        "TECHNICAL",
+        "TEACHER_EDUCATION",
+        "MEDICAL",
+        "NURSING",
+        "PHARMACY",
+        "LAW",
+        "COMPUTER_IT",
+        "ENGINEERING",
+        "AGRICULTURE",
+        "PARAMEDICAL",
+        "TRADE",
+        "LICENCE",
+        "REGISTRATION",
+        "CERTIFICATION",
+        "OTHER"
+      ]
+    },
+    "educationLevel": {
+      "type": "string",
+      "enum": [
+        "CLASS_8",
+        "CLASS_10",
+        "CLASS_12",
+        "DIPLOMA",
+        "ITI",
+        "GRADUATE",
+        "POSTGRADUATE",
+        "DOCTORATE",
+        "PROFESSIONAL",
+        "OTHER"
+      ]
+    },
+    "degreeType": {
+      "type": "string"
+    },
+    "subjectIds": {
+      "$ref": "shared.schema.json#/$defs/stringArray"
+    },
+    "specialisation": {
+      "type": "string"
+    },
+    "tradeId": {
+      "$ref": "shared.schema.json#/$defs/id"
+    },
+    "recognisingAuthority": {
+      "type": "string"
+    },
+    "registrationAuthority": {
+      "type": "string"
+    },
+    "registrationRequired": {
+      "type": "boolean"
+    },
+    "licenceType": {
+      "type": "string"
+    },
+    "minimumDuration": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "COMPLETED",
+        "FINAL_YEAR",
+        "PURSUING",
+        "NOT_HELD"
+      ]
+    },
+    "isSpecialist": {
+      "type": "boolean"
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "sourceIds": {
+      "$ref": "shared.schema.json#/$defs/stringArray"
+    },
+    "confidence": {
+      "$ref": "shared.schema.json#/$defs/confidence"
+    },
+    "dataVersion": {
+      "$ref": "shared.schema.json#/$defs/version"
+    }
+  }
+}
