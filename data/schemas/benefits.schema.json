@@ -2,92 +2,70 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "benefits.schema.json",
   "title": "GovCareer Compass Benefits Profile",
-  "description": "Retirement, leave, medical and employee-benefit profile associated with a career.",
+  "description": "Retirement, pension, leave, medical and employee-benefit profile.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "id",
-    "retirement",
     "confidence",
     "lastVerified",
     "dataVersion"
   ],
   "properties": {
     "id": {
-      "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9-]*$"
+      "$ref": "shared.schema.json#/$defs/id"
     },
-    "retirement": {
-      "type": "object",
-      "additionalProperties": true
+    "retirementAge": {
+      "type": "number",
+      "minimum": 0
+    },
+    "retirementFramework": {
+      "type": "string"
     },
     "pensionFramework": {
       "type": "string"
     },
     "nps": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "object"
     },
     "gratuity": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "object"
     },
     "familyBenefits": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "object"
     },
     "leave": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "object"
     },
     "medical": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "object"
     },
     "insurance": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "object"
     },
     "employeeWelfare": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "object"
     },
     "travelBenefits": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "object"
     },
     "accommodationBenefits": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "object"
     },
     "appointmentDateConditions": {
       "type": "string"
     },
     "sourceIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
+      "$ref": "shared.schema.json#/$defs/stringArray"
     },
     "confidence": {
-      "type": "string",
-      "enum": [
-        "HIGH",
-        "MEDIUM_HIGH",
-        "MEDIUM",
-        "LOW",
-        "ESTIMATE",
-        "NOT_VERIFIED"
-      ]
+      "$ref": "shared.schema.json#/$defs/confidence"
     },
     "lastVerified": {
-      "type": "string",
-      "format": "date"
+      "$ref": "shared.schema.json#/$defs/date"
     },
     "dataVersion": {
-      "type": "string",
-      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+      "$ref": "shared.schema.json#/$defs/version"
     }
   }
 }
