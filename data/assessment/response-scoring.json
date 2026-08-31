@@ -1,0 +1,571 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-08-31",
+  "schema": "../schemas/assessment-response-scoring.schema.json",
+  "assessmentId": "career-finder",
+  "description": "Transforms assessment responses into normalized candidate preference values and analytical profile indicators. It never directly assigns government jobs or overrides eligibility.",
+  "principles": [
+    "Eligibility is evaluated independently from preference scoring.",
+    "Assessment answers influence candidate preferences, not official job eligibility.",
+    "Higher burden values mean worse suitability when a burden metric is used.",
+    "Unknown or undisclosed values must not automatically be treated as zero.",
+    "Recommendations must show important trade-offs.",
+    "Analytical scores must never be represented as official government rankings."
+  ],
+  "answerMappings": [
+    {
+      "id": "map_assessment_goal",
+      "questionId": "welcome_goal",
+      "outputPath": "assessment.goal",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_education_level",
+      "questionId": "highest_education",
+      "outputPath": "educationLevel",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_primary_academic_qualification",
+      "questionId": "academic_qualification_type",
+      "outputPath": "primaryAcademicQualification",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_academic_subjects",
+      "questionId": "graduation_subject",
+      "outputPath": "academicSubjects",
+      "mappingType": "ENUM_ARRAY"
+    },
+    {
+      "id": "map_graduation_specialisation",
+      "questionId": "graduation_specialisation",
+      "outputPath": "graduationSpecialisation",
+      "mappingType": "STRING_OR_EMPTY"
+    },
+    {
+      "id": "map_additional_qualification_presence",
+      "questionId": "additional_qualification_presence",
+      "outputPath": "hasAdditionalQualifications",
+      "mappingType": "BOOLEAN_OR_UNKNOWN"
+    },
+    {
+      "id": "map_additional_qualification_categories",
+      "questionId": "additional_qualification_categories",
+      "outputPath": "additionalQualificationCategories",
+      "mappingType": "ENUM_ARRAY"
+    },
+    {
+      "id": "map_teacher_education",
+      "questionId": "teacher_qualification",
+      "outputPath": "qualifications.teacherEducation",
+      "mappingType": "QUALIFICATION_ARRAY"
+    },
+    {
+      "id": "map_technical_qualifications",
+      "questionId": "technical_qualification",
+      "outputPath": "qualifications.technical",
+      "mappingType": "QUALIFICATION_ARRAY"
+    },
+    {
+      "id": "map_iti_trades",
+      "questionId": "iti_trade",
+      "outputPath": "qualifications.itiTrades",
+      "mappingType": "TRADE_ARRAY"
+    },
+    {
+      "id": "map_computer_qualifications",
+      "questionId": "computer_qualification",
+      "outputPath": "qualifications.computer",
+      "mappingType": "QUALIFICATION_ARRAY"
+    },
+    {
+      "id": "map_law_qualifications",
+      "questionId": "law_qualification",
+      "outputPath": "qualifications.law",
+      "mappingType": "QUALIFICATION_ARRAY"
+    },
+    {
+      "id": "map_medical_qualifications",
+      "questionId": "medical_qualification",
+      "outputPath": "qualifications.medical",
+      "mappingType": "QUALIFICATION_ARRAY"
+    },
+    {
+      "id": "map_nursing_qualifications",
+      "questionId": "nursing_qualification",
+      "outputPath": "qualifications.nursing",
+      "mappingType": "QUALIFICATION_ARRAY"
+    },
+    {
+      "id": "map_pharmacy_qualifications",
+      "questionId": "pharmacy_qualification",
+      "outputPath": "qualifications.pharmacy",
+      "mappingType": "QUALIFICATION_ARRAY"
+    },
+    {
+      "id": "map_engineering_qualifications",
+      "questionId": "engineering_qualification",
+      "outputPath": "qualifications.engineering",
+      "mappingType": "QUALIFICATION_ARRAY"
+    },
+    {
+      "id": "map_professional_registrations",
+      "questionId": "professional_registration",
+      "outputPath": "professionalRegistrations",
+      "mappingType": "REGISTRATION_ARRAY"
+    },
+    {
+      "id": "map_driving_licence",
+      "questionId": "driving_licence",
+      "outputPath": "skills.drivingLicence",
+      "mappingType": "BOOLEAN_OR_UNKNOWN"
+    },
+    {
+      "id": "map_typing",
+      "questionId": "typing_skill",
+      "outputPath": "skills.typingLevel",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_shorthand",
+      "questionId": "shorthand_skill",
+      "outputPath": "skills.shorthandLevel",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_computer_skill",
+      "questionId": "computer_skill",
+      "outputPath": "skills.computerLevel",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_experience_presence",
+      "questionId": "work_experience",
+      "outputPath": "hasRelevantExperience",
+      "mappingType": "BOOLEAN_OR_UNKNOWN"
+    },
+    {
+      "id": "map_experience_summary",
+      "questionId": "experience_details",
+      "outputPath": "experienceSummary",
+      "mappingType": "STRING_OR_EMPTY"
+    },
+    {
+      "id": "map_bengali",
+      "questionId": "language_bengali",
+      "outputPath": "languages.bengaliLevel",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_hindi",
+      "questionId": "language_hindi",
+      "outputPath": "languages.hindiLevel",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_english",
+      "questionId": "language_english",
+      "outputPath": "languages.englishLevel",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_state",
+      "questionId": "state_preference",
+      "outputPath": "stateId",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_government_preferences",
+      "questionId": "government_preference",
+      "outputPath": "governmentPreferences",
+      "mappingType": "GOVERNMENT_PREFERENCE_ARRAY"
+    },
+    {
+      "id": "map_career_interests",
+      "questionId": "career_interest",
+      "outputPath": "careerInterests",
+      "mappingType": "ENUM_ARRAY"
+    },
+    {
+      "id": "map_work_styles",
+      "questionId": "work_style",
+      "outputPath": "preferredWorkStyles",
+      "mappingType": "ENUM_ARRAY"
+    },
+    {
+      "id": "map_salary_importance",
+      "questionId": "salary_importance",
+      "outputPath": "preferences.salaryImportance",
+      "mappingType": "DIRECT_NUMERIC",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "map_authority_importance",
+      "questionId": "authority_importance",
+      "outputPath": "preferences.authorityImportance",
+      "mappingType": "DIRECT_NUMERIC",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "map_prestige_importance",
+      "questionId": "prestige_importance",
+      "outputPath": "preferences.prestigeImportance",
+      "mappingType": "DIRECT_NUMERIC",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "map_family_importance",
+      "questionId": "family_importance",
+      "outputPath": "preferences.familyImportance",
+      "mappingType": "DIRECT_NUMERIC",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "map_parent_care_importance",
+      "questionId": "parent_care_importance",
+      "outputPath": "preferences.parentCareImportance",
+      "mappingType": "DIRECT_NUMERIC_OR_UNKNOWN",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      },
+      "sensitive": true
+    },
+    {
+      "id": "map_location_importance",
+      "questionId": "location_importance",
+      "outputPath": "preferences.locationImportance",
+      "mappingType": "DIRECT_NUMERIC",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "map_security_importance",
+      "questionId": "job_security_importance",
+      "outputPath": "preferences.jobSecurityImportance",
+      "mappingType": "DIRECT_NUMERIC",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "map_work_life_importance",
+      "questionId": "work_life_importance",
+      "outputPath": "preferences.workLifeImportance",
+      "mappingType": "DIRECT_NUMERIC",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "map_career_growth_importance",
+      "questionId": "career_growth_importance",
+      "outputPath": "preferences.careerGrowthImportance",
+      "mappingType": "DIRECT_NUMERIC",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "map_housing_importance",
+      "questionId": "housing_importance",
+      "outputPath": "preferences.housingImportance",
+      "mappingType": "DIRECT_NUMERIC",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "map_low_stress_importance",
+      "questionId": "low_stress_importance",
+      "outputPath": "preferences.lowStressImportance",
+      "mappingType": "DIRECT_NUMERIC",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "map_low_physical_risk_importance",
+      "questionId": "low_physical_risk_importance",
+      "outputPath": "preferences.lowPhysicalRiskImportance",
+      "mappingType": "DIRECT_NUMERIC",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "map_low_transfer_importance",
+      "questionId": "low_transfer_importance",
+      "outputPath": "preferences.lowTransferImportance",
+      "mappingType": "DIRECT_NUMERIC",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "map_low_night_duty_importance",
+      "questionId": "low_night_duty_importance",
+      "outputPath": "preferences.lowNightDutyImportance",
+      "mappingType": "DIRECT_NUMERIC",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "map_low_shift_duty_importance",
+      "questionId": "low_shift_duty_importance",
+      "outputPath": "preferences.lowShiftDutyImportance",
+      "mappingType": "DIRECT_NUMERIC",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "map_low_holiday_duty_importance",
+      "questionId": "low_holiday_duty_importance",
+      "outputPath": "preferences.lowHolidayDutyImportance",
+      "mappingType": "DIRECT_NUMERIC",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "map_low_emergency_duty_importance",
+      "questionId": "low_emergency_duty_importance",
+      "outputPath": "preferences.lowEmergencyDutyImportance",
+      "mappingType": "DIRECT_NUMERIC",
+      "inputRange": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "map_night_tolerance",
+      "questionId": "night_duty_tolerance",
+      "outputPath": "tolerance.nightDuty",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_physical_risk_tolerance",
+      "questionId": "physical_risk_tolerance",
+      "outputPath": "tolerance.physicalRisk",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_transfer_tolerance",
+      "questionId": "transfer_tolerance",
+      "outputPath": "tolerance.transfers",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_public_dealing",
+      "questionId": "public_dealing_preference",
+      "outputPath": "preferences.publicDealing",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_office_field",
+      "questionId": "office_field_preference",
+      "outputPath": "preferences.officeField",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_exam_competition_tolerance",
+      "questionId": "competitive_exam_tolerance",
+      "outputPath": "preferences.examCompetitionTolerance",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_family_context",
+      "questionId": "family_context",
+      "outputPath": "family.context",
+      "mappingType": "ENUM_ARRAY_OR_UNKNOWN",
+      "sensitive": true
+    },
+    {
+      "id": "map_elderly_parent_responsibility",
+      "questionId": "elderly_parent_responsibility",
+      "outputPath": "family.elderlyParentResponsibility",
+      "mappingType": "OPTION_VALUE_OR_UNKNOWN",
+      "sensitive": true
+    },
+    {
+      "id": "map_children_responsibility",
+      "questionId": "children_responsibility",
+      "outputPath": "family.childrenResponsibility",
+      "mappingType": "OPTION_VALUE_OR_UNKNOWN",
+      "sensitive": true
+    },
+    {
+      "id": "map_income_responsibility",
+      "questionId": "income_responsibility",
+      "outputPath": "family.incomeResponsibility",
+      "mappingType": "OPTION_VALUE_OR_UNKNOWN",
+      "sensitive": true
+    },
+    {
+      "id": "map_location_flexibility",
+      "questionId": "future_location_flexibility",
+      "outputPath": "family.locationFlexibility",
+      "mappingType": "OPTION_VALUE"
+    },
+    {
+      "id": "map_confirmation",
+      "questionId": "assessment_confirmation",
+      "outputPath": "assessment.confirmedDisclaimer",
+      "mappingType": "BOOLEAN"
+    }
+  ],
+  "derivedIndicators": [
+    {
+      "id": "family_first_profile",
+      "when": {
+        "all": [
+          {
+            "path": "preferences.familyImportance",
+            "operator": "GREATER_THAN_OR_EQUAL",
+            "value": 8
+          },
+          {
+            "path": "preferences.parentCareImportance",
+            "operator": "GREATER_THAN_OR_EQUAL",
+            "value": 8
+          }
+        ]
+      },
+      "set": {
+        "profileTags": [
+          "FAMILY_FIRST"
+        ]
+      }
+    },
+    {
+      "id": "authority_first_profile",
+      "when": {
+        "all": [
+          {
+            "path": "preferences.authorityImportance",
+            "operator": "GREATER_THAN_OR_EQUAL",
+            "value": 8
+          },
+          {
+            "path": "preferences.prestigeImportance",
+            "operator": "GREATER_THAN_OR_EQUAL",
+            "value": 7
+          }
+        ]
+      },
+      "set": {
+        "profileTags": [
+          "AUTHORITY_FIRST"
+        ]
+      }
+    },
+    {
+      "id": "location_sensitive_profile",
+      "when": {
+        "all": [
+          {
+            "path": "preferences.locationImportance",
+            "operator": "GREATER_THAN_OR_EQUAL",
+            "value": 8
+          },
+          {
+            "path": "family.locationFlexibility",
+            "operator": "LESS_THAN_OR_EQUAL",
+            "value": 3
+          }
+        ]
+      },
+      "set": {
+        "profileTags": [
+          "LOCATION_SENSITIVE"
+        ]
+      }
+    },
+    {
+      "id": "low_operational_burden_profile",
+      "when": {
+        "any": [
+          {
+            "path": "preferences.lowNightDutyImportance",
+            "operator": "GREATER_THAN_OR_EQUAL",
+            "value": 8
+          },
+          {
+            "path": "preferences.lowShiftDutyImportance",
+            "operator": "GREATER_THAN_OR_EQUAL",
+            "value": 8
+          },
+          {
+            "path": "preferences.lowEmergencyDutyImportance",
+            "operator": "GREATER_THAN_OR_EQUAL",
+            "value": 8
+          }
+        ]
+      },
+      "set": {
+        "profileTags": [
+          "LOW_OPERATIONAL_BURDEN"
+        ]
+      }
+    }
+  ],
+  "normalization": {
+    "minScore": 0,
+    "maxScore": 10,
+    "rounding": "HALF_UP",
+    "unknownHandling": "PRESERVE_UNKNOWN"
+  },
+  "presentationRules": [
+    {
+      "id": "eligibility_separate",
+      "description": "Preference scoring must never override a failed eligibility requirement."
+    },
+    {
+      "id": "analytical_not_official",
+      "description": "Assessment-derived scores are analytical and must not be presented as official government rankings."
+    },
+    {
+      "id": "explain_major_factors",
+      "description": "Recommendations should explain the strongest positive and negative factors contributing to the result."
+    },
+    {
+      "id": "show_tradeoffs",
+      "description": "The result should display important disadvantages or conflicts rather than only positive factors."
+    },
+    {
+      "id": "preserve_unknown",
+      "description": "Prefer not to say, unavailable and unanswered values must remain distinguishable from genuine negative answers."
+    },
+    {
+      "id": "no_job_hardcoding",
+      "description": "This assessment file must not hard-code specific government jobs, posts or exam recommendations."
+    }
+  ]
+}
