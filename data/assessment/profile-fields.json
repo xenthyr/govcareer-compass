@@ -1,0 +1,508 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-08-31",
+  "schema": "../schemas/assessment-profile-field.schema.json",
+  "profileNamespace": "candidateProfile",
+  "description": "Canonical mapping between Career Finder responses and the normalized candidate profile consumed by eligibility, preference, scoring and ranking engines.",
+  "principles": [
+    "Profile paths are stable API-like contracts between assessment and application logic.",
+    "Changing a path requires coordinated changes in JavaScript and tests.",
+    "Qualification data references the canonical common qualification catalogue.",
+    "Assessment preferences are distinct from official job attributes.",
+    "Unknown or undisclosed values must remain distinguishable from negative values."
+  ],
+  "fields": [
+    {
+      "id": "educationLevel",
+      "path": "educationLevel",
+      "type": "ENUM",
+      "source": "highest_education",
+      "description": {
+        "en": "Highest educational level selected by the candidate.",
+        "bn": "প্রার্থী নির্বাচিত সর্বোচ্চ শিক্ষাগত স্তর।"
+      }
+    },
+    {
+      "id": "primaryAcademicQualification",
+      "path": "primaryAcademicQualification",
+      "type": "ENUM",
+      "source": "academic_qualification_type",
+      "description": {
+        "en": "Primary academic qualification.",
+        "bn": "প্রধান শিক্ষাগত যোগ্যতা।"
+      }
+    },
+    {
+      "id": "academicSubjects",
+      "path": "academicSubjects",
+      "type": "ENUM_ARRAY",
+      "source": "graduation_subject",
+      "sourceRegistry": "data/common/qualifications.json",
+      "description": {
+        "en": "Academic subjects that may matter for subject-specific eligibility.",
+        "bn": "বিষয়-নির্দিষ্ট যোগ্যতার ক্ষেত্রে প্রাসঙ্গিক শিক্ষাগত বিষয়।"
+      }
+    },
+    {
+      "id": "graduationSpecialisation",
+      "path": "graduationSpecialisation",
+      "type": "STRING_OR_EMPTY",
+      "source": "graduation_specialisation",
+      "description": {
+        "en": "Exact graduation, major or honours subject supplied by the candidate.",
+        "bn": "প্রার্থী প্রদত্ত নির্দিষ্ট স্নাতক, মেজর বা অনার্স বিষয়।"
+      }
+    },
+    {
+      "id": "hasAdditionalQualifications",
+      "path": "hasAdditionalQualifications",
+      "type": "BOOLEAN_OR_UNKNOWN",
+      "source": "additional_qualification_presence"
+    },
+    {
+      "id": "additionalQualificationCategories",
+      "path": "additionalQualificationCategories",
+      "type": "ENUM_ARRAY",
+      "source": "additional_qualification_categories"
+    },
+    {
+      "id": "teacherEducation",
+      "path": "qualifications.teacherEducation",
+      "type": "QUALIFICATION_ARRAY",
+      "source": "teacher_qualification",
+      "qualificationSource": "data/common/qualifications.json"
+    },
+    {
+      "id": "technicalQualifications",
+      "path": "qualifications.technical",
+      "type": "QUALIFICATION_ARRAY",
+      "source": "technical_qualification",
+      "qualificationSource": "data/common/qualifications.json"
+    },
+    {
+      "id": "itiTrades",
+      "path": "qualifications.itiTrades",
+      "type": "TRADE_ARRAY",
+      "source": "iti_trade",
+      "qualificationSource": "data/common/qualifications.json"
+    },
+    {
+      "id": "computerQualifications",
+      "path": "qualifications.computer",
+      "type": "QUALIFICATION_ARRAY",
+      "source": "computer_qualification",
+      "qualificationSource": "data/common/qualifications.json"
+    },
+    {
+      "id": "lawQualifications",
+      "path": "qualifications.law",
+      "type": "QUALIFICATION_ARRAY",
+      "source": "law_qualification",
+      "qualificationSource": "data/common/qualifications.json"
+    },
+    {
+      "id": "medicalQualifications",
+      "path": "qualifications.medical",
+      "type": "QUALIFICATION_ARRAY",
+      "source": "medical_qualification",
+      "qualificationSource": "data/common/qualifications.json"
+    },
+    {
+      "id": "nursingQualifications",
+      "path": "qualifications.nursing",
+      "type": "QUALIFICATION_ARRAY",
+      "source": "nursing_qualification",
+      "qualificationSource": "data/common/qualifications.json"
+    },
+    {
+      "id": "pharmacyQualifications",
+      "path": "qualifications.pharmacy",
+      "type": "QUALIFICATION_ARRAY",
+      "source": "pharmacy_qualification",
+      "qualificationSource": "data/common/qualifications.json"
+    },
+    {
+      "id": "engineeringQualifications",
+      "path": "qualifications.engineering",
+      "type": "QUALIFICATION_ARRAY",
+      "source": "engineering_qualification",
+      "qualificationSource": "data/common/qualifications.json"
+    },
+    {
+      "id": "professionalRegistrations",
+      "path": "professionalRegistrations",
+      "type": "REGISTRATION_ARRAY",
+      "source": "professional_registration"
+    },
+    {
+      "id": "drivingLicence",
+      "path": "skills.drivingLicence",
+      "type": "BOOLEAN_OR_UNKNOWN",
+      "source": "driving_licence"
+    },
+    {
+      "id": "typingLevel",
+      "path": "skills.typingLevel",
+      "type": "ENUM",
+      "source": "typing_skill"
+    },
+    {
+      "id": "shorthandLevel",
+      "path": "skills.shorthandLevel",
+      "type": "ENUM",
+      "source": "shorthand_skill"
+    },
+    {
+      "id": "computerLevel",
+      "path": "skills.computerLevel",
+      "type": "ENUM",
+      "source": "computer_skill"
+    },
+    {
+      "id": "hasRelevantExperience",
+      "path": "hasRelevantExperience",
+      "type": "BOOLEAN_OR_UNKNOWN",
+      "source": "work_experience"
+    },
+    {
+      "id": "experienceSummary",
+      "path": "experienceSummary",
+      "type": "STRING_OR_EMPTY",
+      "source": "experience_details"
+    },
+    {
+      "id": "bengaliLevel",
+      "path": "languages.bengaliLevel",
+      "type": "ENUM",
+      "source": "language_bengali"
+    },
+    {
+      "id": "hindiLevel",
+      "path": "languages.hindiLevel",
+      "type": "ENUM",
+      "source": "language_hindi"
+    },
+    {
+      "id": "englishLevel",
+      "path": "languages.englishLevel",
+      "type": "ENUM",
+      "source": "language_english"
+    },
+    {
+      "id": "stateId",
+      "path": "stateId",
+      "type": "STATE_ID",
+      "source": "state_preference",
+      "sourceRegistry": "data/common/states.json"
+    },
+    {
+      "id": "governmentPreferences",
+      "path": "governmentPreferences",
+      "type": "GOVERNMENT_PREFERENCE_ARRAY",
+      "source": "government_preference",
+      "sourceRegistry": "data/common/governments.json"
+    },
+    {
+      "id": "careerInterests",
+      "path": "careerInterests",
+      "type": "CATEGORY_ID_ARRAY",
+      "source": "career_interest",
+      "sourceRegistry": "data/common/categories.json"
+    },
+    {
+      "id": "preferredWorkStyles",
+      "path": "preferredWorkStyles",
+      "type": "WORK_STYLE_ARRAY",
+      "source": "work_style"
+    },
+    {
+      "id": "salaryImportance",
+      "path": "preferences.salaryImportance",
+      "type": "SCORE",
+      "source": "salary_importance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "authorityImportance",
+      "path": "preferences.authorityImportance",
+      "type": "SCORE",
+      "source": "authority_importance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "prestigeImportance",
+      "path": "preferences.prestigeImportance",
+      "type": "SCORE",
+      "source": "prestige_importance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "familyImportance",
+      "path": "preferences.familyImportance",
+      "type": "SCORE",
+      "source": "family_importance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "parentCareImportance",
+      "path": "preferences.parentCareImportance",
+      "type": "SCORE_OR_UNKNOWN",
+      "source": "parent_care_importance",
+      "sensitive": true,
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "locationImportance",
+      "path": "preferences.locationImportance",
+      "type": "SCORE",
+      "source": "location_importance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "jobSecurityImportance",
+      "path": "preferences.jobSecurityImportance",
+      "type": "SCORE",
+      "source": "job_security_importance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "workLifeImportance",
+      "path": "preferences.workLifeImportance",
+      "type": "SCORE",
+      "source": "work_life_importance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "careerGrowthImportance",
+      "path": "preferences.careerGrowthImportance",
+      "type": "SCORE",
+      "source": "career_growth_importance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "housingImportance",
+      "path": "preferences.housingImportance",
+      "type": "SCORE",
+      "source": "housing_importance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "lowStressImportance",
+      "path": "preferences.lowStressImportance",
+      "type": "SCORE",
+      "source": "low_stress_importance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "lowPhysicalRiskImportance",
+      "path": "preferences.lowPhysicalRiskImportance",
+      "type": "SCORE",
+      "source": "low_physical_risk_importance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "lowTransferImportance",
+      "path": "preferences.lowTransferImportance",
+      "type": "SCORE",
+      "source": "low_transfer_importance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "lowNightDutyImportance",
+      "path": "preferences.lowNightDutyImportance",
+      "type": "SCORE",
+      "source": "low_night_duty_importance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "lowShiftDutyImportance",
+      "path": "preferences.lowShiftDutyImportance",
+      "type": "SCORE",
+      "source": "low_shift_duty_importance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "lowHolidayDutyImportance",
+      "path": "preferences.lowHolidayDutyImportance",
+      "type": "SCORE",
+      "source": "low_holiday_duty_importance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "lowEmergencyDutyImportance",
+      "path": "preferences.lowEmergencyDutyImportance",
+      "type": "SCORE",
+      "source": "low_emergency_duty_importance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "nightDutyTolerance",
+      "path": "tolerance.nightDuty",
+      "type": "SCORE",
+      "source": "night_duty_tolerance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "physicalRiskTolerance",
+      "path": "tolerance.physicalRisk",
+      "type": "SCORE",
+      "source": "physical_risk_tolerance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "transferTolerance",
+      "path": "tolerance.transfers",
+      "type": "SCORE",
+      "source": "transfer_tolerance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "publicDealingPreference",
+      "path": "preferences.publicDealing",
+      "type": "SCORE",
+      "source": "public_dealing_preference",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "officeFieldPreference",
+      "path": "preferences.officeField",
+      "type": "ENUM",
+      "source": "office_field_preference"
+    },
+    {
+      "id": "examCompetitionTolerance",
+      "path": "preferences.examCompetitionTolerance",
+      "type": "SCORE",
+      "source": "competitive_exam_tolerance",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "familyContext",
+      "path": "family.context",
+      "type": "ENUM_ARRAY",
+      "source": "family_context",
+      "sensitive": true
+    },
+    {
+      "id": "elderlyParentResponsibility",
+      "path": "family.elderlyParentResponsibility",
+      "type": "SCORE_OR_UNKNOWN",
+      "source": "elderly_parent_responsibility",
+      "sensitive": true,
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "childrenResponsibility",
+      "path": "family.childrenResponsibility",
+      "type": "SCORE_OR_UNKNOWN",
+      "source": "children_responsibility",
+      "sensitive": true,
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "incomeResponsibility",
+      "path": "family.incomeResponsibility",
+      "type": "SCORE_OR_UNKNOWN",
+      "source": "income_responsibility",
+      "sensitive": true,
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "locationFlexibility",
+      "path": "family.locationFlexibility",
+      "type": "SCORE",
+      "source": "future_location_flexibility",
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    },
+    {
+      "id": "assessmentGoal",
+      "path": "assessment.goal",
+      "type": "ENUM",
+      "source": "welcome_goal"
+    },
+    {
+      "id": "confirmedDisclaimer",
+      "path": "assessment.confirmedDisclaimer",
+      "type": "BOOLEAN",
+      "source": "assessment_confirmation"
+    }
+  ]
+}
