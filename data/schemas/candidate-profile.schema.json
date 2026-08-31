@@ -2,14 +2,20 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "candidate-profile.schema.json",
   "title": "GovCareer Compass Candidate Profile",
-  "description": "Normalized candidate profile generated from Career Finder responses.",
+  "description": "Normalized candidate profile used by eligibility and recommendation engines.",
   "type": "object",
   "additionalProperties": false,
   "required": [
+    "profileVersion",
     "educationLevel",
+    "qualifications",
     "preferences"
   ],
   "properties": {
+    "profileVersion": {
+      "$ref": "shared.schema.json#/$defs/version"
+    },
+
     "educationLevel": {
       "type": "string",
       "enum": [
@@ -17,169 +23,168 @@
         "CLASS_10",
         "CLASS_12",
         "DIPLOMA",
+        "ITI",
         "GRADUATE",
         "POSTGRADUATE",
+        "DOCTORATE",
         "PROFESSIONAL",
         "OTHER"
       ]
     },
-    "degrees": {
+
+    "qualifications": {
       "type": "array",
+      "minItems": 1,
       "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "qualificationId",
+          "status"
+        ],
+        "properties": {
+          "qualificationId": {
+            "$ref": "shared.schema.json#/$defs/id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "COMPLETED",
+              "FINAL_YEAR",
+              "PURSUING"
+            ]
+          },
+          "subjectIds": {
+            "$ref": "shared.schema.json#/$defs/stringArray"
+          },
+          "tradeId": {
+            "$ref": "shared.schema.json#/$defs/id"
+          },
+          "specialisation": {
+            "type": "string"
+          },
+          "institution": {
+            "type": "string"
+          },
+          "yearCompleted": {
+            "type": "integer",
+            "minimum": 1900
+          }
+        }
+      }
     },
-    "subjects": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
-    },
-    "professionalQualifications": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
-    },
+
     "languages": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
+      "$ref": "shared.schema.json#/$defs/stringArray"
     },
-    "mathematics10": {
-      "type": "boolean"
-    },
-    "mathematics12": {
-      "type": "boolean"
-    },
-    "statistics": {
-      "type": "boolean"
-    },
-    "economics": {
-      "type": "boolean"
-    },
-    "commerce": {
-      "type": "boolean"
-    },
-    "bengali": {
-      "type": "boolean"
-    },
-    "hindi": {
-      "type": "boolean"
-    },
-    "computerKnowledge": {
-      "type": "boolean"
-    },
-    "typing": {
-      "type": "boolean"
-    },
-    "shorthand": {
-      "type": "boolean"
-    },
-    "drivingLicence": {
-      "type": "boolean"
-    },
-    "physicalEligibility": {
-      "type": "boolean"
-    },
-    "experience": {
-      "type": "boolean"
-    },
-    "stateId": {
-      "type": "string"
-    },
-    "governmentPreferences": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
-    },
-    "careerInterests": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
-    },
-    "preferences": {
+
+    "skills": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "typing": {
+          "type": "boolean"
+        },
+        "shorthand": {
+          "type": "boolean"
+        },
+        "computerKnowledge": {
+          "type": "boolean"
+        },
+        "drivingLicence": {
+          "type": "boolean"
+        }
+      }
+    },
+
+    "physicalEligibility": {
+      "type": "object"
+    },
+
+    "experience": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+
+    "stateId": {
+      "$ref": "shared.schema.json#/$defs/id"
+    },
+
+    "governmentPreferences": {
+      "$ref": "shared.schema.json#/$defs/stringArray"
+    },
+
+    "careerInterests": {
+      "$ref": "shared.schema.json#/$defs/stringArray"
+    },
+
+    "preferences": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "salaryImportance",
+        "authorityImportance",
+        "familyImportance",
+        "parentCareImportance",
+        "locationImportance",
+        "jobSecurityImportance",
+        "lowStressImportance",
+        "lowPhysicalRiskImportance",
+        "careerGrowthImportance",
+        "prestigeImportance",
+        "workLifeImportance",
+        "housingImportance"
+      ],
+      "properties": {
         "salaryImportance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 10
+          "$ref": "shared.schema.json#/$defs/score"
         },
         "authorityImportance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 10
+          "$ref": "shared.schema.json#/$defs/score"
         },
         "familyImportance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 10
+          "$ref": "shared.schema.json#/$defs/score"
         },
         "parentCareImportance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 10
+          "$ref": "shared.schema.json#/$defs/score"
         },
         "locationImportance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 10
+          "$ref": "shared.schema.json#/$defs/score"
         },
         "jobSecurityImportance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 10
+          "$ref": "shared.schema.json#/$defs/score"
         },
         "lowStressImportance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 10
+          "$ref": "shared.schema.json#/$defs/score"
         },
         "lowPhysicalRiskImportance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 10
+          "$ref": "shared.schema.json#/$defs/score"
         },
         "careerGrowthImportance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 10
+          "$ref": "shared.schema.json#/$defs/score"
         },
         "prestigeImportance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 10
+          "$ref": "shared.schema.json#/$defs/score"
         },
         "workLifeImportance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 10
+          "$ref": "shared.schema.json#/$defs/score"
         },
         "housingImportance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 10
+          "$ref": "shared.schema.json#/$defs/score"
         },
         "lowTransferImportance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 10
+          "$ref": "shared.schema.json#/$defs/score"
         },
         "lowNightDutyImportance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 10
+          "$ref": "shared.schema.json#/$defs/score"
+        },
+        "lowHolidayDutyImportance": {
+          "$ref": "shared.schema.json#/$defs/score"
+        },
+        "lowEmergencyDutyImportance": {
+          "$ref": "shared.schema.json#/$defs/score"
         }
       }
     }
