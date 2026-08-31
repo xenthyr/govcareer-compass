@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "shared-localized-name.schema.json",
+  "title": "GovCareer Compass Localized Name",
+  "description": "Reusable localized display-name object used throughout the GovCareer Compass data model.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "en"
+  ],
+  "properties": {
+    "en": {
+      "type": "string",
+      "minLength": 1
+    },
+    "bn": {
+      "type": "string"
+    },
+    "hi": {
+      "type": "string"
+    },
+    "mr": {
+      "type": "string"
+    },
+    "ta": {
+      "type": "string"
+    },
+    "te": {
+      "type": "string"
+    },
+    "gu": {
+      "type": "string"
+    },
+    "or": {
+      "type": "string"
+    },
+    "as": {
+      "type": "string"
+    },
+    "kn": {
+      "type": "string"
+    },
+    "ml": {
+      "type": "string"
+    }
+  }
+}
