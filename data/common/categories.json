@@ -1,0 +1,314 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-08-31",
+  "description": "Canonical career-role category vocabulary used for jobs, filters, search, comparison and recommendation.",
+  "categories": [
+    {
+      "id": "ADMINISTRATIVE",
+      "label": {
+        "en": "Administrative",
+        "bn": "প্রশাসনিক"
+      },
+      "description": {
+        "en": "General administration, governance and departmental administration.",
+        "bn": "সাধারণ প্রশাসন, শাসন ও দপ্তরভিত্তিক প্রশাসনিক কাজ।"
+      }
+    },
+    {
+      "id": "EXECUTIVE",
+      "label": {
+        "en": "Executive",
+        "bn": "এক্সিকিউটিভ"
+      }
+    },
+    {
+      "id": "POLICE",
+      "label": {
+        "en": "Police",
+        "bn": "পুলিশ"
+      }
+    },
+    {
+      "id": "INVESTIGATION",
+      "label": {
+        "en": "Investigation",
+        "bn": "তদন্ত"
+      }
+    },
+    {
+      "id": "INTELLIGENCE",
+      "label": {
+        "en": "Intelligence",
+        "bn": "গোয়েন্দা"
+      }
+    },
+    {
+      "id": "ENFORCEMENT",
+      "label": {
+        "en": "Enforcement",
+        "bn": "এনফোর্সমেন্ট"
+      }
+    },
+    {
+      "id": "REVENUE",
+      "label": {
+        "en": "Revenue",
+        "bn": "রাজস্ব"
+      }
+    },
+    {
+      "id": "TAX",
+      "label": {
+        "en": "Tax",
+        "bn": "কর"
+      }
+    },
+    {
+      "id": "AUDIT",
+      "label": {
+        "en": "Audit",
+        "bn": "অডিট"
+      }
+    },
+    {
+      "id": "ACCOUNTS",
+      "label": {
+        "en": "Accounts",
+        "bn": "হিসাব"
+      }
+    },
+    {
+      "id": "CLERICAL",
+      "label": {
+        "en": "Clerical",
+        "bn": "ক্লেরিক্যাল"
+      }
+    },
+    {
+      "id": "SECRETARIAT",
+      "label": {
+        "en": "Secretariat",
+        "bn": "সচিবালয়"
+      }
+    },
+    {
+      "id": "RAILWAY_OPERATIONS",
+      "label": {
+        "en": "Railway Operations",
+        "bn": "রেলওয়ে অপারেশন"
+      }
+    },
+    {
+      "id": "SECURITY",
+      "label": {
+        "en": "Security",
+        "bn": "নিরাপত্তা"
+      }
+    },
+    {
+      "id": "PANCHAYAT_ADMINISTRATION",
+      "label": {
+        "en": "Panchayat Administration",
+        "bn": "পঞ্চায়েত প্রশাসন"
+      }
+    },
+    {
+      "id": "CORRECTIONS",
+      "label": {
+        "en": "Corrections / Prisons",
+        "bn": "সংশোধনাগার / কারা প্রশাসন"
+      }
+    },
+    {
+      "id": "WELFARE",
+      "label": {
+        "en": "Welfare",
+        "bn": "কল্যাণ"
+      }
+    },
+    {
+      "id": "DISASTER_MANAGEMENT",
+      "label": {
+        "en": "Disaster Management",
+        "bn": "দুর্যোগ ব্যবস্থাপনা"
+      }
+    },
+    {
+      "id": "POSTAL",
+      "label": {
+        "en": "Postal",
+        "bn": "ডাক"
+      }
+    },
+    {
+      "id": "FIELD_DEVELOPMENT",
+      "label": {
+        "en": "Field Development",
+        "bn": "মাঠভিত্তিক উন্নয়ন"
+      }
+    },
+    {
+      "id": "EDUCATION_NON_TEACHING",
+      "label": {
+        "en": "Education / Non-Teaching",
+        "bn": "শিক্ষা / অশিক্ষক"
+      }
+    },
+    {
+      "id": "TEACHING",
+      "label": {
+        "en": "Teaching",
+        "bn": "শিক্ষকতা"
+      }
+    },
+    {
+      "id": "AGRICULTURE",
+      "label": {
+        "en": "Agriculture",
+        "bn": "কৃষি"
+      }
+    },
+    {
+      "id": "FOREST",
+      "label": {
+        "en": "Forest / Wildlife",
+        "bn": "বন / বন্যপ্রাণী"
+      }
+    },
+    {
+      "id": "FIRE_EMERGENCY",
+      "label": {
+        "en": "Fire & Emergency Services",
+        "bn": "অগ্নি ও জরুরি পরিষেবা"
+      }
+    },
+    {
+      "id": "LABOUR_EMPLOYMENT",
+      "label": {
+        "en": "Labour / Employment",
+        "bn": "শ্রম / কর্মসংস্থান"
+      }
+    },
+    {
+      "id": "INFORMATION_CULTURE",
+      "label": {
+        "en": "Information / Culture",
+        "bn": "তথ্য / সংস্কৃতি"
+      }
+    },
+    {
+      "id": "TOURISM",
+      "label": {
+        "en": "Tourism",
+        "bn": "পর্যটন"
+      }
+    },
+    {
+      "id": "TRANSPORT",
+      "label": {
+        "en": "Transport",
+        "bn": "পরিবহন"
+      }
+    },
+    {
+      "id": "SOCIAL_SERVICES",
+      "label": {
+        "en": "Social Services",
+        "bn": "সামাজিক পরিষেবা"
+      }
+    },
+    {
+      "id": "DEVELOPMENT",
+      "label": {
+        "en": "Development",
+        "bn": "উন্নয়ন"
+      }
+    },
+    {
+      "id": "TECHNICAL",
+      "label": {
+        "en": "Technical",
+        "bn": "কারিগরি"
+      }
+    },
+    {
+      "id": "MEDICAL",
+      "label": {
+        "en": "Medical",
+        "bn": "চিকিৎসা"
+      }
+    },
+    {
+      "id": "NURSING",
+      "label": {
+        "en": "Nursing",
+        "bn": "নার্সিং"
+      }
+    },
+    {
+      "id": "PHARMACY",
+      "label": {
+        "en": "Pharmacy",
+        "bn": "ফার্মেসি"
+      }
+    },
+    {
+      "id": "LEGAL",
+      "label": {
+        "en": "Legal",
+        "bn": "আইনভিত্তিক"
+      }
+    },
+    {
+      "id": "SUPPORT",
+      "label": {
+        "en": "Support / General Service",
+        "bn": "সহায়ক / সাধারণ পরিষেবা"
+      }
+    },
+    {
+      "id": "OTHER",
+      "label": {
+        "en": "Other",
+        "bn": "অন্যান্য"
+      }
+    }
+  ],
+  "workStyles": [
+    {
+      "id": "MOSTLY_OFFICE",
+      "label": {
+        "en": "Mostly Office",
+        "bn": "মূলত অফিস"
+      }
+    },
+    {
+      "id": "OFFICE_PLUS_FIELD",
+      "label": {
+        "en": "Office + Field",
+        "bn": "অফিস + মাঠ"
+      }
+    },
+    {
+      "id": "MOSTLY_FIELD",
+      "label": {
+        "en": "Mostly Field",
+        "bn": "মূলত মাঠভিত্তিক"
+      }
+    },
+    {
+      "id": "OPERATIONAL",
+      "label": {
+        "en": "Operational / Shift-based",
+        "bn": "অপারেশনাল / শিফটভিত্তিক"
+      }
+    },
+    {
+      "id": "MIXED",
+      "label": {
+        "en": "Mixed",
+        "bn": "মিশ্র"
+      }
+    }
+  ]
+}
