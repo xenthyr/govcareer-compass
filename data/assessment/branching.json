@@ -1,0 +1,527 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-08-31",
+  "schema": "../schemas/assessment-branching.schema.json",
+  "assessmentId": "career-finder",
+  "defaultStartQuestionId": "welcome_goal",
+  "description": "Conditional presentation-flow rules for the Career Finder. These rules determine which questions appear. They do not determine government-job eligibility.",
+  "rules": [
+    {
+      "id": "graduate_academic_details",
+      "sourceQuestionId": "highest_education",
+      "condition": {
+        "operator": "IN",
+        "value": [
+          "GRADUATE",
+          "POSTGRADUATE",
+          "DOCTORATE"
+        ]
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "academic_qualification_type",
+        "graduation_subject",
+        "graduation_specialisation"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "below_graduate_no_graduation_specialisation",
+      "sourceQuestionId": "highest_education",
+      "condition": {
+        "operator": "IN",
+        "value": [
+          "CLASS_8",
+          "CLASS_10",
+          "CLASS_12",
+          "ITI",
+          "DIPLOMA"
+        ]
+      },
+      "action": "HIDE",
+      "targetQuestionIds": [
+        "graduation_subject",
+        "graduation_specialisation"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "additional_qualification_yes",
+      "sourceQuestionId": "additional_qualification_presence",
+      "condition": {
+        "operator": "EQUALS",
+        "value": true
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "additional_qualification_categories"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "additional_qualification_no",
+      "sourceQuestionId": "additional_qualification_presence",
+      "condition": {
+        "operator": "IN",
+        "value": [
+          false,
+          "PREFER_NOT_TO_SAY"
+        ]
+      },
+      "action": "HIDE",
+      "targetQuestionIds": [
+        "additional_qualification_categories",
+        "teacher_qualification",
+        "technical_qualification",
+        "iti_trade",
+        "computer_qualification",
+        "law_qualification",
+        "medical_qualification",
+        "nursing_qualification",
+        "pharmacy_qualification",
+        "engineering_qualification",
+        "professional_registration"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "teacher_category_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "CONTAINS",
+        "value": "TEACHER_EDUCATION"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "teacher_qualification"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "teacher_category_not_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "NOT_CONTAINS",
+        "value": "TEACHER_EDUCATION"
+      },
+      "action": "HIDE",
+      "targetQuestionIds": [
+        "teacher_qualification"
+      ],
+      "priority": 90
+    },
+    {
+      "id": "technical_category_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "CONTAINS",
+        "value": "TECHNICAL"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "technical_qualification"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "technical_category_not_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "NOT_CONTAINS",
+        "value": "TECHNICAL"
+      },
+      "action": "HIDE",
+      "targetQuestionIds": [
+        "technical_qualification",
+        "iti_trade"
+      ],
+      "priority": 90
+    },
+    {
+      "id": "iti_selected",
+      "sourceQuestionId": "technical_qualification",
+      "condition": {
+        "operator": "CONTAINS",
+        "value": "ITI"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "iti_trade"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "iti_not_selected",
+      "sourceQuestionId": "technical_qualification",
+      "condition": {
+        "operator": "NOT_CONTAINS",
+        "value": "ITI"
+      },
+      "action": "HIDE",
+      "targetQuestionIds": [
+        "iti_trade"
+      ],
+      "priority": 90
+    },
+    {
+      "id": "computer_category_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "CONTAINS",
+        "value": "COMPUTER_IT"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "computer_qualification"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "computer_category_not_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "NOT_CONTAINS",
+        "value": "COMPUTER_IT"
+      },
+      "action": "HIDE",
+      "targetQuestionIds": [
+        "computer_qualification"
+      ],
+      "priority": 90
+    },
+    {
+      "id": "law_category_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "CONTAINS",
+        "value": "LAW"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "law_qualification"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "law_category_not_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "NOT_CONTAINS",
+        "value": "LAW"
+      },
+      "action": "HIDE",
+      "targetQuestionIds": [
+        "law_qualification"
+      ],
+      "priority": 90
+    },
+    {
+      "id": "medical_category_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "CONTAINS",
+        "value": "MEDICAL"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "medical_qualification"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "medical_category_not_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "NOT_CONTAINS",
+        "value": "MEDICAL"
+      },
+      "action": "HIDE",
+      "targetQuestionIds": [
+        "medical_qualification"
+      ],
+      "priority": 90
+    },
+    {
+      "id": "nursing_category_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "CONTAINS",
+        "value": "NURSING"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "nursing_qualification"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "nursing_category_not_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "NOT_CONTAINS",
+        "value": "NURSING"
+      },
+      "action": "HIDE",
+      "targetQuestionIds": [
+        "nursing_qualification"
+      ],
+      "priority": 90
+    },
+    {
+      "id": "pharmacy_category_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "CONTAINS",
+        "value": "PHARMACY"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "pharmacy_qualification"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "pharmacy_category_not_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "NOT_CONTAINS",
+        "value": "PHARMACY"
+      },
+      "action": "HIDE",
+      "targetQuestionIds": [
+        "pharmacy_qualification"
+      ],
+      "priority": 90
+    },
+    {
+      "id": "engineering_category_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "CONTAINS",
+        "value": "ENGINEERING"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "engineering_qualification"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "engineering_category_not_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "NOT_CONTAINS",
+        "value": "ENGINEERING"
+      },
+      "action": "HIDE",
+      "targetQuestionIds": [
+        "engineering_qualification"
+      ],
+      "priority": 90
+    },
+    {
+      "id": "registration_or_licence_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "INCLUDES_ANY",
+        "value": [
+          "REGISTRATION",
+          "LICENCE"
+        ]
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "professional_registration"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "registration_or_licence_not_selected",
+      "sourceQuestionId": "additional_qualification_categories",
+      "condition": {
+        "operator": "NOT_INCLUDES_ANY",
+        "value": [
+          "REGISTRATION",
+          "LICENCE"
+        ]
+      },
+      "action": "HIDE",
+      "targetQuestionIds": [
+        "professional_registration"
+      ],
+      "priority": 90
+    },
+    {
+      "id": "experience_present",
+      "sourceQuestionId": "work_experience",
+      "condition": {
+        "operator": "EQUALS",
+        "value": true
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "experience_details"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "experience_absent",
+      "sourceQuestionId": "work_experience",
+      "condition": {
+        "operator": "IN",
+        "value": [
+          false,
+          "PREFER_NOT_TO_SAY"
+        ]
+      },
+      "action": "HIDE",
+      "targetQuestionIds": [
+        "experience_details"
+      ],
+      "priority": 90
+    },
+    {
+      "id": "always_collect_driving",
+      "sourceQuestionId": "work_experience",
+      "condition": {
+        "operator": "ALWAYS"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "driving_licence"
+      ],
+      "priority": 10
+    },
+    {
+      "id": "always_collect_typing",
+      "sourceQuestionId": "work_experience",
+      "condition": {
+        "operator": "ALWAYS"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "typing_skill"
+      ],
+      "priority": 10
+    },
+    {
+      "id": "always_collect_shorthand",
+      "sourceQuestionId": "work_experience",
+      "condition": {
+        "operator": "ALWAYS"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "shorthand_skill"
+      ],
+      "priority": 10
+    },
+    {
+      "id": "always_collect_computer_skill",
+      "sourceQuestionId": "work_experience",
+      "condition": {
+        "operator": "ALWAYS"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "computer_skill"
+      ],
+      "priority": 10
+    },
+    {
+      "id": "government_preference_state",
+      "sourceQuestionId": "government_preference",
+      "condition": {
+        "operator": "CONTAINS",
+        "value": "STATE_GOVERNMENT"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "state_preference"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "government_preference_both",
+      "sourceQuestionId": "government_preference",
+      "condition": {
+        "operator": "CONTAINS",
+        "value": "BOTH"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "state_preference"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "government_preference_central_only",
+      "sourceQuestionId": "government_preference",
+      "condition": {
+        "operator": "EQUALS",
+        "value": [
+          "central-government"
+        ]
+      },
+      "action": "OPTIONAL",
+      "targetQuestionIds": [
+        "state_preference"
+      ],
+      "priority": 80
+    },
+    {
+      "id": "family_followups",
+      "sourceQuestionId": "family_context",
+      "condition": {
+        "operator": "NOT_CONTAINS",
+        "value": "PREFER_NOT_TO_SAY"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "elderly_parent_responsibility",
+        "children_responsibility",
+        "income_responsibility"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "family_followups_private",
+      "sourceQuestionId": "family_context",
+      "condition": {
+        "operator": "EQUALS",
+        "value": "PREFER_NOT_TO_SAY"
+      },
+      "action": "HIDE",
+      "targetQuestionIds": [
+        "elderly_parent_responsibility",
+        "children_responsibility",
+        "income_responsibility"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "location_flexibility_always",
+      "sourceQuestionId": "future_location_flexibility",
+      "condition": {
+        "operator": "ALWAYS"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "future_location_flexibility"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "assessment_confirmation_always",
+      "sourceQuestionId": "assessment_confirmation",
+      "condition": {
+        "operator": "ALWAYS"
+      },
+      "action": "SHOW",
+      "targetQuestionIds": [
+        "assessment_confirmation"
+      ],
+      "priority": 1
+    }
+  ]
+}
