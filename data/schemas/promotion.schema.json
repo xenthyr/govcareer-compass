@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "promotion.schema.json",
+  "title": "GovCareer Compass Promotion Profile",
+  "description": "Career-progression and promotion structure for a government post.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "steps",
+    "confidence",
+    "lastVerified",
+    "dataVersion"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order",
+          "designation"
+        ],
+        "properties": {
+          "order": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "designation": {
+            "$ref": "shared-localized-name.schema.json"
+          },
+          "minimumQualifyingService": {
+            "type": "string"
+          },
+          "method": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "SENIORITY",
+                "SELECTION",
+                "DEPARTMENTAL_EXAM",
+                "SELECTION_CUM_SENIORITY",
+                "VACANCY_BASED",
+                "TRAINING",
+                "OTHER",
+                "NOT_VERIFIED"
+              ]
+            },
+            "uniqueItems": true
+          },
+          "vacancyDependence": {
+            "type": "boolean"
+          },
+          "certainty": {
+            "type": "string",
+            "enum": [
+              "RULE_DEFINED",
+              "VACANCY_DEPENDENT",
+              "PRACTICAL_UNCERTAINTY",
+              "NOT_VERIFIED"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "careerCeiling": {
+      "type": "string"
+    },
+    "departmentalExamination": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "trainingRequirements": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "sourceIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "HIGH",
+        "MEDIUM_HIGH",
+        "MEDIUM",
+        "LOW",
+        "ESTIMATE",
+        "NOT_VERIFIED"
+      ]
+    },
+    "lastVerified": {
+      "type": "string",
+      "format": "date"
+    },
+    "dataVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    }
+  }
+}
