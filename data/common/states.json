@@ -1,0 +1,409 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-08-31",
+  "description": "Indian State and Union Territory registry for state selection and future government-exam expansion.",
+  "defaultStateId": "west-bengal",
+  "activeStateIds": [
+    "west-bengal"
+  ],
+  "states": [
+    {
+      "id": "andhra-pradesh",
+      "name": {
+        "en": "Andhra Pradesh",
+        "bn": "অন্ধ্র প্রদেশ"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "arunachal-pradesh",
+      "name": {
+        "en": "Arunachal Pradesh",
+        "bn": "অরুণাচল প্রদেশ"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "assam",
+      "name": {
+        "en": "Assam",
+        "bn": "অসম"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "bihar",
+      "name": {
+        "en": "Bihar",
+        "bn": "বিহার"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "chhattisgarh",
+      "name": {
+        "en": "Chhattisgarh",
+        "bn": "ছত্তিশগড়"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "goa",
+      "name": {
+        "en": "Goa",
+        "bn": "গোয়া"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "gujarat",
+      "name": {
+        "en": "Gujarat",
+        "bn": "গুজরাট"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "haryana",
+      "name": {
+        "en": "Haryana",
+        "bn": "হরিয়ানা"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "himachal-pradesh",
+      "name": {
+        "en": "Himachal Pradesh",
+        "bn": "হিমাচল প্রদেশ"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "jharkhand",
+      "name": {
+        "en": "Jharkhand",
+        "bn": "ঝাড়খণ্ড"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "karnataka",
+      "name": {
+        "en": "Karnataka",
+        "bn": "কর্ণাটক"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "kerala",
+      "name": {
+        "en": "Kerala",
+        "bn": "কেরল"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "madhya-pradesh",
+      "name": {
+        "en": "Madhya Pradesh",
+        "bn": "মধ্যপ্রদেশ"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "maharashtra",
+      "name": {
+        "en": "Maharashtra",
+        "bn": "মহারাষ্ট্র"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "manipur",
+      "name": {
+        "en": "Manipur",
+        "bn": "মণিপুর"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "meghalaya",
+      "name": {
+        "en": "Meghalaya",
+        "bn": "মেঘালয়"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "mizoram",
+      "name": {
+        "en": "Mizoram",
+        "bn": "মিজোরাম"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "nagaland",
+      "name": {
+        "en": "Nagaland",
+        "bn": "নাগাল্যান্ড"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "odisha",
+      "name": {
+        "en": "Odisha",
+        "bn": "ওড়িশা"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "punjab",
+      "name": {
+        "en": "Punjab",
+        "bn": "পাঞ্জাব"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "rajasthan",
+      "name": {
+        "en": "Rajasthan",
+        "bn": "রাজস্থান"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "sikkim",
+      "name": {
+        "en": "Sikkim",
+        "bn": "সিকিম"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "tamil-nadu",
+      "name": {
+        "en": "Tamil Nadu",
+        "bn": "তামিলনাড়ু"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "telangana",
+      "name": {
+        "en": "Telangana",
+        "bn": "তেলেঙ্গানা"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "tripura",
+      "name": {
+        "en": "Tripura",
+        "bn": "ত্রিপুরা"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "uttar-pradesh",
+      "name": {
+        "en": "Uttar Pradesh",
+        "bn": "উত্তর প্রদেশ"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "uttarakhand",
+      "name": {
+        "en": "Uttarakhand",
+        "bn": "উত্তরাখণ্ড"
+      },
+      "type": "STATE",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "west-bengal",
+      "name": {
+        "en": "West Bengal",
+        "bn": "পশ্চিমবঙ্গ"
+      },
+      "type": "STATE",
+      "governmentId": "west-bengal-government",
+      "enabled": true,
+      "coverage": "ACTIVE"
+    }
+  ],
+  "unionTerritories": [
+    {
+      "id": "andaman-nicobar",
+      "name": {
+        "en": "Andaman and Nicobar Islands",
+        "bn": "আন্দামান ও নিকোবর দ্বীপপুঞ্জ"
+      },
+      "type": "UNION_TERRITORY",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "chandigarh",
+      "name": {
+        "en": "Chandigarh",
+        "bn": "চণ্ডীগড়"
+      },
+      "type": "UNION_TERRITORY",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "dadra-nagar-haveli-daman-diu",
+      "name": {
+        "en": "Dadra and Nagar Haveli and Daman and Diu",
+        "bn": "দাদরা ও নগর হাভেলি এবং দমন ও দিউ"
+      },
+      "type": "UNION_TERRITORY",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "delhi",
+      "name": {
+        "en": "Delhi",
+        "bn": "দিল্লি"
+      },
+      "type": "UNION_TERRITORY",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "jammu-kashmir",
+      "name": {
+        "en": "Jammu and Kashmir",
+        "bn": "জম্মু ও কাশ্মীর"
+      },
+      "type": "UNION_TERRITORY",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "ladakh",
+      "name": {
+        "en": "Ladakh",
+        "bn": "লাদাখ"
+      },
+      "type": "UNION_TERRITORY",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "lakshadweep",
+      "name": {
+        "en": "Lakshadweep",
+        "bn": "লক্ষদ্বীপ"
+      },
+      "type": "UNION_TERRITORY",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "puducherry",
+      "name": {
+        "en": "Puducherry",
+        "bn": "পুদুচেরি"
+      },
+      "type": "UNION_TERRITORY",
+      "governmentId": "state-government-generic",
+      "enabled": false,
+      "coverage": "PLANNED"
+    }
+  ]
+}
