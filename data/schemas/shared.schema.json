@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "shared.schema.json",
+  "title": "GovCareer Compass Shared Schema Definitions",
+  "description": "Reusable schema definitions shared by GovCareer Compass entities.",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "minLength": 1
+    },
+
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+
+    "localizedText": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "en"
+      ],
+      "properties": {
+        "en": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bn": {
+          "type": "string"
+        },
+        "hi": {
+          "type": "string"
+        },
+        "mr": {
+          "type": "string"
+        },
+        "ta": {
+          "type": "string"
+        },
+        "te": {
+          "type": "string"
+        },
+        "gu": {
+          "type": "string"
+        },
+        "or": {
+          "type": "string"
+        },
+        "as": {
+          "type": "string"
+        },
+        "kn": {
+          "type": "string"
+        },
+        "ml": {
+          "type": "string"
+        }
+      }
+    },
+
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "HIGH",
+        "MEDIUM_HIGH",
+        "MEDIUM",
+        "LOW",
+        "ESTIMATE",
+        "NOT_VERIFIED"
+      ]
+    },
+
+    "informationType": {
+      "type": "string",
+      "enum": [
+        "OFFICIAL_FACT",
+        "HISTORICAL_FACT",
+        "CURRENT_ESTIMATE",
+        "PRACTICAL_ASSESSMENT",
+        "SECONDARY_SOURCE",
+        "NOT_PUBLICLY_VERIFIED"
+      ]
+    },
+
+    "currentness": {
+      "type": "string",
+      "enum": [
+        "CURRENT",
+        "HISTORICAL",
+        "CURRENT_WITH_HISTORICAL_SUPPORT",
+        "CURRENTNESS_UNCLEAR",
+        "REPLACED",
+        "ABOLISHED",
+        "NOT_VERIFIED"
+      ]
+    },
+
+    "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+
+    "localizedArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/localizedText"
+      }
+    },
+
+    "emptyObject": {
+      "type": "object"
+    }
+  }
+}
