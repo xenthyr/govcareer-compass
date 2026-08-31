@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "location.schema.json",
+  "title": "GovCareer Compass Location Profile",
+  "description": "Posting and geographic-stability profile for a career.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "postingCategory",
+    "confidence",
+    "lastVerified",
+    "dataVersion"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "postingCategory": {
+      "type": "string",
+      "enum": [
+        "KOLKATA_CENTRIC",
+        "WEST_BENGAL_WIDE",
+        "DISTRICT_BASED",
+        "RURAL_HEAVY",
+        "ALL_INDIA",
+        "DELHI_HEAVY",
+        "REMOTE",
+        "LOCATION_UNCERTAIN",
+        "NOT_VERIFIED"
+      ]
+    },
+    "states": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "districts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "cities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "headquartersLocations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "kolkataStability": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "geographicStability": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "ruralBurden": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "remoteBurden": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "transferBurden": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "requestTransfer": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "promotionTransferRisk": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "sourceIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "HIGH",
+        "MEDIUM_HIGH",
+        "MEDIUM",
+        "LOW",
+        "ESTIMATE",
+        "NOT_VERIFIED"
+      ]
+    },
+    "lastVerified": {
+      "type": "string",
+      "format": "date"
+    },
+    "dataVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    }
+  }
+}
