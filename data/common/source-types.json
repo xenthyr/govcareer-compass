@@ -1,0 +1,209 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-08-31",
+  "description": "Canonical source-document vocabulary and evidence hierarchy for GovCareer Compass.",
+  "sourceTypes": [
+    {
+      "id": "RECRUITMENT_NOTIFICATION",
+      "label": {
+        "en": "Recruitment Notification",
+        "bn": "নিয়োগ বিজ্ঞপ্তি"
+      },
+      "priority": "PRIMARY_CURRENT"
+    },
+    {
+      "id": "RECRUITMENT_RULE",
+      "label": {
+        "en": "Recruitment Rule",
+        "bn": "নিয়োগ বিধি"
+      },
+      "priority": "PRIMARY_CURRENT"
+    },
+    {
+      "id": "SERVICE_RULE",
+      "label": {
+        "en": "Service Rule",
+        "bn": "সার্ভিস রুল"
+      },
+      "priority": "PRIMARY_CURRENT"
+    },
+    {
+      "id": "GAZETTE",
+      "label": {
+        "en": "Official Gazette",
+        "bn": "সরকারি গেজেট"
+      },
+      "priority": "PRIMARY_CURRENT"
+    },
+    {
+      "id": "PAY_RULE",
+      "label": {
+        "en": "Pay Rule",
+        "bn": "বেতন বিধি"
+      },
+      "priority": "PRIMARY_CURRENT"
+    },
+    {
+      "id": "FINANCE_ORDER",
+      "label": {
+        "en": "Finance Order",
+        "bn": "অর্থ দপ্তরের আদেশ"
+      },
+      "priority": "PRIMARY_CURRENT"
+    },
+    {
+      "id": "GOVERNMENT_ORDER",
+      "label": {
+        "en": "Government Order",
+        "bn": "সরকারি আদেশ"
+      },
+      "priority": "PRIMARY_CURRENT"
+    },
+    {
+      "id": "OFFICIAL_CIRCULAR",
+      "label": {
+        "en": "Official Circular",
+        "bn": "সরকারি সার্কুলার"
+      },
+      "priority": "PRIMARY_CURRENT"
+    },
+    {
+      "id": "OFFICIAL_CORRIGENDUM",
+      "label": {
+        "en": "Official Corrigendum",
+        "bn": "সরকারি সংশোধনী"
+      },
+      "priority": "PRIMARY_CURRENT"
+    },
+    {
+      "id": "OFFICIAL_RESULT",
+      "label": {
+        "en": "Official Result",
+        "bn": "সরকারি ফলাফল"
+      },
+      "priority": "OFFICIAL_GENERAL"
+    },
+    {
+      "id": "OFFICIAL_ANSWER_KEY",
+      "label": {
+        "en": "Official Answer Key",
+        "bn": "সরকারি উত্তরপত্র"
+      },
+      "priority": "OFFICIAL_GENERAL"
+    },
+    {
+      "id": "DEPARTMENT_PAGE",
+      "label": {
+        "en": "Official Department Page",
+        "bn": "সরকারি দপ্তরের পৃষ্ঠা"
+      },
+      "priority": "OFFICIAL_GENERAL"
+    },
+    {
+      "id": "DIRECTORATE_PAGE",
+      "label": {
+        "en": "Official Directorate Page",
+        "bn": "সরকারি অধিদপ্তরের পৃষ্ঠা"
+      },
+      "priority": "OFFICIAL_GENERAL"
+    },
+    {
+      "id": "OFFICIAL_PORTAL",
+      "label": {
+        "en": "Official Government Portal",
+        "bn": "সরকারি পোর্টাল"
+      },
+      "priority": "OFFICIAL_GENERAL"
+    },
+    {
+      "id": "OFFICIAL_FAQ",
+      "label": {
+        "en": "Official FAQ",
+        "bn": "সরকারি FAQ"
+      },
+      "priority": "OFFICIAL_GENERAL"
+    },
+    {
+      "id": "CADRE_STRENGTH_DOCUMENT",
+      "label": {
+        "en": "Cadre / Sanctioned Strength Document",
+        "bn": "ক্যাডার / অনুমোদিত পদসংখ্যার নথি"
+      },
+      "priority": "OFFICIAL_GENERAL"
+    },
+    {
+      "id": "ORGANISATIONAL_DOCUMENT",
+      "label": {
+        "en": "Organisational Structure Document",
+        "bn": "সাংগঠনিক কাঠামোর নথি"
+      },
+      "priority": "OFFICIAL_GENERAL"
+    },
+    {
+      "id": "ANNUAL_REPORT",
+      "label": {
+        "en": "Annual Report",
+        "bn": "বার্ষিক প্রতিবেদন"
+      },
+      "priority": "OFFICIAL_GENERAL"
+    },
+    {
+      "id": "OFFICIAL_NOTICE",
+      "label": {
+        "en": "Official Notice",
+        "bn": "সরকারি নোটিশ"
+      },
+      "priority": "OFFICIAL_GENERAL"
+    },
+    {
+      "id": "SECONDARY_SOURCE",
+      "label": {
+        "en": "Reputable Secondary Source",
+        "bn": "বিশ্বস্ত দ্বিতীয়িক উৎস"
+      },
+      "priority": "SECONDARY"
+    },
+    {
+      "id": "OTHER",
+      "label": {
+        "en": "Other Source",
+        "bn": "অন্যান্য উৎস"
+      },
+      "priority": "SECONDARY"
+    }
+  ],
+  "priorityDefinitions": [
+    {
+      "id": "PRIMARY_CURRENT",
+      "label": {
+        "en": "Primary Current",
+        "bn": "বর্তমান প্রাথমিক উৎস"
+      },
+      "rank": 1
+    },
+    {
+      "id": "PRIMARY_HISTORICAL",
+      "label": {
+        "en": "Primary Historical",
+        "bn": "ঐতিহাসিক প্রাথমিক উৎস"
+      },
+      "rank": 2
+    },
+    {
+      "id": "OFFICIAL_GENERAL",
+      "label": {
+        "en": "Official General",
+        "bn": "সাধারণ সরকারি উৎস"
+      },
+      "rank": 3
+    },
+    {
+      "id": "SECONDARY",
+      "label": {
+        "en": "Secondary",
+        "bn": "দ্বিতীয়িক"
+      },
+      "rank": 4
+    }
+  ]
+}
