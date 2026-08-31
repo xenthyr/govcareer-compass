@@ -1,0 +1,1014 @@
+{
+  "version": "1.0.0",
+  "schema": "qualification.schema.json",
+  "lastUpdated": "2026-08-31",
+  "description": "Canonical qualification catalogue used by GovCareer Compass. This file defines recognised qualification concepts and attributes. It does not independently determine eligibility for any specific examination or post; eligibility is determined by exam/job-specific rules.",
+  "principles": [
+    "A candidate may hold multiple qualifications.",
+    "Academic, professional, technical, teacher-training, trade and registration credentials are represented separately.",
+    "Specific subject and trade information must be preserved.",
+    "Qualification ownership and qualification status are separate concepts.",
+    "Exam-specific eligibility must be stored in eligibility rules rather than hard-coded into qualification records."
+  ],
+  "educationLevels": [
+    {
+      "id": "CLASS_8",
+      "label": {
+        "en": "Class 8",
+        "bn": "অষ্টম শ্রেণি"
+      },
+      "rank": 1
+    },
+    {
+      "id": "CLASS_10",
+      "label": {
+        "en": "Class 10 / Secondary",
+        "bn": "দশম শ্রেণি / মাধ্যমিক"
+      },
+      "rank": 2
+    },
+    {
+      "id": "CLASS_12",
+      "label": {
+        "en": "Class 12 / Higher Secondary",
+        "bn": "দ্বাদশ শ্রেণি / উচ্চমাধ্যমিক"
+      },
+      "rank": 3
+    },
+    {
+      "id": "ITI",
+      "label": {
+        "en": "Industrial Training Institute Qualification",
+        "bn": "ইন্ডাস্ট্রিয়াল ট্রেনিং ইনস্টিটিউট যোগ্যতা"
+      },
+      "rank": 4
+    },
+    {
+      "id": "DIPLOMA",
+      "label": {
+        "en": "Diploma",
+        "bn": "ডিপ্লোমা"
+      },
+      "rank": 5
+    },
+    {
+      "id": "GRADUATE",
+      "label": {
+        "en": "Graduate",
+        "bn": "স্নাতক"
+      },
+      "rank": 6
+    },
+    {
+      "id": "POSTGRADUATE",
+      "label": {
+        "en": "Postgraduate",
+        "bn": "স্নাতকোত্তর"
+      },
+      "rank": 7
+    },
+    {
+      "id": "DOCTORATE",
+      "label": {
+        "en": "Doctorate",
+        "bn": "ডক্টরেট"
+      },
+      "rank": 8
+    },
+    {
+      "id": "PROFESSIONAL",
+      "label": {
+        "en": "Professional Qualification",
+        "bn": "পেশাগত যোগ্যতা"
+      },
+      "rank": 9
+    },
+    {
+      "id": "OTHER",
+      "label": {
+        "en": "Other Qualification",
+        "bn": "অন্যান্য যোগ্যতা"
+      },
+      "rank": 99
+    }
+  ],
+  "qualificationTypes": [
+    {
+      "id": "ACADEMIC",
+      "label": {
+        "en": "Academic",
+        "bn": "শিক্ষাগত"
+      }
+    },
+    {
+      "id": "PROFESSIONAL",
+      "label": {
+        "en": "Professional",
+        "bn": "পেশাগত"
+      }
+    },
+    {
+      "id": "TECHNICAL",
+      "label": {
+        "en": "Technical",
+        "bn": "কারিগরি"
+      }
+    },
+    {
+      "id": "TEACHER_EDUCATION",
+      "label": {
+        "en": "Teacher Education",
+        "bn": "শিক্ষক-প্রশিক্ষণ"
+      }
+    },
+    {
+      "id": "MEDICAL",
+      "label": {
+        "en": "Medical",
+        "bn": "চিকিৎসা"
+      }
+    },
+    {
+      "id": "NURSING",
+      "label": {
+        "en": "Nursing",
+        "bn": "নার্সিং"
+      }
+    },
+    {
+      "id": "PHARMACY",
+      "label": {
+        "en": "Pharmacy",
+        "bn": "ফার্মেসি"
+      }
+    },
+    {
+      "id": "LAW",
+      "label": {
+        "en": "Law",
+        "bn": "আইন"
+      }
+    },
+    {
+      "id": "COMPUTER_IT",
+      "label": {
+        "en": "Computer / Information Technology",
+        "bn": "কম্পিউটার / তথ্যপ্রযুক্তি"
+      }
+    },
+    {
+      "id": "ENGINEERING",
+      "label": {
+        "en": "Engineering",
+        "bn": "ইঞ্জিনিয়ারিং"
+      }
+    },
+    {
+      "id": "AGRICULTURE",
+      "label": {
+        "en": "Agriculture",
+        "bn": "কৃষি"
+      }
+    },
+    {
+      "id": "PARAMEDICAL",
+      "label": {
+        "en": "Paramedical",
+        "bn": "প্যারামেডিক্যাল"
+      }
+    },
+    {
+      "id": "TRADE",
+      "label": {
+        "en": "Trade Qualification",
+        "bn": "ট্রেড যোগ্যতা"
+      }
+    },
+    {
+      "id": "LICENCE",
+      "label": {
+        "en": "Licence",
+        "bn": "লাইসেন্স"
+      }
+    },
+    {
+      "id": "REGISTRATION",
+      "label": {
+        "en": "Professional Registration",
+        "bn": "পেশাগত রেজিস্ট্রেশন"
+      }
+    },
+    {
+      "id": "CERTIFICATION",
+      "label": {
+        "en": "Certification",
+        "bn": "সার্টিফিকেশন"
+      }
+    },
+    {
+      "id": "OTHER",
+      "label": {
+        "en": "Other",
+        "bn": "অন্যান্য"
+      }
+    }
+  ],
+  "academicQualifications": [
+    {
+      "id": "SECONDARY",
+      "name": {
+        "en": "Secondary / Class 10",
+        "bn": "মাধ্যমিক / দশম শ্রেণি"
+      },
+      "educationLevel": "CLASS_10"
+    },
+    {
+      "id": "HIGHER_SECONDARY",
+      "name": {
+        "en": "Higher Secondary / Class 12",
+        "bn": "উচ্চমাধ্যমিক / দ্বাদশ শ্রেণি"
+      },
+      "educationLevel": "CLASS_12"
+    },
+    {
+      "id": "BA",
+      "name": {
+        "en": "Bachelor of Arts",
+        "bn": "ব্যাচেলর অফ আর্টস"
+      },
+      "educationLevel": "GRADUATE"
+    },
+    {
+      "id": "BSC",
+      "name": {
+        "en": "Bachelor of Science",
+        "bn": "ব্যাচেলর অফ সায়েন্স"
+      },
+      "educationLevel": "GRADUATE"
+    },
+    {
+      "id": "BCOM",
+      "name": {
+        "en": "Bachelor of Commerce",
+        "bn": "ব্যাচেলর অফ কমার্স"
+      },
+      "educationLevel": "GRADUATE"
+    },
+    {
+      "id": "BBA",
+      "name": {
+        "en": "Bachelor of Business Administration",
+        "bn": "ব্যাচেলর অফ বিজনেস অ্যাডমিনিস্ট্রেশন"
+      },
+      "educationLevel": "GRADUATE"
+    },
+    {
+      "id": "BCA",
+      "name": {
+        "en": "Bachelor of Computer Applications",
+        "bn": "ব্যাচেলর অফ কম্পিউটার অ্যাপ্লিকেশনস"
+      },
+      "educationLevel": "GRADUATE"
+    },
+    {
+      "id": "BTECH",
+      "name": {
+        "en": "Bachelor of Technology",
+        "bn": "ব্যাচেলর অফ টেকনোলজি"
+      },
+      "educationLevel": "GRADUATE"
+    },
+    {
+      "id": "BE",
+      "name": {
+        "en": "Bachelor of Engineering",
+        "bn": "ব্যাচেলর অফ ইঞ্জিনিয়ারিং"
+      },
+      "educationLevel": "GRADUATE"
+    },
+    {
+      "id": "LLB",
+      "name": {
+        "en": "Bachelor of Laws",
+        "bn": "ব্যাচেলর অফ লজ"
+      },
+      "educationLevel": "PROFESSIONAL"
+    },
+    {
+      "id": "BA_HONS",
+      "name": {
+        "en": "Bachelor of Arts with Honours",
+        "bn": "ব্যাচেলর অফ আর্টস অনার্স"
+      },
+      "educationLevel": "GRADUATE"
+    },
+    {
+      "id": "MA",
+      "name": {
+        "en": "Master of Arts",
+        "bn": "মাস্টার অফ আর্টস"
+      },
+      "educationLevel": "POSTGRADUATE"
+    },
+    {
+      "id": "MSC",
+      "name": {
+        "en": "Master of Science",
+        "bn": "মাস্টার অফ সায়েন্স"
+      },
+      "educationLevel": "POSTGRADUATE"
+    },
+    {
+      "id": "MCOM",
+      "name": {
+        "en": "Master of Commerce",
+        "bn": "মাস্টার অফ কমার্স"
+      },
+      "educationLevel": "POSTGRADUATE"
+    },
+    {
+      "id": "MBA",
+      "name": {
+        "en": "Master of Business Administration",
+        "bn": "মাস্টার অফ বিজনেস অ্যাডমিনিস্ট্রেশন"
+      },
+      "educationLevel": "POSTGRADUATE"
+    },
+    {
+      "id": "MCA",
+      "name": {
+        "en": "Master of Computer Applications",
+        "bn": "মাস্টার অফ কম্পিউটার অ্যাপ্লিকেশনস"
+      },
+      "educationLevel": "POSTGRADUATE"
+    },
+    {
+      "id": "MTECH",
+      "name": {
+        "en": "Master of Technology",
+        "bn": "মাস্টার অফ টেকনোলজি"
+      },
+      "educationLevel": "POSTGRADUATE"
+    },
+    {
+      "id": "PHD",
+      "name": {
+        "en": "Doctor of Philosophy",
+        "bn": "ডক্টর অফ ফিলোসফি"
+      },
+      "educationLevel": "DOCTORATE"
+    }
+  ],
+  "teacherEducationQualifications": [
+    {
+      "id": "B_ED",
+      "name": {
+        "en": "Bachelor of Education",
+        "bn": "ব্যাচেলর অফ এডুকেশন"
+      },
+      "qualificationType": "TEACHER_EDUCATION",
+      "educationLevel": "PROFESSIONAL"
+    },
+    {
+      "id": "D_EL_ED",
+      "name": {
+        "en": "Diploma in Elementary Education",
+        "bn": "ডিপ্লোমা ইন এলিমেন্টারি এডুকেশন"
+      },
+      "qualificationType": "TEACHER_EDUCATION",
+      "educationLevel": "PROFESSIONAL"
+    },
+    {
+      "id": "B_EL_ED",
+      "name": {
+        "en": "Bachelor of Elementary Education",
+        "bn": "ব্যাচেলর অফ এলিমেন্টারি এডুকেশন"
+      },
+      "qualificationType": "TEACHER_EDUCATION",
+      "educationLevel": "GRADUATE"
+    },
+    {
+      "id": "M_ED",
+      "name": {
+        "en": "Master of Education",
+        "bn": "মাস্টার অফ এডুকেশন"
+      },
+      "qualificationType": "TEACHER_EDUCATION",
+      "educationLevel": "POSTGRADUATE"
+    },
+    {
+      "id": "SPECIAL_EDUCATION_DIPLOMA",
+      "name": {
+        "en": "Diploma in Special Education",
+        "bn": "স্পেশাল এডুকেশনে ডিপ্লোমা"
+      },
+      "qualificationType": "TEACHER_EDUCATION",
+      "educationLevel": "PROFESSIONAL"
+    },
+    {
+      "id": "SPECIAL_EDUCATION_DEGREE",
+      "name": {
+        "en": "Degree in Special Education",
+        "bn": "স্পেশাল এডুকেশন ডিগ্রি"
+      },
+      "qualificationType": "TEACHER_EDUCATION",
+      "educationLevel": "GRADUATE"
+    },
+    {
+      "id": "INTEGRATED_TEACHER_EDUCATION",
+      "name": {
+        "en": "Integrated Teacher Education Qualification",
+        "bn": "ইন্টিগ্রেটেড শিক্ষক-শিক্ষা যোগ্যতা"
+      },
+      "qualificationType": "TEACHER_EDUCATION",
+      "educationLevel": "PROFESSIONAL"
+    }
+  ],
+  "technicalQualifications": [
+    {
+      "id": "ITI",
+      "name": {
+        "en": "Industrial Training Institute Qualification",
+        "bn": "ইন্ডাস্ট্রিয়াল ট্রেনিং ইনস্টিটিউট যোগ্যতা"
+      },
+      "qualificationType": "TECHNICAL",
+      "educationLevel": "ITI",
+      "requiresSpecialisation": true
+    },
+    {
+      "id": "TECHNICAL_DIPLOMA",
+      "name": {
+        "en": "Technical Diploma",
+        "bn": "কারিগরি ডিপ্লোমা"
+      },
+      "qualificationType": "TECHNICAL",
+      "educationLevel": "DIPLOMA",
+      "requiresSpecialisation": true
+    },
+    {
+      "id": "ENGINEERING_DIPLOMA",
+      "name": {
+        "en": "Engineering Diploma",
+        "bn": "ইঞ্জিনিয়ারিং ডিপ্লোমা"
+      },
+      "qualificationType": "ENGINEERING",
+      "educationLevel": "DIPLOMA",
+      "requiresSpecialisation": true
+    },
+    {
+      "id": "BTECH_ENGINEERING",
+      "name": {
+        "en": "Bachelor of Technology / Engineering",
+        "bn": "ব্যাচেলর অফ টেকনোলজি / ইঞ্জিনিয়ারিং"
+      },
+      "qualificationType": "ENGINEERING",
+      "educationLevel": "GRADUATE",
+      "requiresSpecialisation": true
+    }
+  ],
+  "itiTrades": [
+    {
+      "id": "ITI_ELECTRICIAN",
+      "name": {
+        "en": "Electrician",
+        "bn": "ইলেকট্রিশিয়ান"
+      }
+    },
+    {
+      "id": "ITI_FITTER",
+      "name": {
+        "en": "Fitter",
+        "bn": "ফিটার"
+      }
+    },
+    {
+      "id": "ITI_WIREMAN",
+      "name": {
+        "en": "Wireman",
+        "bn": "ওয়্যারম্যান"
+      }
+    },
+    {
+      "id": "ITI_ELECTRONICS_MECHANIC",
+      "name": {
+        "en": "Electronics Mechanic",
+        "bn": "ইলেকট্রনিক্স মেকানিক"
+      }
+    },
+    {
+      "id": "ITI_INSTRUMENT_MECHANIC",
+      "name": {
+        "en": "Instrument Mechanic",
+        "bn": "ইন্সট্রুমেন্ট মেকানিক"
+      }
+    },
+    {
+      "id": "ITI_MACHINIST",
+      "name": {
+        "en": "Machinist",
+        "bn": "মেশিনিস্ট"
+      }
+    },
+    {
+      "id": "ITI_TURNER",
+      "name": {
+        "en": "Turner",
+        "bn": "টার্নার"
+      }
+    },
+    {
+      "id": "ITI_DIESEL_MECHANIC",
+      "name": {
+        "en": "Diesel Mechanic",
+        "bn": "ডিজেল মেকানিক"
+      }
+    },
+    {
+      "id": "ITI_MOTOR_VEHICLE_MECHANIC",
+      "name": {
+        "en": "Mechanic Motor Vehicle",
+        "bn": "মেকানিক মোটর ভেহিকেল"
+      }
+    },
+    {
+      "id": "ITI_COPPA",
+      "name": {
+        "en": "Computer Operator and Programming Assistant",
+        "bn": "কম্পিউটার অপারেটর এবং প্রোগ্রামিং অ্যাসিস্ট্যান্ট"
+      }
+    },
+    {
+      "id": "ITI_DRAUGHTSMAN_CIVIL",
+      "name": {
+        "en": "Draughtsman (Civil)",
+        "bn": "ড্রাফটসম্যান (সিভিল)"
+      }
+    },
+    {
+      "id": "ITI_DRAUGHTSMAN_MECHANICAL",
+      "name": {
+        "en": "Draughtsman (Mechanical)",
+        "bn": "ড্রাফটসম্যান (মেকানিক্যাল)"
+      }
+    },
+    {
+      "id": "ITI_WELDER",
+      "name": {
+        "en": "Welder",
+        "bn": "ওয়েল্ডার"
+      }
+    },
+    {
+      "id": "ITI_CARPENTER",
+      "name": {
+        "en": "Carpenter",
+        "bn": "কার্পেন্টার"
+      }
+    },
+    {
+      "id": "ITI_PLUMBER",
+      "name": {
+        "en": "Plumber",
+        "bn": "প্লাম্বার"
+      }
+    },
+    {
+      "id": "ITI_PAINTER",
+      "name": {
+        "en": "Painter",
+        "bn": "পেইন্টার"
+      }
+    },
+    {
+      "id": "ITI_MASON",
+      "name": {
+        "en": "Mason",
+        "bn": "মেসন"
+      }
+    },
+    {
+      "id": "ITI_REFRIGERATION_AIR_CONDITIONING",
+      "name": {
+        "en": "Refrigeration and Air Conditioning Mechanic",
+        "bn": "রেফ্রিজারেশন ও এয়ার কন্ডিশনিং মেকানিক"
+      }
+    },
+    {
+      "id": "ITI_OTHER_RECOGNISED_TRADE",
+      "name": {
+        "en": "Other Recognised ITI Trade",
+        "bn": "অন্যান্য স্বীকৃত আইটিআই ট্রেড"
+      }
+    }
+  ],
+  "computerQualifications": [
+    {
+      "id": "PGDCA",
+      "name": {
+        "en": "Post Graduate Diploma in Computer Applications",
+        "bn": "পোস্ট গ্র্যাজুয়েট ডিপ্লোমা ইন কম্পিউটার অ্যাপ্লিকেশনস"
+      }
+    },
+    {
+      "id": "NIELIT_O_LEVEL",
+      "name": {
+        "en": "NIELIT O Level",
+        "bn": "NIELIT O লেভেল"
+      }
+    },
+    {
+      "id": "NIELIT_A_LEVEL",
+      "name": {
+        "en": "NIELIT A Level",
+        "bn": "NIELIT A লেভেল"
+      }
+    },
+    {
+      "id": "COMPUTER_CERTIFICATION",
+      "name": {
+        "en": "Recognised Computer Certification",
+        "bn": "স্বীকৃত কম্পিউটার সার্টিফিকেশন"
+      }
+    }
+  ],
+  "lawQualifications": [
+    {
+      "id": "LLB",
+      "name": {
+        "en": "Bachelor of Laws",
+        "bn": "ব্যাচেলর অফ লজ"
+      }
+    },
+    {
+      "id": "LLM",
+      "name": {
+        "en": "Master of Laws",
+        "bn": "মাস্টার অফ লজ"
+      }
+    }
+  ],
+  "medicalQualifications": [
+    {
+      "id": "MBBS",
+      "name": {
+        "en": "Bachelor of Medicine, Bachelor of Surgery",
+        "bn": "ব্যাচেলর অফ মেডিসিন, ব্যাচেলর অফ সার্জারি"
+      }
+    },
+    {
+      "id": "BDS",
+      "name": {
+        "en": "Bachelor of Dental Surgery",
+        "bn": "ব্যাচেলর অফ ডেন্টাল সার্জারি"
+      }
+    },
+    {
+      "id": "BAMS",
+      "name": {
+        "en": "Bachelor of Ayurvedic Medicine and Surgery",
+        "bn": "ব্যাচেলর অফ আয়ুর্বেদিক মেডিসিন অ্যান্ড সার্জারি"
+      }
+    },
+    {
+      "id": "BHMS",
+      "name": {
+        "en": "Bachelor of Homeopathic Medicine and Surgery",
+        "bn": "ব্যাচেলর অফ হোমিওপ্যাথিক মেডিসিন অ্যান্ড সার্জারি"
+      }
+    },
+    {
+      "id": "BUMS",
+      "name": {
+        "en": "Bachelor of Unani Medicine and Surgery",
+        "bn": "ব্যাচেলর অফ ইউনানি মেডিসিন অ্যান্ড সার্জারি"
+      }
+    }
+  ],
+  "nursingQualifications": [
+    {
+      "id": "ANM",
+      "name": {
+        "en": "Auxiliary Nurse Midwife",
+        "bn": "অক্সিলিয়ারি নার্স মিডওয়াইফ"
+      }
+    },
+    {
+      "id": "GNM",
+      "name": {
+        "en": "General Nursing and Midwifery",
+        "bn": "জেনারেল নার্সিং অ্যান্ড মিডওয়াইফারি"
+      }
+    },
+    {
+      "id": "BSC_NURSING",
+      "name": {
+        "en": "Bachelor of Science in Nursing",
+        "bn": "ব্যাচেলর অফ সায়েন্স ইন নার্সিং"
+      }
+    },
+    {
+      "id": "POST_BASIC_BSC_NURSING",
+      "name": {
+        "en": "Post Basic Bachelor of Science in Nursing",
+        "bn": "পোস্ট বেসিক ব্যাচেলর অফ সায়েন্স ইন নার্সিং"
+      }
+    },
+    {
+      "id": "MSC_NURSING",
+      "name": {
+        "en": "Master of Science in Nursing",
+        "bn": "মাস্টার অফ সায়েন্স ইন নার্সিং"
+      }
+    }
+  ],
+  "pharmacyQualifications": [
+    {
+      "id": "D_PHARM",
+      "name": {
+        "en": "Diploma in Pharmacy",
+        "bn": "ডিপ্লোমা ইন ফার্মেসি"
+      }
+    },
+    {
+      "id": "B_PHARM",
+      "name": {
+        "en": "Bachelor of Pharmacy",
+        "bn": "ব্যাচেলর অফ ফার্মেসি"
+      }
+    },
+    {
+      "id": "M_PHARM",
+      "name": {
+        "en": "Master of Pharmacy",
+        "bn": "মাস্টার অফ ফার্মেসি"
+      }
+    },
+    {
+      "id": "PHARM_D",
+      "name": {
+        "en": "Doctor of Pharmacy",
+        "bn": "ডক্টর অফ ফার্মেসি"
+      }
+    }
+  ],
+  "professionalRequirements": [
+    {
+      "id": "BENGAL_LANGUAGE",
+      "name": {
+        "en": "Bengali Language Knowledge",
+        "bn": "বাংলা ভাষাজ্ঞান"
+      },
+      "type": "LANGUAGE"
+    },
+    {
+      "id": "HINDI_LANGUAGE",
+      "name": {
+        "en": "Hindi Language Knowledge",
+        "bn": "হিন্দি ভাষাজ্ঞান"
+      },
+      "type": "LANGUAGE"
+    },
+    {
+      "id": "ENGLISH_LANGUAGE",
+      "name": {
+        "en": "English Language Knowledge",
+        "bn": "ইংরেজি ভাষাজ্ঞান"
+      },
+      "type": "LANGUAGE"
+    },
+    {
+      "id": "TYPING_SKILL",
+      "name": {
+        "en": "Typing Skill",
+        "bn": "টাইপিং দক্ষতা"
+      },
+      "type": "SKILL"
+    },
+    {
+      "id": "SHORTHAND_SKILL",
+      "name": {
+        "en": "Shorthand Skill",
+        "bn": "শর্টহ্যান্ড দক্ষতা"
+      },
+      "type": "SKILL"
+    },
+    {
+      "id": "COMPUTER_PROFICIENCY",
+      "name": {
+        "en": "Computer Proficiency",
+        "bn": "কম্পিউটার দক্ষতা"
+      },
+      "type": "SKILL"
+    },
+    {
+      "id": "DRIVING_LICENCE",
+      "name": {
+        "en": "Valid Driving Licence",
+        "bn": "বৈধ ড্রাইভিং লাইসেন্স"
+      },
+      "type": "LICENCE"
+    },
+    {
+      "id": "PROFESSIONAL_REGISTRATION",
+      "name": {
+        "en": "Professional Registration",
+        "bn": "পেশাগত রেজিস্ট্রেশন"
+      },
+      "type": "REGISTRATION"
+    },
+    {
+      "id": "WORK_EXPERIENCE",
+      "name": {
+        "en": "Required Work Experience",
+        "bn": "প্রয়োজনীয় কর্ম-অভিজ্ঞতা"
+      },
+      "type": "EXPERIENCE"
+    }
+  ],
+  "subjectFamilies": [
+    {
+      "id": "ENGLISH",
+      "name": {
+        "en": "English",
+        "bn": "ইংরেজি"
+      }
+    },
+    {
+      "id": "BENGALI",
+      "name": {
+        "en": "Bengali",
+        "bn": "বাংলা"
+      }
+    },
+    {
+      "id": "HINDI",
+      "name": {
+        "en": "Hindi",
+        "bn": "হিন্দি"
+      }
+    },
+    {
+      "id": "MATHEMATICS",
+      "name": {
+        "en": "Mathematics",
+        "bn": "গণিত"
+      }
+    },
+    {
+      "id": "STATISTICS",
+      "name": {
+        "en": "Statistics",
+        "bn": "পরিসংখ্যান"
+      }
+    },
+    {
+      "id": "ECONOMICS",
+      "name": {
+        "en": "Economics",
+        "bn": "অর্থনীতি"
+      }
+    },
+    {
+      "id": "COMMERCE",
+      "name": {
+        "en": "Commerce",
+        "bn": "বাণিজ্য"
+      }
+    },
+    {
+      "id": "ACCOUNTING",
+      "name": {
+        "en": "Accounting",
+        "bn": "হিসাববিজ্ঞান"
+      }
+    },
+    {
+      "id": "HISTORY",
+      "name": {
+        "en": "History",
+        "bn": "ইতিহাস"
+      }
+    },
+    {
+      "id": "GEOGRAPHY",
+      "name": {
+        "en": "Geography",
+        "bn": "ভূগোল"
+      }
+    },
+    {
+      "id": "POLITICAL_SCIENCE",
+      "name": {
+        "en": "Political Science",
+        "bn": "রাষ্ট্রবিজ্ঞান"
+      }
+    },
+    {
+      "id": "PHYSICS",
+      "name": {
+        "en": "Physics",
+        "bn": "পদার্থবিদ্যা"
+      }
+    },
+    {
+      "id": "CHEMISTRY",
+      "name": {
+        "en": "Chemistry",
+        "bn": "রসায়ন"
+      }
+    },
+    {
+      "id": "BIOLOGY",
+      "name": {
+        "en": "Biology",
+        "bn": "জীববিজ্ঞান"
+      }
+    },
+    {
+      "id": "COMPUTER_SCIENCE",
+      "name": {
+        "en": "Computer Science",
+        "bn": "কম্পিউটার সায়েন্স"
+      }
+    },
+    {
+      "id": "INFORMATION_TECHNOLOGY",
+      "name": {
+        "en": "Information Technology",
+        "bn": "তথ্যপ্রযুক্তি"
+      }
+    },
+    {
+      "id": "LAW",
+      "name": {
+        "en": "Law",
+        "bn": "আইন"
+      }
+    },
+    {
+      "id": "LIBRARY_SCIENCE",
+      "name": {
+        "en": "Library Science",
+        "bn": "গ্রন্থাগার বিজ্ঞান"
+      }
+    },
+    {
+      "id": "PSYCHOLOGY",
+      "name": {
+        "en": "Psychology",
+        "bn": "মনোবিজ্ঞান"
+      }
+    },
+    {
+      "id": "EDUCATION",
+      "name": {
+        "en": "Education",
+        "bn": "শিক্ষাবিজ্ঞান"
+      }
+    },
+    {
+      "id": "AGRICULTURE",
+      "name": {
+        "en": "Agriculture",
+        "bn": "কৃষি"
+      }
+    },
+    {
+      "id": "ENGINEERING",
+      "name": {
+        "en": "Engineering",
+        "bn": "ইঞ্জিনিয়ারিং"
+      }
+    }
+  ],
+  "qualificationStatuses": [
+    {
+      "id": "COMPLETED",
+      "label": {
+        "en": "Completed",
+        "bn": "সম্পন্ন"
+      }
+    },
+    {
+      "id": "FINAL_YEAR",
+      "label": {
+        "en": "Final Year",
+        "bn": "শেষ বর্ষ"
+      }
+    },
+    {
+      "id": "PURSUING",
+      "label": {
+        "en": "Pursuing",
+        "bn": "অধ্যয়নরত"
+      }
+    },
+    {
+      "id": "NOT_HELD",
+      "label": {
+        "en": "Not Held",
+        "bn": "নেই"
+      }
+    }
+  ]
+}
