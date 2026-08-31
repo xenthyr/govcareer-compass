@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "promotion.schema.json",
   "title": "GovCareer Compass Promotion Profile",
-  "description": "Career-progression and promotion structure for a government post.",
+  "description": "Career progression structure for a government post.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -14,8 +14,7 @@
   ],
   "properties": {
     "id": {
-      "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9-]*$"
+      "$ref": "shared.schema.json#/$defs/id"
     },
     "steps": {
       "type": "array",
@@ -32,7 +31,7 @@
             "minimum": 1
           },
           "designation": {
-            "$ref": "shared-localized-name.schema.json"
+            "$ref": "shared.schema.json#/$defs/localizedText"
           },
           "minimumQualifyingService": {
             "type": "string"
@@ -76,38 +75,22 @@
       "type": "string"
     },
     "departmentalExamination": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "object"
     },
     "trainingRequirements": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "object"
     },
     "sourceIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
+      "$ref": "shared.schema.json#/$defs/stringArray"
     },
     "confidence": {
-      "type": "string",
-      "enum": [
-        "HIGH",
-        "MEDIUM_HIGH",
-        "MEDIUM",
-        "LOW",
-        "ESTIMATE",
-        "NOT_VERIFIED"
-      ]
+      "$ref": "shared.schema.json#/$defs/confidence"
     },
     "lastVerified": {
-      "type": "string",
-      "format": "date"
+      "$ref": "shared.schema.json#/$defs/date"
     },
     "dataVersion": {
-      "type": "string",
-      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+      "$ref": "shared.schema.json#/$defs/version"
     }
   }
 }
