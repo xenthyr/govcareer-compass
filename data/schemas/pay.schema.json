@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pay.schema.json",
+  "title": "GovCareer Compass Pay Profile",
+  "description": "Pay-system and salary profile referenced by government job records.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "governmentId",
+    "paySystem",
+    "confidence",
+    "lastVerified",
+    "dataVersion"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "governmentId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stateId": {
+      "type": "string"
+    },
+    "paySystem": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payCommission": {
+      "type": "string"
+    },
+    "level": {
+      "type": "string"
+    },
+    "startingBasic": {
+      "type": "number",
+      "minimum": 0
+    },
+    "maximumBasic": {
+      "type": "number",
+      "minimum": 0
+    },
+    "da": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "hra": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "transportAllowance": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "otherAllowances": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "deductions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "salaryEstimate": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "officialStatus": {
+      "type": "string",
+      "enum": [
+        "OFFICIAL",
+        "CALCULATED",
+        "ESTIMATED",
+        "NOT_VERIFIED"
+      ]
+    },
+    "sourceIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "HIGH",
+        "MEDIUM_HIGH",
+        "MEDIUM",
+        "LOW",
+        "ESTIMATE",
+        "NOT_VERIFIED"
+      ]
+    },
+    "lastVerified": {
+      "type": "string",
+      "format": "date"
+    },
+    "dataVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    }
+  }
+}
