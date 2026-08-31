@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "department.schema.json",
+  "title": "GovCareer Compass Department",
+  "description": "Government ministry, department, secretariat, directorate or equivalent administrative unit.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "governmentId",
+    "name",
+    "type",
+    "status",
+    "confidence",
+    "lastVerified",
+    "dataVersion"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "governmentId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stateId": {
+      "type": "string"
+    },
+    "name": {
+      "$ref": "shared-localized-name.schema.json"
+    },
+    "shortName": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "MINISTRY",
+        "DEPARTMENT",
+        "SECRETARIAT",
+        "DIRECTORATE",
+        "ATTACHED_DEPARTMENT",
+        "SUBORDINATE_DEPARTMENT",
+        "OTHER"
+      ]
+    },
+    "description": {
+      "type": "string"
+    },
+    "website": {
+      "type": "string",
+      "format": "uri"
+    },
+    "directorateIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "organisationIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "serviceCadreIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "sourceIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "HISTORICAL",
+        "REPLACED",
+        "ABOLISHED",
+        "NOT_VERIFIED"
+      ]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "HIGH",
+        "MEDIUM_HIGH",
+        "MEDIUM",
+        "LOW",
+        "ESTIMATE",
+        "NOT_VERIFIED"
+      ]
+    },
+    "lastVerified": {
+      "type": "string",
+      "format": "date"
+    },
+    "dataVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    }
+  }
+}
