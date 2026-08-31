@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "exam.schema.json",
   "title": "GovCareer Compass Examination",
-  "description": "Canonical examination or selection-route record.",
+  "description": "Government recruitment examination or selection route.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -19,50 +19,34 @@
   ],
   "properties": {
     "id": {
-      "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9-]*$"
+      "$ref": "shared.schema.json#/$defs/id"
     },
     "name": {
-      "$ref": "shared-localized-name.schema.json"
-    },
-    "abbreviation": {
-      "type": "string"
+      "$ref": "shared.schema.json#/$defs/localizedText"
     },
     "fullName": {
       "type": "string"
     },
-    "governmentId": {
-      "type": "string",
-      "minLength": 1
-    },
-    "stateId": {
+    "abbreviation": {
       "type": "string"
     },
+    "governmentId": {
+      "$ref": "shared.schema.json#/$defs/id"
+    },
+    "stateId": {
+      "$ref": "shared.schema.json#/$defs/id"
+    },
     "authorityId": {
-      "type": "string",
-      "minLength": 1
+      "$ref": "shared.schema.json#/$defs/id"
     },
     "departmentIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
+      "$ref": "shared.schema.json#/$defs/stringArray"
     },
     "organisationIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
+      "$ref": "shared.schema.json#/$defs/stringArray"
     },
-    "qualification": {
-      "type": "object",
-      "additionalProperties": true
-    },
-    "age": {
-      "type": "object",
-      "additionalProperties": true
+    "qualificationRuleIds": {
+      "$ref": "shared.schema.json#/$defs/stringArray"
     },
     "stages": {
       "type": "array",
@@ -114,57 +98,16 @@
       }
     },
     "physicalRequirements": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "object"
     },
     "medicalRequirements": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "object"
     },
     "syllabus": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "object"
     },
     "attemptRules": {
-      "type": "object",
-      "additionalProperties": true
-    },
-    "recruitmentFrequency": {
-      "type": "string",
-      "enum": [
-        "ANNUAL",
-        "NEARLY_ANNUAL",
-        "PERIODIC",
-        "IRREGULAR",
-        "RARE",
-        "DEPARTMENT_SPECIFIC",
-        "NOT_VERIFIED"
-      ]
-    },
-    "mainPostIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
-    },
-    "recruitmentIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
-    },
-    "status": {
-      "type": "string",
-      "enum": [
-        "ACTIVE",
-        "CURRENT_RECRUITMENT",
-        "RECENTLY_COMPLETED",
-        "HISTORICAL",
-        "DISCONTINUED",
-        "NOT_VERIFIED"
-      ]
+      "type": "object"
     },
     "difficulty": {
       "type": "string",
@@ -188,31 +131,46 @@
         "NOT_VERIFIED"
       ]
     },
-    "sourceIds": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
-    },
-    "confidence": {
+    "recruitmentFrequency": {
       "type": "string",
       "enum": [
-        "HIGH",
-        "MEDIUM_HIGH",
-        "MEDIUM",
-        "LOW",
-        "ESTIMATE",
+        "ANNUAL",
+        "NEARLY_ANNUAL",
+        "PERIODIC",
+        "IRREGULAR",
+        "RARE",
+        "DEPARTMENT_SPECIFIC",
         "NOT_VERIFIED"
       ]
     },
-    "lastVerified": {
+    "mainPostIds": {
+      "$ref": "shared.schema.json#/$defs/stringArray"
+    },
+    "recruitmentIds": {
+      "$ref": "shared.schema.json#/$defs/stringArray"
+    },
+    "status": {
       "type": "string",
-      "format": "date"
+      "enum": [
+        "ACTIVE",
+        "CURRENT_RECRUITMENT",
+        "RECENTLY_COMPLETED",
+        "HISTORICAL",
+        "DISCONTINUED",
+        "NOT_VERIFIED"
+      ]
+    },
+    "sourceIds": {
+      "$ref": "shared.schema.json#/$defs/stringArray"
+    },
+    "confidence": {
+      "$ref": "shared.schema.json#/$defs/confidence"
+    },
+    "lastVerified": {
+      "$ref": "shared.schema.json#/$defs/date"
     },
     "dataVersion": {
-      "type": "string",
-      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+      "$ref": "shared.schema.json#/$defs/version"
     }
   }
 }
