@@ -1,0 +1,198 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-08-31",
+  "description": "Shared location classifications and user location-preference vocabulary. Specific posting locations belong to career-specific data.",
+  "postingCategories": [
+    {
+      "id": "KOLKATA_CENTRIC",
+      "label": {
+        "en": "Kolkata-centric",
+        "bn": "কলকাতা-কেন্দ্রিক"
+      },
+      "direction": "POSITIVE_FOR_KOLKATA_PRIORITY"
+    },
+    {
+      "id": "WEST_BENGAL_WIDE",
+      "label": {
+        "en": "West Bengal-wide",
+        "bn": "পশ্চিমবঙ্গ-ব্যাপী"
+      }
+    },
+    {
+      "id": "DISTRICT_BASED",
+      "label": {
+        "en": "District-based",
+        "bn": "জেলাভিত্তিক"
+      }
+    },
+    {
+      "id": "RURAL_HEAVY",
+      "label": {
+        "en": "Rural-heavy",
+        "bn": "গ্রামাঞ্চল-প্রধান"
+      }
+    },
+    {
+      "id": "URBAN_HEAVY",
+      "label": {
+        "en": "Urban-heavy",
+        "bn": "শহর-কেন্দ্রিক"
+      }
+    },
+    {
+      "id": "ALL_INDIA",
+      "label": {
+        "en": "All-India",
+        "bn": "সারা ভারত"
+      }
+    },
+    {
+      "id": "DELHI_HEAVY",
+      "label": {
+        "en": "Delhi-heavy",
+        "bn": "দিল্লি-প্রধান"
+      }
+    },
+    {
+      "id": "REMOTE",
+      "label": {
+        "en": "Remote / difficult-area possibility",
+        "bn": "দুর্গম / প্রত্যন্ত অঞ্চলের সম্ভাবনা"
+      }
+    },
+    {
+      "id": "LOCATION_UNCERTAIN",
+      "label": {
+        "en": "Location uncertain",
+        "bn": "অবস্থান অনিশ্চিত"
+      }
+    },
+    {
+      "id": "NOT_VERIFIED",
+      "label": {
+        "en": "Not publicly verified",
+        "bn": "প্রকাশ্যভাবে যাচাই করা যায়নি"
+      }
+    }
+  ],
+  "stabilityDimensions": [
+    {
+      "id": "KOLKATA_STABILITY",
+      "label": {
+        "en": "Kolkata Stability",
+        "bn": "কলকাতা স্থিতিশীলতা"
+      },
+      "min": 0,
+      "max": 10,
+      "direction": "HIGHER_IS_BETTER"
+    },
+    {
+      "id": "GEOGRAPHIC_STABILITY",
+      "label": {
+        "en": "Geographic Stability",
+        "bn": "ভৌগোলিক স্থিতিশীলতা"
+      },
+      "min": 0,
+      "max": 10,
+      "direction": "HIGHER_IS_BETTER"
+    },
+    {
+      "id": "TRANSFER_BURDEN",
+      "label": {
+        "en": "Transfer Burden",
+        "bn": "বদলির চাপ"
+      },
+      "min": 0,
+      "max": 10,
+      "direction": "HIGHER_IS_WORSE"
+    },
+    {
+      "id": "RURAL_BURDEN",
+      "label": {
+        "en": "Rural Posting Burden",
+        "bn": "গ্রামীণ পোস্টিংয়ের চাপ"
+      },
+      "min": 0,
+      "max": 10,
+      "direction": "HIGHER_IS_WORSE"
+    },
+    {
+      "id": "REMOTE_BURDEN",
+      "label": {
+        "en": "Remote Posting Burden",
+        "bn": "দুর্গম পোস্টিংয়ের চাপ"
+      },
+      "min": 0,
+      "max": 10,
+      "direction": "HIGHER_IS_WORSE"
+    }
+  ],
+  "userLocationPreferences": [
+    {
+      "id": "KOLKATA_ONLY_PREFERRED",
+      "label": {
+        "en": "Kolkata strongly preferred",
+        "bn": "কলকাতাই প্রবলভাবে পছন্দ"
+      }
+    },
+    {
+      "id": "KOLKATA_OR_NEARBY",
+      "label": {
+        "en": "Kolkata or nearby preferred",
+        "bn": "কলকাতা বা আশেপাশের অঞ্চল পছন্দ"
+      }
+    },
+    {
+      "id": "ANYWHERE_WEST_BENGAL",
+      "label": {
+        "en": "Anywhere in West Bengal",
+        "bn": "পশ্চিমবঙ্গের যেকোনও স্থানে"
+      }
+    },
+    {
+      "id": "ANYWHERE_INDIA",
+      "label": {
+        "en": "Anywhere in India",
+        "bn": "ভারতের যেকোনও স্থানে"
+      }
+    },
+    {
+      "id": "DELHI_OR_MAJOR_CITY",
+      "label": {
+        "en": "Delhi or major city preferred",
+        "bn": "দিল্লি বা বড় শহর পছন্দ"
+      }
+    },
+    {
+      "id": "NO_LOCATION_PREFERENCE",
+      "label": {
+        "en": "No particular location preference",
+        "bn": "কোনও নির্দিষ্ট স্থান পছন্দ নেই"
+      }
+    }
+  ],
+  "mobilityPreferences": [
+    {
+      "id": "LOW_TRANSFER_TOLERANCE",
+      "label": {
+        "en": "Strong preference for low transfers",
+        "bn": "কম বদলির প্রবল পছন্দ"
+      }
+    },
+    {
+      "id": "MODERATE_TRANSFER_TOLERANCE",
+      "label": {
+        "en": "Moderately tolerant of transfers",
+        "bn": "বদলি সম্পর্কে মাঝারি সহনশীলতা"
+      }
+    },
+    {
+      "id": "HIGH_TRANSFER_TOLERANCE",
+      "label": {
+        "en": "Comfortable with transfers",
+        "bn": "বদলিতে স্বচ্ছন্দ"
+      },
+      "direction": "HIGH_MOBILITY"
+    }
+  ]
+}
