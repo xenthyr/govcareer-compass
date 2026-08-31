@@ -1,0 +1,445 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-08-31",
+  "description": "Canonical scoring and preference definitions for GovCareer Compass. These are analytical rules, not official government rankings.",
+  "defaultScale": {
+    "min": 0,
+    "max": 10,
+    "precision": 2
+  },
+  "eligibilityPriority": {
+    "rule": "Eligibility must be evaluated before suitability scoring.",
+    "sequence": [
+      "ELIGIBILITY",
+      "HARD_CONSTRAINTS",
+      "PREFERENCE_SCORING",
+      "RANKING",
+      "EXPLANATION"
+    ]
+  },
+  "metrics": [
+    {
+      "id": "salaryFit",
+      "label": {
+        "en": "Salary Fit",
+        "bn": "বেতন উপযোগিতা"
+      },
+      "direction": "HIGHER_IS_BETTER",
+      "type": "POSITIVE",
+      "sourceField": "pay"
+    },
+    {
+      "id": "authorityFit",
+      "label": {
+        "en": "Authority Fit",
+        "bn": "কর্তৃত্ব উপযোগিতা"
+      },
+      "direction": "HIGHER_IS_BETTER",
+      "type": "POSITIVE",
+      "sourceField": "analysis.authority"
+    },
+    {
+      "id": "prestigeFit",
+      "label": {
+        "en": "Prestige Fit",
+        "bn": "মর্যাদা উপযোগিতা"
+      },
+      "direction": "HIGHER_IS_BETTER",
+      "type": "POSITIVE",
+      "sourceField": "analysis.socialStatus"
+    },
+    {
+      "id": "familyFit",
+      "label": {
+        "en": "Family Compatibility",
+        "bn": "পারিবারিক সামঞ্জস্য"
+      },
+      "direction": "HIGHER_IS_BETTER",
+      "type": "POSITIVE",
+      "sourceField": "analysis.familyCompatibilityBase"
+    },
+    {
+      "id": "parentCareFit",
+      "label": {
+        "en": "Parent-Care Compatibility",
+        "bn": "অভিভাবক পরিচর্যা সামঞ্জস্য"
+      },
+      "direction": "HIGHER_IS_BETTER",
+      "type": "POSITIVE",
+      "sourceField": "analysis.parentCareCompatibilityBase"
+    },
+    {
+      "id": "locationFit",
+      "label": {
+        "en": "Location Stability",
+        "bn": "অবস্থান স্থিতিশীলতা"
+      },
+      "direction": "HIGHER_IS_BETTER",
+      "type": "POSITIVE",
+      "sourceField": "location.kolkataStability"
+    },
+    {
+      "id": "safetyFit",
+      "label": {
+        "en": "Safety",
+        "bn": "নিরাপত্তা"
+      },
+      "direction": "HIGHER_IS_BETTER",
+      "type": "POSITIVE",
+      "sourceField": "analysis.safety"
+    },
+    {
+      "id": "workLifeFit",
+      "label": {
+        "en": "Work-Life Balance",
+        "bn": "কর্ম-জীবন ভারসাম্য"
+      },
+      "direction": "HIGHER_IS_BETTER",
+      "type": "POSITIVE",
+      "sourceField": "lifestyle.workLifeScore"
+    },
+    {
+      "id": "careerGrowthFit",
+      "label": {
+        "en": "Career Growth",
+        "bn": "ক্যারিয়ার উন্নতি"
+      },
+      "direction": "HIGHER_IS_BETTER",
+      "type": "POSITIVE",
+      "sourceField": "analysis.careerGrowth"
+    },
+    {
+      "id": "housingFit",
+      "label": {
+        "en": "Housing Advantage",
+        "bn": "আবাসন সুবিধা"
+      },
+      "direction": "HIGHER_IS_BETTER",
+      "type": "POSITIVE",
+      "sourceField": "analysis.housingAdvantage"
+    },
+    {
+      "id": "englishFit",
+      "label": {
+        "en": "English Honours Advantage",
+        "bn": "ইংরেজি অনার্স সুবিধা"
+      },
+      "direction": "HIGHER_IS_BETTER",
+      "type": "POSITIVE",
+      "sourceField": "analysis.englishAdvantage"
+    },
+    {
+      "id": "stressBurden",
+      "label": {
+        "en": "Stress Burden",
+        "bn": "মানসিক চাপ"
+      },
+      "direction": "HIGHER_IS_WORSE",
+      "type": "BURDEN",
+      "sourceField": "lifestyle.stressBurden"
+    },
+    {
+      "id": "riskBurden",
+      "label": {
+        "en": "Physical Risk Burden",
+        "bn": "শারীরিক ঝুঁকি"
+      },
+      "direction": "HIGHER_IS_WORSE",
+      "type": "BURDEN",
+      "sourceField": "lifestyle.riskBurden"
+    },
+    {
+      "id": "transferBurden",
+      "label": {
+        "en": "Transfer Burden",
+        "bn": "বদলির চাপ"
+      },
+      "direction": "HIGHER_IS_WORSE",
+      "type": "BURDEN",
+      "sourceField": "location.transferBurden"
+    },
+    {
+      "id": "nightDutyBurden",
+      "label": {
+        "en": "Night-Duty Burden",
+        "bn": "রাত্রিকালীন ডিউটির চাপ"
+      },
+      "direction": "HIGHER_IS_WORSE",
+      "type": "BURDEN",
+      "sourceField": "lifestyle.nightDutyBurden"
+    },
+    {
+      "id": "shiftDutyBurden",
+      "label": {
+        "en": "Shift-Duty Burden",
+        "bn": "শিফট ডিউটির চাপ"
+      },
+      "direction": "HIGHER_IS_WORSE",
+      "type": "BURDEN",
+      "sourceField": "lifestyle.shiftDutyBurden"
+    },
+    {
+      "id": "holidayDutyBurden",
+      "label": {
+        "en": "Holiday-Duty Burden",
+        "bn": "ছুটির দিনের ডিউটির চাপ"
+      },
+      "direction": "HIGHER_IS_WORSE",
+      "type": "BURDEN",
+      "sourceField": "lifestyle.holidayDutyBurden"
+    },
+    {
+      "id": "emergencyDutyBurden",
+      "label": {
+        "en": "Emergency-Duty Burden",
+        "bn": "জরুরি ডিউটির চাপ"
+      },
+      "direction": "HIGHER_IS_WORSE",
+      "type": "BURDEN",
+      "sourceField": "lifestyle.emergencyDutyBurden"
+    },
+    {
+      "id": "travelBurden",
+      "label": {
+        "en": "Travel Burden",
+        "bn": "ভ্রমণের চাপ"
+      },
+      "direction": "HIGHER_IS_WORSE",
+      "type": "BURDEN",
+      "sourceField": "lifestyle.travelBurden"
+    }
+  ],
+  "preferenceDimensions": [
+    {
+      "id": "salaryImportance",
+      "metricId": "salaryFit",
+      "inputType": "SCALE",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "authorityImportance",
+      "metricId": "authorityFit",
+      "inputType": "SCALE",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "prestigeImportance",
+      "metricId": "prestigeFit",
+      "inputType": "SCALE",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "familyImportance",
+      "metricId": "familyFit",
+      "inputType": "SCALE",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "parentCareImportance",
+      "metricId": "parentCareFit",
+      "inputType": "SCALE",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "locationImportance",
+      "metricId": "locationFit",
+      "inputType": "SCALE",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "jobSecurityImportance",
+      "metricId": "jobSecurity",
+      "inputType": "SCALE",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "workLifeImportance",
+      "metricId": "workLifeFit",
+      "inputType": "SCALE",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "careerGrowthImportance",
+      "metricId": "careerGrowthFit",
+      "inputType": "SCALE",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "housingImportance",
+      "metricId": "housingFit",
+      "inputType": "SCALE",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "englishAdvantageImportance",
+      "metricId": "englishFit",
+      "inputType": "SCALE",
+      "default": 3,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "lowStressImportance",
+      "metricId": "stressBurden",
+      "inputType": "INVERSE_BURDEN",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "lowPhysicalRiskImportance",
+      "metricId": "riskBurden",
+      "inputType": "INVERSE_BURDEN",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "lowTransferImportance",
+      "metricId": "transferBurden",
+      "inputType": "INVERSE_BURDEN",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "lowNightDutyImportance",
+      "metricId": "nightDutyBurden",
+      "inputType": "INVERSE_BURDEN",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "lowShiftDutyImportance",
+      "metricId": "shiftDutyBurden",
+      "inputType": "INVERSE_BURDEN",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "lowHolidayDutyImportance",
+      "metricId": "holidayDutyBurden",
+      "inputType": "INVERSE_BURDEN",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    },
+    {
+      "id": "lowEmergencyDutyImportance",
+      "metricId": "emergencyDutyBurden",
+      "inputType": "INVERSE_BURDEN",
+      "default": 5,
+      "min": 0,
+      "max": 10
+    }
+  ],
+  "scoreInterpretation": [
+    {
+      "min": 90,
+      "max": 100,
+      "label": {
+        "en": "Exceptional Fit",
+        "bn": "অসাধারণ সামঞ্জস্য"
+      }
+    },
+    {
+      "min": 80,
+      "max": 89.99,
+      "label": {
+        "en": "Strong Fit",
+        "bn": "খুব ভালো সামঞ্জস্য"
+      }
+    },
+    {
+      "min": 70,
+      "max": 79.99,
+      "label": {
+        "en": "Good Fit",
+        "bn": "ভালো সামঞ্জস্য"
+      }
+    },
+    {
+      "min": 60,
+      "max": 69.99,
+      "label": {
+        "en": "Moderate Fit",
+        "bn": "মাঝারি সামঞ্জস্য"
+      }
+    },
+    {
+      "min": 50,
+      "max": 59.99,
+      "label": {
+        "en": "Mixed Fit",
+        "bn": "মিশ্র সামঞ্জস্য"
+      }
+    },
+    {
+      "min": 0,
+      "max": 49.99,
+      "label": {
+        "en": "Weak Fit",
+        "bn": "দুর্বল সামঞ্জস্য"
+      }
+    }
+  ],
+  "rules": [
+    {
+      "id": "ELIGIBILITY_BEFORE_SCORING",
+      "type": "HARD_RULE",
+      "description": "Suitability scoring must not be used to make an ineligible career appear eligible."
+    },
+    {
+      "id": "HARD_CONSTRAINTS_BEFORE_PREFERENCES",
+      "type": "HARD_RULE",
+      "description": "Mandatory qualification, age, physical, medical, language, domicile and other hard conditions are evaluated before preference scoring."
+    },
+    {
+      "id": "BURDEN_DIRECTION",
+      "type": "SAFETY_RULE",
+      "description": "Higher burden values represent worse suitability and must not accidentally improve ranking."
+    },
+    {
+      "id": "UNKNOWN_IS_NOT_ZERO",
+      "type": "DATA_RULE",
+      "description": "Unknown or unverified information must not automatically be interpreted as zero."
+    },
+    {
+      "id": "NO_OFFICIAL_RANKING_CLAIM",
+      "type": "PRESENTATION_RULE",
+      "description": "Analytical career scores must never be described as official government rankings."
+    },
+    {
+      "id": "EXPLAIN_RECOMMENDATION",
+      "type": "UX_RULE",
+      "description": "A recommendation should show the major factors contributing to the result."
+    },
+    {
+      "id": "SHOW_TRADEOFFS",
+      "type": "UX_RULE",
+      "description": "Recommendations should identify important disadvantages or conflicts, not only positive factors."
+    }
+  ]
+}
