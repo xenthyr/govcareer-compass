@@ -1,0 +1,123 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-08-31",
+  "description": "Evidence-confidence and information-type vocabulary used by research, source, data and UI systems.",
+  "levels": [
+    {
+      "id": "HIGH",
+      "label": {
+        "en": "High Confidence",
+        "bn": "উচ্চ আস্থা"
+      },
+      "displayTone": "positive",
+      "description": {
+        "en": "A current authoritative primary source directly supports the relevant information.",
+        "bn": "বর্তমান নির্ভরযোগ্য প্রাথমিক সরকারি উৎস সংশ্লিষ্ট তথ্যকে সরাসরি সমর্থন করে।"
+      }
+    },
+    {
+      "id": "MEDIUM_HIGH",
+      "label": {
+        "en": "Medium-High Confidence",
+        "bn": "মাঝারি-উচ্চ আস্থা"
+      },
+      "displayTone": "positive",
+      "description": {
+        "en": "Strong official evidence exists, although the most recent direct confirmation may not be available.",
+        "bn": "শক্তিশালী সরকারি প্রমাণ আছে, যদিও সর্বশেষ সরাসরি নিশ্চিতকরণ নাও পাওয়া যেতে পারে।"
+      }
+    },
+    {
+      "id": "MEDIUM",
+      "label": {
+        "en": "Medium Confidence",
+        "bn": "মাঝারি আস্থা"
+      },
+      "displayTone": "caution",
+      "description": {
+        "en": "Official evidence exists, but current applicability or completeness requires caution.",
+        "bn": "সরকারি প্রমাণ আছে, তবে বর্তমান প্রযোজ্যতা বা পূর্ণতার ক্ষেত্রে সতর্কতা প্রয়োজন।"
+      }
+    },
+    {
+      "id": "LOW",
+      "label": {
+        "en": "Low Confidence",
+        "bn": "কম আস্থা"
+      },
+      "displayTone": "warning",
+      "description": {
+        "en": "Evidence is limited or relies significantly on secondary information.",
+        "bn": "প্রমাণ সীমিত অথবা উল্লেখযোগ্যভাবে দ্বিতীয়িক তথ্যের উপর নির্ভরশীল।"
+      }
+    },
+    {
+      "id": "ESTIMATE",
+      "label": {
+        "en": "Estimate",
+        "bn": "অনুমান"
+      },
+      "displayTone": "estimate",
+      "description": {
+        "en": "The value is calculated or analytically estimated rather than directly published as an official figure.",
+        "bn": "তথ্যটি সরাসরি সরকারি সংখ্যা হিসেবে প্রকাশিত নয়; এটি গণনা বা বিশ্লেষণভিত্তিক অনুমান।"
+      }
+    },
+    {
+      "id": "NOT_VERIFIED",
+      "label": {
+        "en": "Not Publicly Verified",
+        "bn": "প্রকাশ্যভাবে যাচাই করা যায়নি"
+      },
+      "displayTone": "neutral",
+      "description": {
+        "en": "Sufficient publicly accessible evidence was not located.",
+        "bn": "যথেষ্ট প্রকাশ্য প্রমাণ পাওয়া যায়নি।"
+      }
+    }
+  ],
+  "informationTypes": [
+    {
+      "id": "OFFICIAL_FACT",
+      "label": {
+        "en": "Official Fact",
+        "bn": "সরকারি তথ্য"
+      }
+    },
+    {
+      "id": "HISTORICAL_FACT",
+      "label": {
+        "en": "Historical Official Fact",
+        "bn": "ঐতিহাসিক সরকারি তথ্য"
+      }
+    },
+    {
+      "id": "CURRENT_ESTIMATE",
+      "label": {
+        "en": "Current Estimate",
+        "bn": "বর্তমান অনুমান"
+      }
+    },
+    {
+      "id": "PRACTICAL_ASSESSMENT",
+      "label": {
+        "en": "Practical Assessment",
+        "bn": "ব্যবহারিক বিশ্লেষণ"
+      }
+    },
+    {
+      "id": "SECONDARY_SOURCE",
+      "label": {
+        "en": "Secondary Source",
+        "bn": "দ্বিতীয়িক উৎস"
+      }
+    },
+    {
+      "id": "NOT_PUBLICLY_VERIFIED",
+      "label": {
+        "en": "Not Publicly Verified",
+        "bn": "প্রকাশ্যভাবে যাচাই করা যায়নি"
+      }
+    }
+  ]
+}
