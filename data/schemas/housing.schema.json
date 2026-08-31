@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "housing.schema.json",
+  "title": "GovCareer Compass Housing Profile",
+  "description": "Government accommodation, quarter and housing-effect profile.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "availabilityStatus",
+    "confidence",
+    "lastVerified",
+    "dataVersion"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "accommodationTypes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "GOVERNMENT_QUARTER",
+          "DEPARTMENTAL_QUARTER",
+          "POLICE_HOUSING",
+          "RAILWAY_QUARTER",
+          "BARRACK",
+          "HOSTEL",
+          "OTHER",
+          "NONE"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "entitlement": {
+      "type": "string"
+    },
+    "eligibility": {
+      "type": "string"
+    },
+    "availabilityStatus": {
+      "type": "string",
+      "enum": [
+        "MEANINGFUL_ADVANTAGE",
+        "VACANCY_DEPENDENT",
+        "DEPARTMENTAL",
+        "LIMITED",
+        "NONE_IDENTIFIED",
+        "NOT_VERIFIED"
+      ]
+    },
+    "allotment": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "waitingList": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "licenceFee": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "hraEffect": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "utilityCosts": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "maintenanceCosts": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "privateHousingAlternative": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "practicalLikelihood": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "sourceIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "HIGH",
+        "MEDIUM_HIGH",
+        "MEDIUM",
+        "LOW",
+        "ESTIMATE",
+        "NOT_VERIFIED"
+      ]
+    },
+    "lastVerified": {
+      "type": "string",
+      "format": "date"
+    },
+    "dataVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    }
+  }
+}
