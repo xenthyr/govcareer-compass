@@ -1,0 +1,977 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-08-31",
+  "assessmentId": "career-finder",
+  "assessmentVersion": "1.0.0",
+  "defaultLanguage": "en",
+  "supportedLanguages": [
+    "en",
+    "bn"
+  ],
+  "schema": "../schemas/assessment-question.schema.json",
+  "description": "Canonical question catalogue for the GovCareer Compass Career Finder. Questions collect candidate facts, qualifications, skills, location preferences, career interests, family considerations and personal preferences. They do not directly determine eligibility or recommendations.",
+  "designPrinciples": [
+    "Eligibility facts are collected separately from personal preferences.",
+    "Government-job eligibility is never hard-coded into an assessment answer.",
+    "Qualification questions reference reusable qualification identifiers.",
+    "State selection references the common state registry.",
+    "Preference questions create normalized candidate-preference values.",
+    "Branching determines which questions are presented.",
+    "The eligibility engine remains authoritative for job and examination eligibility.",
+    "The recommendation engine remains authoritative for suitability scoring.",
+    "Sensitive family-context questions are optional in practical use even when the assessment flow may present them.",
+    "The final result must explain that official recruitment notifications control final eligibility."
+  ],
+  "questionOrder": [
+    "welcome_goal",
+    "highest_education",
+    "academic_qualification_type",
+    "graduation_subject",
+    "graduation_specialisation",
+    "additional_qualification_presence",
+    "additional_qualification_categories",
+    "teacher_qualification",
+    "technical_qualification",
+    "iti_trade",
+    "computer_qualification",
+    "law_qualification",
+    "medical_qualification",
+    "nursing_qualification",
+    "pharmacy_qualification",
+    "engineering_qualification",
+    "professional_registration",
+    "driving_licence",
+    "typing_skill",
+    "shorthand_skill",
+    "computer_skill",
+    "work_experience",
+    "experience_details",
+    "language_bengali",
+    "language_hindi",
+    "language_english",
+    "state_preference",
+    "government_preference",
+    "career_interest",
+    "work_style",
+    "salary_importance",
+    "authority_importance",
+    "prestige_importance",
+    "family_importance",
+    "parent_care_importance",
+    "location_importance",
+    "job_security_importance",
+    "work_life_importance",
+    "career_growth_importance",
+    "housing_importance",
+    "low_stress_importance",
+    "low_physical_risk_importance",
+    "low_transfer_importance",
+    "low_night_duty_importance",
+    "low_shift_duty_importance",
+    "low_holiday_duty_importance",
+    "low_emergency_duty_importance",
+    "night_duty_tolerance",
+    "physical_risk_tolerance",
+    "transfer_tolerance",
+    "public_dealing_preference",
+    "office_field_preference",
+    "competitive_exam_tolerance",
+    "family_context",
+    "elderly_parent_responsibility",
+    "children_responsibility",
+    "income_responsibility",
+    "future_location_flexibility",
+    "assessment_confirmation"
+  ],
+  "questions": [
+    {
+      "id": "welcome_goal",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "What is your main purpose for using GovCareer Compass?",
+        "bn": "GovCareer Compass ব্যবহারের আপনার প্রধান উদ্দেশ্য কী?"
+      },
+      "helpText": {
+        "en": "Choose the type of guidance you want from the Career Finder.",
+        "bn": "Career Finder থেকে আপনি কী ধরনের নির্দেশনা চান তা নির্বাচন করুন।"
+      },
+      "profileField": "assessment.goal",
+      "required": true,
+      "optionSetId": "assessment_goal",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "highest_education",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "What is your highest completed or currently pursuing educational level?",
+        "bn": "আপনার সর্বোচ্চ সম্পন্ন বা বর্তমানে অধ্যয়নরত শিক্ষাগত স্তর কোনটি?"
+      },
+      "helpText": {
+        "en": "This is your main education level. Additional qualifications are collected separately.",
+        "bn": "এটি আপনার মূল শিক্ষাগত স্তর। অতিরিক্ত যোগ্যতা আলাদাভাবে সংগ্রহ করা হবে।"
+      },
+      "profileField": "educationLevel",
+      "required": true,
+      "optionSetId": "education_level",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "academic_qualification_type",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "What is your main academic qualification?",
+        "bn": "আপনার প্রধান শিক্ষাগত যোগ্যতা কোনটি?"
+      },
+      "helpText": {
+        "en": "Choose the main academic qualification relevant to your profile.",
+        "bn": "আপনার প্রোফাইলের জন্য প্রাসঙ্গিক প্রধান শিক্ষাগত যোগ্যতা নির্বাচন করুন।"
+      },
+      "profileField": "primaryAcademicQualification",
+      "required": true,
+      "optionSetId": "academic_qualification_type",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "graduation_subject",
+      "type": "MULTI_SELECT",
+      "question": {
+        "en": "Which subject or subjects did you study in your graduation?",
+        "bn": "স্নাতক স্তরে আপনি কোন বিষয় বা বিষয়গুলি পড়েছেন?"
+      },
+      "helpText": {
+        "en": "Subject-specific recruitment can depend on the exact subject studied.",
+        "bn": "বিষয়-নির্দিষ্ট নিয়োগে আপনি ঠিক কোন বিষয় পড়েছেন তা গুরুত্বপূর্ণ হতে পারে।"
+      },
+      "profileField": "academicSubjects",
+      "required": false,
+      "optionSetId": "academic_subjects",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "graduation_specialisation",
+      "type": "TEXT",
+      "question": {
+        "en": "Enter your exact graduation, major or honours subject.",
+        "bn": "আপনার স্নাতক, মেজর বা অনার্সের নির্দিষ্ট বিষয় লিখুন।"
+      },
+      "helpText": {
+        "en": "Use the official or commonly recognised subject name where possible.",
+        "bn": "সম্ভব হলে সরকারি নথিতে ব্যবহৃত বা প্রচলিত বিষয়ের নাম লিখুন।"
+      },
+      "profileField": "graduationSpecialisation",
+      "required": false,
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "additional_qualification_presence",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "Do you have any additional professional, technical or specialist qualification?",
+        "bn": "আপনার কি কোনও অতিরিক্ত পেশাগত, কারিগরি বা বিশেষায়িত যোগ্যতা আছে?"
+      },
+      "profileField": "hasAdditionalQualifications",
+      "required": true,
+      "optionSetId": "yes_no_prefer_not",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "additional_qualification_categories",
+      "type": "MULTI_SELECT",
+      "question": {
+        "en": "Which additional qualification categories do you have?",
+        "bn": "আপনার কোন কোন অতিরিক্ত যোগ্যতার শ্রেণি রয়েছে?"
+      },
+      "helpText": {
+        "en": "Select all relevant categories. The next questions will ask for specific qualifications.",
+        "bn": "প্রাসঙ্গিক সব বিভাগ নির্বাচন করুন। পরের প্রশ্নে নির্দিষ্ট যোগ্যতা জানতে চাওয়া হবে।"
+      },
+      "profileField": "additionalQualificationCategories",
+      "required": false,
+      "optionSetId": "additional_qualification_categories",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "teacher_qualification",
+      "type": "MULTI_SELECT",
+      "question": {
+        "en": "Which teacher-education qualifications do you hold?",
+        "bn": "আপনার কোন কোন শিক্ষক-প্রশিক্ষণ যোগ্যতা রয়েছে?"
+      },
+      "helpText": {
+        "en": "Include only qualifications that are completed or formally being pursued.",
+        "bn": "শুধুমাত্র সম্পন্ন বা আনুষ্ঠানিকভাবে অধ্যয়নরত যোগ্যতা নির্বাচন করুন।"
+      },
+      "profileField": "qualifications.teacherEducation",
+      "required": false,
+      "optionSetId": "teacher_education_qualifications",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "technical_qualification",
+      "type": "MULTI_SELECT",
+      "question": {
+        "en": "Which technical qualifications do you hold?",
+        "bn": "আপনার কোন কোন কারিগরি যোগ্যতা রয়েছে?"
+      },
+      "profileField": "qualifications.technical",
+      "required": false,
+      "optionSetId": "technical_qualifications",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "iti_trade",
+      "type": "MULTI_SELECT",
+      "question": {
+        "en": "Which Industrial Training Institute (ITI) trade or trades do you hold?",
+        "bn": "আপনার কোন কোন ইন্ডাস্ট্রিয়াল ট্রেনিং ইনস্টিটিউট (ITI) ট্রেড রয়েছে?"
+      },
+      "helpText": {
+        "en": "Technical eligibility may depend on the exact trade rather than ITI alone.",
+        "bn": "কারিগরি যোগ্যতা অনেক সময় শুধুমাত্র ITI নয়, নির্দিষ্ট ট্রেডের উপরও নির্ভর করে।"
+      },
+      "profileField": "qualifications.itiTrades",
+      "required": false,
+      "optionSetId": "iti_trades",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "computer_qualification",
+      "type": "MULTI_SELECT",
+      "question": {
+        "en": "Which computer or information-technology qualifications do you hold?",
+        "bn": "আপনার কোন কোন কম্পিউটার বা তথ্যপ্রযুক্তি যোগ্যতা রয়েছে?"
+      },
+      "profileField": "qualifications.computer",
+      "required": false,
+      "optionSetId": "computer_qualifications",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "law_qualification",
+      "type": "MULTI_SELECT",
+      "question": {
+        "en": "Which law qualifications do you hold?",
+        "bn": "আপনার কোন কোন আইন-সংক্রান্ত যোগ্যতা রয়েছে?"
+      },
+      "profileField": "qualifications.law",
+      "required": false,
+      "optionSetId": "law_qualifications",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "medical_qualification",
+      "type": "MULTI_SELECT",
+      "question": {
+        "en": "Which medical qualifications do you hold?",
+        "bn": "আপনার কোন কোন চিকিৎসা-সংক্রান্ত যোগ্যতা রয়েছে?"
+      },
+      "profileField": "qualifications.medical",
+      "required": false,
+      "optionSetId": "medical_qualifications",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "nursing_qualification",
+      "type": "MULTI_SELECT",
+      "question": {
+        "en": "Which nursing qualifications do you hold?",
+        "bn": "আপনার কোন কোন নার্সিং যোগ্যতা রয়েছে?"
+      },
+      "profileField": "qualifications.nursing",
+      "required": false,
+      "optionSetId": "nursing_qualifications",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "pharmacy_qualification",
+      "type": "MULTI_SELECT",
+      "question": {
+        "en": "Which pharmacy qualifications do you hold?",
+        "bn": "আপনার কোন কোন ফার্মেসি যোগ্যতা রয়েছে?"
+      },
+      "profileField": "qualifications.pharmacy",
+      "required": false,
+      "optionSetId": "pharmacy_qualifications",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "engineering_qualification",
+      "type": "MULTI_SELECT",
+      "question": {
+        "en": "Which engineering qualifications do you hold?",
+        "bn": "আপনার কোন কোন ইঞ্জিনিয়ারিং যোগ্যতা রয়েছে?"
+      },
+      "profileField": "qualifications.engineering",
+      "required": false,
+      "optionSetId": "engineering_qualifications",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "professional_registration",
+      "type": "MULTI_SELECT",
+      "question": {
+        "en": "Which professional registrations or licences do you hold?",
+        "bn": "আপনার কোন কোন পেশাগত রেজিস্ট্রেশন বা লাইসেন্স রয়েছে?"
+      },
+      "helpText": {
+        "en": "Only select registrations or licences you actually hold.",
+        "bn": "আপনার কাছে বাস্তবে থাকা রেজিস্ট্রেশন বা লাইসেন্সই নির্বাচন করুন।"
+      },
+      "profileField": "professionalRegistrations",
+      "required": false,
+      "optionSetId": "professional_registration_types",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "driving_licence",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "Do you hold a valid driving licence?",
+        "bn": "আপনার কি বৈধ ড্রাইভিং লাইসেন্স রয়েছে?"
+      },
+      "profileField": "skills.drivingLicence",
+      "required": true,
+      "optionSetId": "yes_no_prefer_not",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "typing_skill",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "What is your current typing ability?",
+        "bn": "আপনার বর্তমান টাইপিং দক্ষতা কেমন?"
+      },
+      "profileField": "skills.typingLevel",
+      "required": true,
+      "optionSetId": "typing_skill_level",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "shorthand_skill",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "What is your current shorthand ability?",
+        "bn": "আপনার বর্তমান শর্টহ্যান্ড দক্ষতা কেমন?"
+      },
+      "profileField": "skills.shorthandLevel",
+      "required": true,
+      "optionSetId": "shorthand_skill_level",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "computer_skill",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "How comfortable are you with everyday computer work?",
+        "bn": "দৈনন্দিন কম্পিউটার কাজে আপনি কতটা স্বচ্ছন্দ?"
+      },
+      "profileField": "skills.computerLevel",
+      "required": true,
+      "optionSetId": "computer_skill_level",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "work_experience",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "Do you have relevant work experience that may matter for government recruitment?",
+        "bn": "সরকারি নিয়োগে প্রাসঙ্গিক হতে পারে এমন কর্ম-অভিজ্ঞতা কি আপনার রয়েছে?"
+      },
+      "profileField": "hasRelevantExperience",
+      "required": true,
+      "optionSetId": "yes_no_prefer_not",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "experience_details",
+      "type": "TEXT",
+      "question": {
+        "en": "Briefly describe your relevant work experience.",
+        "bn": "আপনার প্রাসঙ্গিক কর্ম-অভিজ্ঞতা সংক্ষেপে লিখুন।"
+      },
+      "profileField": "experienceSummary",
+      "required": false,
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "language_bengali",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "How would you describe your Bengali-language ability?",
+        "bn": "আপনার বাংলা ভাষার দক্ষতা কেমন?"
+      },
+      "profileField": "languages.bengaliLevel",
+      "required": true,
+      "optionSetId": "language_proficiency",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "language_hindi",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "How would you describe your Hindi-language ability?",
+        "bn": "আপনার হিন্দি ভাষার দক্ষতা কেমন?"
+      },
+      "profileField": "languages.hindiLevel",
+      "required": true,
+      "optionSetId": "language_proficiency",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "language_english",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "How would you describe your English-language ability?",
+        "bn": "আপনার ইংরেজি ভাষার দক্ষতা কেমন?"
+      },
+      "profileField": "languages.englishLevel",
+      "required": true,
+      "optionSetId": "language_proficiency",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "state_preference",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "Which state government would you like to consider?",
+        "bn": "কোন রাজ্য সরকারের চাকরি আপনি বিবেচনা করতে চান?"
+      },
+      "helpText": {
+        "en": "All states can be selected, but only states with an active dataset will currently produce state-specific recommendations.",
+        "bn": "সব রাজ্য নির্বাচন করা যাবে, তবে বর্তমানে সক্রিয় ডেটাসেট থাকা রাজ্যগুলিই এখন রাজ্যভিত্তিক সুপারিশ তৈরি করবে।"
+      },
+      "profileField": "stateId",
+      "required": true,
+      "optionSetId": "state_registry",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "government_preference",
+      "type": "MULTI_SELECT",
+      "question": {
+        "en": "Which government systems do you want to consider?",
+        "bn": "আপনি কোন কোন সরকারি ব্যবস্থা বিবেচনা করতে চান?"
+      },
+      "profileField": "governmentPreferences",
+      "required": true,
+      "optionSetId": "government_preferences",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "career_interest",
+      "type": "MULTI_SELECT",
+      "question": {
+        "en": "Which government career areas interest you?",
+        "bn": "কোন কোন সরকারি ক্যারিয়ার ক্ষেত্র আপনার কাছে আকর্ষণীয়?"
+      },
+      "profileField": "careerInterests",
+      "required": true,
+      "optionSetId": "career_interests",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "work_style",
+      "type": "MULTI_SELECT",
+      "question": {
+        "en": "Which work styles would you prefer?",
+        "bn": "কোন ধরনের কাজের পরিবেশ আপনি পছন্দ করবেন?"
+      },
+      "profileField": "preferredWorkStyles",
+      "required": true,
+      "optionSetId": "work_styles",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "salary_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is salary and compensation to you?",
+        "bn": "বেতন ও আর্থিক সুবিধা আপনার কাছে কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.salaryImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "minLabel": {
+          "en": "Not important",
+          "bn": "গুরুত্বপূর্ণ নয়"
+        },
+        "maxLabel": {
+          "en": "Extremely important",
+          "bn": "অত্যন্ত গুরুত্বপূর্ণ"
+        }
+      },
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "authority_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is authority and decision-making responsibility?",
+        "bn": "কর্তৃত্ব ও সিদ্ধান্ত নেওয়ার দায়িত্ব আপনার কাছে কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.authorityImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "prestige_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is professional prestige or social status?",
+        "bn": "পেশাগত মর্যাদা বা সামাজিক অবস্থান আপনার কাছে কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.prestigeImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "family_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is family time and family compatibility?",
+        "bn": "পারিবারিক সময় ও পারিবারিক সামঞ্জস্য আপনার কাছে কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.familyImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "parent_care_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is being available to care for parents or older family members?",
+        "bn": "বাবা-মা বা বয়স্ক পরিবারের সদস্যদের দেখাশোনার জন্য উপলব্ধ থাকা কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.parentCareImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "sensitive": true,
+      "allowPreferNotToSay": true,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "location_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is geographic stability?",
+        "bn": "ভৌগোলিক স্থিতিশীলতা আপনার কাছে কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.locationImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "job_security_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is long-term job security?",
+        "bn": "দীর্ঘমেয়াদি চাকরির নিরাপত্তা আপনার কাছে কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.jobSecurityImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "work_life_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is work-life balance?",
+        "bn": "কর্ম-জীবন ভারসাম্য আপনার কাছে কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.workLifeImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "career_growth_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is career growth and promotion potential?",
+        "bn": "ক্যারিয়ার উন্নতি ও পদোন্নতির সম্ভাবনা আপনার কাছে কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.careerGrowthImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "housing_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is government or departmental accommodation?",
+        "bn": "সরকারি বা দপ্তরীয় আবাসন সুবিধা আপনার কাছে কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.housingImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "low_stress_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is avoiding high-stress work?",
+        "bn": "অতিরিক্ত মানসিক চাপ এড়ানো আপনার কাছে কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.lowStressImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "low_physical_risk_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is avoiding physically risky work?",
+        "bn": "শারীরিক ঝুঁকিপূর্ণ কাজ এড়ানো আপনার কাছে কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.lowPhysicalRiskImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "low_transfer_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is avoiding frequent transfers?",
+        "bn": "ঘনঘন বদলি এড়ানো আপনার কাছে কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.lowTransferImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "low_night_duty_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is avoiding night duty?",
+        "bn": "রাত্রিকালীন ডিউটি এড়ানো আপনার কাছে কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.lowNightDutyImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "low_shift_duty_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is avoiding shift-based work?",
+        "bn": "শিফটভিত্তিক কাজ এড়ানো আপনার কাছে কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.lowShiftDutyImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "low_holiday_duty_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is having holidays and festivals mostly free?",
+        "bn": "ছুটি ও উৎসবের দিনগুলি বেশিরভাগ সময় অবসর থাকা আপনার কাছে কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.lowHolidayDutyImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "low_emergency_duty_importance",
+      "type": "SCALE",
+      "question": {
+        "en": "How important is avoiding emergency call-outs?",
+        "bn": "জরুরি পরিস্থিতিতে হঠাৎ ডিউটিতে ডাকা এড়ানো আপনার কাছে কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "preferences.lowEmergencyDutyImportance",
+      "required": true,
+      "scale": {
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "night_duty_tolerance",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "How comfortable are you with night duty?",
+        "bn": "রাত্রিকালীন ডিউটি নিয়ে আপনি কতটা স্বচ্ছন্দ?"
+      },
+      "profileField": "tolerance.nightDuty",
+      "required": true,
+      "optionSetId": "tolerance_level",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "physical_risk_tolerance",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "How comfortable are you with physically demanding or potentially risky work?",
+        "bn": "শারীরিকভাবে কঠিন বা সম্ভাব্য ঝুঁকিপূর্ণ কাজে আপনি কতটা স্বচ্ছন্দ?"
+      },
+      "profileField": "tolerance.physicalRisk",
+      "required": true,
+      "optionSetId": "tolerance_level",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "transfer_tolerance",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "How comfortable are you with transfers or relocation?",
+        "bn": "বদলি বা অন্যত্র স্থানান্তরের ব্যাপারে আপনি কতটা স্বচ্ছন্দ?"
+      },
+      "profileField": "tolerance.transfers",
+      "required": true,
+      "optionSetId": "tolerance_level",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "public_dealing_preference",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "How comfortable are you with frequent public interaction?",
+        "bn": "ঘনঘন জনসাধারণের সঙ্গে যোগাযোগের কাজে আপনি কতটা স্বচ্ছন্দ?"
+      },
+      "profileField": "preferences.publicDealing",
+      "required": true,
+      "optionSetId": "public_dealing_preference",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "office_field_preference",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "Which work environment would you prefer?",
+        "bn": "আপনি কোন ধরনের কর্মপরিবেশ পছন্দ করবেন?"
+      },
+      "profileField": "preferences.officeField",
+      "required": true,
+      "optionSetId": "office_field_preference",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "competitive_exam_tolerance",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "How much preparation and competition are you willing to accept for a high-value career?",
+        "bn": "উচ্চ-মূল্যের ক্যারিয়ারের জন্য আপনি কতটা দীর্ঘ প্রস্তুতি ও প্রতিযোগিতা গ্রহণ করতে প্রস্তুত?"
+      },
+      "profileField": "preferences.examCompetitionTolerance",
+      "required": true,
+      "optionSetId": "exam_competition_tolerance",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "family_context",
+      "type": "MULTI_SELECT",
+      "question": {
+        "en": "Which family responsibilities are relevant to your career decision?",
+        "bn": "আপনার ক্যারিয়ার সিদ্ধান্তে কোন পারিবারিক দায়িত্বগুলি প্রাসঙ্গিক?"
+      },
+      "helpText": {
+        "en": "You may choose not to provide family details.",
+        "bn": "আপনি চাইলে পারিবারিক তথ্য না-ও দিতে পারেন।"
+      },
+      "profileField": "family.context",
+      "required": false,
+      "optionSetId": "family_context",
+      "sensitive": true,
+      "allowPreferNotToSay": true,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "elderly_parent_responsibility",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "How important is your ability to remain available for elderly parents or older family members?",
+        "bn": "বয়স্ক বাবা-মা বা পরিবারের প্রবীণ সদস্যদের জন্য উপলব্ধ থাকতে পারা কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "family.elderlyParentResponsibility",
+      "required": false,
+      "optionSetId": "responsibility_level",
+      "sensitive": true,
+      "allowPreferNotToSay": true,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "children_responsibility",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "How important is predictable availability for childcare or children's needs?",
+        "bn": "সন্তানের যত্ন বা সন্তানের প্রয়োজনের জন্য পূর্বানুমানযোগ্যভাবে উপলব্ধ থাকা কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "family.childrenResponsibility",
+      "required": false,
+      "optionSetId": "responsibility_level",
+      "sensitive": true,
+      "allowPreferNotToSay": true,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "income_responsibility",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "How important is income stability because other people may depend financially on you?",
+        "bn": "অন্যরা আপনার আয়ের উপর আর্থিকভাবে নির্ভর করতে পারে বলে আয়ের স্থিতিশীলতা কতটা গুরুত্বপূর্ণ?"
+      },
+      "profileField": "family.incomeResponsibility",
+      "required": false,
+      "optionSetId": "responsibility_level",
+      "sensitive": true,
+      "allowPreferNotToSay": true,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "future_location_flexibility",
+      "type": "SINGLE_SELECT",
+      "question": {
+        "en": "How flexible could you be about your long-term place of residence?",
+        "bn": "দীর্ঘমেয়াদে বসবাসের স্থান পরিবর্তনের ব্যাপারে আপনি কতটা নমনীয়?"
+      },
+      "profileField": "family.locationFlexibility",
+      "required": true,
+      "optionSetId": "location_flexibility",
+      "sensitive": false,
+      "status": "ACTIVE"
+    },
+    {
+      "id": "assessment_confirmation",
+      "type": "BOOLEAN",
+      "question": {
+        "en": "I understand that GovCareer Compass provides analytical guidance and that official recruitment notifications determine final eligibility.",
+        "bn": "আমি বুঝি যে GovCareer Compass বিশ্লেষণভিত্তিক নির্দেশনা দেয় এবং চূড়ান্ত যোগ্যতা সরকারি নিয়োগ বিজ্ঞপ্তি নির্ধারণ করে।"
+      },
+      "profileField": "assessment.confirmedDisclaimer",
+      "required": true,
+      "sensitive": false,
+      "status": "ACTIVE"
+    }
+  ]
+}
