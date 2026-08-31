@@ -2,22 +2,23 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "government.schema.json",
   "title": "GovCareer Compass Government",
-  "description": "Government-system classification record.",
+  "description": "Government-system record.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "id",
     "name",
     "type",
-    "enabled"
+    "enabled",
+    "coverage",
+    "dataVersion"
   ],
   "properties": {
     "id": {
-      "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9-]*$"
+      "$ref": "shared.schema.json#/$defs/id"
     },
     "name": {
-      "$ref": "shared-localized-name.schema.json"
+      "$ref": "shared.schema.json#/$defs/localizedText"
     },
     "type": {
       "type": "string",
@@ -42,6 +43,15 @@
         "PARTIAL",
         "DISABLED"
       ]
+    },
+    "description": {
+      "$ref": "shared.schema.json#/$defs/localizedText"
+    },
+    "sourceIds": {
+      "$ref": "shared.schema.json#/$defs/stringArray"
+    },
+    "dataVersion": {
+      "$ref": "shared.schema.json#/$defs/version"
     }
   }
 }
