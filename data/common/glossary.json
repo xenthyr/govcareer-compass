@@ -1,0 +1,475 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-08-31",
+  "description": "Central abbreviation and terminology dictionary used throughout GovCareer Compass.",
+  "terms": [
+    {
+      "id": "BA",
+      "abbreviation": "BA",
+      "fullName": {
+        "en": "Bachelor of Arts",
+        "bn": "ব্যাচেলর অফ আর্টস"
+      },
+      "category": "EDUCATION"
+    },
+    {
+      "id": "BSC",
+      "abbreviation": "B.Sc.",
+      "fullName": {
+        "en": "Bachelor of Science",
+        "bn": "ব্যাচেলর অফ সায়েন্স"
+      },
+      "category": "EDUCATION"
+    },
+    {
+      "id": "BCOM",
+      "abbreviation": "B.Com.",
+      "fullName": {
+        "en": "Bachelor of Commerce",
+        "bn": "ব্যাচেলর অফ কমার্স"
+      },
+      "category": "EDUCATION"
+    },
+    {
+      "id": "MA",
+      "abbreviation": "M.A.",
+      "fullName": {
+        "en": "Master of Arts",
+        "bn": "মাস্টার অফ আর্টস"
+      },
+      "category": "EDUCATION"
+    },
+    {
+      "id": "B_ED",
+      "abbreviation": "B.Ed.",
+      "fullName": {
+        "en": "Bachelor of Education",
+        "bn": "ব্যাচেলর অফ এডুকেশন"
+      },
+      "category": "TEACHER_EDUCATION"
+    },
+    {
+      "id": "D_EL_ED",
+      "abbreviation": "D.El.Ed.",
+      "fullName": {
+        "en": "Diploma in Elementary Education",
+        "bn": "ডিপ্লোমা ইন এলিমেন্টারি এডুকেশন"
+      },
+      "category": "TEACHER_EDUCATION"
+    },
+    {
+      "id": "B_EL_ED",
+      "abbreviation": "B.El.Ed.",
+      "fullName": {
+        "en": "Bachelor of Elementary Education",
+        "bn": "ব্যাচেলর অফ এলিমেন্টারি এডুকেশন"
+      },
+      "category": "TEACHER_EDUCATION"
+    },
+    {
+      "id": "ITI",
+      "abbreviation": "ITI",
+      "fullName": {
+        "en": "Industrial Training Institute",
+        "bn": "ইন্ডাস্ট্রিয়াল ট্রেনিং ইনস্টিটিউট"
+      },
+      "category": "TECHNICAL"
+    },
+    {
+      "id": "NCVT",
+      "abbreviation": "NCVT",
+      "fullName": {
+        "en": "National Council for Vocational Training",
+        "bn": "ন্যাশনাল কাউন্সিল ফর ভোকেশনাল ট্রেনিং"
+      },
+      "category": "TECHNICAL"
+    },
+    {
+      "id": "SCVT",
+      "abbreviation": "SCVT",
+      "fullName": {
+        "en": "State Council for Vocational Training",
+        "bn": "স্টেট কাউন্সিল ফর ভোকেশনাল ট্রেনিং"
+      },
+      "category": "TECHNICAL"
+    },
+    {
+      "id": "SI",
+      "abbreviation": "SI",
+      "fullName": {
+        "en": "Sub-Inspector",
+        "bn": "সাব-ইন্সপেক্টর"
+      },
+      "category": "POST"
+    },
+    {
+      "id": "ASI",
+      "abbreviation": "ASI",
+      "fullName": {
+        "en": "Assistant Sub-Inspector",
+        "bn": "অ্যাসিস্ট্যান্ট সাব-ইন্সপেক্টর"
+      },
+      "category": "POST"
+    },
+    {
+      "id": "IPS",
+      "abbreviation": "IPS",
+      "fullName": {
+        "en": "Indian Police Service",
+        "bn": "ইন্ডিয়ান পুলিশ সার্ভিস"
+      },
+      "category": "SERVICE"
+    },
+    {
+      "id": "IAS",
+      "abbreviation": "IAS",
+      "fullName": {
+        "en": "Indian Administrative Service",
+        "bn": "ইন্ডিয়ান অ্যাডমিনিস্ট্রেটিভ সার্ভিস"
+      },
+      "category": "SERVICE"
+    },
+    {
+      "id": "WBCS",
+      "abbreviation": "WBCS",
+      "fullName": {
+        "en": "West Bengal Civil Service",
+        "bn": "ওয়েস্ট বেঙ্গল সিভিল সার্ভিস"
+      },
+      "category": "SERVICE"
+    },
+    {
+      "id": "WBPSC",
+      "abbreviation": "WBPSC",
+      "fullName": {
+        "en": "West Bengal Public Service Commission",
+        "bn": "ওয়েস্ট বেঙ্গল পাবলিক সার্ভিস কমিশন"
+      },
+      "category": "AUTHORITY"
+    },
+    {
+      "id": "WBPRB",
+      "abbreviation": "WBPRB",
+      "fullName": {
+        "en": "West Bengal Police Recruitment Board",
+        "bn": "ওয়েস্ট বেঙ্গল পুলিশ রিক্রুটমেন্ট বোর্ড"
+      },
+      "category": "AUTHORITY"
+    },
+    {
+      "id": "SSC",
+      "abbreviation": "SSC",
+      "fullName": {
+        "en": "Staff Selection Commission",
+        "bn": "স্টাফ সিলেকশন কমিশন"
+      },
+      "category": "AUTHORITY"
+    },
+    {
+      "id": "CGL",
+      "abbreviation": "CGL",
+      "fullName": {
+        "en": "Combined Graduate Level",
+        "bn": "কম্বাইন্ড গ্র্যাজুয়েট লেভেল"
+      },
+      "category": "EXAM"
+    },
+    {
+      "id": "CPO",
+      "abbreviation": "CPO",
+      "fullName": {
+        "en": "Central Police Organisation",
+        "bn": "সেন্ট্রাল পুলিশ অর্গানাইজেশন"
+      },
+      "category": "EXAM"
+    },
+    {
+      "id": "CHSL",
+      "abbreviation": "CHSL",
+      "fullName": {
+        "en": "Combined Higher Secondary Level",
+        "bn": "কম্বাইন্ড হায়ার সেকেন্ডারি লেভেল"
+      },
+      "category": "EXAM"
+    },
+    {
+      "id": "MTS",
+      "abbreviation": "MTS",
+      "fullName": {
+        "en": "Multi-Tasking Staff",
+        "bn": "মাল্টি-টাস্কিং স্টাফ"
+      },
+      "category": "POST"
+    },
+    {
+      "id": "RRB",
+      "abbreviation": "RRB",
+      "fullName": {
+        "en": "Railway Recruitment Board",
+        "bn": "রেলওয়ে রিক্রুটমেন্ট বোর্ড"
+      },
+      "category": "AUTHORITY"
+    },
+    {
+      "id": "RPF",
+      "abbreviation": "RPF",
+      "fullName": {
+        "en": "Railway Protection Force",
+        "bn": "রেলওয়ে প্রোটেকশন ফোর্স"
+      },
+      "category": "ORGANISATION"
+    },
+    {
+      "id": "UPSC",
+      "abbreviation": "UPSC",
+      "fullName": {
+        "en": "Union Public Service Commission",
+        "bn": "ইউনিয়ন পাবলিক সার্ভিস কমিশন"
+      },
+      "category": "AUTHORITY"
+    },
+    {
+      "id": "CAPF",
+      "abbreviation": "CAPF",
+      "fullName": {
+        "en": "Central Armed Police Forces",
+        "bn": "সেন্ট্রাল আর্মড পুলিশ ফোর্সেস"
+      },
+      "category": "SECURITY"
+    },
+    {
+      "id": "CBI",
+      "abbreviation": "CBI",
+      "fullName": {
+        "en": "Central Bureau of Investigation",
+        "bn": "সেন্ট্রাল ব্যুরো অফ ইনভেস্টিগেশন"
+      },
+      "category": "INVESTIGATION"
+    },
+    {
+      "id": "NIA",
+      "abbreviation": "NIA",
+      "fullName": {
+        "en": "National Investigation Agency",
+        "bn": "ন্যাশনাল ইনভেস্টিগেশন এজেন্সি"
+      },
+      "category": "INVESTIGATION"
+    },
+    {
+      "id": "NCB",
+      "abbreviation": "NCB",
+      "fullName": {
+        "en": "Narcotics Control Bureau",
+        "bn": "নারকোটিক্স কন্ট্রোল ব্যুরো"
+      },
+      "category": "ENFORCEMENT"
+    },
+    {
+      "id": "IB",
+      "abbreviation": "IB",
+      "fullName": {
+        "en": "Intelligence Bureau",
+        "bn": "ইন্টেলিজেন্স ব্যুরো"
+      },
+      "category": "INTELLIGENCE"
+    },
+    {
+      "id": "ACIO",
+      "abbreviation": "ACIO",
+      "fullName": {
+        "en": "Assistant Central Intelligence Officer",
+        "bn": "অ্যাসিস্ট্যান্ট সেন্ট্রাল ইন্টেলিজেন্স অফিসার"
+      },
+      "category": "POST"
+    },
+    {
+      "id": "ASO",
+      "abbreviation": "ASO",
+      "fullName": {
+        "en": "Assistant Section Officer",
+        "bn": "অ্যাসিস্ট্যান্ট সেকশন অফিসার"
+      },
+      "category": "POST"
+    },
+    {
+      "id": "AAO",
+      "abbreviation": "AAO",
+      "fullName": {
+        "en": "Assistant Audit Officer",
+        "bn": "অ্যাসিস্ট্যান্ট অডিট অফিসার"
+      },
+      "category": "POST"
+    },
+    {
+      "id": "AEO",
+      "abbreviation": "AEO",
+      "fullName": {
+        "en": "Assistant Enforcement Officer",
+        "bn": "অ্যাসিস্ট্যান্ট এনফোর্সমেন্ট অফিসার"
+      },
+      "category": "POST"
+    },
+    {
+      "id": "NTPC",
+      "abbreviation": "NTPC",
+      "fullName": {
+        "en": "Non-Technical Popular Categories",
+        "bn": "নন-টেকনিক্যাল পপুলার ক্যাটাগরিজ"
+      },
+      "category": "RAILWAY"
+    },
+    {
+      "id": "JAA",
+      "abbreviation": "JAA",
+      "fullName": {
+        "en": "Junior Accounts Assistant",
+        "bn": "জুনিয়র অ্যাকাউন্টস অ্যাসিস্ট্যান্ট"
+      },
+      "category": "POST"
+    },
+    {
+      "id": "LDA",
+      "abbreviation": "LDA",
+      "fullName": {
+        "en": "Lower Division Assistant",
+        "bn": "লোয়ার ডিভিশন অ্যাসিস্ট্যান্ট"
+      },
+      "category": "POST"
+    },
+    {
+      "id": "LDC",
+      "abbreviation": "LDC",
+      "fullName": {
+        "en": "Lower Division Clerk",
+        "bn": "লোয়ার ডিভিশন ক্লার্ক"
+      },
+      "category": "POST"
+    },
+    {
+      "id": "UDA",
+      "abbreviation": "UDA",
+      "fullName": {
+        "en": "Upper Division Assistant",
+        "bn": "আপার ডিভিশন অ্যাসিস্ট্যান্ট"
+      },
+      "category": "POST"
+    },
+    {
+      "id": "UDC",
+      "abbreviation": "UDC",
+      "fullName": {
+        "en": "Upper Division Clerk",
+        "bn": "আপার ডিভিশন ক্লার্ক"
+      },
+      "category": "POST"
+    },
+    {
+      "id": "HRA",
+      "abbreviation": "HRA",
+      "fullName": {
+        "en": "House Rent Allowance",
+        "bn": "হাউস রেন্ট অ্যালাওয়েন্স"
+      },
+      "category": "PAY"
+    },
+    {
+      "id": "DA",
+      "abbreviation": "DA",
+      "fullName": {
+        "en": "Dearness Allowance",
+        "bn": "ডিয়ারনেস অ্যালাওয়েন্স"
+      },
+      "category": "PAY"
+    },
+    {
+      "id": "NPS",
+      "abbreviation": "NPS",
+      "fullName": {
+        "en": "National Pension System",
+        "bn": "ন্যাশনাল পেনশন সিস্টেম"
+      },
+      "category": "RETIREMENT"
+    },
+    {
+      "id": "PET",
+      "abbreviation": "PET",
+      "fullName": {
+        "en": "Physical Efficiency Test",
+        "bn": "ফিজিক্যাল এফিশিয়েন্সি টেস্ট"
+      },
+      "category": "RECRUITMENT"
+    },
+    {
+      "id": "PST",
+      "abbreviation": "PST",
+      "fullName": {
+        "en": "Physical Standard Test",
+        "bn": "ফিজিক্যাল স্ট্যান্ডার্ড টেস্ট"
+      },
+      "category": "RECRUITMENT"
+    },
+    {
+      "id": "DV",
+      "abbreviation": "DV",
+      "fullName": {
+        "en": "Document Verification",
+        "bn": "ডকুমেন্ট ভেরিফিকেশন"
+      },
+      "category": "RECRUITMENT"
+    },
+    {
+      "id": "TET",
+      "abbreviation": "TET",
+      "fullName": {
+        "en": "Teacher Eligibility Test",
+        "bn": "টিচার এলিজিবিলিটি টেস্ট"
+      },
+      "category": "EDUCATION"
+    },
+    {
+      "id": "SLST",
+      "abbreviation": "SLST",
+      "fullName": {
+        "en": "State Level Selection Test",
+        "bn": "স্টেট লেভেল সিলেকশন টেস্ট"
+      },
+      "category": "EXAM"
+    },
+    {
+      "id": "CPC",
+      "abbreviation": "CPC",
+      "fullName": {
+        "en": "Central Pay Commission",
+        "bn": "সেন্ট্রাল পে কমিশন"
+      },
+      "category": "PAY"
+    },
+    {
+      "id": "ROPA",
+      "abbreviation": "ROPA",
+      "fullName": {
+        "en": "Revision of Pay and Allowances",
+        "bn": "রিভিশন অফ পে অ্যান্ড অ্যালাওয়েন্সেস"
+      },
+      "category": "PAY"
+    },
+    {
+      "id": "NCVET",
+      "abbreviation": "NCVET",
+      "fullName": {
+        "en": "National Council for Vocational Education and Training",
+        "bn": "ন্যাশনাল কাউন্সিল ফর ভোকেশনাল এডুকেশন অ্যান্ড ট্রেনিং"
+      },
+      "category": "TECHNICAL"
+    },
+    {
+      "id": "NIELIT",
+      "abbreviation": "NIELIT",
+      "fullName": {
+        "en": "National Institute of Electronics and Information Technology",
+        "bn": "ন্যাশনাল ইনস্টিটিউট অফ ইলেকট্রনিক্স অ্যান্ড ইনফরমেশন টেকনোলজি"
+      },
+      "category": "TECHNICAL"
+    }
+  ]
+}
