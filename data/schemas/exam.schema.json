@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "exam.schema.json",
+  "title": "GovCareer Compass Examination",
+  "description": "Canonical examination or selection-route record.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "name",
+    "governmentId",
+    "authorityId",
+    "stages",
+    "status",
+    "confidence",
+    "sourceIds",
+    "lastVerified",
+    "dataVersion"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "name": {
+      "$ref": "shared-localized-name.schema.json"
+    },
+    "abbreviation": {
+      "type": "string"
+    },
+    "fullName": {
+      "type": "string"
+    },
+    "governmentId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stateId": {
+      "type": "string"
+    },
+    "authorityId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "departmentIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "organisationIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "qualification": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "age": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "stages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order",
+          "type"
+        ],
+        "properties": {
+          "order": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "PRELIMINARY",
+              "MAIN",
+              "DESCRIPTIVE",
+              "INTERVIEW",
+              "PERSONALITY_TEST",
+              "PHYSICAL",
+              "MEDICAL",
+              "SKILL_TEST",
+              "TYPING_TEST",
+              "DOCUMENT_VERIFICATION",
+              "OTHER"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "mandatory": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "skillTests": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "physicalRequirements": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "medicalRequirements": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "syllabus": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "attemptRules": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "recruitmentFrequency": {
+      "type": "string",
+      "enum": [
+        "ANNUAL",
+        "NEARLY_ANNUAL",
+        "PERIODIC",
+        "IRREGULAR",
+        "RARE",
+        "DEPARTMENT_SPECIFIC",
+        "NOT_VERIFIED"
+      ]
+    },
+    "mainPostIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "recruitmentIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "CURRENT_RECRUITMENT",
+        "RECENTLY_COMPLETED",
+        "HISTORICAL",
+        "DISCONTINUED",
+        "NOT_VERIFIED"
+      ]
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "EASY",
+        "MODERATE",
+        "HARD",
+        "VERY_HARD",
+        "EXTREME",
+        "NOT_VERIFIED"
+      ]
+    },
+    "preparationBurden": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MODERATE",
+        "HIGH",
+        "VERY_HIGH",
+        "EXTREME",
+        "NOT_VERIFIED"
+      ]
+    },
+    "sourceIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "HIGH",
+        "MEDIUM_HIGH",
+        "MEDIUM",
+        "LOW",
+        "ESTIMATE",
+        "NOT_VERIFIED"
+      ]
+    },
+    "lastVerified": {
+      "type": "string",
+      "format": "date"
+    },
+    "dataVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    }
+  }
+}
