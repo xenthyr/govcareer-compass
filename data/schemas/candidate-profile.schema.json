@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "candidate-profile.schema.json",
+  "title": "GovCareer Compass Candidate Profile",
+  "description": "Normalized candidate profile generated from Career Finder responses.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "educationLevel",
+    "preferences"
+  ],
+  "properties": {
+    "educationLevel": {
+      "type": "string",
+      "enum": [
+        "CLASS_8",
+        "CLASS_10",
+        "CLASS_12",
+        "DIPLOMA",
+        "GRADUATE",
+        "POSTGRADUATE",
+        "PROFESSIONAL",
+        "OTHER"
+      ]
+    },
+    "degrees": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "subjects": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "professionalQualifications": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "languages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "mathematics10": {
+      "type": "boolean"
+    },
+    "mathematics12": {
+      "type": "boolean"
+    },
+    "statistics": {
+      "type": "boolean"
+    },
+    "economics": {
+      "type": "boolean"
+    },
+    "commerce": {
+      "type": "boolean"
+    },
+    "bengali": {
+      "type": "boolean"
+    },
+    "hindi": {
+      "type": "boolean"
+    },
+    "computerKnowledge": {
+      "type": "boolean"
+    },
+    "typing": {
+      "type": "boolean"
+    },
+    "shorthand": {
+      "type": "boolean"
+    },
+    "drivingLicence": {
+      "type": "boolean"
+    },
+    "physicalEligibility": {
+      "type": "boolean"
+    },
+    "experience": {
+      "type": "boolean"
+    },
+    "stateId": {
+      "type": "string"
+    },
+    "governmentPreferences": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "careerInterests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "preferences": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "salaryImportance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "authorityImportance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "familyImportance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "parentCareImportance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "locationImportance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "jobSecurityImportance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "lowStressImportance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "lowPhysicalRiskImportance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "careerGrowthImportance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "prestigeImportance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "workLifeImportance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "housingImportance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "lowTransferImportance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "lowNightDutyImportance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        }
+      }
+    }
+  }
+}
