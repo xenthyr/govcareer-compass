@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "state.schema.json",
+  "title": "GovCareer Compass State",
+  "description": "State or Union Territory registry record used for geographic expansion and activation control.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "name",
+    "type",
+    "enabled",
+    "coverage",
+    "lastVerified",
+    "dataVersion"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "name": {
+      "$ref": "shared-localized-name.schema.json"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "STATE",
+        "UNION_TERRITORY",
+        "OTHER"
+      ]
+    },
+    "capital": {
+      "$ref": "shared-localized-name.schema.json"
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "coverage": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "PLANNED",
+        "RESEARCHING",
+        "PARTIAL",
+        "TEMPORARILY_DISABLED"
+      ]
+    },
+    "website": {
+      "type": "string",
+      "format": "uri"
+    },
+    "governmentType": {
+      "type": "string",
+      "enum": [
+        "STATE_GOVERNMENT",
+        "UNION_TERRITORY_ADMINISTRATION",
+        "OTHER"
+      ]
+    },
+    "sourceIds": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "lastVerified": {
+      "type": "string",
+      "format": "date"
+    },
+    "dataVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    }
+  }
+}
