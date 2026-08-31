@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "source.schema.json",
   "title": "GovCareer Compass Source",
-  "description": "Canonical evidence/source record supporting government-career facts.",
+  "description": "Evidence/source record supporting one or more factual claims.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -19,8 +19,7 @@
   ],
   "properties": {
     "id": {
-      "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9-]*$"
+      "$ref": "shared.schema.json#/$defs/id"
     },
     "organisation": {
       "type": "string",
@@ -59,20 +58,16 @@
       ]
     },
     "publicationDate": {
-      "type": "string",
-      "format": "date"
+      "$ref": "shared.schema.json#/$defs/date"
     },
     "verificationDate": {
-      "type": "string",
-      "format": "date"
+      "$ref": "shared.schema.json#/$defs/date"
     },
     "url": {
-      "type": "string",
-      "format": "uri"
+      "$ref": "shared.schema.json#/$defs/url"
     },
     "archiveUrl": {
-      "type": "string",
-      "format": "uri"
+      "$ref": "shared.schema.json#/$defs/url"
     },
     "sourcePriority": {
       "type": "string",
@@ -84,15 +79,7 @@
       ]
     },
     "confidence": {
-      "type": "string",
-      "enum": [
-        "HIGH",
-        "MEDIUM_HIGH",
-        "MEDIUM",
-        "LOW",
-        "ESTIMATE",
-        "NOT_VERIFIED"
-      ]
+      "$ref": "shared.schema.json#/$defs/confidence"
     },
     "currentness": {
       "type": "string",
@@ -107,6 +94,7 @@
     },
     "supportedClaims": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "type": "string",
         "minLength": 1
@@ -117,8 +105,7 @@
       "type": "string"
     },
     "dataVersion": {
-      "type": "string",
-      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+      "$ref": "shared.schema.json#/$defs/version"
     }
   }
 }
