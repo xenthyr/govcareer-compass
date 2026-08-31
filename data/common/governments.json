@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-08-31",
+  "description": "Government-system registry. It distinguishes government type from specific departments and organisations.",
+  "governments": [
+    {
+      "id": "central-government",
+      "name": {
+        "en": "Central Government",
+        "bn": "কেন্দ্রীয় সরকার"
+      },
+      "type": "CENTRAL",
+      "enabled": true,
+      "coverage": "ACTIVE",
+      "description": {
+        "en": "Government of India and its eligible ministries, departments, attached offices and subordinate organisations.",
+        "bn": "ভারত সরকার এবং এর প্রাসঙ্গিক মন্ত্রণালয়, বিভাগ, সংযুক্ত দপ্তর ও অধীনস্থ সংস্থাসমূহ।"
+      }
+    },
+    {
+      "id": "west-bengal-government",
+      "name": {
+        "en": "West Bengal Government",
+        "bn": "পশ্চিমবঙ্গ সরকার"
+      },
+      "type": "STATE",
+      "stateId": "west-bengal",
+      "enabled": true,
+      "coverage": "ACTIVE",
+      "description": {
+        "en": "Government of West Bengal and its eligible departments, directorates, organisations and institutions.",
+        "bn": "পশ্চিমবঙ্গ সরকার এবং এর প্রাসঙ্গিক দপ্তর, অধিদপ্তর, সংস্থা ও প্রতিষ্ঠানসমূহ।"
+      }
+    },
+    {
+      "id": "state-government-generic",
+      "name": {
+        "en": "State Government",
+        "bn": "রাজ্য সরকার"
+      },
+      "type": "STATE",
+      "enabled": false,
+      "coverage": "PLANNED",
+      "description": {
+        "en": "Generic state-government classification used for future state expansion.",
+        "bn": "ভবিষ্যৎ রাজ্য সম্প্রসারণের জন্য সাধারণ রাজ্য-সরকার শ্রেণিবিন্যাস।"
+      }
+    },
+    {
+      "id": "local-government",
+      "name": {
+        "en": "Local Government",
+        "bn": "স্থানীয় সরকার"
+      },
+      "type": "LOCAL",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "public-sector-undertaking",
+      "name": {
+        "en": "Public Sector Undertaking",
+        "bn": "রাষ্ট্রায়ত্ত সংস্থা"
+      },
+      "type": "PSU",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "statutory-body",
+      "name": {
+        "en": "Statutory Body",
+        "bn": "আইন দ্বারা প্রতিষ্ঠিত সংস্থা"
+      },
+      "type": "STATUTORY_BODY",
+      "enabled": false,
+      "coverage": "PLANNED"
+    },
+    {
+      "id": "autonomous-body",
+      "name": {
+        "en": "Autonomous Body",
+        "bn": "স্বশাসিত সংস্থা"
+      },
+      "type": "AUTONOMOUS_BODY",
+      "enabled": false,
+      "coverage": "PLANNED"
+    }
+  ]
+}
