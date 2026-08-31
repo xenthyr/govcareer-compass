@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "organisation.schema.json",
+  "title": "GovCareer Compass Organisation",
+  "description": "Government commission, board, force, directorate, authority, attached office or other institutional organisation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "governmentId",
+    "name",
+    "type",
+    "status",
+    "confidence",
+    "lastVerified",
+    "dataVersion"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "governmentId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stateId": {
+      "type": "string"
+    },
+    "departmentId": {
+      "type": "string"
+    },
+    "name": {
+      "$ref": "shared-localized-name.schema.json"
+    },
+    "shortName": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "COMMISSION",
+        "BOARD",
+        "DIRECTORATE",
+        "POLICE_ORGANISATION",
+        "POLICE_FORCE",
+        "CENTRAL_ARMED_FORCE",
+        "RAILWAY_ORGANISATION",
+        "AUTHORITY",
+        "ATTACHED_OFFICE",
+        "SUBORDINATE_OFFICE",
+        "STATUTORY_BODY",
+        "AUTONOMOUS_BODY",
+        "PUBLIC_BODY",
+        "OTHER"
+      ]
+    },
+    "description": {
+      "type": "string"
+    },
+    "website": {
+      "type": "string",
+      "format": "uri"
+    },
+    "departmentIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "sourceIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "HISTORICAL",
+        "REPLACED",
+        "ABOLISHED",
+        "NOT_VERIFIED"
+      ]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "HIGH",
+        "MEDIUM_HIGH",
+        "MEDIUM",
+        "LOW",
+        "ESTIMATE",
+        "NOT_VERIFIED"
+      ]
+    },
+    "lastVerified": {
+      "type": "string",
+      "format": "date"
+    },
+    "dataVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    }
+  }
+}
