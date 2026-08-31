@@ -1,0 +1,2152 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-08-31",
+  "schema": "../schemas/assessment-option.schema.json",
+  "description": "Reusable option-set catalogue for the Career Finder. Option IDs are stable identifiers. Government, state, qualification and category identifiers should correspond to the canonical common-data registries.",
+  "optionSets": [
+    {
+      "id": "assessment_goal",
+      "label": {
+        "en": "Assessment Goal",
+        "bn": "মূল উদ্দেশ্য"
+      },
+      "options": [
+        {
+          "id": "find_best_career",
+          "label": {
+            "en": "Find the government career that best fits me",
+            "bn": "আমার সঙ্গে সবচেয়ে মানানসই সরকারি ক্যারিয়ার খুঁজতে চাই"
+          },
+          "value": "FIND_BEST_CAREER"
+        },
+        {
+          "id": "compare_careers",
+          "label": {
+            "en": "Compare government careers",
+            "bn": "সরকারি ক্যারিয়ারগুলির তুলনা করতে চাই"
+          },
+          "value": "COMPARE_CAREERS"
+        },
+        {
+          "id": "check_eligibility",
+          "label": {
+            "en": "Check where I am eligible",
+            "bn": "কোন চাকরিতে আমি যোগ্য তা জানতে চাই"
+          },
+          "value": "CHECK_ELIGIBILITY"
+        },
+        {
+          "id": "explore_salary",
+          "label": {
+            "en": "Explore salary and benefits",
+            "bn": "বেতন ও সুবিধা জানতে চাই"
+          },
+          "value": "EXPLORE_SALARY"
+        },
+        {
+          "id": "explore_family_fit",
+          "label": {
+            "en": "Find careers compatible with family life",
+            "bn": "পরিবারের সঙ্গে মানানসই ক্যারিয়ার খুঁজতে চাই"
+          },
+          "value": "EXPLORE_FAMILY_FIT"
+        }
+      ]
+    },
+    {
+      "id": "education_level",
+      "label": {
+        "en": "Highest Education Level",
+        "bn": "সর্বোচ্চ শিক্ষাগত স্তর"
+      },
+      "options": [
+        {
+          "id": "class_8",
+          "label": {
+            "en": "Class 8",
+            "bn": "অষ্টম শ্রেণি"
+          },
+          "value": "CLASS_8"
+        },
+        {
+          "id": "class_10",
+          "label": {
+            "en": "Class 10 / Secondary",
+            "bn": "দশম শ্রেণি / মাধ্যমিক"
+          },
+          "value": "CLASS_10"
+        },
+        {
+          "id": "class_12",
+          "label": {
+            "en": "Class 12 / Higher Secondary",
+            "bn": "দ্বাদশ শ্রেণি / উচ্চমাধ্যমিক"
+          },
+          "value": "CLASS_12"
+        },
+        {
+          "id": "iti",
+          "label": {
+            "en": "Industrial Training Institute (ITI)",
+            "bn": "ইন্ডাস্ট্রিয়াল ট্রেনিং ইনস্টিটিউট (ITI)"
+          },
+          "value": "ITI"
+        },
+        {
+          "id": "diploma",
+          "label": {
+            "en": "Diploma",
+            "bn": "ডিপ্লোমা"
+          },
+          "value": "DIPLOMA"
+        },
+        {
+          "id": "graduate",
+          "label": {
+            "en": "Graduate",
+            "bn": "স্নাতক"
+          },
+          "value": "GRADUATE"
+        },
+        {
+          "id": "postgraduate",
+          "label": {
+            "en": "Postgraduate",
+            "bn": "স্নাতকোত্তর"
+          },
+          "value": "POSTGRADUATE"
+        },
+        {
+          "id": "doctorate",
+          "label": {
+            "en": "Doctorate",
+            "bn": "ডক্টরেট"
+          },
+          "value": "DOCTORATE"
+        }
+      ]
+    },
+    {
+      "id": "academic_qualification_type",
+      "label": {
+        "en": "Main Academic Qualification",
+        "bn": "প্রধান শিক্ষাগত যোগ্যতা"
+      },
+      "options": [
+        {
+          "id": "secondary",
+          "label": {
+            "en": "Secondary / Class 10",
+            "bn": "মাধ্যমিক / দশম শ্রেণি"
+          },
+          "value": "SECONDARY"
+        },
+        {
+          "id": "higher_secondary",
+          "label": {
+            "en": "Higher Secondary / Class 12",
+            "bn": "উচ্চমাধ্যমিক / দ্বাদশ শ্রেণি"
+          },
+          "value": "HIGHER_SECONDARY"
+        },
+        {
+          "id": "ba",
+          "label": {
+            "en": "Bachelor of Arts",
+            "bn": "ব্যাচেলর অফ আর্টস"
+          },
+          "value": "BA"
+        },
+        {
+          "id": "bsc",
+          "label": {
+            "en": "Bachelor of Science",
+            "bn": "ব্যাচেলর অফ সায়েন্স"
+          },
+          "value": "BSC"
+        },
+        {
+          "id": "bcom",
+          "label": {
+            "en": "Bachelor of Commerce",
+            "bn": "ব্যাচেলর অফ কমার্স"
+          },
+          "value": "BCOM"
+        },
+        {
+          "id": "bba",
+          "label": {
+            "en": "Bachelor of Business Administration",
+            "bn": "ব্যাচেলর অফ বিজনেস অ্যাডমিনিস্ট্রেশন"
+          },
+          "value": "BBA"
+        },
+        {
+          "id": "bca",
+          "label": {
+            "en": "Bachelor of Computer Applications",
+            "bn": "ব্যাচেলর অফ কম্পিউটার অ্যাপ্লিকেশনস"
+          },
+          "value": "BCA"
+        },
+        {
+          "id": "btech",
+          "label": {
+            "en": "Bachelor of Technology",
+            "bn": "ব্যাচেলর অফ টেকনোলজি"
+          },
+          "value": "BTECH"
+        },
+        {
+          "id": "be",
+          "label": {
+            "en": "Bachelor of Engineering",
+            "bn": "ব্যাচেলর অফ ইঞ্জিনিয়ারিং"
+          },
+          "value": "BE"
+        },
+        {
+          "id": "llb",
+          "label": {
+            "en": "Bachelor of Laws",
+            "bn": "ব্যাচেলর অফ লজ"
+          },
+          "value": "LLB"
+        },
+        {
+          "id": "ba_hons",
+          "label": {
+            "en": "Bachelor of Arts with Honours",
+            "bn": "ব্যাচেলর অফ আর্টস অনার্স"
+          },
+          "value": "BA_HONS"
+        },
+        {
+          "id": "ma",
+          "label": {
+            "en": "Master of Arts",
+            "bn": "মাস্টার অফ আর্টস"
+          },
+          "value": "MA"
+        },
+        {
+          "id": "msc",
+          "label": {
+            "en": "Master of Science",
+            "bn": "মাস্টার অফ সায়েন্স"
+          },
+          "value": "MSC"
+        },
+        {
+          "id": "mcom",
+          "label": {
+            "en": "Master of Commerce",
+            "bn": "মাস্টার অফ কমার্স"
+          },
+          "value": "MCOM"
+        },
+        {
+          "id": "mba",
+          "label": {
+            "en": "Master of Business Administration",
+            "bn": "মাস্টার অফ বিজনেস অ্যাডমিনিস্ট্রেশন"
+          },
+          "value": "MBA"
+        },
+        {
+          "id": "mca",
+          "label": {
+            "en": "Master of Computer Applications",
+            "bn": "মাস্টার অফ কম্পিউটার অ্যাপ্লিকেশনস"
+          },
+          "value": "MCA"
+        }
+      ]
+    },
+    {
+      "id": "academic_subjects",
+      "label": {
+        "en": "Academic Subjects",
+        "bn": "শিক্ষাগত বিষয়"
+      },
+      "options": [
+        {
+          "id": "english",
+          "label": {
+            "en": "English",
+            "bn": "ইংরেজি"
+          },
+          "value": "ENGLISH"
+        },
+        {
+          "id": "bengali",
+          "label": {
+            "en": "Bengali",
+            "bn": "বাংলা"
+          },
+          "value": "BENGALI"
+        },
+        {
+          "id": "hindi",
+          "label": {
+            "en": "Hindi",
+            "bn": "হিন্দি"
+          },
+          "value": "HINDI"
+        },
+        {
+          "id": "history",
+          "label": {
+            "en": "History",
+            "bn": "ইতিহাস"
+          },
+          "value": "HISTORY"
+        },
+        {
+          "id": "geography",
+          "label": {
+            "en": "Geography",
+            "bn": "ভূগোল"
+          },
+          "value": "GEOGRAPHY"
+        },
+        {
+          "id": "political_science",
+          "label": {
+            "en": "Political Science",
+            "bn": "রাষ্ট্রবিজ্ঞান"
+          },
+          "value": "POLITICAL_SCIENCE"
+        },
+        {
+          "id": "economics",
+          "label": {
+            "en": "Economics",
+            "bn": "অর্থনীতি"
+          },
+          "value": "ECONOMICS"
+        },
+        {
+          "id": "mathematics",
+          "label": {
+            "en": "Mathematics",
+            "bn": "গণিত"
+          },
+          "value": "MATHEMATICS"
+        },
+        {
+          "id": "statistics",
+          "label": {
+            "en": "Statistics",
+            "bn": "পরিসংখ্যান"
+          },
+          "value": "STATISTICS"
+        },
+        {
+          "id": "commerce",
+          "label": {
+            "en": "Commerce",
+            "bn": "বাণিজ্য"
+          },
+          "value": "COMMERCE"
+        },
+        {
+          "id": "accounting",
+          "label": {
+            "en": "Accounting",
+            "bn": "হিসাববিজ্ঞান"
+          },
+          "value": "ACCOUNTING"
+        },
+        {
+          "id": "physics",
+          "label": {
+            "en": "Physics",
+            "bn": "পদার্থবিদ্যা"
+          },
+          "value": "PHYSICS"
+        },
+        {
+          "id": "chemistry",
+          "label": {
+            "en": "Chemistry",
+            "bn": "রসায়ন"
+          },
+          "value": "CHEMISTRY"
+        },
+        {
+          "id": "biology",
+          "label": {
+            "en": "Biology",
+            "bn": "জীববিজ্ঞান"
+          },
+          "value": "BIOLOGY"
+        },
+        {
+          "id": "computer_science",
+          "label": {
+            "en": "Computer Science",
+            "bn": "কম্পিউটার সায়েন্স"
+          },
+          "value": "COMPUTER_SCIENCE"
+        },
+        {
+          "id": "information_technology",
+          "label": {
+            "en": "Information Technology",
+            "bn": "তথ্যপ্রযুক্তি"
+          },
+          "value": "INFORMATION_TECHNOLOGY"
+        },
+        {
+          "id": "psychology",
+          "label": {
+            "en": "Psychology",
+            "bn": "মনোবিজ্ঞান"
+          },
+          "value": "PSYCHOLOGY"
+        },
+        {
+          "id": "education",
+          "label": {
+            "en": "Education",
+            "bn": "শিক্ষাবিজ্ঞান"
+          },
+          "value": "EDUCATION"
+        },
+        {
+          "id": "library_science",
+          "label": {
+            "en": "Library Science",
+            "bn": "গ্রন্থাগার বিজ্ঞান"
+          },
+          "value": "LIBRARY_SCIENCE"
+        },
+        {
+          "id": "agriculture",
+          "label": {
+            "en": "Agriculture",
+            "bn": "কৃষি"
+          },
+          "value": "AGRICULTURE"
+        }
+      ]
+    },
+    {
+      "id": "yes_no_prefer_not",
+      "label": {
+        "en": "Yes / No",
+        "bn": "হ্যাঁ / না"
+      },
+      "options": [
+        {
+          "id": "yes",
+          "label": {
+            "en": "Yes",
+            "bn": "হ্যাঁ"
+          },
+          "value": true
+        },
+        {
+          "id": "no",
+          "label": {
+            "en": "No",
+            "bn": "না"
+          },
+          "value": false
+        },
+        {
+          "id": "prefer_not",
+          "label": {
+            "en": "Prefer not to say",
+            "bn": "উত্তর দিতে চাই না"
+          },
+          "value": "PREFER_NOT_TO_SAY"
+        }
+      ]
+    },
+    {
+      "id": "additional_qualification_categories",
+      "label": {
+        "en": "Additional Qualification Categories",
+        "bn": "অতিরিক্ত যোগ্যতার শ্রেণি"
+      },
+      "options": [
+        {
+          "id": "teacher_education",
+          "label": {
+            "en": "Teacher Education",
+            "bn": "শিক্ষক-প্রশিক্ষণ"
+          },
+          "value": "TEACHER_EDUCATION"
+        },
+        {
+          "id": "technical",
+          "label": {
+            "en": "Technical / ITI",
+            "bn": "কারিগরি / ITI"
+          },
+          "value": "TECHNICAL"
+        },
+        {
+          "id": "computer_it",
+          "label": {
+            "en": "Computer / Information Technology",
+            "bn": "কম্পিউটার / তথ্যপ্রযুক্তি"
+          },
+          "value": "COMPUTER_IT"
+        },
+        {
+          "id": "engineering",
+          "label": {
+            "en": "Engineering",
+            "bn": "ইঞ্জিনিয়ারিং"
+          },
+          "value": "ENGINEERING"
+        },
+        {
+          "id": "law",
+          "label": {
+            "en": "Law",
+            "bn": "আইন"
+          },
+          "value": "LAW"
+        },
+        {
+          "id": "medical",
+          "label": {
+            "en": "Medical",
+            "bn": "চিকিৎসা"
+          },
+          "value": "MEDICAL"
+        },
+        {
+          "id": "nursing",
+          "label": {
+            "en": "Nursing",
+            "bn": "নার্সিং"
+          },
+          "value": "NURSING"
+        },
+        {
+          "id": "pharmacy",
+          "label": {
+            "en": "Pharmacy",
+            "bn": "ফার্মেসি"
+          },
+          "value": "PHARMACY"
+        },
+        {
+          "id": "agriculture",
+          "label": {
+            "en": "Agriculture",
+            "bn": "কৃষি"
+          },
+          "value": "AGRICULTURE"
+        },
+        {
+          "id": "paramedical",
+          "label": {
+            "en": "Paramedical",
+            "bn": "প্যারামেডিক্যাল"
+          },
+          "value": "PARAMEDICAL"
+        },
+        {
+          "id": "licence",
+          "label": {
+            "en": "Licence",
+            "bn": "লাইসেন্স"
+          },
+          "value": "LICENCE"
+        },
+        {
+          "id": "registration",
+          "label": {
+            "en": "Professional Registration",
+            "bn": "পেশাগত রেজিস্ট্রেশন"
+          },
+          "value": "REGISTRATION"
+        },
+        {
+          "id": "other",
+          "label": {
+            "en": "Other Specialist Qualification",
+            "bn": "অন্যান্য বিশেষায়িত যোগ্যতা"
+          },
+          "value": "OTHER"
+        },
+        {
+          "id": "none",
+          "label": {
+            "en": "None",
+            "bn": "কোনওটি নয়"
+          },
+          "value": "NONE"
+        }
+      ]
+    },
+    {
+      "id": "teacher_education_qualifications",
+      "label": {
+        "en": "Teacher Education Qualifications",
+        "bn": "শিক্ষক-প্রশিক্ষণ যোগ্যতা"
+      },
+      "source": "data/common/qualifications.json",
+      "options": [
+        {
+          "id": "B_ED",
+          "label": {
+            "en": "Bachelor of Education",
+            "bn": "ব্যাচেলর অফ এডুকেশন"
+          },
+          "value": "B_ED"
+        },
+        {
+          "id": "D_EL_ED",
+          "label": {
+            "en": "Diploma in Elementary Education",
+            "bn": "ডিপ্লোমা ইন এলিমেন্টারি এডুকেশন"
+          },
+          "value": "D_EL_ED"
+        },
+        {
+          "id": "B_EL_ED",
+          "label": {
+            "en": "Bachelor of Elementary Education",
+            "bn": "ব্যাচেলর অফ এলিমেন্টারি এডুকেশন"
+          },
+          "value": "B_EL_ED"
+        },
+        {
+          "id": "M_ED",
+          "label": {
+            "en": "Master of Education",
+            "bn": "মাস্টার অফ এডুকেশন"
+          },
+          "value": "M_ED"
+        },
+        {
+          "id": "SPECIAL_EDUCATION_DIPLOMA",
+          "label": {
+            "en": "Diploma in Special Education",
+            "bn": "স্পেশাল এডুকেশনে ডিপ্লোমা"
+          },
+          "value": "SPECIAL_EDUCATION_DIPLOMA"
+        },
+        {
+          "id": "SPECIAL_EDUCATION_DEGREE",
+          "label": {
+            "en": "Degree in Special Education",
+            "bn": "স্পেশাল এডুকেশনে ডিগ্রি"
+          },
+          "value": "SPECIAL_EDUCATION_DEGREE"
+        },
+        {
+          "id": "INTEGRATED_TEACHER_EDUCATION",
+          "label": {
+            "en": "Integrated Teacher Education Qualification",
+            "bn": "ইন্টিগ্রেটেড শিক্ষক-শিক্ষা যোগ্যতা"
+          },
+          "value": "INTEGRATED_TEACHER_EDUCATION"
+        }
+      ]
+    },
+    {
+      "id": "technical_qualifications",
+      "label": {
+        "en": "Technical Qualifications",
+        "bn": "কারিগরি যোগ্যতা"
+      },
+      "options": [
+        {
+          "id": "ITI",
+          "label": {
+            "en": "Industrial Training Institute Qualification",
+            "bn": "ইন্ডাস্ট্রিয়াল ট্রেনিং ইনস্টিটিউট যোগ্যতা"
+          },
+          "value": "ITI"
+        },
+        {
+          "id": "TECHNICAL_DIPLOMA",
+          "label": {
+            "en": "Technical Diploma",
+            "bn": "কারিগরি ডিপ্লোমা"
+          },
+          "value": "TECHNICAL_DIPLOMA"
+        },
+        {
+          "id": "ENGINEERING_DIPLOMA",
+          "label": {
+            "en": "Engineering Diploma",
+            "bn": "ইঞ্জিনিয়ারিং ডিপ্লোমা"
+          },
+          "value": "ENGINEERING_DIPLOMA"
+        }
+      ]
+    },
+    {
+      "id": "iti_trades",
+      "label": {
+        "en": "Industrial Training Institute Trades",
+        "bn": "ইন্ডাস্ট্রিয়াল ট্রেনিং ইনস্টিটিউট ট্রেড"
+      },
+      "source": "data/common/qualifications.json",
+      "options": [
+        {
+          "id": "ITI_ELECTRICIAN",
+          "label": {
+            "en": "Electrician",
+            "bn": "ইলেকট্রিশিয়ান"
+          },
+          "value": "ITI_ELECTRICIAN"
+        },
+        {
+          "id": "ITI_FITTER",
+          "label": {
+            "en": "Fitter",
+            "bn": "ফিটার"
+          },
+          "value": "ITI_FITTER"
+        },
+        {
+          "id": "ITI_WIREMAN",
+          "label": {
+            "en": "Wireman",
+            "bn": "ওয়্যারম্যান"
+          },
+          "value": "ITI_WIREMAN"
+        },
+        {
+          "id": "ITI_ELECTRONICS_MECHANIC",
+          "label": {
+            "en": "Electronics Mechanic",
+            "bn": "ইলেকট্রনিক্স মেকানিক"
+          },
+          "value": "ITI_ELECTRONICS_MECHANIC"
+        },
+        {
+          "id": "ITI_INSTRUMENT_MECHANIC",
+          "label": {
+            "en": "Instrument Mechanic",
+            "bn": "ইন্সট্রুমেন্ট মেকানিক"
+          },
+          "value": "ITI_INSTRUMENT_MECHANIC"
+        },
+        {
+          "id": "ITI_MACHINIST",
+          "label": {
+            "en": "Machinist",
+            "bn": "মেশিনিস্ট"
+          },
+          "value": "ITI_MACHINIST"
+        },
+        {
+          "id": "ITI_TURNER",
+          "label": {
+            "en": "Turner",
+            "bn": "টার্নার"
+          },
+          "value": "ITI_TURNER"
+        },
+        {
+          "id": "ITI_DIESEL_MECHANIC",
+          "label": {
+            "en": "Diesel Mechanic",
+            "bn": "ডিজেল মেকানিক"
+          },
+          "value": "ITI_DIESEL_MECHANIC"
+        },
+        {
+          "id": "ITI_MOTOR_VEHICLE_MECHANIC",
+          "label": {
+            "en": "Mechanic Motor Vehicle",
+            "bn": "মেকানিক মোটর ভেহিকেল"
+          },
+          "value": "ITI_MOTOR_VEHICLE_MECHANIC"
+        },
+        {
+          "id": "ITI_COPPA",
+          "label": {
+            "en": "Computer Operator and Programming Assistant",
+            "bn": "কম্পিউটার অপারেটর এবং প্রোগ্রামিং অ্যাসিস্ট্যান্ট"
+          },
+          "value": "ITI_COPPA"
+        },
+        {
+          "id": "ITI_DRAUGHTSMAN_CIVIL",
+          "label": {
+            "en": "Draughtsman (Civil)",
+            "bn": "ড্রাফটসম্যান (সিভিল)"
+          },
+          "value": "ITI_DRAUGHTSMAN_CIVIL"
+        },
+        {
+          "id": "ITI_DRAUGHTSMAN_MECHANICAL",
+          "label": {
+            "en": "Draughtsman (Mechanical)",
+            "bn": "ড্রাফটসম্যান (মেকানিক্যাল)"
+          },
+          "value": "ITI_DRAUGHTSMAN_MECHANICAL"
+        },
+        {
+          "id": "ITI_WELDER",
+          "label": {
+            "en": "Welder",
+            "bn": "ওয়েল্ডার"
+          },
+          "value": "ITI_WELDER"
+        },
+        {
+          "id": "ITI_CARPENTER",
+          "label": {
+            "en": "Carpenter",
+            "bn": "কার্পেন্টার"
+          },
+          "value": "ITI_CARPENTER"
+        },
+        {
+          "id": "ITI_PLUMBER",
+          "label": {
+            "en": "Plumber",
+            "bn": "প্লাম্বার"
+          },
+          "value": "ITI_PLUMBER"
+        },
+        {
+          "id": "ITI_PAINTER",
+          "label": {
+            "en": "Painter",
+            "bn": "পেইন্টার"
+          },
+          "value": "ITI_PAINTER"
+        },
+        {
+          "id": "ITI_MASON",
+          "label": {
+            "en": "Mason",
+            "bn": "মেসন"
+          },
+          "value": "ITI_MASON"
+        },
+        {
+          "id": "ITI_REFRIGERATION_AIR_CONDITIONING",
+          "label": {
+            "en": "Refrigeration and Air Conditioning Mechanic",
+            "bn": "রেফ্রিজারেশন ও এয়ার কন্ডিশনিং মেকানিক"
+          },
+          "value": "ITI_REFRIGERATION_AIR_CONDITIONING"
+        },
+        {
+          "id": "ITI_OTHER_RECOGNISED_TRADE",
+          "label": {
+            "en": "Other Recognised ITI Trade",
+            "bn": "অন্যান্য স্বীকৃত ITI ট্রেড"
+          },
+          "value": "ITI_OTHER_RECOGNISED_TRADE"
+        }
+      ]
+    },
+    {
+      "id": "computer_qualifications",
+      "label": {
+        "en": "Computer / Information Technology Qualifications",
+        "bn": "কম্পিউটার / তথ্যপ্রযুক্তি যোগ্যতা"
+      },
+      "source": "data/common/qualifications.json",
+      "options": [
+        {
+          "id": "PGDCA",
+          "label": {
+            "en": "Post Graduate Diploma in Computer Applications",
+            "bn": "পোস্ট গ্র্যাজুয়েট ডিপ্লোমা ইন কম্পিউটার অ্যাপ্লিকেশনস"
+          },
+          "value": "PGDCA"
+        },
+        {
+          "id": "NIELIT_O_LEVEL",
+          "label": {
+            "en": "NIELIT O Level",
+            "bn": "NIELIT O লেভেল"
+          },
+          "value": "NIELIT_O_LEVEL"
+        },
+        {
+          "id": "NIELIT_A_LEVEL",
+          "label": {
+            "en": "NIELIT A Level",
+            "bn": "NIELIT A লেভেল"
+          },
+          "value": "NIELIT_A_LEVEL"
+        },
+        {
+          "id": "COMPUTER_CERTIFICATION",
+          "label": {
+            "en": "Recognised Computer Certification",
+            "bn": "স্বীকৃত কম্পিউটার সার্টিফিকেশন"
+          },
+          "value": "COMPUTER_CERTIFICATION"
+        }
+      ]
+    },
+    {
+      "id": "law_qualifications",
+      "label": {
+        "en": "Law Qualifications",
+        "bn": "আইন-সংক্রান্ত যোগ্যতা"
+      },
+      "source": "data/common/qualifications.json",
+      "options": [
+        {
+          "id": "LLB",
+          "label": {
+            "en": "Bachelor of Laws",
+            "bn": "ব্যাচেলর অফ লজ"
+          },
+          "value": "LLB"
+        },
+        {
+          "id": "LLM",
+          "label": {
+            "en": "Master of Laws",
+            "bn": "মাস্টার অফ লজ"
+          },
+          "value": "LLM"
+        }
+      ]
+    },
+    {
+      "id": "medical_qualifications",
+      "label": {
+        "en": "Medical Qualifications",
+        "bn": "চিকিৎসা-সংক্রান্ত যোগ্যতা"
+      },
+      "source": "data/common/qualifications.json",
+      "options": [
+        {
+          "id": "MBBS",
+          "label": {
+            "en": "Bachelor of Medicine, Bachelor of Surgery",
+            "bn": "ব্যাচেলর অফ মেডিসিন, ব্যাচেলর অফ সার্জারি"
+          },
+          "value": "MBBS"
+        },
+        {
+          "id": "BDS",
+          "label": {
+            "en": "Bachelor of Dental Surgery",
+            "bn": "ব্যাচেলর অফ ডেন্টাল সার্জারি"
+          },
+          "value": "BDS"
+        },
+        {
+          "id": "BAMS",
+          "label": {
+            "en": "Bachelor of Ayurvedic Medicine and Surgery",
+            "bn": "ব্যাচেলর অফ আয়ুর্বেদিক মেডিসিন অ্যান্ড সার্জারি"
+          },
+          "value": "BAMS"
+        },
+        {
+          "id": "BHMS",
+          "label": {
+            "en": "Bachelor of Homeopathic Medicine and Surgery",
+            "bn": "ব্যাচেলর অফ হোমিওপ্যাথিক মেডিসিন অ্যান্ড সার্জারি"
+          },
+          "value": "BHMS"
+        },
+        {
+          "id": "BUMS",
+          "label": {
+            "en": "Bachelor of Unani Medicine and Surgery",
+            "bn": "ব্যাচেলর অফ ইউনানি মেডিসিন অ্যান্ড সার্জারি"
+          },
+          "value": "BUMS"
+        }
+      ]
+    },
+    {
+      "id": "nursing_qualifications",
+      "label": {
+        "en": "Nursing Qualifications",
+        "bn": "নার্সিং যোগ্যতা"
+      },
+      "source": "data/common/qualifications.json",
+      "options": [
+        {
+          "id": "ANM",
+          "label": {
+            "en": "Auxiliary Nurse Midwife",
+            "bn": "অক্সিলিয়ারি নার্স মিডওয়াইফ"
+          },
+          "value": "ANM"
+        },
+        {
+          "id": "GNM",
+          "label": {
+            "en": "General Nursing and Midwifery",
+            "bn": "জেনারেল নার্সিং অ্যান্ড মিডওয়াইফারি"
+          },
+          "value": "GNM"
+        },
+        {
+          "id": "BSC_NURSING",
+          "label": {
+            "en": "Bachelor of Science in Nursing",
+            "bn": "ব্যাচেলর অফ সায়েন্স ইন নার্সিং"
+          },
+          "value": "BSC_NURSING"
+        },
+        {
+          "id": "POST_BASIC_BSC_NURSING",
+          "label": {
+            "en": "Post Basic Bachelor of Science in Nursing",
+            "bn": "পোস্ট বেসিক ব্যাচেলর অফ সায়েন্স ইন নার্সিং"
+          },
+          "value": "POST_BASIC_BSC_NURSING"
+        },
+        {
+          "id": "MSC_NURSING",
+          "label": {
+            "en": "Master of Science in Nursing",
+            "bn": "মাস্টার অফ সায়েন্স ইন নার্সিং"
+          },
+          "value": "MSC_NURSING"
+        }
+      ]
+    },
+    {
+      "id": "pharmacy_qualifications",
+      "label": {
+        "en": "Pharmacy Qualifications",
+        "bn": "ফার্মেসি যোগ্যতা"
+      },
+      "source": "data/common/qualifications.json",
+      "options": [
+        {
+          "id": "D_PHARM",
+          "label": {
+            "en": "Diploma in Pharmacy",
+            "bn": "ডিপ্লোমা ইন ফার্মেসি"
+          },
+          "value": "D_PHARM"
+        },
+        {
+          "id": "B_PHARM",
+          "label": {
+            "en": "Bachelor of Pharmacy",
+            "bn": "ব্যাচেলর অফ ফার্মেসি"
+          },
+          "value": "B_PHARM"
+        },
+        {
+          "id": "M_PHARM",
+          "label": {
+            "en": "Master of Pharmacy",
+            "bn": "মাস্টার অফ ফার্মেসি"
+          },
+          "value": "M_PHARM"
+        },
+        {
+          "id": "PHARM_D",
+          "label": {
+            "en": "Doctor of Pharmacy",
+            "bn": "ডক্টর অফ ফার্মেসি"
+          },
+          "value": "PHARM_D"
+        }
+      ]
+    },
+    {
+      "id": "engineering_qualifications",
+      "label": {
+        "en": "Engineering Qualifications",
+        "bn": "ইঞ্জিনিয়ারিং যোগ্যতা"
+      },
+      "source": "data/common/qualifications.json",
+      "options": [
+        {
+          "id": "ENGINEERING_DIPLOMA",
+          "label": {
+            "en": "Engineering Diploma",
+            "bn": "ইঞ্জিনিয়ারিং ডিপ্লোমা"
+          },
+          "value": "ENGINEERING_DIPLOMA"
+        },
+        {
+          "id": "BTECH_ENGINEERING",
+          "label": {
+            "en": "Bachelor of Technology / Engineering",
+            "bn": "ব্যাচেলর অফ টেকনোলজি / ইঞ্জিনিয়ারিং"
+          },
+          "value": "BTECH_ENGINEERING"
+        },
+        {
+          "id": "MTECH_ENGINEERING",
+          "label": {
+            "en": "Master of Technology / Engineering",
+            "bn": "মাস্টার অফ টেকনোলজি / ইঞ্জিনিয়ারিং"
+          },
+          "value": "MTECH_ENGINEERING"
+        }
+      ]
+    },
+    {
+      "id": "professional_registration_types",
+      "label": {
+        "en": "Professional Registration or Licence",
+        "bn": "পেশাগত রেজিস্ট্রেশন বা লাইসেন্স"
+      },
+      "options": [
+        {
+          "id": "PROFESSIONAL_REGISTRATION",
+          "label": {
+            "en": "Professional registration",
+            "bn": "পেশাগত রেজিস্ট্রেশন"
+          },
+          "value": "PROFESSIONAL_REGISTRATION"
+        },
+        {
+          "id": "PROFESSIONAL_LICENCE",
+          "label": {
+            "en": "Professional licence",
+            "bn": "পেশাগত লাইসেন্স"
+          },
+          "value": "PROFESSIONAL_LICENCE"
+        },
+        {
+          "id": "NONE",
+          "label": {
+            "en": "None",
+            "bn": "কোনওটি নয়"
+          },
+          "value": "NONE"
+        }
+      ]
+    },
+    {
+      "id": "typing_skill_level",
+      "label": {
+        "en": "Typing Skill Level",
+        "bn": "টাইপিং দক্ষতার স্তর"
+      },
+      "options": [
+        {
+          "id": "none",
+          "label": {
+            "en": "No formal typing skill",
+            "bn": "কোনও আনুষ্ঠানিক টাইপিং দক্ষতা নেই"
+          },
+          "value": "NONE"
+        },
+        {
+          "id": "basic",
+          "label": {
+            "en": "Basic",
+            "bn": "মৌলিক"
+          },
+          "value": "BASIC"
+        },
+        {
+          "id": "intermediate",
+          "label": {
+            "en": "Intermediate",
+            "bn": "মাঝারি"
+          },
+          "value": "INTERMEDIATE"
+        },
+        {
+          "id": "advanced",
+          "label": {
+            "en": "Advanced",
+            "bn": "উন্নত"
+          },
+          "value": "ADVANCED"
+        },
+        {
+          "id": "verified_speed",
+          "label": {
+            "en": "Verified qualifying speed",
+            "bn": "যাচাইকৃত যোগ্যতামূলক গতি"
+          },
+          "value": "VERIFIED_QUALIFYING_SPEED"
+        }
+      ]
+    },
+    {
+      "id": "shorthand_skill_level",
+      "label": {
+        "en": "Shorthand Skill Level",
+        "bn": "শর্টহ্যান্ড দক্ষতার স্তর"
+      },
+      "options": [
+        {
+          "id": "none",
+          "label": {
+            "en": "None",
+            "bn": "নেই"
+          },
+          "value": "NONE"
+        },
+        {
+          "id": "basic",
+          "label": {
+            "en": "Basic",
+            "bn": "মৌলিক"
+          },
+          "value": "BASIC"
+        },
+        {
+          "id": "intermediate",
+          "label": {
+            "en": "Intermediate",
+            "bn": "মাঝারি"
+          },
+          "value": "INTERMEDIATE"
+        },
+        {
+          "id": "advanced",
+          "label": {
+            "en": "Advanced",
+            "bn": "উন্নত"
+          },
+          "value": "ADVANCED"
+        },
+        {
+          "id": "verified_speed",
+          "label": {
+            "en": "Verified qualifying speed",
+            "bn": "যাচাইকৃত যোগ্যতামূলক গতি"
+          },
+          "value": "VERIFIED_QUALIFYING_SPEED"
+        }
+      ]
+    },
+    {
+      "id": "computer_skill_level",
+      "label": {
+        "en": "Computer Skill Level",
+        "bn": "কম্পিউটার দক্ষতার স্তর"
+      },
+      "options": [
+        {
+          "id": "none",
+          "label": {
+            "en": "Very limited",
+            "bn": "খুব সীমিত"
+          },
+          "value": "NONE"
+        },
+        {
+          "id": "basic",
+          "label": {
+            "en": "Basic",
+            "bn": "মৌলিক"
+          },
+          "value": "BASIC"
+        },
+        {
+          "id": "intermediate",
+          "label": {
+            "en": "Intermediate",
+            "bn": "মাঝারি"
+          },
+          "value": "INTERMEDIATE"
+        },
+        {
+          "id": "advanced",
+          "label": {
+            "en": "Advanced",
+            "bn": "উন্নত"
+          },
+          "value": "ADVANCED"
+        }
+      ]
+    },
+    {
+      "id": "language_proficiency",
+      "label": {
+        "en": "Language Proficiency",
+        "bn": "ভাষা দক্ষতা"
+      },
+      "options": [
+        {
+          "id": "none",
+          "label": {
+            "en": "No practical proficiency",
+            "bn": "ব্যবহারিক দক্ষতা নেই"
+          },
+          "value": "NONE"
+        },
+        {
+          "id": "basic",
+          "label": {
+            "en": "Basic",
+            "bn": "মৌলিক"
+          },
+          "value": "BASIC"
+        },
+        {
+          "id": "working",
+          "label": {
+            "en": "Working proficiency",
+            "bn": "কাজের উপযোগী দক্ষতা"
+          },
+          "value": "WORKING"
+        },
+        {
+          "id": "fluent",
+          "label": {
+            "en": "Fluent",
+            "bn": "সাবলীল"
+          },
+          "value": "FLUENT"
+        }
+      ]
+    },
+    {
+      "id": "state_registry",
+      "label": {
+        "en": "Indian State / Union Territory",
+        "bn": "ভারতের রাজ্য / কেন্দ্রশাসিত অঞ্চল"
+      },
+      "source": "data/common/states.json",
+      "options": [
+        {
+          "id": "andhra-pradesh",
+          "label": {
+            "en": "Andhra Pradesh",
+            "bn": "অন্ধ্র প্রদেশ"
+          },
+          "value": "andhra-pradesh"
+        },
+        {
+          "id": "arunachal-pradesh",
+          "label": {
+            "en": "Arunachal Pradesh",
+            "bn": "অরুণাচল প্রদেশ"
+          },
+          "value": "arunachal-pradesh"
+        },
+        {
+          "id": "assam",
+          "label": {
+            "en": "Assam",
+            "bn": "অসম"
+          },
+          "value": "assam"
+        },
+        {
+          "id": "bihar",
+          "label": {
+            "en": "Bihar",
+            "bn": "বিহার"
+          },
+          "value": "bihar"
+        },
+        {
+          "id": "chhattisgarh",
+          "label": {
+            "en": "Chhattisgarh",
+            "bn": "ছত্তিশগড়"
+          },
+          "value": "chhattisgarh"
+        },
+        {
+          "id": "goa",
+          "label": {
+            "en": "Goa",
+            "bn": "গোয়া"
+          },
+          "value": "goa"
+        },
+        {
+          "id": "gujarat",
+          "label": {
+            "en": "Gujarat",
+            "bn": "গুজরাট"
+          },
+          "value": "gujarat"
+        },
+        {
+          "id": "haryana",
+          "label": {
+            "en": "Haryana",
+            "bn": "হরিয়ানা"
+          },
+          "value": "haryana"
+        },
+        {
+          "id": "himachal-pradesh",
+          "label": {
+            "en": "Himachal Pradesh",
+            "bn": "হিমাচল প্রদেশ"
+          },
+          "value": "himachal-pradesh"
+        },
+        {
+          "id": "jharkhand",
+          "label": {
+            "en": "Jharkhand",
+            "bn": "ঝাড়খণ্ড"
+          },
+          "value": "jharkhand"
+        },
+        {
+          "id": "karnataka",
+          "label": {
+            "en": "Karnataka",
+            "bn": "কর্ণাটক"
+          },
+          "value": "karnataka"
+        },
+        {
+          "id": "kerala",
+          "label": {
+            "en": "Kerala",
+            "bn": "কেরল"
+          },
+          "value": "kerala"
+        },
+        {
+          "id": "madhya-pradesh",
+          "label": {
+            "en": "Madhya Pradesh",
+            "bn": "মধ্যপ্রদেশ"
+          },
+          "value": "madhya-pradesh"
+        },
+        {
+          "id": "maharashtra",
+          "label": {
+            "en": "Maharashtra",
+            "bn": "মহারাষ্ট্র"
+          },
+          "value": "maharাষ্ট্র"
+        },
+        {
+          "id": "manipur",
+          "label": {
+            "en": "Manipur",
+            "bn": "মণিপুর"
+          },
+          "value": "manipur"
+        },
+        {
+          "id": "meghalaya",
+          "label": {
+            "en": "Meghalaya",
+            "bn": "মেঘালয়"
+          },
+          "value": "meghalaya"
+        },
+        {
+          "id": "mizoram",
+          "label": {
+            "en": "Mizoram",
+            "bn": "মিজোরাম"
+          },
+          "value": "mizoram"
+        },
+        {
+          "id": "nagaland",
+          "label": {
+            "en": "Nagaland",
+            "bn": "নাগাল্যান্ড"
+          },
+          "value": "nagaland"
+        },
+        {
+          "id": "odisha",
+          "label": {
+            "en": "Odisha",
+            "bn": "ওড়িশা"
+          },
+          "value": "odisha"
+        },
+        {
+          "id": "punjab",
+          "label": {
+            "en": "Punjab",
+            "bn": "পাঞ্জাব"
+          },
+          "value": "punjab"
+        },
+        {
+          "id": "rajasthan",
+          "label": {
+            "en": "Rajasthan",
+            "bn": "রাজস্থান"
+          },
+          "value": "rajasthan"
+        },
+        {
+          "id": "sikkim",
+          "label": {
+            "en": "Sikkim",
+            "bn": "সিকিম"
+          },
+          "value": "sikkim"
+        },
+        {
+          "id": "tamil-nadu",
+          "label": {
+            "en": "Tamil Nadu",
+            "bn": "তামিলনাড়ু"
+          },
+          "value": "tamil-nadu"
+        },
+        {
+          "id": "telangana",
+          "label": {
+            "en": "Telangana",
+            "bn": "তেলেঙ্গানা"
+          },
+          "value": "telangana"
+        },
+        {
+          "id": "tripura",
+          "label": {
+            "en": "Tripura",
+            "bn": "ত্রিপুরা"
+          },
+          "value": "tripura"
+        },
+        {
+          "id": "uttar-pradesh",
+          "label": {
+            "en": "Uttar Pradesh",
+            "bn": "উত্তর প্রদেশ"
+          },
+          "value": "uttar-pradesh"
+        },
+        {
+          "id": "uttarakhand",
+          "label": {
+            "en": "Uttarakhand",
+            "bn": "উত্তরাখণ্ড"
+          },
+          "value": "uttarakhand"
+        },
+        {
+          "id": "west-bengal",
+          "label": {
+            "en": "West Bengal",
+            "bn": "পশ্চিমবঙ্গ"
+          },
+          "value": "west-bengal"
+        },
+        {
+          "id": "andaman-nicobar",
+          "label": {
+            "en": "Andaman and Nicobar Islands",
+            "bn": "আন্দামান ও নিকোবর দ্বীপপুঞ্জ"
+          },
+          "value": "andaman-nicobar"
+        },
+        {
+          "id": "chandigarh",
+          "label": {
+            "en": "Chandigarh",
+            "bn": "চণ্ডীগড়"
+          },
+          "value": "chandigarh"
+        },
+        {
+          "id": "dadra-nagar-haveli-daman-diu",
+          "label": {
+            "en": "Dadra and Nagar Haveli and Daman and Diu",
+            "bn": "দাদরা ও নগর হাভেলি এবং দমন ও দিউ"
+          },
+          "value": "dadra-nagar-haveli-daman-diu"
+        },
+        {
+          "id": "delhi",
+          "label": {
+            "en": "Delhi",
+            "bn": "দিল্লি"
+          },
+          "value": "delhi"
+        },
+        {
+          "id": "jammu-kashmir",
+          "label": {
+            "en": "Jammu and Kashmir",
+            "bn": "জম্মু ও কাশ্মীর"
+          },
+          "value": "jammu-kashmir"
+        },
+        {
+          "id": "ladakh",
+          "label": {
+            "en": "Ladakh",
+            "bn": "লাদাখ"
+          },
+          "value": "ladakh"
+        },
+        {
+          "id": "lakshadweep",
+          "label": {
+            "en": "Lakshadweep",
+            "bn": "লক্ষদ্বীপ"
+          },
+          "value": "lakshadweep"
+        },
+        {
+          "id": "puducherry",
+          "label": {
+            "en": "Puducherry",
+            "bn": "পুদুচেরি"
+          },
+          "value": "puducherry"
+        }
+      ]
+    },
+    {
+      "id": "government_preferences",
+      "label": {
+        "en": "Government Preference",
+        "bn": "সরকারি ব্যবস্থার পছন্দ"
+      },
+      "options": [
+        {
+          "id": "central",
+          "label": {
+            "en": "Central Government",
+            "bn": "কেন্দ্রীয় সরকার"
+          },
+          "value": "central-government"
+        },
+        {
+          "id": "state",
+          "label": {
+            "en": "State Government",
+            "bn": "রাজ্য সরকার"
+          },
+          "value": "STATE_GOVERNMENT"
+        },
+        {
+          "id": "both",
+          "label": {
+            "en": "Both Central and State Government",
+            "bn": "কেন্দ্রীয় ও রাজ্য উভয় সরকার"
+          },
+          "value": "BOTH"
+        }
+      ]
+    },
+    {
+      "id": "career_interests",
+      "label": {
+        "en": "Career Interests",
+        "bn": "ক্যারিয়ারের আগ্রহ"
+      },
+      "options": [
+        {
+          "id": "administrative",
+          "label": {
+            "en": "Administrative",
+            "bn": "প্রশাসনিক"
+          },
+          "value": "ADMINISTRATIVE"
+        },
+        {
+          "id": "police",
+          "label": {
+            "en": "Police",
+            "bn": "পুলিশ"
+          },
+          "value": "POLICE"
+        },
+        {
+          "id": "investigation",
+          "label": {
+            "en": "Investigation",
+            "bn": "তদন্ত"
+          },
+          "value": "INVESTIGATION"
+        },
+        {
+          "id": "intelligence",
+          "label": {
+            "en": "Intelligence",
+            "bn": "গোয়েন্দা"
+          },
+          "value": "INTELLIGENCE"
+        },
+        {
+          "id": "enforcement",
+          "label": {
+            "en": "Enforcement",
+            "bn": "এনফোর্সমেন্ট"
+          },
+          "value": "ENFORCEMENT"
+        },
+        {
+          "id": "revenue_tax",
+          "label": {
+            "en": "Revenue / Tax",
+            "bn": "রাজস্ব / কর"
+          },
+          "value": "REVENUE_TAX"
+        },
+        {
+          "id": "audit_accounts",
+          "label": {
+            "en": "Audit / Accounts",
+            "bn": "অডিট / হিসাব"
+          },
+          "value": "AUDIT_ACCOUNTS"
+        },
+        {
+          "id": "railway",
+          "label": {
+            "en": "Railway",
+            "bn": "রেলওয়ে"
+          },
+          "value": "RAILWAY_OPERATIONS"
+        },
+        {
+          "id": "postal",
+          "label": {
+            "en": "Postal",
+            "bn": "ডাক"
+          },
+          "value": "POSTAL"
+        },
+        {
+          "id": "panchayat",
+          "label": {
+            "en": "Panchayat / Rural Development",
+            "bn": "পঞ্চায়েত / গ্রামীণ উন্নয়ন"
+          },
+          "value": "PANCHAYAT_ADMINISTRATION"
+        },
+        {
+          "id": "education",
+          "label": {
+            "en": "Education / Non-Teaching",
+            "bn": "শিক্ষা / অশিক্ষক"
+          },
+          "value": "EDUCATION_NON_TEACHING"
+        },
+        {
+          "id": "teaching",
+          "label": {
+            "en": "Teaching",
+            "bn": "শিক্ষকতা"
+          },
+          "value": "TEACHING"
+        },
+        {
+          "id": "clerical",
+          "label": {
+            "en": "Clerical / Office",
+            "bn": "ক্লেরিক্যাল / অফিস"
+          },
+          "value": "CLERICAL"
+        },
+        {
+          "id": "social_welfare",
+          "label": {
+            "en": "Social Welfare",
+            "bn": "সামাজিক কল্যাণ"
+          },
+          "value": "WELFARE"
+        },
+        {
+          "id": "forest",
+          "label": {
+            "en": "Forest / Wildlife",
+            "bn": "বন / বন্যপ্রাণী"
+          },
+          "value": "FOREST"
+        },
+        {
+          "id": "fire_emergency",
+          "label": {
+            "en": "Fire / Emergency Services",
+            "bn": "অগ্নি / জরুরি পরিষেবা"
+          },
+          "value": "FIRE_EMERGENCY"
+        }
+      ]
+    },
+    {
+      "id": "work_styles",
+      "label": {
+        "en": "Preferred Work Styles",
+        "bn": "পছন্দের কাজের ধরন"
+      },
+      "options": [
+        {
+          "id": "mostly_office",
+          "label": {
+            "en": "Mostly office",
+            "bn": "মূলত অফিস"
+          },
+          "value": "MOSTLY_OFFICE"
+        },
+        {
+          "id": "office_field",
+          "label": {
+            "en": "Office + field",
+            "bn": "অফিস + মাঠ"
+          },
+          "value": "OFFICE_PLUS_FIELD"
+        },
+        {
+          "id": "mostly_field",
+          "label": {
+            "en": "Mostly field",
+            "bn": "মূলত মাঠ"
+          },
+          "value": "MOSTLY_FIELD"
+        },
+        {
+          "id": "operational",
+          "label": {
+            "en": "Operational / shift-based",
+            "bn": "অপারেশনাল / শিফটভিত্তিক"
+          },
+          "value": "OPERATIONAL"
+        }
+      ]
+    },
+    {
+      "id": "tolerance_level",
+      "label": {
+        "en": "Tolerance Level",
+        "bn": "সহনশীলতার স্তর"
+      },
+      "options": [
+        {
+          "id": "very_low",
+          "label": {
+            "en": "Very low",
+            "bn": "খুব কম"
+          },
+          "value": 1
+        },
+        {
+          "id": "low",
+          "label": {
+            "en": "Low",
+            "bn": "কম"
+          },
+          "value": 3
+        },
+        {
+          "id": "moderate",
+          "label": {
+            "en": "Moderate",
+            "bn": "মাঝারি"
+          },
+          "value": 5
+        },
+        {
+          "id": "high",
+          "label": {
+            "en": "High",
+            "bn": "বেশি"
+          },
+          "value": 7
+        },
+        {
+          "id": "very_high",
+          "label": {
+            "en": "Very high",
+            "bn": "খুব বেশি"
+          },
+          "value": 10
+        }
+      ]
+    },
+    {
+      "id": "public_dealing_preference",
+      "label": {
+        "en": "Public Interaction Preference",
+        "bn": "জনসাধারণের সঙ্গে যোগাযোগের পছন্দ"
+      },
+      "options": [
+        {
+          "id": "avoid",
+          "label": {
+            "en": "Prefer minimal public interaction",
+            "bn": "জনসাধারণের সঙ্গে খুব কম যোগাযোগ পছন্দ"
+          },
+          "value": 2
+        },
+        {
+          "id": "moderate",
+          "label": {
+            "en": "Moderate public interaction",
+            "bn": "মাঝারি জনসংযোগ"
+          },
+          "value": 5
+        },
+        {
+          "id": "comfortable",
+          "label": {
+            "en": "Comfortable with frequent public interaction",
+            "bn": "ঘনঘন জনসংযোগে স্বচ্ছন্দ"
+          },
+          "value": 8
+        },
+        {
+          "id": "high",
+          "label": {
+            "en": "Strongly prefer public-facing work",
+            "bn": "জনমুখী কাজ খুব পছন্দ"
+          },
+          "value": 10
+        }
+      ]
+    },
+    {
+      "id": "office_field_preference",
+      "label": {
+        "en": "Office / Field Preference",
+        "bn": "অফিস / মাঠ পছন্দ"
+      },
+      "options": [
+        {
+          "id": "office",
+          "label": {
+            "en": "Strong preference for office work",
+            "bn": "অফিসের কাজ বেশি পছন্দ"
+          },
+          "value": "MOSTLY_OFFICE"
+        },
+        {
+          "id": "mixed",
+          "label": {
+            "en": "A mixture of office and field work",
+            "bn": "অফিস ও মাঠের মিশ্র কাজ"
+          },
+          "value": "OFFICE_PLUS_FIELD"
+        },
+        {
+          "id": "field",
+          "label": {
+            "en": "Strong preference for field work",
+            "bn": "মাঠের কাজ বেশি পছন্দ"
+          },
+          "value": "MOSTLY_FIELD"
+        },
+        {
+          "id": "operational",
+          "label": {
+            "en": "Operational / active duty",
+            "bn": "অপারেশনাল / সক্রিয় ডিউটি"
+          },
+          "value": "OPERATIONAL"
+        }
+      ]
+    },
+    {
+      "id": "exam_competition_tolerance",
+      "label": {
+        "en": "Competition and Preparation Tolerance",
+        "bn": "প্রতিযোগিতা ও প্রস্তুতির সহনশীলতা"
+      },
+      "options": [
+        {
+          "id": "low",
+          "label": {
+            "en": "I prefer shorter or more accessible preparation",
+            "bn": "কম সময়ের বা তুলনামূলক সহজ প্রস্তুতি পছন্দ"
+          },
+          "value": 2
+        },
+        {
+          "id": "moderate",
+          "label": {
+            "en": "I can prepare seriously for a competitive exam",
+            "bn": "প্রতিযোগিতামূলক পরীক্ষার জন্য গুরুত্ব দিয়ে প্রস্তুতি নিতে পারি"
+          },
+          "value": 5
+        },
+        {
+          "id": "high",
+          "label": {
+            "en": "I am willing to prepare for highly competitive exams",
+            "bn": "খুব প্রতিযোগিতামূলক পরীক্ষার জন্যও প্রস্তুত"
+          },
+          "value": 8
+        },
+        {
+          "id": "extreme",
+          "label": {
+            "en": "I am willing to pursue extremely demanding examinations",
+            "bn": "অত্যন্ত কঠিন পরীক্ষার জন্যও দীর্ঘ প্রস্তুতি নিতে প্রস্তুত"
+          },
+          "value": 10
+        }
+      ]
+    },
+    {
+      "id": "family_context",
+      "label": {
+        "en": "Family Responsibilities",
+        "bn": "পারিবারিক দায়িত্ব"
+      },
+      "options": [
+        {
+          "id": "elderly_parents",
+          "label": {
+            "en": "Elderly parents or older family members depend on my availability",
+            "bn": "বয়স্ক বাবা-মা বা পরিবারের প্রবীণ সদস্যদের জন্য আমার উপলব্ধতা গুরুত্বপূর্ণ"
+          },
+          "value": "ELDERLY_PARENT_RESPONSIBILITY"
+        },
+        {
+          "id": "children",
+          "label": {
+            "en": "Children or childcare responsibilities matter to my decision",
+            "bn": "সন্তান বা শিশুর যত্ন আমার সিদ্ধান্তে গুরুত্বপূর্ণ"
+          },
+          "value": "CHILDCARE_RESPONSIBILITY"
+        },
+        {
+          "id": "spouse",
+          "label": {
+            "en": "Spouse or future family stability matters",
+            "bn": "স্বামী/স্ত্রী বা ভবিষ্যৎ পারিবারিক স্থিতিশীলতা গুরুত্বপূর্ণ"
+          },
+          "value": "SPOUSE_FAMILY_STABILITY"
+        },
+        {
+          "id": "financial_dependants",
+          "label": {
+            "en": "Other people may financially depend on me",
+            "bn": "অন্য কেউ আমার আয়ের উপর আর্থিকভাবে নির্ভর করতে পারেন"
+          },
+          "value": "FINANCIAL_DEPENDANTS"
+        },
+        {
+          "id": "none",
+          "label": {
+            "en": "No major family responsibility affecting career choice",
+            "bn": "ক্যারিয়ার নির্বাচনে বড় কোনও পারিবারিক দায়িত্ব নেই"
+          },
+          "value": "NONE"
+        },
+        {
+          "id": "prefer_not",
+          "label": {
+            "en": "Prefer not to say",
+            "bn": "উত্তর দিতে চাই না"
+          },
+          "value": "PREFER_NOT_TO_SAY"
+        }
+      ]
+    },
+    {
+      "id": "responsibility_level",
+      "label": {
+        "en": "Responsibility Level",
+        "bn": "দায়িত্বের গুরুত্ব"
+      },
+      "options": [
+        {
+          "id": "not_relevant",
+          "label": {
+            "en": "Not relevant to me",
+            "bn": "আমার ক্ষেত্রে প্রাসঙ্গিক নয়"
+          },
+          "value": 0
+        },
+        {
+          "id": "low",
+          "label": {
+            "en": "Low",
+            "bn": "কম"
+          },
+          "value": 3
+        },
+        {
+          "id": "moderate",
+          "label": {
+            "en": "Moderate",
+            "bn": "মাঝারি"
+          },
+          "value": 5
+        },
+        {
+          "id": "high",
+          "label": {
+            "en": "High",
+            "bn": "বেশি"
+          },
+          "value": 8
+        },
+        {
+          "id": "very_high",
+          "label": {
+            "en": "Very high",
+            "bn": "খুব বেশি"
+          },
+          "value": 10
+        },
+        {
+          "id": "prefer_not",
+          "label": {
+            "en": "Prefer not to say",
+            "bn": "উত্তর দিতে চাই না"
+          },
+          "value": "PREFER_NOT_TO_SAY"
+        }
+      ]
+    },
+    {
+      "id": "location_flexibility",
+      "label": {
+        "en": "Location Flexibility",
+        "bn": "অবস্থান পরিবর্তনের নমনীয়তা"
+      },
+      "options": [
+        {
+          "id": "very_low",
+          "label": {
+            "en": "I strongly prefer to stay near my current home",
+            "bn": "আমি বর্তমান বাড়ির কাছাকাছি থাকতেই খুব বেশি পছন্দ করি"
+          },
+          "value": 1
+        },
+        {
+          "id": "low",
+          "label": {
+            "en": "I can relocate, but preferably within my state",
+            "bn": "স্থানান্তর হতে পারি, তবে নিজের রাজ্যের মধ্যে হলে ভালো"
+          },
+          "value": 3
+        },
+        {
+          "id": "moderate",
+          "label": {
+            "en": "I can relocate when necessary",
+            "bn": "প্রয়োজন হলে স্থানান্তর হতে পারি"
+          },
+          "value": 5
+        },
+        {
+          "id": "high",
+          "label": {
+            "en": "I am comfortable with significant relocation",
+            "bn": "বড় ধরনের স্থানান্তরেও আমি স্বচ্ছন্দ"
+          },
+          "value": 8
+        },
+        {
+          "id": "very_high",
+          "label": {
+            "en": "I am comfortable working anywhere in India",
+            "bn": "ভারতের যেকোনও স্থানে কাজ করতে স্বচ্ছন্দ"
+          },
+          "value": 10
+        }
+      ]
+    }
+  ]
+}
