@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "assessment-question.schema.json",
+  "title": "GovCareer Compass Assessment Question",
+  "description": "Question definition used by the Career Finder assessment engine.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "type",
+    "question",
+    "required",
+    "status",
+    "version"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "SINGLE_SELECT",
+        "MULTI_SELECT",
+        "BOOLEAN",
+        "SCALE",
+        "NUMBER",
+        "TEXT"
+      ]
+    },
+    "question": {
+      "$ref": "shared-localized-name.schema.json"
+    },
+    "helpText": {
+      "$ref": "shared-localized-name.schema.json"
+    },
+    "required": {
+      "type": "boolean"
+    },
+    "profileField": {
+      "type": "string",
+      "minLength": 1
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "label"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "$ref": "shared-localized-name.schema.json"
+          },
+          "value": {}
+        }
+      }
+    },
+    "scale": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "step": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "minLabel": {
+          "$ref": "shared-localized-name.schema.json"
+        },
+        "maxLabel": {
+          "$ref": "shared-localized-name.schema.json"
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "branching": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "sensitive": {
+      "type": "boolean"
+    },
+    "allowPreferNotToSay": {
+      "type": "boolean"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "DRAFT",
+        "DEPRECATED"
+      ]
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    }
+  }
+}
