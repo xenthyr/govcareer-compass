@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "source.schema.json",
+  "title": "GovCareer Compass Source",
+  "description": "Canonical evidence/source record supporting government-career facts.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "organisation",
+    "title",
+    "documentType",
+    "verificationDate",
+    "sourcePriority",
+    "confidence",
+    "currentness",
+    "supportedClaims",
+    "dataVersion"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "organisation": {
+      "type": "string",
+      "minLength": 1
+    },
+    "department": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "documentType": {
+      "type": "string",
+      "enum": [
+        "RECRUITMENT_NOTIFICATION",
+        "RECRUITMENT_RULE",
+        "SERVICE_RULE",
+        "GAZETTE",
+        "PAY_RULE",
+        "FINANCE_ORDER",
+        "GOVERNMENT_ORDER",
+        "DEPARTMENT_PAGE",
+        "DIRECTORATE_PAGE",
+        "CADRE_STRENGTH_DOCUMENT",
+        "ORGANISATIONAL_DOCUMENT",
+        "ANNUAL_REPORT",
+        "OFFICIAL_PORTAL",
+        "OFFICIAL_FAQ",
+        "OFFICIAL_CIRCULAR",
+        "OFFICIAL_CORRIGENDUM",
+        "OFFICIAL_RESULT",
+        "OFFICIAL_ANSWER_KEY",
+        "SECONDARY_SOURCE",
+        "OTHER"
+      ]
+    },
+    "publicationDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "verificationDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "archiveUrl": {
+      "type": "string",
+      "format": "uri"
+    },
+    "sourcePriority": {
+      "type": "string",
+      "enum": [
+        "PRIMARY_CURRENT",
+        "PRIMARY_HISTORICAL",
+        "OFFICIAL_GENERAL",
+        "SECONDARY"
+      ]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "HIGH",
+        "MEDIUM_HIGH",
+        "MEDIUM",
+        "LOW",
+        "ESTIMATE",
+        "NOT_VERIFIED"
+      ]
+    },
+    "currentness": {
+      "type": "string",
+      "enum": [
+        "CURRENT",
+        "HISTORICAL",
+        "CURRENTNESS_UNCLEAR",
+        "REPLACED",
+        "ABOLISHED",
+        "NOT_VERIFIED"
+      ]
+    },
+    "supportedClaims": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "notes": {
+      "type": "string"
+    },
+    "dataVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    }
+  }
+}
