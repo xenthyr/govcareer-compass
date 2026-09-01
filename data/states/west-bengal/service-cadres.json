@@ -1,0 +1,476 @@
+{
+  "$schema": "../../../schemas/service-cadre.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "west-bengal-government",
+  "stateId": "west-bengal",
+  "lastVerified": "2026-08-31",
+  "serviceCadres": [
+    {
+      "id": "service-wbcs-executive",
+      "name": {
+        "en": "West Bengal Civil Service (Executive)",
+        "bn": "পশ্চিমবঙ্গ সিভিল সার্ভিস (এক্সিকিউটিভ)"
+      },
+      "abbreviation": "WBCS Executive",
+      "governmentId": "west-bengal-government",
+      "organisationId": "org-wbpsc",
+      "type": "STATE_GROUP_A_SERVICE",
+      "serviceNature": "ADMINISTRATIVE",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "postIds": [
+        "job-wbcs-executive"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "EXECUTIVE",
+        "FIELD",
+        "SUPERVISORY",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": false,
+      "postingScope": "STATEWIDE",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-wb-revenue-service",
+      "name": {
+        "en": "West Bengal Revenue Service / Assistant Commissioner of Revenue",
+        "bn": "পশ্চিমবঙ্গ রাজস্ব পরিষেবা / সহকারী রাজস্ব কমিশনার"
+      },
+      "abbreviation": "WB Revenue Service",
+      "governmentId": "west-bengal-government",
+      "organisationId": "org-wbpsc",
+      "type": "STATE_GROUP_A_SERVICE",
+      "serviceNature": "TAX",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "postIds": [
+        "job-wbcs-revenue"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "TAX",
+        "FIELD",
+        "INSPECTION"
+      ],
+      "uniformed": false,
+      "postingScope": "STATEWIDE",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-wb-cooperative-service",
+      "name": {
+        "en": "West Bengal Co-operative Service",
+        "bn": "পশ্চিমবঙ্গ সমবায় পরিষেবা"
+      },
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationId": "org-wbpsc",
+      "type": "STATE_GROUP_A_SERVICE",
+      "serviceNature": "ADMINISTRATIVE",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "postIds": [
+        "job-wbcs-cooperative"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "INSPECTION",
+        "FIELD"
+      ],
+      "uniformed": false,
+      "postingScope": "STATEWIDE",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-wb-labour-service",
+      "name": {
+        "en": "West Bengal Labour Service",
+        "bn": "পশ্চিমবঙ্গ শ্রম পরিষেবা"
+      },
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationId": "org-wbpsc",
+      "type": "STATE_GROUP_A_SERVICE",
+      "serviceNature": "ADMINISTRATIVE",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "postIds": [
+        "job-wbcs-labour"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "INSPECTION",
+        "FIELD",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": false,
+      "postingScope": "STATEWIDE",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-wb-food-supplies",
+      "name": {
+        "en": "West Bengal Food and Supplies Service",
+        "bn": "পশ্চিমবঙ্গ খাদ্য ও সরবরাহ পরিষেবা"
+      },
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationId": "org-wbpsc",
+      "type": "STATE_GROUP_A_SERVICE",
+      "serviceNature": "ADMINISTRATIVE",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "postIds": [
+        "job-wbcs-food-supplies"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "FIELD",
+        "INSPECTION",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": false,
+      "postingScope": "STATEWIDE",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-wb-employment-service",
+      "name": {
+        "en": "West Bengal Employment Service",
+        "bn": "পশ্চিমবঙ্গ এমপ্লয়মেন্ট সার্ভিস"
+      },
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationId": "org-wbpsc",
+      "type": "STATE_GROUP_A_SERVICE",
+      "serviceNature": "ADMINISTRATIVE",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "postIds": [
+        "job-wbcs-employment"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "PUBLIC_DEALING",
+        "FIELD"
+      ],
+      "uniformed": false,
+      "postingScope": "STATEWIDE",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-wb-police-service",
+      "name": {
+        "en": "West Bengal Police Service",
+        "bn": "পশ্চিমবঙ্গ পুলিশ পরিষেবা"
+      },
+      "abbreviation": "WB Police Service",
+      "governmentId": "west-bengal-government",
+      "organisationId": "org-wbpsc",
+      "type": "POLICE_SERVICE",
+      "serviceNature": "POLICE",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "postIds": [
+        "job-wbcs-police-service"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-police"
+      ],
+      "careerNature": [
+        "POLICE",
+        "FIELD",
+        "ENFORCEMENT",
+        "SUPERVISORY"
+      ],
+      "uniformed": true,
+      "physicalRequirementProfile": "physical-wbcs-police-service",
+      "medicalRequirementProfile": "medical-wb-police-service",
+      "postingScope": "STATEWIDE",
+      "transferProfile": "VERY_HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-wb-joint-bdo",
+      "name": {
+        "en": "Joint Block Development Officer",
+        "bn": "জয়েন্ট ব্লক ডেভেলপমেন্ট অফিসার"
+      },
+      "abbreviation": "Joint BDO",
+      "governmentId": "west-bengal-government",
+      "organisationId": "org-wbpsc",
+      "type": "STATE_GROUP_B_OR_C_SERVICE",
+      "serviceNature": "ADMINISTRATIVE",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "postIds": [
+        "job-wbcs-joint-bdo"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "FIELD",
+        "RURAL_DEVELOPMENT",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": false,
+      "postingScope": "DISTRICT_AND_BLOCK",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-wb-subordinate-land-revenue-grade1",
+      "name": {
+        "en": "West Bengal Subordinate Land Revenue Service, Grade I",
+        "bn": "পশ্চিমবঙ্গ সাবঅর্ডিনেট ল্যান্ড রেভিনিউ সার্ভিস, গ্রেড I"
+      },
+      "abbreviation": "WBSLRS Grade I",
+      "governmentId": "west-bengal-government",
+      "organisationId": "org-wbpsc",
+      "type": "REVENUE_SERVICE",
+      "serviceNature": "REVENUE",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "postIds": [
+        "job-wb-subordinate-land-revenue"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali",
+        "eligibility-land-revenue-bengali"
+      ],
+      "careerNature": [
+        "REVENUE",
+        "FIELD",
+        "INSPECTION",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": false,
+      "postingScope": "DISTRICT_AND_FIELD",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-wb-panchayat-development-officer",
+      "name": {
+        "en": "Panchayat Development Officer",
+        "bn": "পঞ্চায়েত ডেভেলপমেন্ট অফিসার"
+      },
+      "abbreviation": "PDO",
+      "governmentId": "west-bengal-government",
+      "organisationId": "org-wb-panchayat",
+      "type": "RURAL_DEVELOPMENT_SERVICE",
+      "serviceNature": "ADMINISTRATIVE",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "postIds": [
+        "job-wb-panchayat-development-officer"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "RURAL_DEVELOPMENT",
+        "FIELD",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": false,
+      "postingScope": "DISTRICT_AND_BLOCK",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-wb-rehabilitation-officer",
+      "name": {
+        "en": "Rehabilitation Officer",
+        "bn": "রিহ্যাবিলিটেশন অফিসার"
+      },
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationId": "org-wbpsc",
+      "type": "STATE_SERVICE",
+      "serviceNature": "ADMINISTRATIVE",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "postIds": [
+        "job-wb-rehabilitation-officer"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "FIELD",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": false,
+      "postingScope": "STATEWIDE",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-kolkata-police-si",
+      "name": {
+        "en": "Kolkata Police Sub-Inspector / Sub-Inspectress",
+        "bn": "কলকাতা পুলিশ সাব-ইন্সপেক্টর / সাব-ইন্সপেক্ট্রেস"
+      },
+      "abbreviation": "KP SI",
+      "governmentId": "west-bengal-government",
+      "organisationId": "org-kolkata-police",
+      "type": "POLICE_SERVICE",
+      "serviceNature": "POLICE",
+      "examIds": [
+        "exam-wbprb-kp-si-2023"
+      ],
+      "postIds": [
+        "job-kp-si",
+        "job-kp-si-armed"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-police-graduate-bengali",
+        "eligibility-kp-si-physical"
+      ],
+      "careerNature": [
+        "POLICE",
+        "INVESTIGATION",
+        "FIELD",
+        "ENFORCEMENT",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": true,
+      "physicalRequirementProfile": "physical-kp-si",
+      "medicalRequirementProfile": "medical-kp-si",
+      "postingScope": "KOLKATA_POLICE_AREA",
+      "transferProfile": "MEDIUM",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-wbprb-kp-si-2023"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-wbp-si",
+      "name": {
+        "en": "West Bengal Police Sub-Inspector",
+        "bn": "পশ্চিমবঙ্গ পুলিশ সাব-ইন্সপেক্টর"
+      },
+      "abbreviation": "WBP SI",
+      "governmentId": "west-bengal-government",
+      "organisationId": "org-west-bengal-police",
+      "type": "POLICE_SERVICE",
+      "serviceNature": "POLICE",
+      "examIds": [
+        "exam-wbprb-wbp-si-2024"
+      ],
+      "postIds": [
+        "job-wbp-si-ub",
+        "job-wbp-si-ab"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-police-graduate-bengali",
+        "eligibility-wbp-si-physical"
+      ],
+      "careerNature": [
+        "POLICE",
+        "INVESTIGATION",
+        "FIELD",
+        "ENFORCEMENT",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": true,
+      "physicalRequirementProfile": "physical-wbp-si",
+      "medicalRequirementProfile": "medical-wbp-si",
+      "postingScope": "STATEWIDE",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-wbprb-wbp-si-2024"
+      ],
+      "version": "1.0.0"
+    }
+  ]
+}
