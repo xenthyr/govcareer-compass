@@ -1,0 +1,777 @@
+/**
+ * GovCareer Compass
+ * ============================================================
+ * Data Visualization & Analytical Graphics
+ * ============================================================
+ *
+ * Depends on:
+ *   tokens.css
+ *   reset.css
+ *   themes.css
+ *   base.css
+ *   layout.css
+ *   components.css
+ *
+ * PRINCIPLES:
+ *   1. Charts must represent actual dataset values.
+ *   2. Numeric values must remain visible as text.
+ *   3. Color must never be the only meaning-bearing mechanism.
+ *   4. Charts must work in both light and dark themes.
+ *   5. Decorative graphics must never imply unsupported facts.
+ */
+
+/* ============================================================
+   CHART CONTAINER
+   ============================================================ */
+
+.chart-card {
+  position: relative;
+  min-width: 0;
+  padding: var(--gc-space-5);
+
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-xl);
+
+  background:
+    var(--gc-semantic-bg-surface);
+
+  box-shadow:
+    var(--gc-shadow-sm);
+}
+
+.chart-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--gc-space-4);
+  margin-bottom: var(--gc-space-5);
+}
+
+.chart-card__heading {
+  min-width: 0;
+}
+
+.chart-card__title {
+  font-size: var(--gc-font-size-lg);
+}
+
+.chart-card__description {
+  margin-top: var(--gc-space-2);
+  color: var(--gc-semantic-text-muted);
+  font-size: var(--gc-font-size-sm);
+}
+
+.chart-card__value {
+  flex: 0 0 auto;
+  color: var(--gc-semantic-text-primary);
+  font-size: var(--gc-font-size-xl);
+  font-weight: var(--gc-weight-extrabold);
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-card__body {
+  position: relative;
+  min-width: 0;
+}
+
+.chart-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--gc-space-3);
+  margin-top: var(--gc-space-5);
+  padding-top: var(--gc-space-4);
+  border-top:
+    1px solid
+    var(--gc-semantic-border-subtle);
+}
+
+/* ============================================================
+   CHART CANVAS / SVG
+   ============================================================ */
+
+.chart {
+  position: relative;
+  width: 100%;
+  min-height: var(--gc-chart-height-md);
+}
+
+.chart--small {
+  min-height: var(--gc-chart-height-sm);
+}
+
+.chart--large {
+  min-height: var(--gc-chart-height-lg);
+}
+
+.chart--xlarge {
+  min-height: var(--gc-chart-height-xl);
+}
+
+.chart canvas,
+.chart svg {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ============================================================
+   ACCESSIBLE CHART SUMMARY
+   ============================================================ */
+
+.chart__accessible-summary {
+  margin-top: var(--gc-space-3);
+  color: var(--gc-semantic-text-secondary);
+  font-size: var(--gc-font-size-sm);
+  line-height: var(--gc-line-relaxed);
+}
+
+.chart__accessible-table {
+  margin-top: var(--gc-space-4);
+}
+
+/* ============================================================
+   CHART GRID
+   ============================================================ */
+
+.chart-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(
+        min(100%, 20rem),
+        1fr
+      )
+    );
+  gap: var(--gc-space-5);
+}
+
+.chart-grid--2 {
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+}
+
+.chart-grid--3 {
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+}
+
+/* ============================================================
+   LEGEND
+   ============================================================ */
+
+.chart-legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--gc-space-3) var(--gc-space-5);
+}
+
+.chart-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gc-space-2);
+  color: var(--gc-semantic-text-secondary);
+  font-size: var(--gc-font-size-xs);
+}
+
+.chart-legend__marker {
+  width: 0.7rem;
+  height: 0.7rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--gc-semantic-accent-primary);
+}
+
+.chart-legend__marker--secondary {
+  background: var(--gc-semantic-accent-secondary);
+}
+
+.chart-legend__marker--positive {
+  background: var(--gc-semantic-success);
+}
+
+.chart-legend__marker--warning {
+  background: var(--gc-semantic-warning);
+}
+
+.chart-legend__marker--negative {
+  background: var(--gc-semantic-danger);
+}
+
+/* ============================================================
+   HORIZONTAL BAR CHART
+   ============================================================ */
+
+.bar-chart {
+  display: grid;
+  gap: var(--gc-space-4);
+}
+
+.bar-chart__row {
+  display: grid;
+  grid-template-columns:
+    minmax(8rem, 14rem)
+    minmax(0, 1fr)
+    auto;
+  align-items: center;
+  gap: var(--gc-space-3);
+}
+
+.bar-chart__label {
+  color: var(--gc-semantic-text-secondary);
+  font-size: var(--gc-font-size-sm);
+}
+
+.bar-chart__track {
+  position: relative;
+  height: 0.7rem;
+  overflow: hidden;
+  border-radius: var(--gc-radius-pill);
+  background: var(--gc-semantic-bg-surface-subtle);
+}
+
+.bar-chart__fill {
+  display: block;
+  height: 100%;
+  min-width: 0;
+  border-radius: inherit;
+  background: var(--gc-gradient-brand);
+  transform-origin: left center;
+  transition:
+    width
+    var(--gc-duration-slow)
+    var(--gc-ease-emphasis);
+}
+
+.bar-chart__fill--secondary {
+  background:
+    var(--gc-gradient-violet);
+}
+
+.bar-chart__fill--positive {
+  background:
+    var(--gc-gradient-success);
+}
+
+.bar-chart__fill--warning {
+  background:
+    var(--gc-gradient-warning);
+}
+
+.bar-chart__value {
+  min-width: 3.5rem;
+  color: var(--gc-semantic-text-primary);
+  font-size: var(--gc-font-size-xs);
+  font-weight: var(--gc-weight-bold);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   VERTICAL BAR CHART
+   ============================================================ */
+
+.vertical-bar-chart {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(
+        3rem,
+        1fr
+      )
+    );
+  align-items: end;
+  gap: var(--gc-space-3);
+  min-height: var(--gc-chart-height-md);
+}
+
+.vertical-bar-chart__item {
+  display: grid;
+  grid-template-rows:
+    1fr
+    auto
+    auto;
+  align-items: end;
+  gap: var(--gc-space-2);
+  min-height: 100%;
+}
+
+.vertical-bar-chart__plot {
+  position: relative;
+  height: 100%;
+  min-height: 9rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  border-bottom:
+    1px solid
+    var(--gc-semantic-border-default);
+}
+
+.vertical-bar-chart__bar {
+  width: min(2.75rem, 75%);
+  min-height: 0.2rem;
+  border-radius:
+    var(--gc-radius-sm)
+    var(--gc-radius-sm)
+    0
+    0;
+  background: var(--gc-gradient-brand);
+  transition:
+    height
+    var(--gc-duration-slow)
+    var(--gc-ease-emphasis);
+}
+
+.vertical-bar-chart__value {
+  color: var(--gc-semantic-text-primary);
+  font-size: var(--gc-font-size-xs);
+  font-weight: var(--gc-weight-bold);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.vertical-bar-chart__label {
+  color: var(--gc-semantic-text-muted);
+  font-size: var(--gc-font-size-xs);
+  text-align: center;
+  line-height: var(--gc-line-snug);
+}
+
+/* ============================================================
+   DONUT / RING CHART
+   ============================================================ */
+
+.ring-chart {
+  position: relative;
+  width: 10rem;
+  height: 10rem;
+  margin-inline: auto;
+}
+
+.ring-chart__svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.ring-chart__track {
+  fill: none;
+  stroke:
+    var(--gc-semantic-bg-surface-subtle);
+  stroke-width: 10;
+}
+
+.ring-chart__progress {
+  fill: none;
+  stroke:
+    var(--gc-semantic-accent-primary);
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition:
+    stroke-dashoffset
+    var(--gc-duration-slow)
+    var(--gc-ease-emphasis);
+}
+
+.ring-chart__center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+}
+
+.ring-chart__value {
+  color: var(--gc-semantic-text-primary);
+  font-size: var(--gc-font-size-2xl);
+  font-weight: var(--gc-weight-extrabold);
+  font-variant-numeric: tabular-nums;
+}
+
+.ring-chart__label {
+  margin-top: var(--gc-space-1);
+  color: var(--gc-semantic-text-muted);
+  font-size: var(--gc-font-size-xs);
+}
+
+/* ============================================================
+   SCORE VISUALIZATION
+   ============================================================ */
+
+.score-visualization {
+  display: grid;
+  grid-template-columns:
+    minmax(10rem, 0.75fr)
+    minmax(0, 1.25fr);
+  align-items: center;
+  gap: var(--gc-space-6);
+}
+
+.score-visualization__headline {
+  display: grid;
+  gap: var(--gc-space-1);
+}
+
+.score-visualization__score {
+  color: var(--gc-semantic-text-primary);
+  font-size: clamp(
+    2rem,
+    6vw,
+    3.25rem
+  );
+  line-height: 1;
+  font-weight: var(--gc-weight-extrabold);
+  font-variant-numeric: tabular-nums;
+}
+
+.score-visualization__label {
+  color: var(--gc-semantic-text-muted);
+  font-size: var(--gc-font-size-sm);
+}
+
+.score-visualization__bars {
+  display: grid;
+  gap: var(--gc-space-3);
+}
+
+/* ============================================================
+   RADAR-STYLE / MULTI-DIMENSION VISUAL
+   ============================================================ */
+
+.radar-chart {
+  width: min(
+    100%,
+    30rem
+  );
+  margin-inline: auto;
+}
+
+.radar-chart svg {
+  width: 100%;
+  height: auto;
+}
+
+.radar-chart__grid {
+  fill: none;
+  stroke:
+    var(--gc-semantic-border-subtle);
+  stroke-width: 1;
+}
+
+.radar-chart__axis {
+  stroke:
+    var(--gc-semantic-border-default);
+  stroke-width: 1;
+}
+
+.radar-chart__area {
+  fill:
+    rgb(18 183 211 / 0.14);
+  stroke:
+    var(--gc-semantic-accent-primary);
+  stroke-width: 2;
+}
+
+.radar-chart__point {
+  fill:
+    var(--gc-semantic-accent-primary);
+  stroke:
+    var(--gc-semantic-bg-surface-raised);
+  stroke-width: 2;
+}
+
+/* ============================================================
+   RANKING VISUALIZATION
+   ============================================================ */
+
+.ranking-chart {
+  display: grid;
+  gap: var(--gc-space-3);
+}
+
+.ranking-chart__row {
+  display: grid;
+  grid-template-columns:
+    2.25rem
+    minmax(10rem, 16rem)
+    minmax(0, 1fr)
+    3.5rem;
+  align-items: center;
+  gap: var(--gc-space-3);
+}
+
+.ranking-chart__rank {
+  color: var(--gc-semantic-text-muted);
+  font-size: var(--gc-font-size-sm);
+  font-weight: var(--gc-weight-bold);
+  text-align: center;
+}
+
+.ranking-chart__name {
+  overflow: hidden;
+  color: var(--gc-semantic-text-primary);
+  font-size: var(--gc-font-size-sm);
+  font-weight: var(--gc-weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ranking-chart__track {
+  height: 0.55rem;
+  overflow: hidden;
+  border-radius: var(--gc-radius-pill);
+  background: var(--gc-semantic-bg-surface-subtle);
+}
+
+.ranking-chart__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--gc-gradient-brand);
+}
+
+.ranking-chart__score {
+  color: var(--gc-semantic-text-primary);
+  font-size: var(--gc-font-size-sm);
+  font-weight: var(--gc-weight-bold);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   PAY COMPARISON
+   ============================================================ */
+
+.pay-chart {
+  display: grid;
+  gap: var(--gc-space-5);
+}
+
+.pay-chart__row {
+  display: grid;
+  gap: var(--gc-space-2);
+}
+
+.pay-chart__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gc-space-3);
+}
+
+.pay-chart__job {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--gc-semantic-text-primary);
+  font-size: var(--gc-font-size-sm);
+  font-weight: var(--gc-weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pay-chart__amount {
+  flex: 0 0 auto;
+  color: var(--gc-semantic-text-primary);
+  font-size: var(--gc-font-size-sm);
+  font-weight: var(--gc-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.pay-chart__track {
+  position: relative;
+  height: 0.8rem;
+  overflow: hidden;
+  border-radius: var(--gc-radius-pill);
+  background: var(--gc-semantic-bg-surface-subtle);
+}
+
+.pay-chart__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--gc-gradient-brand);
+}
+
+/* ============================================================
+   AXIS / GUIDES
+   ============================================================ */
+
+.chart-axis {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--gc-space-3);
+  margin-top: var(--gc-space-2);
+  color: var(--gc-semantic-text-muted);
+  font-size: var(--gc-font-size-xs);
+}
+
+.chart-guide-lines {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      5,
+      1fr
+    );
+  pointer-events: none;
+}
+
+.chart-guide-lines__line {
+  min-height: 8rem;
+  border-left:
+    1px dashed
+    var(--gc-semantic-border-subtle);
+}
+
+/* ============================================================
+   CHART TOOLTIP
+   ============================================================ */
+
+.chart-tooltip {
+  position: fixed;
+  z-index: var(--gc-z-popover);
+
+  max-width:
+    min(
+      20rem,
+      calc(100vw - 2rem)
+    );
+
+  padding:
+    var(--gc-space-3)
+    var(--gc-space-4);
+
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-md);
+
+  background:
+    var(--gc-semantic-bg-surface-raised);
+
+  color:
+    var(--gc-semantic-text-primary);
+
+  box-shadow:
+    var(--gc-shadow-lg);
+
+  pointer-events:
+    none;
+}
+
+.chart-tooltip__label {
+  color:
+    var(--gc-semantic-text-muted);
+
+  font-size:
+    var(--gc-font-size-xs);
+}
+
+.chart-tooltip__value {
+  margin-top:
+    0.15rem;
+
+  font-size:
+    var(--gc-font-size-sm);
+
+  font-weight:
+    var(--gc-weight-bold);
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+/* ============================================================
+   DATA QUALITY NOTE
+   ============================================================ */
+
+.chart-data-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gc-space-2);
+
+  margin-top:
+    var(--gc-space-4);
+
+  padding:
+    var(--gc-space-3);
+
+  border:
+    1px solid
+    var(--gc-semantic-border-subtle);
+
+  border-radius:
+    var(--gc-radius-md);
+
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+
+  color:
+    var(--gc-semantic-text-muted);
+
+  font-size:
+    var(--gc-font-size-xs);
+
+  line-height:
+    var(--gc-line-relaxed);
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .bar-chart__fill,
+  .vertical-bar-chart__bar,
+  .ring-chart__progress {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE CHARTS
+   ============================================================ */
+
+@media (max-width: 767px) {
+  .chart-grid--2,
+  .chart-grid--3 {
+    grid-template-columns: 1fr;
+  }
+
+  .score-visualization {
+    grid-template-columns: 1fr;
+  }
+
+  .bar-chart__row {
+    grid-template-columns:
+      1fr
+      auto;
+  }
+
+  .bar-chart__track {
+    grid-column: 1 / -1;
+  }
+
+  .ranking-chart__row {
+    grid-template-columns:
+      2rem
+      minmax(0, 1fr)
+      3.5rem;
+  }
+
+  .ranking-chart__track {
+    grid-column: 2 / -1;
+  }
+
+  .pay-chart__job {
+    white-space: normal;
+  }
+}
