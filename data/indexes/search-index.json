@@ -1,0 +1,196 @@
+{
+  "$schema": "../../schemas/shared.schema.json",
+  "indexType": "GLOBAL_SEARCH_INDEX",
+  "indexVersion": "1.0.0",
+  "schemaVersion": "1.0.0",
+  "generated": false,
+  "generatedAt": null,
+  "generatedFrom": [
+    "/data/central/jobs.json",
+    "/data/central/exams.json",
+    "/data/central/departments.json",
+    "/data/central/organisations.json",
+    "/data/central/sources.json",
+    "/data/states/west-bengal/jobs.json",
+    "/data/states/west-bengal/exams.json",
+    "/data/states/west-bengal/departments.json",
+    "/data/states/west-bengal/organisations.json",
+    "/data/states/west-bengal/sources.json",
+    "/data/common/glossary.json",
+    "/data/common/qualifications.json",
+    "/data/common/categories.json",
+    "/data/common/locations.json",
+    "/data/common/states.json",
+    "/data/common/governments.json"
+  ],
+  "description": "Global derived search index for GovCareer Compass. Provides normalized searchable references across jobs, examinations, departments, organisations, qualifications, terminology, locations, governments and sources.",
+  "sourceOfTruth": "Canonical records in /data/. This index must never become an independent factual database.",
+  "rules": {
+    "derivedOnly": true,
+    "canonicalDataWins": true,
+    "duplicateDocumentsAreNotAllowed": true,
+    "stableTargetIdsAreRequired": true,
+    "searchMustNeverChangeEligibility": true,
+    "searchMustNeverChangeRanking": true,
+    "historicalRecordsMayRemainSearchable": true,
+    "notVerifiedRecordsMustBeVisiblyLabelled": true
+  },
+  "summary": {
+    "totalDocuments": 0,
+    "jobs": 0,
+    "exams": 0,
+    "departments": 0,
+    "organisations": 0,
+    "qualifications": 0,
+    "categories": 0,
+    "locations": 0,
+    "glossaryTerms": 0,
+    "sources": 0
+  },
+  "documents": [],
+  "indexes": {
+    "byId": {},
+    "byType": {},
+    "byGovernmentId": {},
+    "byStateId": {},
+    "byDepartmentId": {},
+    "byOrganisationId": {},
+    "byExamId": {},
+    "byJobId": {},
+    "byQualificationId": {},
+    "byCategoryId": {},
+    "byLocationId": {},
+    "bySourceId": {},
+    "byToken": {},
+    "byAlias": {},
+    "byAbbreviation": {},
+    "byFullForm": {}
+  },
+  "documentShape": {
+    "id": "string",
+    "type": "JOB|EXAM|DEPARTMENT|ORGANISATION|QUALIFICATION|CATEGORY|LOCATION|GLOSSARY|SOURCE",
+    "canonicalId": "string",
+    "governmentId": "string|null",
+    "stateId": "string|null",
+    "departmentId": "string|null",
+    "organisationId": "string|null",
+    "examId": "string|null",
+    "jobId": "string|null",
+    "displayName": {
+      "en": "string",
+      "bn": "string|null"
+    },
+    "aliases": [
+      "string"
+    ],
+    "abbreviations": [
+      "string"
+    ],
+    "fullForms": [
+      "string"
+    ],
+    "keywords": [
+      "string"
+    ],
+    "searchText": "string",
+    "status": "ACTIVE|CURRENT_NO_RECRUITMENT|HISTORICAL|RENAMED|MERGED|REPLACED|ABOLISHED|UNKNOWN",
+    "confidence": "HIGH|MEDIUM_HIGH|MEDIUM|LOW|ESTIMATE|NOT_VERIFIED"
+  },
+  "tokenization": {
+    "caseSensitive": false,
+    "unicodeNormalized": true,
+    "diacriticsInsensitive": true,
+    "whitespaceNormalized": true,
+    "punctuationNormalized": true,
+    "minimumTokenLength": 2,
+    "stopWords": [
+      "the",
+      "and",
+      "of",
+      "for",
+      "to",
+      "in",
+      "a",
+      "an"
+    ]
+  },
+  "searchFields": {
+    "highestPriority": [
+      "displayName",
+      "officialName",
+      "shortName",
+      "postName",
+      "examName",
+      "fullForm",
+      "abbreviation"
+    ],
+    "mediumPriority": [
+      "department",
+      "organisation",
+      "government",
+      "state",
+      "category",
+      "qualification",
+      "location",
+      "aliases"
+    ],
+    "lowerPriority": [
+      "keywords",
+      "jobProfile",
+      "conditions",
+      "notes"
+    ]
+  },
+  "rankingWeights": {
+    "exactIdMatch": 1000,
+    "exactNameMatch": 900,
+    "exactAbbreviationMatch": 850,
+    "exactFullFormMatch": 840,
+    "prefixMatch": 700,
+    "tokenMatch": 500,
+    "aliasMatch": 450,
+    "keywordMatch": 300,
+    "descriptionMatch": 150
+  },
+  "searchBehavior": {
+    "exactQuery": true,
+    "prefixQuery": true,
+    "tokenQuery": true,
+    "multiWordQuery": true,
+    "abbreviationQuery": true,
+    "fullFormQuery": true,
+    "fuzzyMatching": false,
+    "fuzzyMatchingCanBeAddedLater": true,
+    "highlightMatches": true,
+    "returnCanonicalId": true,
+    "returnRecordType": true
+  },
+  "filters": [
+    "government",
+    "state",
+    "educationLevel",
+    "eligibility",
+    "category",
+    "department",
+    "organisation",
+    "exam",
+    "paySystem",
+    "payLevel",
+    "location",
+    "physicalRequirement",
+    "workLife",
+    "familyCompatibility",
+    "stress",
+    "housing",
+    "status",
+    "confidence"
+  ],
+  "languageSearch": {
+    "supportedLanguages": [
+      "en",
+      "bn"
+    ],
+    "futureLanguagesMustNotRequireChangingCanonicalIds": true,
+    "sourceTitlesRemainOriginalWhereOfficiallyRequired": true
+  }
+}
