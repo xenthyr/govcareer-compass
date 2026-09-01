@@ -1340,4 +1340,285 @@ Expected:
 
 Authority-related attributes become more influential.
 
+Kolkata Test
+
+Increase Kolkata importance.
+
+Expected:
+
+Kolkata stability becomes more influential.
+
+Transfer Test
+
+Increase low-transfer importance.
+
+Expected:
+
+Transfer-heavy careers become less suitable.
+
+Night-Duty Test
+
+Increase night-duty avoidance.
+
+Expected:
+
+High night-duty careers become less suitable.
+
+Physical-Risk Test
+
+Increase low-risk importance.
+
+Expected:
+
+Physically risky careers become less suitable.
+
+Unknown Data Test
+
+Expected:
+
+UNKNOWN ≠ 0
+
+Eligibility Test
+
+Expected:
+
+Preference changes cannot override NOT_ELIGIBLE.
+
+
+---
+
+60. Negative Metric Safety
+
+The UI and engine must distinguish:
+
+Stress Burden = 8/10
+
+from:
+
+Stress Suitability = 2/10
+
+and:
+
+Safety = 8/10
+
+from:
+
+Risk = 2/10
+
+The underlying semantics must be explicit.
+
+This prevents an accidental implementation where a higher stress or risk number is interpreted as a better career.
+
+
+---
+
+61. Family Scoring Safety
+
+Family scoring must not accidentally double-count:
+
+family
+parent care
+work-life
+location
+transfer
+night duty
+emergency duty
+
+The model should support category-level balancing and documented weights.
+
+
+---
+
+62. Salary Scoring Safety
+
+Salary scoring must not:
+
+treat basic pay as take-home;
+
+compare unrelated pay-level numbers as identical;
+
+ignore pay-system differences;
+
+assume HRA is always received;
+
+assume government housing is free;
+
+fabricate current salary.
+
+
+
+---
+
+63. Recommendation Safety
+
+The recommendation engine must not:
+
+invent eligibility;
+
+invent job duties;
+
+invent housing availability;
+
+invent transfer frequency;
+
+invent promotion timelines;
+
+invent current vacancies;
+
+invent salary;
+
+use stale information without labelling it;
+
+present estimates as official facts.
+
+
+
+---
+
+64. AI Safety
+
+The AI assistant may explain a structured score but must not silently modify:
+
+eligibilityStatus
+careerAttributes
+source evidence
+scoring rules
+
+The recommended architecture is:
+
+Structured Data
+      ↓
+Deterministic Engines
+      ↓
+Structured Recommendation
+      ↓
+AI Explanation
+
+The AI is an explanation and assistance layer, not the canonical database.
+
+
+---
+
+65. Acceptance Criteria
+
+The Scoring Methodology is correctly implemented when:
+
+positive metrics have explicit positive direction;
+
+negative metrics have explicit negative/burden direction;
+
+importance is distinct from suitability;
+
+tolerance is distinct from importance;
+
+unknown values remain unknown;
+
+weights are configurable;
+
+active dimensions are normalized;
+
+correlated categories can be balanced;
+
+salary systems remain distinct;
+
+family and parent-care preferences work;
+
+Kolkata and location preferences work;
+
+transfer preference works;
+
+night-duty preference works;
+
+physical-risk preference works;
+
+housing preference works;
+
+career-growth preference works;
+
+English-fit is analytical rather than falsely official;
+
+exam difficulty remains separate from career quality;
+
+confidence remains separate from suitability;
+
+recommendation scores can be explained;
+
+trade-offs are visible;
+
+ranking is reproducible;
+
+scoring versions are trackable;
+
+eligibility remains protected from preference scoring;
+
+the system can expand to additional government datasets and states without rewriting the scoring architecture.
+
+
+
+---
+
+66. Methodology Disclosure Text
+
+The website should provide a concise explanation similar to:
+
+> GovCareer Compass suitability scores are analytical decision-support scores calculated from the candidate's stated preferences, the structured characteristics of the selected career and the current scoring methodology. They are not official government rankings, selection probabilities, guarantees of appointment, or guarantees of posting.
+
+
+
+
+---
+
+67. Final Mathematical Principle
+
+The scoring engine fundamentally implements:
+
+Candidate Preference
+        ×
+Verified Career Attribute
+        =
+Criterion Contribution
+
+then:
+
+All usable criterion contributions
+        ↓
+Weighted Normalization
+        ↓
+Overall Suitability
+
+with:
+
+Eligibility
+        ↓
+Hard gate
+
+and:
+
+Confidence
+        ↓
+Separate reliability indicator
+
+
+---
+
+68. Final Non-Negotiable Rule
+
+> A high GovCareer Compass score means that a career appears highly compatible with the candidate's stated preferences under the current methodology. It does not mean that the career is objectively best, that the candidate is guaranteed to qualify, or that the candidate is guaranteed to be selected.
+
+
+
+The permanent decision architecture is therefore:
+
+ELIGIBILITY
+    ↓
+What can I pursue?
+
+SCORING
+    ↓
+How well does it fit me?
+
+RANKING
+    ↓
+Which suitable options should I consider first?ted attributes become more influential.
+
 Kolka
