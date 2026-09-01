@@ -1,0 +1,92 @@
+{
+  "$schema": "../../schemas/shared.schema.json",
+  "indexType": "DEPARTMENT_INDEX",
+  "indexVersion": "1.0.0",
+  "schemaVersion": "1.0.0",
+  "generated": false,
+  "generatedAt": null,
+  "generatedFrom": [
+    "/data/central/departments.json",
+    "/data/states/west-bengal/departments.json"
+  ],
+  "description": "Derived lookup index connecting departments to organisations, services, examinations and jobs.",
+  "sourceOfTruth": "Canonical department records.",
+  "rules": {
+    "departmentIsNotOrganisation": true,
+    "departmentIsNotRecruitmentAuthority": true,
+    "departmentIdMustBeStable": true,
+    "noDuplicateIds": true,
+    "historicalNamesMustBePreserved": true
+  },
+  "summary": {
+    "totalRecords": 0,
+    "centralRecords": 0,
+    "westBengalRecords": 0,
+    "activeRecords": 0,
+    "historicalRecords": 0,
+    "partialResearchRecords": 0,
+    "verifiedRecords": 0
+  },
+  "records": [],
+  "indexes": {
+    "byId": {},
+    "byGovernmentId": {},
+    "byStateId": {},
+    "byMinistryId": {},
+    "byOrganisationId": {},
+    "byServiceCadreId": {},
+    "byExamId": {},
+    "byJobId": {},
+    "byCategoryId": {},
+    "byStatus": {},
+    "byResearchStatus": {},
+    "byRecruitmentAuthorityId": {},
+    "byLocationId": {}
+  },
+  "recordShape": {
+    "id": "string",
+    "governmentId": "string|null",
+    "stateId": "string|null",
+    "ministryId": "string|null",
+    "organisationIds": [
+      "string"
+    ],
+    "serviceCadreIds": [
+      "string"
+    ],
+    "examIds": [
+      "string"
+    ],
+    "jobIds": [
+      "string"
+    ],
+    "categoryIds": [
+      "string"
+    ],
+    "recruitmentAuthorityIds": [
+      "string"
+    ],
+    "locationIds": [
+      "string"
+    ],
+    "status": "ACTIVE|HISTORICAL|RENAMED|MERGED|REORGANISED|ABOLISHED|UNKNOWN",
+    "researchStatus": "COMPLETE|SUBSTANTIALLY_COMPLETE|PARTIAL|NOT_VERIFIED"
+  },
+  "searchFields": [
+    "departmentName",
+    "historicalNames",
+    "government",
+    "ministry",
+    "organisationNames",
+    "serviceNames",
+    "jobNames",
+    "locationNames",
+    "keywords"
+  ],
+  "relationshipRules": {
+    "departmentToOrganisation": "One department may control or administratively relate to multiple organisations.",
+    "departmentToJob": "Jobs must reference the department through canonical job records or validated relationships.",
+    "departmentToExam": "An examination may recruit for posts across multiple departments.",
+    "departmentToAuthority": "The recruiting authority may be different from the employing department."
+  }
+}
