@@ -1,53 +1,38 @@
 /**
  * GovCareer Compass
+ * ============================================================
  * Runtime Database Registry
+ * ============================================================
  *
- * The registry owns normalized records after they have passed
- * through loading and validation.
+ * The registry is the application's normalized runtime data store.
  *
- * It provides:
- * - CRUD-like runtime lookup;
- * - cross-entity lookup;
- * - snapshot access;
- * - immutable-return semantics.
+ * Canonical JSON remains the source of truth.
+ *
+ * Pipeline:
+ *
+ * canonical JSON
+ *      ↓
+ * loader
+ *      ↓
+ * normalizer
+ *      ↓
+ * validator
+ *      ↓
+ * registry
+ *      ↓
+ * indexes / application logic
+ *
+ * IMPORTANT
+ * ----------
+ * The registry does not determine legal eligibility and does not
+ * perform recommendation scoring.
  */
 
 import {
   cleanId
 } from './normalizer.js';
 
-function createMap(
-  records
-) {
-  const map =
-    new Map();
-
-  if (!Array.isArray(records)) {
-    return map;
-  }
-
-  records.forEach(
-    (record) => {
-      const id =
-        cleanId(
-          record?.id
-        );
-
-      if (id) {
-        map.set(
-          id,
-          record
-        );
-      }
-    }
-  );
-
-  return map;
-}
-
-function cloneRecord(
-  record
-) {
+function cloneRecord(record) {
   if (
     record === undefined ||
     record === null
@@ -60,29 +45,55 @@ function cloneRecord(
     'function'
   ) {
     try {
-      return structuredClone(
-        record
-      );
+      return structuredClone(record);
     } catch {
-      // Fall through.
+      // Fall through to JSON cloning.
     }
   }
 
   try {
     return JSON.parse(
-      JSON.stringify(
-        record
-      )
+      JSON.stringify(record)
     );
   } catch {
     return record;
   }
 }
 
+function normalizeEntityType(entityType) {
+  return String(
+    entityType || ''
+  )
+    .trim()
+    .toUpperCase();
+}
+
+function createMap(records) {
+  const map = new Map();
+
+  if (!Array.isArray(records)) {
+    return map;
+  }
+
+  records.forEach((record) => {
+    const id = cleanId(
+      record?.id
+    );
+
+    if (id) {
+      map.set(
+        id,
+        record
+      );
+    }
+  });
+
+  return map;
+}
+
 class DatabaseRegistry {
   constructor() {
-    this.collections =
-      new Map();
+    this.collections = new Map();
 
     this.meta = {
       loadedAt: null,
@@ -93,19 +104,20 @@ class DatabaseRegistry {
     };
   }
 
-  register(
-    entityType,
-    records
-  ) {
+  register(entityType, records) {
     const type =
-      String(
+      normalizeEntityType(
         entityType
-      ).toUpperCase();
+      );
+
+    if (!type) {
+      throw new Error(
+        'Registry entity type cannot be empty.'
+      );
+    }
 
     const map =
-      createMap(
-        records
-      );
+      createMap(records);
 
     this.collections.set(
       type,
@@ -115,11 +127,9 @@ class DatabaseRegistry {
     return map.size;
   }
 
-  registerMany(
-    collections
-  ) {
+  registerMany(collections = {}) {
     Object.entries(
-      collections || {}
+      collections
     ).forEach(
       ([entityType, records]) => {
         this.register(
@@ -132,13 +142,11 @@ class DatabaseRegistry {
     return this;
   }
 
-  unregister(
-    entityType
-  ) {
+  unregister(entityType) {
     return this.collections.delete(
-      String(
+      normalizeEntityType(
         entityType
-      ).toUpperCase()
+      )
     );
   }
 
@@ -154,36 +162,43 @@ class DatabaseRegistry {
     };
   }
 
-  hasCollection(
-    entityType
-  ) {
+  hasCollection(entityType) {
     return this.collections.has(
-      String(
+      normalizeEntityType(
         entityType
-      ).toUpperCase()
+      )
     );
   }
 
-  getCollection(
-    entityType
-  ) {
+  getCollection(entityType) {
     return (
       this.collections.get(
-        String(
+        normalizeEntityType(
           entityType
-        ).toUpperCase()
-      ) || new Map()
+        )
+      ) ||
+      new Map()
     );
   }
 
-  get(
-    entityType,
-    id
-  ) {
+  has(entityType, id) {
     const normalizedId =
-      cleanId(
-        id
-      );
+      cleanId(id);
+
+    if (!normalizedId) {
+      return false;
+    }
+
+    return this.getCollection(
+      entityType
+    ).has(
+      normalizedId
+    );
+  }
+
+  get(entityType, id) {
+    const normalizedId =
+      cleanId(id);
 
     if (!normalizedId) {
       return null;
@@ -197,34 +212,11 @@ class DatabaseRegistry {
       );
 
     return record
-      ? cloneRecord(
-          record
-        )
+      ? cloneRecord(record)
       : null;
   }
 
-  has(
-    entityType,
-    id
-  ) {
-    const normalizedId =
-      cleanId(
-        id
-      );
-
-    return (
-      normalizedId !== null &&
-      this.getCollection(
-        entityType
-      ).has(
-        normalizedId
-      )
-    );
-  }
-
-  getAll(
-    entityType
-  ) {
+  getAll(entityType) {
     return [
       ...this.getCollection(
         entityType
@@ -234,18 +226,26 @@ class DatabaseRegistry {
     );
   }
 
-  count(
-    entityType
-  ) {
+  count(entityType) {
     return this.getCollection(
       entityType
     ).size;
   }
 
-  find(
-    entityType,
-    predicate
-  ) {
+  getCounts() {
+    const result = {};
+
+    this.collections.forEach(
+      (map, entityType) => {
+        result[entityType] =
+          map.size;
+      }
+    );
+
+    return result;
+  }
+
+  find(entityType, predicate) {
     if (
       typeof predicate !==
       'function'
@@ -260,10 +260,7 @@ class DatabaseRegistry {
     );
   }
 
-  first(
-    entityType,
-    predicate
-  ) {
+  first(entityType, predicate) {
     if (
       typeof predicate !==
       'function'
@@ -292,13 +289,15 @@ class DatabaseRegistry {
     return null;
   }
 
-  getJobsByExam(
-    examId
-  ) {
+  /**
+   * ----------------------------------------------------------
+   * JOB RELATIONSHIPS
+   * ----------------------------------------------------------
+   */
+
+  getJobsByExam(examId) {
     const id =
-      cleanId(
-        examId
-      );
+      cleanId(examId);
 
     if (!id) {
       return [];
@@ -310,9 +309,7 @@ class DatabaseRegistry {
         Array.isArray(
           job.examIds
         ) &&
-        job.examIds.includes(
-          id
-        )
+        job.examIds.includes(id)
     );
   }
 
@@ -320,9 +317,7 @@ class DatabaseRegistry {
     departmentId
   ) {
     const id =
-      cleanId(
-        departmentId
-      );
+      cleanId(departmentId);
 
     if (!id) {
       return [];
@@ -340,9 +335,7 @@ class DatabaseRegistry {
     organisationId
   ) {
     const id =
-      cleanId(
-        organisationId
-      );
+      cleanId(organisationId);
 
     if (!id) {
       return [];
@@ -356,52 +349,334 @@ class DatabaseRegistry {
     );
   }
 
-  getExamsByJob(
+  getJobsByServiceCadre(
+    serviceCadreId
+  ) {
+    const id =
+      cleanId(serviceCadreId);
+
+    if (!id) {
+      return [];
+    }
+
+    return this.find(
+      'JOB',
+      (job) =>
+        job.serviceCadreId ===
+        id
+    );
+  }
+
+  getJobsByEligibilityRule(
+    ruleId
+  ) {
+    const id =
+      cleanId(ruleId);
+
+    if (!id) {
+      return [];
+    }
+
+    return this.find(
+      'JOB',
+      (job) =>
+        Array.isArray(
+          job.eligibilityRuleIds
+        ) &&
+        job.eligibilityRuleIds.includes(
+          id
+        )
+    );
+  }
+
+  /**
+   * ----------------------------------------------------------
+   * EXAM RELATIONSHIPS
+   * ----------------------------------------------------------
+   */
+
+  getExamsByJob(jobId) {
+    const id =
+      cleanId(jobId);
+
+    if (!id) {
+      return [];
+    }
+
+    return this.find(
+      'EXAM',
+      (exam) =>
+        Array.isArray(
+          exam.postIds
+        ) &&
+        exam.postIds.includes(id)
+    );
+  }
+
+  getExamsByServiceCadre(
+    serviceCadreId
+  ) {
+    const id =
+      cleanId(serviceCadreId);
+
+    if (!id) {
+      return [];
+    }
+
+    return this.find(
+      'EXAM',
+      (exam) =>
+        exam.serviceCadreId ===
+        id ||
+        (
+          Array.isArray(
+            exam.serviceCadreIds
+          ) &&
+          exam.serviceCadreIds.includes(
+            id
+          )
+        )
+    );
+  }
+
+  /**
+   * ----------------------------------------------------------
+   * SERVICE / CADRE RELATIONSHIPS
+   * ----------------------------------------------------------
+   */
+
+  getServiceCadre(
+    serviceCadreId
+  ) {
+    return this.get(
+      'SERVICE_CADRE',
+      serviceCadreId
+    );
+  }
+
+  getServiceCadresByDepartment(
+    departmentId
+  ) {
+    const id =
+      cleanId(departmentId);
+
+    if (!id) {
+      return [];
+    }
+
+    return this.find(
+      'SERVICE_CADRE',
+      (serviceCadre) =>
+        serviceCadre.departmentId ===
+        id
+    );
+  }
+
+  getServiceCadresByOrganisation(
+    organisationId
+  ) {
+    const id =
+      cleanId(organisationId);
+
+    if (!id) {
+      return [];
+    }
+
+    return this.find(
+      'SERVICE_CADRE',
+      (serviceCadre) =>
+        serviceCadre.organisationId ===
+        id
+    );
+  }
+
+  getJobsAndServiceCadre(
+    serviceCadreId
+  ) {
+    const serviceCadre =
+      this.getServiceCadre(
+        serviceCadreId
+      );
+
+    if (!serviceCadre) {
+      return {
+        serviceCadre: null,
+        jobs: []
+      };
+    }
+
+    return {
+      serviceCadre,
+      jobs:
+        this.getJobsByServiceCadre(
+          serviceCadreId
+        )
+    };
+  }
+
+  /**
+   * ----------------------------------------------------------
+   * ELIGIBILITY RELATIONSHIPS
+   * ----------------------------------------------------------
+   */
+
+  getEligibilityRule(
+    ruleId
+  ) {
+    return this.get(
+      'ELIGIBILITY_RULE',
+      ruleId
+    );
+  }
+
+  getEligibilityRulesByTarget(
+    targetType,
+    targetId
+  ) {
+    const normalizedType =
+      String(
+        targetType || ''
+      )
+        .trim()
+        .toUpperCase();
+
+    const id =
+      cleanId(targetId);
+
+    if (
+      !normalizedType ||
+      !id
+    ) {
+      return [];
+    }
+
+    return this.find(
+      'ELIGIBILITY_RULE',
+      (rule) =>
+        String(
+          rule.targetType ||
+          ''
+        )
+          .toUpperCase() ===
+          normalizedType &&
+        rule.targetId === id
+    );
+  }
+
+  getEligibilityRulesByJob(
     jobId
+  ) {
+    return this.getEligibilityRulesByTarget(
+      'JOB',
+      jobId
+    );
+  }
+
+  getEligibilityRulesByExam(
+    examId
+  ) {
+    return this.getEligibilityRulesByTarget(
+      'EXAM',
+      examId
+    );
+  }
+
+  getEligibilityRulesByServiceCadre(
+    serviceCadreId
+  ) {
+    return this.getEligibilityRulesByTarget(
+      'SERVICE_CADRE',
+      serviceCadreId
+    );
+  }
+
+  getEligibilityRulesByQualification(
+    qualificationId
   ) {
     const id =
       cleanId(
-        jobId
+        qualificationId
       );
 
     if (!id) {
       return [];
     }
 
-    const job =
-      this.get(
-        'JOB',
-        id
-      );
-
-    if (!job) {
-      return [];
-    }
-
-    return this.getAll(
-      'EXAM'
-    ).filter(
-      (exam) =>
-        Array.isArray(
-          exam.postIds
-        ) &&
-        exam.postIds.includes(
-          id
+    return this.find(
+      'ELIGIBILITY_RULE',
+      (rule) =>
+        (
+          Array.isArray(
+            rule.qualificationIds
+          ) &&
+          rule.qualificationIds.includes(
+            id
+          )
+        ) ||
+        (
+          Array.isArray(
+            rule.requiredQualificationIds
+          ) &&
+          rule.requiredQualificationIds.includes(
+            id
+          )
         )
     );
   }
 
-  getSourcesByIds(
-    sourceIds
+  /**
+   * ----------------------------------------------------------
+   * QUALIFICATION RELATIONSHIPS
+   * ----------------------------------------------------------
+   */
+
+  getQualification(
+    qualificationId
   ) {
-    const ids =
-      Array.isArray(
+    return this.get(
+      'QUALIFICATION',
+      qualificationId
+    );
+  }
+
+  getQualificationsByIds(
+    qualificationIds
+  ) {
+    if (
+      !Array.isArray(
+        qualificationIds
+      )
+    ) {
+      return [];
+    }
+
+    return qualificationIds
+      .map(
+        (id) =>
+          this.get(
+            'QUALIFICATION',
+            id
+          )
+      )
+      .filter(Boolean);
+  }
+
+  /**
+   * ----------------------------------------------------------
+   * SOURCE RELATIONSHIPS
+   * ----------------------------------------------------------
+   */
+
+  getSourcesByIds(sourceIds) {
+    if (
+      !Array.isArray(
         sourceIds
       )
-        ? sourceIds
-        : [];
+    ) {
+      return [];
+    }
 
-    return ids
+    return sourceIds
       .map(
         (id) =>
           this.get(
@@ -412,12 +687,32 @@ class DatabaseRegistry {
       .filter(Boolean);
   }
 
-  setMeta(
-    meta
-  ) {
+  /**
+   * ----------------------------------------------------------
+   * METADATA
+   * ----------------------------------------------------------
+   */
+
+  setMeta(meta = {}) {
     this.meta = {
       ...this.meta,
-      ...(meta || {})
+      ...meta,
+
+      warnings: Array.isArray(
+        meta.warnings
+      )
+        ? [
+            ...meta.warnings
+          ]
+        : this.meta.warnings,
+
+      errors: Array.isArray(
+        meta.errors
+      )
+        ? [
+            ...meta.errors
+          ]
+        : this.meta.errors
     };
 
     return this;
@@ -427,16 +722,12 @@ class DatabaseRegistry {
     return {
       ...this.meta,
       warnings: [
-        ...(
-          this.meta
-            .warnings || []
-        )
+        ...this.meta
+          .warnings
       ],
       errors: [
-        ...(
-          this.meta
-            .errors || []
-        )
+        ...this.meta
+          .errors
       ]
     };
   }
@@ -445,9 +736,9 @@ class DatabaseRegistry {
     const snapshot = {};
 
     this.collections.forEach(
-      (map, type) => {
+      (map, entityType) => {
         snapshot[
-          type
+          entityType
         ] = [
           ...map.values()
         ].map(
@@ -457,19 +748,6 @@ class DatabaseRegistry {
     );
 
     return snapshot;
-  }
-
-  getCounts() {
-    const counts = {};
-
-    this.collections.forEach(
-      (map, type) => {
-        counts[type] =
-          map.size;
-      }
-    );
-
-    return counts;
   }
 }
 
