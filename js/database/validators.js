@@ -1,35 +1,57 @@
 /**
  * GovCareer Compass
- * Runtime Data Validator
+ * ============================================================
+ * Runtime Database Validator
+ * ============================================================
  *
- * Purpose:
- * - validate loaded JSON before it reaches application logic;
- * - detect duplicate IDs;
- * - detect broken relationships;
- * - detect obviously invalid score ranges;
- * - distinguish errors from warnings.
+ * Runtime validation complements the repository's JSON Schema
+ * validation.
  *
- * This is intentionally a runtime validator.
- * Full JSON-Schema validation remains a repository/build concern.
+ * Errors stop unsafe/broken data from entering the runtime
+ * recommendation pipeline.
  */
 
-const VALID_JOB_ELIGIBILITY = new Set([
-  'DIRECT',
-  'CONDITIONAL',
-  'NOT_ELIGIBLE',
-  'MANUAL_VERIFICATION',
-  'UNKNOWN'
-]);
+const VALID_JOB_ELIGIBILITY =
+  new Set([
+    'DIRECT',
+    'CONDITIONAL',
+    'NOT_ELIGIBLE',
+    'MANUAL_VERIFICATION',
+    'UNKNOWN'
+  ]);
 
-const VALID_CONFIDENCE = new Set([
-  'HIGH',
-  'MEDIUM_HIGH',
-  'MEDIUM',
-  'LOW',
-  'ESTIMATE',
-  'NOT_VERIFIED',
-  'UNKNOWN'
-]);
+const VALID_RULE_CLASSES =
+  new Set([
+    'HARD',
+    'SOFT'
+  ]);
+
+const VALID_CONFIDENCE =
+  new Set([
+    'HIGH',
+    'MEDIUM_HIGH',
+    'MEDIUM',
+    'LOW',
+    'ESTIMATE',
+    'NOT_VERIFIED',
+    'UNKNOWN'
+  ]);
+
+const SCORE_FIELDS =
+  [
+    'workLife',
+    'stress',
+    'physicalRisk',
+    'authority',
+    'familyCompatibility',
+    'parentCareCompatibility',
+    'kolkataStability',
+    'transferBurden',
+    'careerGrowth',
+    'socialStatus',
+    'housingAdvantage',
+    'physicalSafety'
+  ];
 
 function isObject(
   value
@@ -38,13 +60,11 @@ function isObject(
     value !== null &&
     typeof value ===
       'object' &&
-    !Array.isArray(
-      value
-    )
+    !Array.isArray(value)
   );
 }
 
-function createIssue(
+function issue(
   severity,
   code,
   message,
@@ -58,34 +78,44 @@ function createIssue(
   };
 }
 
-function validateCollectionShape(
+function validateObjectRecords(
   records,
   entityName
 ) {
   const errors = [];
-  const warnings = [];
 
-  if (!Array.isArray(records)) {
+  if (
+    !Array.isArray(records)
+  ) {
     errors.push(
-      createIssue(
+      issue(
         'ERROR',
         'NOT_ARRAY',
-        `${entityName} data must be an array.`
+        `${entityName} must be an array.`
       )
     );
 
-    return {
-      valid: false,
-      errors,
-      warnings
-    };
+    return errors;
   }
 
-  return {
-    valid: true,
-    errors,
-    warnings
-  };
+  records.forEach(
+    (record, index) => {
+      if (
+        !isObject(record)
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'INVALID_RECORD',
+            `${entityName} record must be an object.`,
+            `${entityName}[${index}]`
+          )
+        );
+      }
+    }
+  );
+
+  return errors;
 }
 
 function validateIds(
@@ -94,15 +124,18 @@ function validateIds(
 ) {
   const errors = [];
   const seen =
-    new Map();
+    new Set();
+
+  if (
+    !Array.isArray(records)
+  ) {
+    return errors;
+  }
 
   records.forEach(
     (record, index) => {
       const id =
         record?.id;
-
-      const path =
-        `${entityName}[${index}].id`;
 
       if (
         typeof id !==
@@ -110,11 +143,11 @@ function validateIds(
         !id.trim()
       ) {
         errors.push(
-          createIssue(
+          issue(
             'ERROR',
             'MISSING_ID',
-            `${entityName} record is missing a valid ID.`,
-            path
+            `${entityName} record requires a stable ID.`,
+            `${entityName}[${index}].id`
           )
         );
 
@@ -125,20 +158,95 @@ function validateIds(
         seen.has(id)
       ) {
         errors.push(
-          createIssue(
+          issue(
             'ERROR',
             'DUPLICATE_ID',
             `Duplicate ${entityName} ID "${id}".`,
-            path
+            `${entityName}[${index}].id`
           )
         );
 
         return;
       }
 
-      seen.set(
-        id,
-        index
+      seen.add(id);
+    }
+  );
+
+  return errors;
+}
+
+function validateReferenceArray(
+  records,
+  field,
+  validIds,
+  entityName
+) {
+  const errors = [];
+
+  if (
+    !Array.isArray(records)
+  ) {
+    return errors;
+  }
+
+  const ids =
+    new Set(
+      validIds.filter(
+        (id) =>
+          typeof id ===
+          'string'
+      )
+    );
+
+  records.forEach(
+    (record, index) => {
+      const values =
+        record?.[field];
+
+      if (
+        values === undefined ||
+        values === null
+      ) {
+        return;
+      }
+
+      if (
+        !Array.isArray(
+          values
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'REFERENCE_NOT_ARRAY',
+            `${field} must be an array.`,
+            `${entityName}[${index}].${field}`
+          )
+        );
+
+        return;
+      }
+
+      values.forEach(
+        (value) => {
+          if (
+            typeof value !==
+              'string' ||
+            !ids.has(value)
+          ) {
+            errors.push(
+              issue(
+                'ERROR',
+                'BROKEN_REFERENCE',
+                `${entityName}.${field} references unknown ID "${String(
+                  value
+                )}".`,
+                `${entityName}[${index}].${field}`
+              )
+            );
+          }
+        }
       );
     }
   );
@@ -146,45 +254,27 @@ function validateIds(
   return errors;
 }
 
-function validateObjectRecords(
-  records,
-  entityName
-) {
-  return records
-    .map(
-      (record, index) => {
-        if (
-          !isObject(record)
-        ) {
-          return createIssue(
-            'ERROR',
-            'INVALID_RECORD',
-            `${entityName} record must be an object.`,
-            `${entityName}[${index}]`
-          );
-        }
-
-        return null;
-      }
-    )
-    .filter(Boolean);
-}
-
-function validateReferences(
+function validateReferenceField(
   records,
   field,
-  referenceIds,
+  validIds,
   entityName
 ) {
   const errors = [];
-  const validIds =
+
+  if (
+    !Array.isArray(records)
+  ) {
+    return errors;
+  }
+
+  const ids =
     new Set(
-      referenceIds
-        .filter(
-          (id) =>
-            typeof id ===
-            'string'
-        )
+      validIds.filter(
+        (id) =>
+          typeof id ===
+          'string'
+      )
     );
 
   records.forEach(
@@ -193,84 +283,82 @@ function validateReferences(
         record?.[field];
 
       if (
-        value ===
-          undefined ||
-        value === null
+        value === undefined ||
+        value === null ||
+        value === ''
       ) {
         return;
       }
 
-      const ids =
-        Array.isArray(value)
-          ? value
-          : [value];
-
-      ids.forEach((id) => {
-        if (
-          typeof id !==
-            'string' ||
-          !validIds.has(id)
-        ) {
-          errors.push(
-            createIssue(
-              'ERROR',
-              'BROKEN_REFERENCE',
-              `${entityName} references unknown ${field} ID "${String(
-                id
-              )}".`,
-              `${entityName}[${index}].${field}`
-            )
-          );
-        }
-      });
+      if (
+        typeof value !==
+          'string' ||
+        !ids.has(value)
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'BROKEN_REFERENCE',
+            `${entityName}.${field} references unknown ID "${String(
+              value
+            )}".`,
+            `${entityName}[${index}].${field}`
+          )
+        );
+      }
     }
   );
 
   return errors;
 }
 
-function validateScore(
+function validateScores(
   record,
-  field,
-  {
-    min = 0,
-    max = 10
-  } = {}
+  entityName,
+  index
 ) {
-  const value =
-    record?.[field];
+  const errors = [];
 
-  if (
-    value === undefined ||
-    value === null
-  ) {
-    return null;
-  }
+  SCORE_FIELDS.forEach(
+    (field) => {
+      const value =
+        record?.[field];
 
-  if (
-    typeof value !==
-      'number' ||
-    !Number.isFinite(
-      value
-    ) ||
-    value < min ||
-    value > max
-  ) {
-    return createIssue(
-      'ERROR',
-      'INVALID_SCORE',
-      `${field} must be a number from ${min} to ${max}.`
-    );
-  }
+      if (
+        value === undefined ||
+        value === null
+      ) {
+        return;
+      }
 
-  return null;
+      if (
+        typeof value !==
+          'number' ||
+        !Number.isFinite(
+          value
+        ) ||
+        value < 0 ||
+        value > 10
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'INVALID_SCORE',
+            `${field} must be a number from 0 to 10.`,
+            `${entityName}[${index}].${field}`
+          )
+        );
+      }
+    }
+  );
+
+  return errors;
 }
 
-function validateJobRecords(
+function validateJobs(
   jobs
 ) {
   const errors = [];
-  const warnings = [];
 
   errors.push(
     ...validateObjectRecords(
@@ -286,9 +374,17 @@ function validateJobRecords(
     )
   );
 
+  if (
+    !Array.isArray(jobs)
+  ) {
+    return errors;
+  }
+
   jobs.forEach(
     (job, index) => {
-      if (!isObject(job)) {
+      if (
+        !isObject(job)
+      ) {
         return;
       }
 
@@ -304,10 +400,10 @@ function validateJobRecords(
         )
       ) {
         errors.push(
-          createIssue(
+          issue(
             'ERROR',
             'INVALID_ELIGIBILITY_STATUS',
-            `Invalid eligibility status "${String(
+            `Invalid job eligibility status "${String(
               eligibility
             )}".`,
             `jobs[${index}].eligibilityStatus`
@@ -323,7 +419,7 @@ function validateJobRecords(
         )
       ) {
         errors.push(
-          createIssue(
+          issue(
             'ERROR',
             'INVALID_CONFIDENCE',
             `Invalid confidence "${String(
@@ -334,39 +430,17 @@ function validateJobRecords(
         );
       }
 
-      [
-        'workLife',
-        'stress',
-        'physicalRisk',
-        'authority',
-        'familyCompatibility',
-        'parentCareCompatibility',
-        'kolkataStability',
-        'transferBurden'
-      ].forEach(
-        (field) => {
-          const issue =
-            validateScore(
-              job,
-              field
-            );
-
-          if (issue) {
-            issue.path =
-              `jobs[${index}].${field}`;
-
-            errors.push(
-              issue
-            );
-          }
-        }
+      errors.push(
+        ...validateScores(
+          job,
+          'jobs',
+          index
+        )
       );
 
       if (
         job.startingBasic !==
           undefined &&
-        job.startingBasic !==
-          null &&
         (
           typeof job.startingBasic !==
             'number' ||
@@ -375,7 +449,7 @@ function validateJobRecords(
         )
       ) {
         errors.push(
-          createIssue(
+          issue(
             'ERROR',
             'INVALID_BASIC_PAY',
             'startingBasic must be a non-negative number.',
@@ -387,8 +461,6 @@ function validateJobRecords(
       if (
         job.maximumBasic !==
           undefined &&
-        job.maximumBasic !==
-          null &&
         (
           typeof job.maximumBasic !==
             'number' ||
@@ -397,7 +469,7 @@ function validateJobRecords(
         )
       ) {
         errors.push(
-          createIssue(
+          issue(
             'ERROR',
             'INVALID_MAXIMUM_PAY',
             'maximumBasic must be a non-negative number.',
@@ -415,24 +487,10 @@ function validateJobRecords(
           job.maximumBasic
       ) {
         errors.push(
-          createIssue(
+          issue(
             'ERROR',
-            'PAY_RANGE_INVALID',
+            'INVALID_PAY_RANGE',
             'startingBasic cannot exceed maximumBasic.',
-            `jobs[${index}]`
-          )
-        );
-      }
-
-      if (
-        !job.sourceIds?.length &&
-        !job.sources?.length
-      ) {
-        warnings.push(
-          createIssue(
-            'WARNING',
-            'NO_SOURCE_REFERENCE',
-            'Job has no source reference.',
             `jobs[${index}]`
           )
         );
@@ -440,19 +498,13 @@ function validateJobRecords(
     }
   );
 
-  return {
-    valid:
-      errors.length === 0,
-    errors,
-    warnings
-  };
+  return errors;
 }
 
-function validateExamRecords(
+function validateExams(
   exams
 ) {
   const errors = [];
-  const warnings = [];
 
   errors.push(
     ...validateObjectRecords(
@@ -468,26 +520,18 @@ function validateExamRecords(
     )
   );
 
+  if (
+    !Array.isArray(exams)
+  ) {
+    return errors;
+  }
+
   exams.forEach(
     (exam, index) => {
-      if (!isObject(exam)) {
-        return;
-      }
-
       if (
-        exam.sourceIds &&
-        !Array.isArray(
-          exam.sourceIds
-        )
+        !isObject(exam)
       ) {
-        errors.push(
-          createIssue(
-            'ERROR',
-            'INVALID_SOURCE_IDS',
-            'sourceIds must be an array.',
-            `exams[${index}].sourceIds`
-          )
-        );
+        return;
       }
 
       if (
@@ -504,44 +548,198 @@ function validateExamRecords(
         )
       ) {
         errors.push(
-          createIssue(
+          issue(
             'ERROR',
-            'INVALID_EXAM_YEAR',
+            'INVALID_YEAR',
             'Exam year must be a valid integer.',
             `exams[${index}].year`
-          )
-        );
-      }
-
-      if (
-        !exam.postIds?.length &&
-        !exam.jobIds?.length
-      ) {
-        warnings.push(
-          createIssue(
-            'WARNING',
-            'NO_POST_MAPPING',
-            'Exam has no mapped post IDs.',
-            `exams[${index}]`
           )
         );
       }
     }
   );
 
-  return {
-    valid:
-      errors.length === 0,
-    errors,
-    warnings
-  };
+  return errors;
 }
 
-function validateGenericRecords(
+function validateServiceCadres(
+  serviceCadres
+) {
+  const errors = [];
+
+  errors.push(
+    ...validateObjectRecords(
+      serviceCadres,
+      'serviceCadres'
+    )
+  );
+
+  errors.push(
+    ...validateIds(
+      serviceCadres,
+      'serviceCadres'
+    )
+  );
+
+  return errors;
+}
+
+function validateEligibilityRules(
+  rules
+) {
+  const errors = [];
+
+  errors.push(
+    ...validateObjectRecords(
+      rules,
+      'eligibilityRules'
+    )
+  );
+
+  errors.push(
+    ...validateIds(
+      rules,
+      'eligibilityRules'
+    )
+  );
+
+  if (
+    !Array.isArray(rules)
+  ) {
+    return errors;
+  }
+
+  rules.forEach(
+    (rule, index) => {
+      if (
+        !isObject(rule)
+      ) {
+        return;
+      }
+
+      if (
+        rule.ruleClass !==
+          undefined &&
+        !VALID_RULE_CLASSES.has(
+          rule.ruleClass
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'INVALID_RULE_CLASS',
+            `Invalid ruleClass "${String(
+              rule.ruleClass
+            )}".`,
+            `eligibilityRules[${index}].ruleClass`
+          )
+        );
+      }
+
+      if (
+        rule.minimumAge !==
+          undefined &&
+        rule.maximumAge !==
+          undefined &&
+        rule.minimumAge >
+          rule.maximumAge
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'INVALID_AGE_RANGE',
+            'minimumAge cannot exceed maximumAge.',
+            `eligibilityRules[${index}]`
+          )
+        );
+      }
+
+      if (
+        rule.minimumPercentage !==
+          undefined &&
+        rule.maximumPercentage !==
+          undefined &&
+        rule.minimumPercentage >
+          rule.maximumPercentage
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'INVALID_PERCENTAGE_RANGE',
+            'minimumPercentage cannot exceed maximumPercentage.',
+            `eligibilityRules[${index}]`
+          )
+        );
+      }
+
+      if (
+        rule.confidence !==
+          undefined &&
+        !VALID_CONFIDENCE.has(
+          rule.confidence
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'INVALID_CONFIDENCE',
+            `Invalid confidence "${String(
+              rule.confidence
+            )}".`,
+            `eligibilityRules[${index}].confidence`
+          )
+        );
+      }
+
+      if (
+        rule.ruleClass ===
+          'HARD' &&
+        !Array.isArray(
+          rule.sourceIds
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'HARD_RULE_WITHOUT_SOURCE',
+            'A hard eligibility rule must contain sourceIds.',
+            `eligibilityRules[${index}].sourceIds`
+          )
+        );
+      }
+    }
+  );
+
+  return errors;
+}
+
+function validateQualifications(
+  qualifications
+) {
+  const errors = [];
+
+  errors.push(
+    ...validateObjectRecords(
+      qualifications,
+      'qualifications'
+    )
+  );
+
+  errors.push(
+    ...validateIds(
+      qualifications,
+      'qualifications'
+    )
+  );
+
+  return errors;
+}
+
+function validateGeneric(
   records,
   entityName
 ) {
-  const errors = [
+  return [
     ...validateObjectRecords(
       records,
       entityName
@@ -551,121 +749,359 @@ function validateGenericRecords(
       entityName
     )
   ];
-
-  return {
-    valid:
-      errors.length === 0,
-    errors,
-    warnings: []
-  };
 }
 
 function validateCrossReferences(
-  {
-    jobs = [],
-    exams = [],
-    departments = [],
-    organisations = [],
-    sources = []
-  } = {}
+  database
 ) {
   const errors = [];
-  const warnings = [];
+
+  const jobs =
+    database?.jobs || [];
+
+  const exams =
+    database?.exams || [];
+
+  const serviceCadres =
+    database?.serviceCadres ||
+    [];
+
+  const eligibilityRules =
+    database?.eligibilityRules ||
+    [];
+
+  const qualifications =
+    database?.qualifications ||
+    [];
+
+  const departments =
+    database?.departments ||
+    [];
+
+  const organisations =
+    database?.organisations ||
+    [];
+
+  const sources =
+    database?.sources ||
+    [];
+
+  const jobIds =
+    jobs.map(
+      (item) =>
+        item.id
+    );
 
   const examIds =
     exams.map(
-      (item) => item.id
+      (item) =>
+        item.id
+    );
+
+  const serviceCadreIds =
+    serviceCadres.map(
+      (item) =>
+        item.id
+    );
+
+  const eligibilityRuleIds =
+    eligibilityRules.map(
+      (item) =>
+        item.id
+    );
+
+  const qualificationIds =
+    qualifications.map(
+      (item) =>
+        item.id
     );
 
   const departmentIds =
     departments.map(
-      (item) => item.id
+      (item) =>
+        item.id
     );
 
   const organisationIds =
     organisations.map(
-      (item) => item.id
+      (item) =>
+        item.id
     );
 
   const sourceIds =
     sources.map(
-      (item) => item.id
+      (item) =>
+        item.id
     );
 
-  jobs.forEach(
-    (job, index) => {
-      errors.push(
-        ...validateReferences(
-          [job],
-          'examIds',
-          examIds,
-          'jobs'
-        ).map(
-          (issue) => ({
-            ...issue,
-            path:
-              `jobs[${index}].${issue.path ?? 'examIds'}`
-          })
-        )
-      );
+  errors.push(
+    ...validateReferenceField(
+      jobs,
+      'departmentId',
+      departmentIds,
+      'jobs'
+    )
+  );
 
-      errors.push(
-        ...validateReferences(
-          [job],
-          'departmentId',
-          departmentIds,
-          'jobs'
-        )
-      );
+  errors.push(
+    ...validateReferenceField(
+      jobs,
+      'organisationId',
+      organisationIds,
+      'jobs'
+    )
+  );
 
-      errors.push(
-        ...validateReferences(
-          [job],
-          'organisationId',
-          organisationIds,
-          'jobs'
-        )
-      );
+  errors.push(
+    ...validateReferenceField(
+      jobs,
+      'serviceCadreId',
+      serviceCadreIds,
+      'jobs'
+    )
+  );
 
+  errors.push(
+    ...validateReferenceArray(
+      jobs,
+      'examIds',
+      examIds,
+      'jobs'
+    )
+  );
+
+  errors.push(
+    ...validateReferenceArray(
+      jobs,
+      'eligibilityRuleIds',
+      eligibilityRuleIds,
+      'jobs'
+    )
+  );
+
+  errors.push(
+    ...validateReferenceArray(
+      jobs,
+      'sourceIds',
+      sourceIds,
+      'jobs'
+    )
+  );
+
+  errors.push(
+    ...validateReferenceArray(
+      exams,
+      'postIds',
+      jobIds,
+      'exams'
+    )
+  );
+
+  errors.push(
+    ...validateReferenceField(
+      exams,
+      'serviceCadreId',
+      serviceCadreIds,
+      'exams'
+    )
+  );
+
+  errors.push(
+    ...validateReferenceArray(
+      exams,
+      'sourceIds',
+      sourceIds,
+      'exams'
+    )
+  );
+
+  errors.push(
+    ...validateReferenceArray(
+      serviceCadres,
+      'postIds',
+      jobIds,
+      'serviceCadres'
+    )
+  );
+
+  errors.push(
+    ...validateReferenceArray(
+      serviceCadres,
+      'examIds',
+      examIds,
+      'serviceCadres'
+    )
+  );
+
+  errors.push(
+    ...validateReferenceArray(
+      serviceCadres,
+      'eligibilityRuleIds',
+      eligibilityRuleIds,
+      'serviceCadres'
+    )
+  );
+
+  errors.push(
+    ...validateReferenceArray(
+      serviceCadres,
+      'sourceIds',
+      sourceIds,
+      'serviceCadres'
+    )
+  );
+
+  errors.push(
+    ...validateReferenceField(
+      eligibilityRules,
+      'targetId',
+      new Set(
+        [
+          ...jobIds,
+          ...examIds,
+          ...serviceCadreIds
+        ]
+      ),
+      'eligibilityRules'
+    )
+  );
+
+  errors.push(
+    ...validateReferenceArray(
+      eligibilityRules,
+      'qualificationIds',
+      qualificationIds,
+      'eligibilityRules'
+    )
+  );
+
+  errors.push(
+    ...validateReferenceArray(
+      eligibilityRules,
+      'requiredQualificationIds',
+      qualificationIds,
+      'eligibilityRules'
+    )
+  );
+
+  errors.push(
+    ...validateReferenceArray(
+      eligibilityRules,
+      'sourceIds',
+      sourceIds,
+      'eligibilityRules'
+    )
+  );
+
+  return errors;
+}
+
+function validateDatabase(
+  database = {}
+) {
+  const errors = [];
+  const warnings = [];
+
+  errors.push(
+    ...validateJobs(
+      database.jobs || []
+    )
+  );
+
+  errors.push(
+    ...validateExams(
+      database.exams || []
+    )
+  );
+
+  errors.push(
+    ...validateServiceCadres(
+      database.serviceCadres ||
+        []
+    )
+  );
+
+  errors.push(
+    ...validateEligibilityRules(
+      database.eligibilityRules ||
+        []
+    )
+  );
+
+  errors.push(
+    ...validateQualifications(
+      database.qualifications ||
+        []
+    )
+  );
+
+  [
+    [
+      'departments',
+      database.departments
+    ],
+    [
+      'organisations',
+      database.organisations
+    ],
+    [
+      'sources',
+      database.sources
+    ],
+    [
+      'governments',
+      database.governments
+    ],
+    [
+      'states',
+      database.states
+    ]
+  ].forEach(
+    ([
+      entityName,
+      records
+    ]) => {
       errors.push(
-        ...validateReferences(
-          [job],
-          'sourceIds',
-          sourceIds,
-          'jobs'
+        ...validateGeneric(
+          records || [],
+          entityName
         )
       );
     }
   );
 
-  exams.forEach(
-    (exam, index) => {
-      errors.push(
-        ...validateReferences(
-          [exam],
-          'sourceIds',
-          sourceIds,
-          'exams'
-        ).map(
-          (issue) => ({
-            ...issue,
-            path:
-              `exams[${index}].${issue.path ?? 'sourceIds'}`
-          })
-        )
-      );
-    }
+  errors.push(
+    ...validateCrossReferences(
+      database
+    )
   );
 
   if (
-    !jobs.length &&
-    !exams.length
+    (
+      database.jobs ||
+      []
+    ).length === 0
   ) {
     warnings.push(
-      createIssue(
+      issue(
         'WARNING',
-        'EMPTY_DATABASE',
-        'No jobs or exams are currently loaded.'
+        'NO_JOBS',
+        'No job records are currently loaded.'
+      )
+    );
+  }
+
+  if (
+    (
+      database.exams ||
+      []
+    ).length === 0
+  ) {
+    warnings.push(
+      issue(
+        'WARNING',
+        'NO_EXAMS',
+        'No exam records are currently loaded.'
       )
     );
   }
@@ -673,103 +1109,15 @@ function validateCrossReferences(
   return {
     valid:
       errors.length === 0,
+
     errors,
-    warnings
-  };
-}
 
-function validateDatabase(
-  database
-) {
-  const errors = [];
-  const warnings = [];
-
-  const validators = {
-    jobs: validateJobRecords,
-    exams: validateExamRecords,
-    departments:
-      (records) =>
-        validateGenericRecords(
-          records,
-          'departments'
-        ),
-    organisations:
-      (records) =>
-        validateGenericRecords(
-          records,
-          'organisations'
-        ),
-    sources:
-      (records) =>
-        validateGenericRecords(
-          records,
-          'sources'
-        ),
-    governments:
-      (records) =>
-        validateGenericRecords(
-          records,
-          'governments'
-        ),
-    states:
-      (records) =>
-        validateGenericRecords(
-          records,
-          'states'
-        )
-  };
-
-  Object.entries(
-    database || {}
-  ).forEach(
-    ([key, records]) => {
-      const validator =
-        validators[key];
-
-      if (!validator) {
-        return;
-      }
-
-      const result =
-        validator(
-          Array.isArray(
-            records
-          )
-            ? records
-            : []
-        );
-
-      errors.push(
-        ...result.errors
-      );
-
-      warnings.push(
-        ...result.warnings
-      );
-    }
-  );
-
-  const crossReference =
-    validateCrossReferences(
-      database
-    );
-
-  errors.push(
-    ...crossReference.errors
-  );
-
-  warnings.push(
-    ...crossReference.warnings
-  );
-
-  return {
-    valid:
-      errors.length === 0,
-    errors,
     warnings,
+
     counts: {
       errors:
         errors.length,
+
       warnings:
         warnings.length
     }
@@ -777,13 +1125,15 @@ function validateDatabase(
 }
 
 export {
-  validateCollectionShape,
-  validateIds,
   validateObjectRecords,
-  validateReferences,
-  validateJobRecords,
-  validateExamRecords,
-  validateGenericRecords,
+  validateIds,
+  validateReferenceArray,
+  validateReferenceField,
+  validateJobs,
+  validateExams,
+  validateServiceCadres,
+  validateEligibilityRules,
+  validateQualifications,
   validateCrossReferences,
   validateDatabase
 };
@@ -791,6 +1141,9 @@ export {
 export default {
   validateDatabase,
   validateCrossReferences,
-  validateJobRecords,
-  validateExamRecords
+  validateJobs,
+  validateExams,
+  validateServiceCadres,
+  validateEligibilityRules,
+  validateQualifications
 };
