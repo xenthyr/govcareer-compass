@@ -1,0 +1,534 @@
+{
+  "$schema": "../../schemas/eligibility-rule.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "central-government",
+  "lastVerified": "2026-08-31",
+  "eligibilityRules": [
+    {
+      "id": "eligibility-cse-general-degree",
+      "name": {
+        "en": "Civil Services general degree requirement",
+        "bn": "সিভিল সার্ভিসেস সাধারণ ডিগ্রি যোগ্যতা"
+      },
+      "description": {
+        "en": "Recognised bachelor's degree or equivalent as prescribed by the applicable Civil Services Examination notification.",
+        "bn": "প্রযোজ্য সিভিল সার্ভিসেস পরীক্ষার বিজ্ঞপ্তিতে নির্ধারিত স্বীকৃত স্নাতক ডিগ্রি বা সমমানের যোগ্যতা।"
+      },
+      "ruleType": "HARD_ELIGIBILITY",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "qualifications",
+        "profileFieldId": "candidate.qualifications"
+      },
+      "requiredQualifications": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "explanation": {
+        "en": "The candidate must possess the prescribed bachelor's degree or equivalent by the applicable cutoff date.",
+        "bn": "প্রযোজ্য কাট-অফ তারিখের মধ্যে প্রয়োজনীয় স্নাতক ডিগ্রি বা সমমানের যোগ্যতা থাকতে হবে।"
+      },
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ],
+      "sourceDate": "2026-02-04",
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-capf-ac-degree",
+      "name": {
+        "en": "CAPF Assistant Commandant degree requirement",
+        "bn": "CAPF সহকারী কমান্ড্যান্ট ডিগ্রি যোগ্যতা"
+      },
+      "ruleType": "HARD_ELIGIBILITY",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "qualifications",
+        "profileFieldId": "candidate.qualifications"
+      },
+      "requiredQualifications": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-upsc-capf-2026"
+      ],
+      "sourceDate": "2026-02-20",
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-capf-ac-physical",
+      "name": {
+        "en": "CAPF Assistant Commandant physical standard and endurance requirement",
+        "bn": "CAPF সহকারী কমান্ড্যান্ট শারীরিক মান ও সহনশীলতা যোগ্যতা"
+      },
+      "ruleType": "PHYSICAL_REQUIREMENT",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "physicalProfile",
+        "profileFieldId": "candidate.physicalProfile"
+      },
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-upsc-capf-2026"
+      ],
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "notes": {
+        "en": "Exact physical measurements and endurance conditions must be read from the applicable examination notification.",
+        "bn": "সঠিক শারীরিক মাপ ও সহনশীলতার শর্ত প্রযোজ্য পরীক্ষার বিজ্ঞপ্তি থেকে যাচাই করতে হবে।"
+      }
+    },
+    {
+      "id": "eligibility-capf-ac-medical",
+      "name": {
+        "en": "CAPF Assistant Commandant medical requirement",
+        "bn": "CAPF সহকারী কমান্ড্যান্ট চিকিৎসাগত যোগ্যতা"
+      },
+      "ruleType": "MEDICAL_REQUIREMENT",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "medicalProfile",
+        "profileFieldId": "candidate.medicalProfile"
+      },
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-upsc-capf-2026"
+      ],
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-ssc-cgl-general-degree",
+      "name": {
+        "en": "SSC CGL general bachelor's degree requirement",
+        "bn": "SSC CGL সাধারণ স্নাতক ডিগ্রি যোগ্যতা"
+      },
+      "description": {
+        "en": "Bachelor's degree from a recognised university or equivalent for applicable general CGL posts.",
+        "bn": "প্রযোজ্য সাধারণ CGL পোস্টের জন্য স্বীকৃত বিশ্ববিদ্যালয় থেকে স্নাতক ডিগ্রি বা সমমানের যোগ্যতা।"
+      },
+      "ruleType": "HARD_ELIGIBILITY",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "qualifications",
+        "profileFieldId": "candidate.qualifications"
+      },
+      "requiredQualifications": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "explanation": {
+        "en": "This rule is the general academic baseline. Individual CGL posts may impose additional requirements.",
+        "bn": "এটি সাধারণ একাডেমিক ভিত্তি। পৃথক CGL পোস্টে অতিরিক্ত শর্ত থাকতে পারে।"
+      },
+      "sourceIds": [
+        "src-ssc-cgl-2026"
+      ],
+      "sourceDate": "2026-05-21",
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-ssc-cgl-post-specific-physical",
+      "name": {
+        "en": "SSC CGL post-specific physical or medical requirement",
+        "bn": "SSC CGL পোস্ট-নির্দিষ্ট শারীরিক বা চিকিৎসাগত যোগ্যতা"
+      },
+      "ruleType": "PHYSICAL_REQUIREMENT",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "physicalAndMedicalProfile",
+        "profileFieldId": "candidate.physicalAndMedicalProfile"
+      },
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-ssc-cgl-2026"
+      ],
+      "sourceDate": "2026-05-21",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "notes": {
+        "en": "Applies only to CGL posts where the notification specifies physical or medical requirements.",
+        "bn": "শুধুমাত্র সেই CGL পোস্টে প্রযোজ্য যেখানে বিজ্ঞপ্তিতে শারীরিক বা চিকিৎসাগত শর্ত নির্দিষ্ট রয়েছে।"
+      }
+    },
+    {
+      "id": "eligibility-cgl-cbi-si",
+      "name": {
+        "en": "CBI Sub-Inspector post-specific requirements",
+        "bn": "CBI সাব-ইন্সপেক্টর পোস্ট-নির্দিষ্ট যোগ্যতা"
+      },
+      "ruleType": "ELIGIBILITY_CONDITION",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "postSpecificRequirements",
+        "profileFieldId": "candidate.postSpecificRequirements"
+      },
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-ssc-cgl-2026"
+      ],
+      "sourceDate": "2026-05-21",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "notes": {
+        "en": "Post-specific physical and medical conditions must be evaluated separately from the general bachelor's degree requirement.",
+        "bn": "সাধারণ স্নাতক ডিগ্রির পাশাপাশি পোস্ট-নির্দিষ্ট শারীরিক ও চিকিৎসাগত শর্ত পৃথকভাবে যাচাই করতে হবে।"
+      }
+    },
+    {
+      "id": "eligibility-rrb-ntpc-graduate",
+      "name": {
+        "en": "RRB NTPC Graduate degree requirement",
+        "bn": "RRB NTPC স্নাতক ডিগ্রি যোগ্যতা"
+      },
+      "ruleType": "HARD_ELIGIBILITY",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "qualifications",
+        "profileFieldId": "candidate.qualifications"
+      },
+      "requiredQualifications": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-rrb-ntpc-graduate-2025"
+      ],
+      "sourceDate": "2025-10-21",
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-typing-required",
+      "name": {
+        "en": "Typing requirement",
+        "bn": "টাইপিং যোগ্যতা"
+      },
+      "ruleType": "SKILL_REQUIREMENT",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "typingSkill",
+        "profileFieldId": "candidate.typing"
+      },
+      "requiredSkills": [
+        "skill-typing"
+      ],
+      "skill": {
+        "required": true,
+        "typing": {
+          "required": true
+        }
+      },
+      "failureStatus": "CONDITION_NOT_MET",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-rrb-ntpc-graduate-2025"
+      ],
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-rpf-si-degree",
+      "name": {
+        "en": "RPF Sub-Inspector bachelor's degree requirement",
+        "bn": "RPF সাব-ইন্সপেক্টর স্নাতক ডিগ্রি যোগ্যতা"
+      },
+      "ruleType": "HARD_ELIGIBILITY",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "qualifications",
+        "profileFieldId": "candidate.qualifications"
+      },
+      "requiredQualifications": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-rrb-employment-notices"
+      ],
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-rpf-si-physical",
+      "name": {
+        "en": "RPF Sub-Inspector physical requirement",
+        "bn": "RPF সাব-ইন্সপেক্টর শারীরিক যোগ্যতা"
+      },
+      "ruleType": "PHYSICAL_REQUIREMENT",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "physicalProfile",
+        "profileFieldId": "candidate.physicalProfile"
+      },
+      "physical": {
+        "required": true,
+        "profileId": "physical-rpf-si"
+      },
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-rrb-employment-notices"
+      ],
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-rpf-si-medical",
+      "name": {
+        "en": "RPF Sub-Inspector medical requirement",
+        "bn": "RPF সাব-ইন্সপেক্টর চিকিৎসাগত যোগ্যতা"
+      },
+      "ruleType": "MEDICAL_REQUIREMENT",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "medicalProfile",
+        "profileFieldId": "candidate.medicalProfile"
+      },
+      "medical": {
+        "required": true,
+        "standardId": "medical-rpf-si"
+      },
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-rrb-employment-notices"
+      ],
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-ib-sa-matriculation",
+      "name": {
+        "en": "IB Security Assistant / Executive matriculation requirement",
+        "bn": "IB সিকিউরিটি অ্যাসিস্ট্যান্ট / এক্সিকিউটিভ মাধ্যমিক যোগ্যতা"
+      },
+      "ruleType": "HARD_ELIGIBILITY",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "qualifications",
+        "profileFieldId": "candidate.qualifications"
+      },
+      "requiredQualifications": [
+        "qualification-matriculation"
+      ],
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-ib-sa-2025"
+      ],
+      "sourceDate": "2025-07-26",
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-ib-sa-local-language",
+      "name": {
+        "en": "IB Security Assistant local-language requirement",
+        "bn": "IB সিকিউরিটি অ্যাসিস্ট্যান্ট স্থানীয় ভাষা যোগ্যতা"
+      },
+      "ruleType": "LANGUAGE_REQUIREMENT",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "languages",
+        "profileFieldId": "candidate.languages"
+      },
+      "requiredLanguages": [],
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-ib-sa-2025"
+      ],
+      "sourceDate": "2025-07-26",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "notes": {
+        "en": "The exact local language/dialect must be derived from the particular recruitment notice and post/location. Do not hard-code Bengali for every IB recruitment.",
+        "bn": "প্রতিটি নিয়োগ বিজ্ঞপ্তি ও পোস্ট/অবস্থান অনুযায়ী নির্দিষ্ট স্থানীয় ভাষা/উপভাষা নির্ধারণ করতে হবে। প্রতিটি IB নিয়োগে স্বয়ংক্রিয়ভাবে বাংলা নির্ধারণ করা যাবে না।"
+      }
+    },
+    {
+      "id": "eligibility-stenographer-class12",
+      "name": {
+        "en": "SSC Stenographer Higher Secondary requirement",
+        "bn": "SSC স্টেনোগ্রাফার উচ্চমাধ্যমিক যোগ্যতা"
+      },
+      "ruleType": "HARD_ELIGIBILITY",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "qualifications",
+        "profileFieldId": "candidate.qualifications"
+      },
+      "requiredQualifications": [
+        "qualification-class-12"
+      ],
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-ssc-steno-2025"
+      ],
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-stenographer-skill",
+      "name": {
+        "en": "SSC Stenographer stenography skill requirement",
+        "bn": "SSC স্টেনোগ্রাফার শর্টহ্যান্ড/স্টেনোগ্রাফি দক্ষতা"
+      },
+      "ruleType": "SKILL_REQUIREMENT",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "shorthand",
+        "profileFieldId": "candidate.shorthand"
+      },
+      "requiredSkills": [
+        "skill-shorthand"
+      ],
+      "skill": {
+        "required": true,
+        "shorthand": {
+          "required": true
+        }
+      },
+      "failureStatus": "CONDITION_NOT_MET",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-ssc-steno-2025"
+      ],
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-chsl-class12",
+      "name": {
+        "en": "SSC CHSL Higher Secondary requirement",
+        "bn": "SSC CHSL উচ্চমাধ্যমিক যোগ্যতা"
+      },
+      "ruleType": "HARD_ELIGIBILITY",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "qualifications",
+        "profileFieldId": "candidate.qualifications"
+      },
+      "requiredQualifications": [
+        "qualification-class-12"
+      ],
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-ssc-calendar-2026"
+      ],
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-chsl-typing",
+      "name": {
+        "en": "SSC CHSL typing or skill requirement",
+        "bn": "SSC CHSL টাইপিং বা দক্ষতা যোগ্যতা"
+      },
+      "ruleType": "SKILL_REQUIREMENT",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "typingSkill",
+        "profileFieldId": "candidate.typing"
+      },
+      "requiredSkills": [
+        "skill-typing"
+      ],
+      "skill": {
+        "required": true,
+        "typing": {
+          "required": true
+        }
+      },
+      "failureStatus": "CONDITION_NOT_MET",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-ssc-calendar-2026"
+      ],
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-mts-matriculation",
+      "name": {
+        "en": "SSC MTS matriculation requirement",
+        "bn": "SSC MTS মাধ্যমিক যোগ্যতা"
+      },
+      "ruleType": "HARD_ELIGIBILITY",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "qualifications",
+        "profileFieldId": "candidate.qualifications"
+      },
+      "requiredQualifications": [
+        "qualification-matriculation"
+      ],
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-ssc-calendar-2026"
+      ],
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "notes": {
+        "en": "Whether a graduate may apply must be evaluated against the applicable recruitment notice and any specific qualification restriction.",
+        "bn": "স্নাতক প্রার্থী আবেদন করতে পারবেন কি না তা প্রযোজ্য নিয়োগ বিজ্ঞপ্তি ও বিশেষ যোগ্যতার বিধিনিষেধ অনুযায়ী যাচাই করতে হবে।"
+      }
+    }
+  ]
+}
