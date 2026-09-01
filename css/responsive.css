@@ -1,0 +1,956 @@
+/**
+ * GovCareer Compass
+ * ============================================================
+ * Responsive Layout & Interaction System
+ * ============================================================
+ *
+ * This file is intentionally loaded AFTER the desktop/shared
+ * component styles and therefore acts as the responsive
+ * override layer.
+ *
+ * Targets:
+ *   • Smartphones
+ *   • Small tablets
+ *   • Tablets
+ *   • Laptops
+ *   • Desktop
+ *   • Large desktop
+ *
+ * Strategy:
+ *   Start with the stable desktop/component architecture,
+ *   progressively collapse geometry as available width decreases.
+ */
+
+/* ============================================================
+   LARGE DESKTOP
+   ============================================================ */
+
+@media (min-width: 1536px) {
+  :root {
+    --gc-mobile-header-height: 4rem;
+  }
+
+  .site-header__inner,
+  .app-header__inner {
+    min-height:
+      var(--gc-header-height);
+  }
+
+  .hero__inner {
+    gap:
+      var(--gc-space-16);
+  }
+
+  .page-section {
+    padding-block:
+      var(--gc-space-20);
+  }
+}
+
+/* ============================================================
+   DESKTOP / LAPTOP
+   ============================================================ */
+
+@media (min-width: 1024px) {
+  /*
+   * Desktop-only helpers.
+   */
+
+  .desktop-only {
+    display: initial !important;
+  }
+
+  .mobile-only,
+  .tablet-only {
+    display: none !important;
+  }
+}
+
+/* ============================================================
+   TABLET LANDSCAPE / SMALL LAPTOP
+   ============================================================ */
+
+@media (max-width: 1279px) {
+  .hide-at-1280 {
+    display: none !important;
+  }
+
+  .site-header__inner,
+  .app-header__inner {
+    gap:
+      var(--gc-space-3);
+  }
+
+  .header-search {
+    flex-basis:
+      18rem;
+  }
+}
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media (max-width: 1023px) {
+  .desktop-only {
+    display: none !important;
+  }
+
+  .tablet-only {
+    display: initial !important;
+  }
+
+  .mobile-only {
+    display: none !important;
+  }
+
+  /*
+   * Header.
+   */
+
+  .site-header__inner,
+  .app-header__inner {
+    min-height:
+      var(--gc-mobile-header-height);
+
+    width:
+      min(
+        calc(100% - 1.5rem),
+        var(--gc-container-max)
+      );
+  }
+
+  .header-search {
+    order:
+      10;
+
+    flex-basis:
+      100%;
+
+    width:
+      100%;
+  }
+
+  /*
+   * If the header becomes multi-row, keep enough visual
+   * breathing room.
+   */
+
+  .site-header__inner,
+  .app-header__inner {
+    flex-wrap:
+      wrap;
+
+    padding-block:
+      var(--gc-space-2);
+  }
+
+  /*
+   * Hero.
+   */
+
+  .hero__visual {
+    min-height:
+      18rem;
+  }
+
+  /*
+   * Desktop sidebars become normal-flow sections.
+   */
+
+  .sticky-on-desktop {
+    position:
+      static !important;
+
+    top:
+      auto !important;
+  }
+
+  /*
+   * Touch target enlargement.
+   */
+
+  .button,
+  .icon-button,
+  .pagination__button,
+  .pagination__page {
+    min-height:
+      var(--gc-touch-target);
+  }
+}
+
+/* ============================================================
+   SMALL TABLET / LARGE PHONE
+   ============================================================ */
+
+@media (max-width: 767px) {
+  /*
+   * Visibility utilities.
+   */
+
+  .desktop-only,
+  .tablet-only {
+    display: none !important;
+  }
+
+  .mobile-only {
+    display: initial !important;
+  }
+
+  /*
+   * Global dimensions.
+   */
+
+  :root {
+    --gc-header-height:
+      var(--gc-mobile-header-height);
+  }
+
+  /*
+   * Sections.
+   */
+
+  .page-section {
+    padding-block:
+      var(--gc-space-8);
+  }
+
+  .page-section--hero {
+    padding-block:
+      var(--gc-space-8)
+      var(--gc-space-10);
+  }
+
+  .page-section__header {
+    margin-bottom:
+      var(--gc-space-5);
+  }
+
+  /*
+   * Header.
+   */
+
+  .site-header__inner,
+  .app-header__inner {
+    width:
+      calc(100% - 1rem);
+
+    min-height:
+      var(--gc-mobile-header-height);
+
+    gap:
+      var(--gc-space-2);
+
+    padding-block:
+      var(--gc-space-2);
+  }
+
+  .site-header,
+  .app-header {
+    /*
+     * Prevent a large blur layer from becoming unnecessarily
+     * expensive on smaller screens.
+     */
+    backdrop-filter:
+      blur(14px)
+      saturate(125%);
+
+    -webkit-backdrop-filter:
+      blur(14px)
+      saturate(125%);
+  }
+
+  .brand__mark,
+  .site-brand__mark,
+  .header-brand__mark {
+    width:
+      2.2rem;
+
+    height:
+      2.2rem;
+  }
+
+  .brand__tagline,
+  .site-brand__tagline,
+  .header-brand__tagline {
+    display:
+      none;
+  }
+
+  .header-actions {
+    gap:
+      var(--gc-space-1);
+  }
+
+  /*
+   * Search.
+   */
+
+  .header-search {
+    order:
+      20;
+
+    min-width:
+      100%;
+  }
+
+  /*
+   * Header rows should not overlap the navigation drawer.
+   */
+
+  .site-header,
+  .app-header {
+    z-index:
+      var(--gc-z-header);
+  }
+
+  /*
+   * Hero.
+   */
+
+  .hero__actions {
+    margin-top:
+      var(--gc-space-5);
+  }
+
+  .hero__visual {
+    min-height:
+      14rem;
+  }
+
+  /*
+   * Grid behavior.
+   */
+
+  .auto-grid,
+  .auto-grid--compact,
+  .auto-grid--large {
+    grid-template-columns:
+      1fr;
+  }
+
+  /*
+   * Toolbars.
+   */
+
+  .toolbar {
+    align-items:
+      stretch;
+
+    flex-direction:
+      column;
+  }
+
+  .toolbar__left,
+  .toolbar__right {
+    width:
+      100%;
+  }
+
+  .toolbar__right {
+    margin-left:
+      0;
+  }
+
+  /*
+   * Buttons in action groups become easier to tap.
+   */
+
+  .toolbar .button,
+  .toolbar__left .button,
+  .toolbar__right .button {
+    min-height:
+      var(--gc-touch-target);
+  }
+
+  /*
+   * Search result list.
+   */
+
+  .global-search__results {
+    max-height:
+      70vh;
+
+    overflow-y:
+      auto;
+  }
+
+  /*
+   * Generic modal.
+   */
+
+  .modal-backdrop,
+  [data-modal-backdrop] {
+    align-items:
+      flex-end;
+
+    padding:
+      0;
+  }
+
+  .modal,
+  [role="dialog"] {
+    width:
+      100%;
+
+    max-width:
+      none;
+
+    max-height:
+      92vh;
+
+    border-left:
+      0;
+
+    border-right:
+      0;
+
+    border-bottom:
+      0;
+
+    border-radius:
+      var(--gc-radius-xl)
+      var(--gc-radius-xl)
+      0
+      0;
+  }
+
+  /*
+   * Drawer.
+   */
+
+  .drawer,
+  [data-drawer] {
+    width:
+      min(
+        22rem,
+        calc(100vw - 0.5rem)
+      );
+  }
+
+  /*
+   * Comparison.
+   */
+
+  .comparison-table__scroll,
+  .data-table__scroll {
+    overflow-x:
+      auto;
+
+    -webkit-overflow-scrolling:
+      touch;
+  }
+
+  /*
+   * Keep sticky comparison metric usable without making every
+   * table column narrow.
+   */
+
+  .comparison-table__metric-header,
+  .comparison-table__metric {
+    min-width:
+      10rem;
+  }
+
+  /*
+   * Filter panel.
+   */
+
+  .filter-panel {
+    padding:
+      var(--gc-space-4);
+  }
+
+  .filter-panel__footer {
+    margin-inline:
+      calc(
+        -1 *
+        var(--gc-space-4)
+      );
+
+    margin-bottom:
+      calc(
+        -1 *
+        var(--gc-space-4)
+      );
+
+    padding-inline:
+      var(--gc-space-4);
+  }
+
+  /*
+   * Source cards.
+   */
+
+  .source-card {
+    padding:
+      var(--gc-space-4);
+  }
+
+  /*
+   * Career results.
+   */
+
+  .career-result__actions {
+    align-items:
+      stretch;
+
+    flex-direction:
+      column;
+  }
+
+  .career-result__actions .button {
+    width:
+      100%;
+  }
+
+  /*
+   * Pagination.
+   */
+
+  .pagination__controls {
+    width:
+      100%;
+
+    overflow-x:
+      auto;
+
+    justify-content:
+      flex-start;
+
+    padding-bottom:
+      0.1rem;
+  }
+
+  /*
+   * Prevent tiny controls from being forced into narrow spaces.
+   */
+
+  .pagination__button span {
+    display:
+      none;
+  }
+
+  /*
+   * Footer.
+   */
+
+  .site-footer__grid,
+  .app-footer__grid {
+    gap:
+      var(--gc-space-6);
+  }
+}
+
+/* ============================================================
+   STANDARD PHONE
+   ============================================================ */
+
+@media (max-width: 599px) {
+  /*
+   * Typography.
+   */
+
+  h1 {
+    font-size:
+      clamp(
+        1.8rem,
+        9vw,
+        2.55rem
+      );
+  }
+
+  h2 {
+    font-size:
+      clamp(
+        1.45rem,
+        7vw,
+        2rem
+      );
+  }
+
+  h3 {
+    font-size:
+      clamp(
+        1.15rem,
+        5.5vw,
+        1.45rem
+      );
+  }
+
+  /*
+   * Container.
+   */
+
+  .container,
+  .container--wide,
+  .container--readable,
+  .layout-container,
+  .layout-container--wide {
+    width:
+      calc(100% - 1rem);
+  }
+
+  /*
+   * Sections.
+   */
+
+  .page-section {
+    padding-block:
+      var(--gc-space-7);
+  }
+
+  /*
+   * Cards.
+   */
+
+  .job-card,
+  .exam-card,
+  .source-card,
+  .career-result,
+  .filter-panel,
+  .score-card,
+  .chart-card,
+  .question-card,
+  .form-section {
+    border-radius:
+      var(--gc-radius-lg);
+  }
+
+  /*
+   * Search.
+   */
+
+  .global-search__shortcut {
+    display:
+      none;
+  }
+
+  .global-search__types {
+    overflow-x:
+      auto;
+
+    flex-wrap:
+      nowrap;
+
+    padding-bottom:
+      0.2rem;
+
+    scrollbar-width:
+      none;
+  }
+
+  .global-search__types::-webkit-scrollbar {
+    display:
+      none;
+  }
+
+  .search-type-chip {
+    flex:
+      0 0 auto;
+  }
+
+  /*
+   * Result cards.
+   */
+
+  .career-result__identity {
+    gap:
+      var(--gc-space-2);
+  }
+
+  .career-result__overall-score {
+    grid-column:
+      1 / -1;
+  }
+
+  /*
+   * Job cards.
+   */
+
+  .job-card__header,
+  .exam-card__header {
+    align-items:
+      flex-start;
+
+    gap:
+      var(--gc-space-3);
+  }
+
+  /*
+   * Forms.
+   */
+
+  .option-card__label {
+    min-height:
+      3.5rem;
+
+    padding:
+      var(--gc-space-3)
+      var(--gc-space-3);
+  }
+
+  /*
+   * Score visuals.
+   */
+
+  .score-card__header {
+    flex-direction:
+      column;
+  }
+
+  /*
+   * Charts.
+   */
+
+  .vertical-bar-chart {
+    gap:
+      var(--gc-space-2);
+  }
+
+  /*
+   * Toast.
+   */
+
+  .toast-container {
+    width:
+      calc(100vw - 0.75rem);
+
+    right:
+      0.375rem;
+
+    bottom:
+      0.375rem;
+  }
+
+  /*
+   * Tables.
+   */
+
+  .data-table {
+    border-radius:
+      var(--gc-radius-lg);
+  }
+}
+
+/* ============================================================
+   SMALL PHONE
+   ============================================================ */
+
+@media (max-width: 399px) {
+  /*
+   * Keep controls usable rather than squeezing them.
+   */
+
+  .button {
+    width:
+      auto;
+
+    max-width:
+      100%;
+  }
+
+  .header-actions {
+    flex-wrap:
+      wrap;
+  }
+
+  .brand__name,
+  .site-brand__name,
+  .header-brand__name {
+    max-width:
+      12rem;
+  }
+
+  /*
+   * Career result header becomes simpler.
+   */
+
+  .career-result__rank {
+    width:
+      2rem;
+
+    min-width:
+      2rem;
+
+    height:
+      2rem;
+  }
+
+  .career-result__icon {
+    width:
+      2rem;
+
+    height:
+      2rem;
+  }
+
+  /*
+   * Source metadata uses a single column.
+   */
+
+  .source-card__meta {
+    grid-template-columns:
+      1fr;
+  }
+
+  /*
+   * Pagination remains horizontally usable.
+   */
+
+  .pagination {
+    padding:
+      var(--gc-space-3);
+  }
+}
+
+/* ============================================================
+   TOUCH-DEVICE REFINEMENT
+   ============================================================ */
+
+@media (hover: none) and (pointer: coarse) {
+  /*
+   * Hover should never be required to understand or operate
+   * the interface.
+   */
+
+  .job-card:hover,
+  .exam-card:hover,
+  .career-result:hover,
+  .button:hover,
+  .icon-button:hover,
+  .option-card__label:hover {
+    transform:
+      none;
+  }
+
+  .button,
+  .icon-button,
+  .pagination__button,
+  .pagination__page,
+  .filter-chip,
+  .search-type-chip {
+    min-height:
+      var(--gc-touch-target);
+  }
+
+  /*
+   * Reduce hover-only visual changes.
+   */
+
+  .job-card:hover,
+  .exam-card:hover,
+  .career-result:hover {
+    box-shadow:
+      var(--gc-shadow-sm);
+  }
+
+  /*
+   * Native momentum scrolling.
+   */
+
+  .data-table__scroll,
+  .comparison-table__scroll,
+  .drawer__body,
+  .global-search__results {
+    -webkit-overflow-scrolling:
+      touch;
+  }
+}
+
+/* ============================================================
+   COARSE POINTER / LANDSCAPE PHONE
+   ============================================================ */
+
+@media (max-width: 767px) and (orientation: landscape) {
+  .modal,
+  [role="dialog"] {
+    max-height:
+      94vh;
+  }
+
+  .global-search__results {
+    max-height:
+      75vh;
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .app-header,
+  .job-card,
+  .exam-card,
+  .career-result,
+  .button,
+  .icon-button {
+    transition:
+      none !important;
+  }
+}
+
+/* ============================================================
+   HIGH-CONTRAST / FORCED COLORS
+   ============================================================ */
+
+@media (forced-colors: active) {
+  .glass-panel,
+  .job-card,
+  .exam-card,
+  .career-result,
+  .score-card,
+  .chart-card,
+  .filter-panel,
+  .source-card,
+  .comparison-table-wrapper,
+  .data-table,
+  .question-card,
+  .form-section {
+    border:
+      1px solid
+      CanvasText;
+
+    background:
+      Canvas;
+
+    color:
+      CanvasText;
+  }
+
+  .button,
+  .filter-chip,
+  .search-type-chip,
+  .pagination__button,
+  .pagination__page {
+    border:
+      1px solid
+      ButtonText;
+
+    background:
+      ButtonFace;
+
+    color:
+      ButtonText;
+  }
+
+  .button--primary {
+    background:
+      Highlight;
+
+    color:
+      HighlightText;
+  }
+
+  .score-bar__fill,
+  .career-result__metric-fill,
+  .bar-chart__fill,
+  .vertical-bar-chart__bar,
+  .pay-chart__fill,
+  .ranking-chart__fill {
+    background:
+      Highlight;
+  }
+}
