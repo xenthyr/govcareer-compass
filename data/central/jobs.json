@@ -1,0 +1,2331 @@
+{
+  "$schema": "../../schemas/job.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "central-government",
+  "lastVerified": "2026-08-31",
+  "jobs": [
+    {
+      "id": "job-cse-ias",
+      "governmentId": "central-government",
+      "departmentId": null,
+      "organisationId": "org-upsc",
+      "serviceCadreId": "service-ias",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "post": {
+        "name": "Indian Administrative Service",
+        "abbreviation": "IAS"
+      },
+      "jobCategory": "ADMINISTRATIVE",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-10",
+        "startingBasic": 56100,
+        "maximumBasic": 177500,
+        "payLevel": "LEVEL_10"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "ALL_INDIA",
+        "transferProfile": "HIGH",
+        "kolkataStability": "LOW"
+      },
+      "work": {
+        "deskField": "OFFICE_AND_FIELD",
+        "publicInteraction": "HIGH",
+        "nightDuty": "ROLE_DEPENDENT",
+        "shiftDuty": "ROLE_DEPENDENT",
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "VERY_HIGH",
+        "authority": "VERY_HIGH",
+        "socialStatus": "VERY_HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "APPLICABLE_SERVICE_MEDICAL_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-service-general"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-cse-service"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ]
+    },
+    {
+      "id": "job-cse-ips",
+      "governmentId": "central-government",
+      "departmentId": "dept-home",
+      "organisationId": "org-upsc",
+      "serviceCadreId": "service-ips",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "post": {
+        "name": "Indian Police Service",
+        "abbreviation": "IPS"
+      },
+      "jobCategory": "POLICE",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT_ACADEMIC_WITH_MEDICAL_REQUIREMENTS",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-10",
+        "startingBasic": 56100,
+        "maximumBasic": 177500,
+        "payLevel": "LEVEL_10"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "ALL_INDIA",
+        "transferProfile": "VERY_HIGH",
+        "kolkataStability": "LOW"
+      },
+      "work": {
+        "deskField": "FIELD_HEAVY",
+        "publicInteraction": "VERY_HIGH",
+        "nightDuty": "FREQUENT_ROLE_DEPENDENT",
+        "shiftDuty": "ROLE_DEPENDENT",
+        "holidayDuty": "FREQUENT_ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "VERY_HIGH",
+        "authority": "VERY_HIGH",
+        "socialStatus": "VERY_HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "SPECIFIED_SERVICE_MEDICAL_STANDARDS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-service-general"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-cse-service"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ]
+    },
+    {
+      "id": "job-cse-irs-income-tax",
+      "governmentId": "central-government",
+      "departmentId": "dept-revenue",
+      "organisationId": "org-cbdt",
+      "serviceCadreId": "service-irs-it",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "post": {
+        "name": "Indian Revenue Service (Income Tax)",
+        "abbreviation": "IRS (IT)"
+      },
+      "jobCategory": "TAX",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-10",
+        "startingBasic": 56100,
+        "maximumBasic": 177500,
+        "payLevel": "LEVEL_10"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "ALL_INDIA",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM_LOW"
+      },
+      "work": {
+        "deskField": "OFFICE_AND_FIELD",
+        "publicInteraction": "MEDIUM_HIGH",
+        "nightDuty": "ROLE_DEPENDENT",
+        "shiftDuty": false,
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "VERY_HIGH",
+        "authority": "HIGH",
+        "socialStatus": "VERY_HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "SERVICE_MEDICAL_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-service-general"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-cse-service"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ]
+    },
+    {
+      "id": "job-cse-irs-customs",
+      "governmentId": "central-government",
+      "departmentId": "dept-revenue",
+      "organisationId": "org-cbic",
+      "serviceCadreId": "service-irs-cic",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "post": {
+        "name": "Indian Revenue Service (Customs and Indirect Taxes)",
+        "abbreviation": "IRS (C&IT)"
+      },
+      "jobCategory": "TAX_ENFORCEMENT",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-10",
+        "startingBasic": 56100,
+        "maximumBasic": 177500,
+        "payLevel": "LEVEL_10"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "ALL_INDIA",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM_LOW"
+      },
+      "work": {
+        "deskField": "OFFICE_AND_FIELD",
+        "publicInteraction": "MEDIUM_HIGH",
+        "nightDuty": "ROLE_DEPENDENT",
+        "shiftDuty": "ROLE_DEPENDENT",
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "VERY_HIGH",
+        "authority": "HIGH",
+        "socialStatus": "VERY_HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "SERVICE_MEDICAL_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-service-general"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-cse-service"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ]
+    },
+    {
+      "id": "job-cse-iaas",
+      "governmentId": "central-government",
+      "departmentId": "dept-cag",
+      "organisationId": "org-cag",
+      "serviceCadreId": "service-iaas",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "post": {
+        "name": "Indian Audit and Accounts Service",
+        "abbreviation": "IA&AS"
+      },
+      "jobCategory": "AUDIT_ACCOUNTS",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-10",
+        "startingBasic": 56100,
+        "maximumBasic": 177500,
+        "payLevel": "LEVEL_10"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "ALL_INDIA",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OFFICE_AND_INSPECTION",
+        "publicInteraction": "MEDIUM",
+        "nightDuty": "LOW_ROLE_DEPENDENT",
+        "shiftDuty": false,
+        "holidayDuty": "LOW_ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "VERY_HIGH",
+        "authority": "HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "SERVICE_MEDICAL_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-service-general"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-cse-service"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ]
+    },
+    {
+      "id": "job-cse-icas",
+      "governmentId": "central-government",
+      "departmentId": "dept-finance",
+      "organisationId": null,
+      "serviceCadreId": "service-icas",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "post": {
+        "name": "Indian Civil Accounts Service",
+        "abbreviation": "ICAS"
+      },
+      "jobCategory": "ACCOUNTS",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-10",
+        "startingBasic": 56100,
+        "maximumBasic": 177500,
+        "payLevel": "LEVEL_10"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "ALL_INDIA",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OFFICE_HEAVY",
+        "publicInteraction": "MEDIUM",
+        "nightDuty": "LOW_ROLE_DEPENDENT",
+        "shiftDuty": false,
+        "holidayDuty": "LOW_ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "VERY_HIGH",
+        "authority": "HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "SERVICE_MEDICAL_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-service-general"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-cse-service"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ]
+    },
+    {
+      "id": "job-cse-idas",
+      "governmentId": "central-government",
+      "departmentId": "dept-defence",
+      "organisationId": "org-defence-services",
+      "serviceCadreId": "service-idas",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "post": {
+        "name": "Indian Defence Accounts Service",
+        "abbreviation": "IDAS"
+      },
+      "jobCategory": "ACCOUNTS",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-10",
+        "startingBasic": 56100,
+        "maximumBasic": 177500,
+        "payLevel": "LEVEL_10"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "ALL_INDIA",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OFFICE_AND_INSPECTION",
+        "publicInteraction": "MEDIUM",
+        "nightDuty": "LOW_ROLE_DEPENDENT",
+        "shiftDuty": false,
+        "holidayDuty": "LOW_ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "VERY_HIGH",
+        "authority": "HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "SERVICE_MEDICAL_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-service-general"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-cse-service"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ]
+    },
+    {
+      "id": "job-cse-iis",
+      "governmentId": "central-government",
+      "departmentId": "dept-iandb",
+      "organisationId": null,
+      "serviceCadreId": "service-iis",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "post": {
+        "name": "Indian Information Service",
+        "abbreviation": "IIS"
+      },
+      "jobCategory": "INFORMATION_COMMUNICATION",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-10",
+        "startingBasic": 56100,
+        "maximumBasic": 177500,
+        "payLevel": "LEVEL_10"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "ALL_INDIA",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM_LOW"
+      },
+      "work": {
+        "deskField": "OFFICE_AND_PUBLIC_COMMUNICATION",
+        "publicInteraction": "MEDIUM_HIGH",
+        "nightDuty": "ROLE_DEPENDENT",
+        "shiftDuty": "ROLE_DEPENDENT",
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "VERY_HIGH",
+        "authority": "MEDIUM_HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "SERVICE_MEDICAL_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-service-general"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-cse-service"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "MEDIUM_HIGH",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ]
+    },
+    {
+      "id": "job-cse-ipos",
+      "governmentId": "central-government",
+      "departmentId": "dept-posts",
+      "organisationId": "org-india-post",
+      "serviceCadreId": "service-ipos",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "post": {
+        "name": "Indian Postal Service",
+        "abbreviation": "IPoS"
+      },
+      "jobCategory": "POSTAL_ADMINISTRATION",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-10",
+        "startingBasic": 56100,
+        "maximumBasic": 177500,
+        "payLevel": "LEVEL_10"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "ALL_INDIA",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OFFICE_AND_FIELD",
+        "publicInteraction": "HIGH",
+        "nightDuty": "ROLE_DEPENDENT",
+        "shiftDuty": "ROLE_DEPENDENT",
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "VERY_HIGH",
+        "authority": "HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "SERVICE_MEDICAL_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-service-general"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-cse-service"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ]
+    },
+    {
+      "id": "job-capf-ac",
+      "governmentId": "central-government",
+      "departmentId": "dept-home",
+      "organisationId": "org-capf",
+      "serviceCadreId": "service-capf-ac",
+      "examIds": [
+        "exam-upsc-capf-ac"
+      ],
+      "post": {
+        "name": "Assistant Commandant in Central Armed Police Forces",
+        "abbreviation": "AC"
+      },
+      "jobCategory": "SECURITY_POLICE",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-capf-ac-degree"
+      ],
+      "baEnglishEligibility": "DIRECT_ACADEMIC_WITH_PHYSICAL_MEDICAL",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-10",
+        "startingBasic": 56100,
+        "maximumBasic": 177500,
+        "payLevel": "LEVEL_10"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "ALL_INDIA",
+        "transferProfile": "VERY_HIGH",
+        "kolkataStability": "LOW"
+      },
+      "work": {
+        "deskField": "FIELD_HEAVY",
+        "publicInteraction": "HIGH",
+        "nightDuty": "FREQUENT",
+        "shiftDuty": "FREQUENT_ROLE_DEPENDENT",
+        "holidayDuty": "FREQUENT_ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "VERY_HIGH",
+        "authority": "HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": true,
+        "medical": "DETAILED_CAPF_MEDICAL"
+      },
+      "housing": {
+        "housingProfileId": "housing-capf"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-capf-ac"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-capf"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-upsc-capf-2026"
+      ]
+    },
+    {
+      "id": "job-ssc-cgl-aso",
+      "governmentId": "central-government",
+      "departmentId": "dept-dopt",
+      "organisationId": "org-ssc",
+      "serviceCadreId": "service-ssc-cgl-general",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "post": {
+        "name": "Assistant / Assistant Section Officer",
+        "abbreviation": "ASO"
+      },
+      "jobCategory": "ADMINISTRATIVE",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-7",
+        "startingBasic": 44900,
+        "maximumBasic": 142400,
+        "payLevel": "LEVEL_7"
+      },
+      "posting": {
+        "scope": "CENTRAL_GOVERNMENT",
+        "locationType": "MINISTRY_OR_REGIONAL",
+        "transferProfile": "MEDIUM_HIGH",
+        "kolkataStability": "POST_DEPENDENT"
+      },
+      "work": {
+        "deskField": "OFFICE_HEAVY",
+        "publicInteraction": "LOW_MEDIUM",
+        "nightDuty": "LOW",
+        "shiftDuty": false,
+        "holidayDuty": "LOW_ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "HIGH",
+        "authority": "MEDIUM",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "GENERAL_CENTRAL_SERVICE_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-office"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-ssc-cgl-clerical"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final",
+        "src-ssc-cgl-2026"
+      ]
+    },
+    {
+      "id": "job-ssc-cgl-income-tax-inspector",
+      "governmentId": "central-government",
+      "departmentId": "dept-revenue",
+      "organisationId": "org-cbdt",
+      "serviceCadreId": "service-cbdt-inspector",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "post": {
+        "name": "Inspector of Income Tax",
+        "abbreviation": null
+      },
+      "jobCategory": "TAX_INSPECTION",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-7",
+        "startingBasic": 44900,
+        "maximumBasic": 142400,
+        "payLevel": "LEVEL_7"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "REGIONAL_TAX_OFFICES",
+        "transferProfile": "MEDIUM_HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OFFICE_AND_FIELD",
+        "publicInteraction": "MEDIUM_HIGH",
+        "nightDuty": "LOW_ROLE_DEPENDENT",
+        "shiftDuty": false,
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "HIGH",
+        "authority": "MEDIUM_HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "GENERAL_CENTRAL_SERVICE_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-office"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-inspector-tax"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final",
+        "src-ssc-cgl-2026"
+      ]
+    },
+    {
+      "id": "job-ssc-cgl-central-excise",
+      "governmentId": "central-government",
+      "departmentId": "dept-revenue",
+      "organisationId": "org-cbic",
+      "serviceCadreId": "service-cbic-inspector",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "post": {
+        "name": "Inspector (Central Excise)",
+        "abbreviation": null
+      },
+      "jobCategory": "TAX_ENFORCEMENT",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-7",
+        "startingBasic": 44900,
+        "maximumBasic": 142400,
+        "payLevel": "LEVEL_7"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "CBIC_FIELD_FORMATIONS",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OFFICE_AND_FIELD",
+        "publicInteraction": "HIGH",
+        "nightDuty": "ROLE_DEPENDENT",
+        "shiftDuty": "ROLE_DEPENDENT",
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "HIGH",
+        "authority": "HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "POST_SPECIFIC_MEDICAL"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-office"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-inspector-cbic"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final",
+        "src-cbic"
+      ]
+    },
+    {
+      "id": "job-ssc-cgl-preventive-officer",
+      "governmentId": "central-government",
+      "departmentId": "dept-revenue",
+      "organisationId": "org-cbic",
+      "serviceCadreId": "service-cbic-inspector",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "post": {
+        "name": "Inspector (Preventive Officer)",
+        "abbreviation": null
+      },
+      "jobCategory": "CUSTOMS_ENFORCEMENT",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT_ACADEMIC_WITH_POST_SPECIFIC_PHYSICAL_MEDICAL",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-7",
+        "startingBasic": 44900,
+        "maximumBasic": 142400,
+        "payLevel": "LEVEL_7"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "CUSTOMS_FORMATIONS",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "FIELD_AND_OFFICE",
+        "publicInteraction": "HIGH",
+        "nightDuty": "ROLE_DEPENDENT",
+        "shiftDuty": "ROLE_DEPENDENT",
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "HIGH",
+        "authority": "HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": "POST_SPECIFIC_RECRUITMENT_REQUIREMENT",
+        "medical": "POST_SPECIFIC"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-office"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-inspector-cbic"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final"
+      ]
+    },
+    {
+      "id": "job-ssc-cgl-examiner",
+      "governmentId": "central-government",
+      "departmentId": "dept-revenue",
+      "organisationId": "org-cbic",
+      "serviceCadreId": "service-cbic-inspector",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "post": {
+        "name": "Inspector (Examiner)",
+        "abbreviation": null
+      },
+      "jobCategory": "CUSTOMS_ENFORCEMENT",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT_ACADEMIC_WITH_POST_SPECIFIC_PHYSICAL_MEDICAL",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-7",
+        "startingBasic": 44900,
+        "maximumBasic": 142400,
+        "payLevel": "LEVEL_7"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "CUSTOMS_PORT_AIR_CARGO_FORMATIONS",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "FIELD_AND_OFFICE",
+        "publicInteraction": "HIGH",
+        "nightDuty": "ROLE_DEPENDENT",
+        "shiftDuty": "ROLE_DEPENDENT",
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "HIGH",
+        "authority": "HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": "POST_SPECIFIC_RECRUITMENT_REQUIREMENT",
+        "medical": "POST_SPECIFIC"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-office"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-inspector-cbic"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final"
+      ]
+    },
+    {
+      "id": "job-ssc-cgl-aeo",
+      "governmentId": "central-government",
+      "departmentId": "dept-revenue",
+      "organisationId": "org-ed",
+      "serviceCadreId": "service-ed-aeo",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "post": {
+        "name": "Assistant Enforcement Officer",
+        "abbreviation": "AEO"
+      },
+      "jobCategory": "ENFORCEMENT",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-7",
+        "startingBasic": 44900,
+        "maximumBasic": 142400,
+        "payLevel": "LEVEL_7"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "ED_ZONAL_OFFICES",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OFFICE_AND_FIELD",
+        "publicInteraction": "HIGH",
+        "nightDuty": "ROLE_DEPENDENT",
+        "shiftDuty": "ROLE_DEPENDENT",
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "HIGH",
+        "authority": "HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "GENERAL_CENTRAL_SERVICE_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-office"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-enforcement"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final",
+        "src-ed"
+      ]
+    },
+    {
+      "id": "job-ssc-cgl-cbi-si",
+      "governmentId": "central-government",
+      "departmentId": "dept-mopg",
+      "organisationId": "org-cbi",
+      "serviceCadreId": "service-cbi-si",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "post": {
+        "name": "Sub-Inspector, Central Bureau of Investigation",
+        "abbreviation": "CBI SI"
+      },
+      "jobCategory": "INVESTIGATION",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-cbi-si"
+      ],
+      "baEnglishEligibility": "DIRECT_ACADEMIC_WITH_POST_SPECIFIC_MEDICAL",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-7",
+        "startingBasic": 44900,
+        "maximumBasic": 142400,
+        "payLevel": "LEVEL_7"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "CBI_OFFICES",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "INVESTIGATION_AND_OFFICE",
+        "publicInteraction": "HIGH",
+        "nightDuty": "ROLE_DEPENDENT",
+        "shiftDuty": "ROLE_DEPENDENT",
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "HIGH",
+        "authority": "HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "POST_SPECIFIC"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-office"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-cbi-investigation"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final"
+      ]
+    },
+    {
+      "id": "job-ssc-cgl-inspector-posts",
+      "governmentId": "central-government",
+      "departmentId": "dept-posts",
+      "organisationId": "org-india-post",
+      "serviceCadreId": "service-inspector-posts",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "post": {
+        "name": "Inspector Posts",
+        "abbreviation": null
+      },
+      "jobCategory": "POSTAL_INSPECTION",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-7",
+        "startingBasic": 44900,
+        "maximumBasic": 142400,
+        "payLevel": "LEVEL_7"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "POSTAL_CIRCLE",
+        "transferProfile": "MEDIUM_HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OFFICE_AND_FIELD",
+        "publicInteraction": "MEDIUM_HIGH",
+        "nightDuty": "LOW_ROLE_DEPENDENT",
+        "shiftDuty": false,
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "HIGH",
+        "authority": "MEDIUM_HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "GENERAL_CENTRAL_SERVICE_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-postal"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-postal-inspector"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-ssc-cgl-2026",
+        "src-india-post-rr"
+      ]
+    },
+    {
+      "id": "job-ssc-cgl-assistant-epfo",
+      "governmentId": "central-government",
+      "departmentId": "dept-labour",
+      "organisationId": "org-epfo",
+      "serviceCadreId": "service-epfo-assistant",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "post": {
+        "name": "Assistant / Assistant Section Officer, Employees' Provident Fund Organisation",
+        "abbreviation": "ASO"
+      },
+      "jobCategory": "ADMINISTRATIVE_SOCIAL_SECURITY",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-7",
+        "startingBasic": 44900,
+        "maximumBasic": 142400,
+        "payLevel": "LEVEL_7"
+      },
+      "posting": {
+        "scope": "REGIONAL_OFFICES",
+        "locationType": "REGIONAL",
+        "transferProfile": "MEDIUM",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OFFICE_HEAVY",
+        "publicInteraction": "MEDIUM",
+        "nightDuty": "LOW",
+        "shiftDuty": false,
+        "holidayDuty": "LOW_ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "HIGH",
+        "authority": "MEDIUM",
+        "socialStatus": "MEDIUM_HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "GENERAL_CENTRAL_SERVICE_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-office"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-ssc-cgl-clerical"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final"
+      ]
+    },
+    {
+      "id": "job-ssc-cgl-auditor-cag",
+      "governmentId": "central-government",
+      "departmentId": "dept-cag",
+      "organisationId": "org-cag",
+      "serviceCadreId": "service-cag-auditor",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "post": {
+        "name": "Auditor, Offices under Comptroller and Auditor General of India",
+        "abbreviation": "Auditor"
+      },
+      "jobCategory": "AUDIT",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-5",
+        "startingBasic": 29200,
+        "maximumBasic": 92300,
+        "payLevel": "LEVEL_5"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "AUDIT_OFFICES",
+        "transferProfile": "MEDIUM",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OFFICE_AND_AUDIT",
+        "publicInteraction": "LOW_MEDIUM",
+        "nightDuty": "LOW",
+        "shiftDuty": false,
+        "holidayDuty": "LOW_ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "MEDIUM_HIGH",
+        "authority": "MEDIUM",
+        "socialStatus": "MEDIUM_HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "GENERAL_CENTRAL_SERVICE_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-office"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-audit"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final"
+      ]
+    },
+    {
+      "id": "job-ssc-cgl-tax-assistant",
+      "governmentId": "central-government",
+      "departmentId": "dept-revenue",
+      "organisationId": "org-cbdt",
+      "serviceCadreId": "service-tax-assistant",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "post": {
+        "name": "Tax Assistant",
+        "abbreviation": null
+      },
+      "jobCategory": "TAX_CLERICAL",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-4",
+        "startingBasic": 25500,
+        "maximumBasic": 81100,
+        "payLevel": "LEVEL_4"
+      },
+      "posting": {
+        "scope": "REGIONAL",
+        "locationType": "TAX_OFFICES",
+        "transferProfile": "MEDIUM",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OFFICE_HEAVY",
+        "publicInteraction": "MEDIUM",
+        "nightDuty": "LOW",
+        "shiftDuty": false,
+        "holidayDuty": "LOW_ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "MEDIUM",
+        "authority": "LOW_MEDIUM",
+        "socialStatus": "MEDIUM"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "GENERAL_CENTRAL_SERVICE_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-office"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-tax"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-ssc-cgl-2026"
+      ]
+    },
+    {
+      "id": "job-rpf-si",
+      "governmentId": "central-government",
+      "departmentId": "dept-railways",
+      "organisationId": "org-rpf",
+      "serviceCadreId": "service-rpf-si",
+      "examIds": [
+        "exam-rpf-si"
+      ],
+      "post": {
+        "name": "Sub-Inspector, Railway Protection Force",
+        "abbreviation": "RPF SI"
+      },
+      "jobCategory": "RAILWAY_SECURITY",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-rpf-si-degree"
+      ],
+      "baEnglishEligibility": "DIRECT_ACADEMIC_WITH_PHYSICAL_MEDICAL",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-6",
+        "startingBasic": 35400,
+        "maximumBasic": 112400,
+        "payLevel": "LEVEL_6"
+      },
+      "posting": {
+        "scope": "ALL_INDIA",
+        "locationType": "RAILWAY_ZONES",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "FIELD_HEAVY",
+        "publicInteraction": "HIGH",
+        "nightDuty": "FREQUENT",
+        "shiftDuty": "FREQUENT",
+        "holidayDuty": "FREQUENT"
+      },
+      "career": {
+        "careerGrowth": "HIGH",
+        "authority": "HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": true,
+        "medical": "RAILWAY_MEDICAL"
+      },
+      "housing": {
+        "housingProfileId": "housing-railways"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-rpf"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-railway-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "MEDIUM_HIGH",
+      "sourceIds": [
+        "src-rrb-employment-notices"
+      ]
+    },
+    {
+      "id": "job-rrb-station-master",
+      "governmentId": "central-government",
+      "departmentId": "dept-railways",
+      "organisationId": "org-rrb",
+      "serviceCadreId": "service-railway-operations",
+      "examIds": [
+        "exam-rrb-ntpc-graduate"
+      ],
+      "post": {
+        "name": "Station Master",
+        "abbreviation": null
+      },
+      "jobCategory": "RAILWAY_OPERATIONS",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-rrb-ntpc-graduate"
+      ],
+      "baEnglishEligibility": "DIRECT_ACADEMIC_WITH_MEDICAL",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-6",
+        "startingBasic": 35400,
+        "maximumBasic": 112400,
+        "payLevel": "LEVEL_6"
+      },
+      "posting": {
+        "scope": "RAILWAY_ZONES",
+        "locationType": "STATION_BASED",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OPERATIONS",
+        "publicInteraction": "HIGH",
+        "nightDuty": "FREQUENT",
+        "shiftDuty": "FREQUENT",
+        "holidayDuty": "FREQUENT"
+      },
+      "career": {
+        "careerGrowth": "HIGH",
+        "authority": "HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "RAILWAY_MEDICAL_CATEGORY"
+      },
+      "housing": {
+        "housingProfileId": "housing-railways"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-railway-operations"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-railway-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-rrb-ntpc-graduate-2025"
+      ]
+    },
+    {
+      "id": "job-rrb-chief-commercial-ticket-supervisor",
+      "governmentId": "central-government",
+      "departmentId": "dept-railways",
+      "organisationId": "org-rrb",
+      "serviceCadreId": "service-railway-commercial",
+      "examIds": [
+        "exam-rrb-ntpc-graduate"
+      ],
+      "post": {
+        "name": "Chief Commercial cum Ticket Supervisor",
+        "abbreviation": "CCTS"
+      },
+      "jobCategory": "RAILWAY_COMMERCIAL",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-rrb-ntpc-graduate"
+      ],
+      "baEnglishEligibility": "DIRECT_ACADEMIC_WITH_MEDICAL",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-6",
+        "startingBasic": 35400,
+        "maximumBasic": 112400,
+        "payLevel": "LEVEL_6"
+      },
+      "posting": {
+        "scope": "RAILWAY_ZONES",
+        "locationType": "STATION_AND_COMMERCIAL",
+        "transferProfile": "MEDIUM_HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OFFICE_AND_PUBLIC_DEALING",
+        "publicInteraction": "VERY_HIGH",
+        "nightDuty": "ROLE_DEPENDENT",
+        "shiftDuty": "ROLE_DEPENDENT",
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "HIGH",
+        "authority": "MEDIUM_HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "RAILWAY_MEDICAL_CATEGORY"
+      },
+      "housing": {
+        "housingProfileId": "housing-railways"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-railway-commercial"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-railway-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-rrb-ntpc-graduate-2025"
+      ]
+    },
+    {
+      "id": "job-rrb-goods-train-manager",
+      "governmentId": "central-government",
+      "departmentId": "dept-railways",
+      "organisationId": "org-rrb",
+      "serviceCadreId": "service-railway-operations",
+      "examIds": [
+        "exam-rrb-ntpc-graduate"
+      ],
+      "post": {
+        "name": "Goods Train Manager",
+        "abbreviation": "GTM"
+      },
+      "jobCategory": "RAILWAY_OPERATIONS",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-rrb-ntpc-graduate"
+      ],
+      "baEnglishEligibility": "DIRECT_ACADEMIC_WITH_MEDICAL",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-5",
+        "startingBasic": 29200,
+        "maximumBasic": 92300,
+        "payLevel": "LEVEL_5"
+      },
+      "posting": {
+        "scope": "RAILWAY_ZONES",
+        "locationType": "RAILWAY_YARDS_AND_ROUTES",
+        "transferProfile": "HIGH",
+        "kolkataStability": "LOW_MEDIUM"
+      },
+      "work": {
+        "deskField": "OPERATIONS",
+        "publicInteraction": "MEDIUM",
+        "nightDuty": "FREQUENT",
+        "shiftDuty": "FREQUENT",
+        "holidayDuty": "FREQUENT"
+      },
+      "career": {
+        "careerGrowth": "MEDIUM_HIGH",
+        "authority": "MEDIUM_HIGH",
+        "socialStatus": "MEDIUM_HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "RAILWAY_MEDICAL_CATEGORY"
+      },
+      "housing": {
+        "housingProfileId": "housing-railways"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-railway-operations"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-railway-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-rrb-ntpc-graduate-2025"
+      ]
+    },
+    {
+      "id": "job-rrb-jaa-typist",
+      "governmentId": "central-government",
+      "departmentId": "dept-railways",
+      "organisationId": "org-rrb",
+      "serviceCadreId": "service-railway-accounts",
+      "examIds": [
+        "exam-rrb-ntpc-graduate"
+      ],
+      "post": {
+        "name": "Junior Accounts Assistant cum Typist",
+        "abbreviation": "JAA cum Typist"
+      },
+      "jobCategory": "RAILWAY_ACCOUNTS",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-rrb-ntpc-graduate",
+        "eligibility-typing-required"
+      ],
+      "baEnglishEligibility": "DIRECT_WITH_TYPING",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-5",
+        "startingBasic": 29200,
+        "maximumBasic": 92300,
+        "payLevel": "LEVEL_5"
+      },
+      "posting": {
+        "scope": "RAILWAY_ZONES",
+        "locationType": "RAILWAY_ACCOUNTS_OFFICES",
+        "transferProfile": "MEDIUM",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OFFICE_HEAVY",
+        "publicInteraction": "LOW_MEDIUM",
+        "nightDuty": "LOW",
+        "shiftDuty": "LOW_ROLE_DEPENDENT",
+        "holidayDuty": "LOW_ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "MEDIUM_HIGH",
+        "authority": "MEDIUM",
+        "socialStatus": "MEDIUM"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "RAILWAY_MEDICAL_CATEGORY"
+      },
+      "housing": {
+        "housingProfileId": "housing-railways"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-railway-accounts"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-railway-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-rrb-ntpc-graduate-2025"
+      ]
+    },
+    {
+      "id": "job-rrb-senior-clerk-typist",
+      "governmentId": "central-government",
+      "departmentId": "dept-railways",
+      "organisationId": "org-rrb",
+      "serviceCadreId": "service-railway-clerical",
+      "examIds": [
+        "exam-rrb-ntpc-graduate"
+      ],
+      "post": {
+        "name": "Senior Clerk cum Typist",
+        "abbreviation": null
+      },
+      "jobCategory": "RAILWAY_CLERICAL",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-rrb-ntpc-graduate",
+        "eligibility-typing-required"
+      ],
+      "baEnglishEligibility": "DIRECT_WITH_TYPING",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-5",
+        "startingBasic": 29200,
+        "maximumBasic": 92300,
+        "payLevel": "LEVEL_5"
+      },
+      "posting": {
+        "scope": "RAILWAY_ZONES",
+        "locationType": "RAILWAY_OFFICES",
+        "transferProfile": "MEDIUM",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OFFICE_HEAVY",
+        "publicInteraction": "MEDIUM",
+        "nightDuty": "LOW_ROLE_DEPENDENT",
+        "shiftDuty": "LOW_ROLE_DEPENDENT",
+        "holidayDuty": "LOW_ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "MEDIUM_HIGH",
+        "authority": "MEDIUM",
+        "socialStatus": "MEDIUM"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "RAILWAY_MEDICAL_CATEGORY"
+      },
+      "housing": {
+        "housingProfileId": "housing-railways"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-railway-clerical"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-railway-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-rrb-ntpc-graduate-2025"
+      ]
+    },
+    {
+      "id": "job-postal-assistant",
+      "governmentId": "central-government",
+      "departmentId": "dept-posts",
+      "organisationId": "org-india-post",
+      "serviceCadreId": "service-postal-assistant",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "post": {
+        "name": "Postal Assistant",
+        "abbreviation": "PA"
+      },
+      "jobCategory": "POSTAL_ADMINISTRATION",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "SSC_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-4",
+        "startingBasic": 25500,
+        "maximumBasic": 81100,
+        "payLevel": "LEVEL_4"
+      },
+      "posting": {
+        "scope": "POSTAL_CIRCLES",
+        "locationType": "POSTAL_DIVISIONS",
+        "transferProfile": "MEDIUM",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OFFICE_AND_PUBLIC_DEALING",
+        "publicInteraction": "HIGH",
+        "nightDuty": "LOW_ROLE_DEPENDENT",
+        "shiftDuty": "ROLE_DEPENDENT",
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "MEDIUM_HIGH",
+        "authority": "MEDIUM",
+        "socialStatus": "MEDIUM_HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "GENERAL_POSTAL_SERVICE_MEDICAL"
+      },
+      "housing": {
+        "housingProfileId": "housing-postal"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-postal-assistant"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-india-post-rr",
+        "src-ssc-cgl-2025-final"
+      ]
+    },
+    {
+      "id": "job-sorting-assistant",
+      "governmentId": "central-government",
+      "departmentId": "dept-posts",
+      "organisationId": "org-india-post",
+      "serviceCadreId": "service-sorting-assistant",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "post": {
+        "name": "Sorting Assistant",
+        "abbreviation": "SA"
+      },
+      "jobCategory": "POSTAL_OPERATIONS",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "baEnglishEligibility": "DIRECT",
+      "recruitmentRoute": "SSC_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-4",
+        "startingBasic": 25500,
+        "maximumBasic": 81100,
+        "payLevel": "LEVEL_4"
+      },
+      "posting": {
+        "scope": "POSTAL_CIRCLES",
+        "locationType": "SORTING_OFFICES",
+        "transferProfile": "MEDIUM",
+        "kolkataStability": "MEDIUM"
+      },
+      "work": {
+        "deskField": "OPERATIONS",
+        "publicInteraction": "MEDIUM",
+        "nightDuty": "ROLE_DEPENDENT",
+        "shiftDuty": "ROLE_DEPENDENT",
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "MEDIUM_HIGH",
+        "authority": "MEDIUM",
+        "socialStatus": "MEDIUM"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "GENERAL_POSTAL_SERVICE_MEDICAL"
+      },
+      "housing": {
+        "housingProfileId": "housing-postal"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-postal-assistant"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-india-post-rr",
+        "src-ssc-cgl-2025-final"
+      ]
+    },
+    {
+      "id": "job-ib-security-assistant",
+      "governmentId": "central-government",
+      "departmentId": "dept-home",
+      "organisationId": "org-ib",
+      "serviceCadreId": "service-ib-sa-exe",
+      "examIds": [
+        "exam-ib-sa-exe"
+      ],
+      "post": {
+        "name": "Security Assistant / Executive",
+        "abbreviation": "SA/Exe"
+      },
+      "jobCategory": "INTELLIGENCE_SECURITY",
+      "entryLevel": "CLASS_10",
+      "qualificationRuleIds": [
+        "qualification-matriculation"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ib-sa-2025"
+      ],
+      "baEnglishEligibility": "CONDITIONAL_ON_LOCAL_LANGUAGE_OTHER_NOTICE_CONDITIONS",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-3",
+        "startingBasic": 21700,
+        "maximumBasic": 69100,
+        "payLevel": "LEVEL_3"
+      },
+      "posting": {
+        "scope": "SUBSIDIARY_INTELLIGENCE_BUREAUX",
+        "locationType": "REGIONAL_SECURITY_OFFICES",
+        "transferProfile": "MEDIUM_HIGH",
+        "kolkataStability": "POST_DEPENDENT"
+      },
+      "work": {
+        "deskField": "FIELD_AND_INTELLIGENCE_SUPPORT",
+        "publicInteraction": "MEDIUM",
+        "nightDuty": "ROLE_DEPENDENT",
+        "shiftDuty": "ROLE_DEPENDENT",
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "MEDIUM_HIGH",
+        "authority": "MEDIUM_HIGH",
+        "socialStatus": "HIGH"
+      },
+      "physical": {
+        "physicalTest": "NOTICE_DEPENDENT",
+        "medical": "SECURITY_SERVICE_MEDICAL"
+      },
+      "housing": {
+        "housingProfileId": "housing-intelligence"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-ib-operational"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-ib-sa-2025"
+      ]
+    },
+    {
+      "id": "job-ssc-steno-c",
+      "governmentId": "central-government",
+      "departmentId": "dept-dopt",
+      "organisationId": "org-ssc",
+      "serviceCadreId": "service-stenographer-c",
+      "examIds": [
+        "exam-ssc-stenographer"
+      ],
+      "post": {
+        "name": "Stenographer Grade C",
+        "abbreviation": null
+      },
+      "jobCategory": "SECRETARIAL",
+      "entryLevel": "CLASS_12",
+      "qualificationRuleIds": [
+        "qualification-class-12"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-stenographer-skill"
+      ],
+      "baEnglishEligibility": "DIRECT_ACADEMIC_WITH_STENOGRAPHY",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-6-or-7-post-dependent",
+        "startingBasic": null,
+        "maximumBasic": null,
+        "payLevel": "POST_DEPENDENT"
+      },
+      "posting": {
+        "scope": "CENTRAL_GOVERNMENT",
+        "locationType": "MINISTRY_OR_DEPARTMENT",
+        "transferProfile": "MEDIUM_HIGH",
+        "kolkataStability": "POST_DEPENDENT"
+      },
+      "work": {
+        "deskField": "OFFICE_HEAVY",
+        "publicInteraction": "LOW_MEDIUM",
+        "nightDuty": "LOW_ROLE_DEPENDENT",
+        "shiftDuty": false,
+        "holidayDuty": "LOW_ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "MEDIUM_HIGH",
+        "authority": "MEDIUM",
+        "socialStatus": "MEDIUM_HIGH"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "GENERAL_CENTRAL_SERVICE_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-office"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-secretarial"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-ssc-steno-2025",
+        "src-ssc-calendar-2026"
+      ]
+    },
+    {
+      "id": "job-ssc-steno-d",
+      "governmentId": "central-government",
+      "departmentId": "dept-dopt",
+      "organisationId": "org-ssc",
+      "serviceCadreId": "service-stenographer-d",
+      "examIds": [
+        "exam-ssc-stenographer"
+      ],
+      "post": {
+        "name": "Stenographer Grade D",
+        "abbreviation": null
+      },
+      "jobCategory": "SECRETARIAL",
+      "entryLevel": "CLASS_12",
+      "qualificationRuleIds": [
+        "qualification-class-12"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-stenographer-skill"
+      ],
+      "baEnglishEligibility": "DIRECT_ACADEMIC_WITH_STENOGRAPHY",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-4",
+        "startingBasic": 25500,
+        "maximumBasic": 81100,
+        "payLevel": "LEVEL_4"
+      },
+      "posting": {
+        "scope": "CENTRAL_GOVERNMENT",
+        "locationType": "MINISTRY_OR_DEPARTMENT",
+        "transferProfile": "MEDIUM_HIGH",
+        "kolkataStability": "POST_DEPENDENT"
+      },
+      "work": {
+        "deskField": "OFFICE_HEAVY",
+        "publicInteraction": "LOW_MEDIUM",
+        "nightDuty": "LOW_ROLE_DEPENDENT",
+        "shiftDuty": false,
+        "holidayDuty": "LOW_ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "MEDIUM",
+        "authority": "LOW_MEDIUM",
+        "socialStatus": "MEDIUM"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "GENERAL_CENTRAL_SERVICE_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-office"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-secretarial"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-ssc-steno-2025"
+      ]
+    },
+    {
+      "id": "job-ssc-chsl-ldc",
+      "governmentId": "central-government",
+      "departmentId": "dept-dopt",
+      "organisationId": "org-ssc",
+      "serviceCadreId": "service-ldc-jsa",
+      "examIds": [
+        "exam-ssc-chsl"
+      ],
+      "post": {
+        "name": "Lower Divisional Clerk / Junior Secretariat Assistant",
+        "abbreviation": "LDC / JSA"
+      },
+      "jobCategory": "CLERICAL",
+      "entryLevel": "CLASS_12",
+      "qualificationRuleIds": [
+        "qualification-class-12"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-chsl-general"
+      ],
+      "baEnglishEligibility": "DIRECT_ACADEMIC",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-2",
+        "startingBasic": 19900,
+        "maximumBasic": 63200,
+        "payLevel": "LEVEL_2"
+      },
+      "posting": {
+        "scope": "CENTRAL_GOVERNMENT",
+        "locationType": "MINISTRY_OR_DEPARTMENT",
+        "transferProfile": "MEDIUM_HIGH",
+        "kolkataStability": "POST_DEPENDENT"
+      },
+      "work": {
+        "deskField": "OFFICE_HEAVY",
+        "publicInteraction": "LOW_MEDIUM",
+        "nightDuty": "LOW",
+        "shiftDuty": false,
+        "holidayDuty": "LOW_ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "MEDIUM",
+        "authority": "LOW",
+        "socialStatus": "MEDIUM"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "GENERAL_CENTRAL_SERVICE_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-office"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-clerical"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "MEDIUM_HIGH",
+      "sourceIds": [
+        "src-ssc-calendar-2026"
+      ]
+    },
+    {
+      "id": "job-ssc-mts",
+      "governmentId": "central-government",
+      "departmentId": "dept-dopt",
+      "organisationId": "org-ssc",
+      "serviceCadreId": "service-mts",
+      "examIds": [
+        "exam-ssc-mts-havaldar"
+      ],
+      "post": {
+        "name": "Multi-Tasking Staff (Non-Technical)",
+        "abbreviation": "MTS"
+      },
+      "jobCategory": "SUPPORT_STAFF",
+      "entryLevel": "CLASS_10",
+      "qualificationRuleIds": [
+        "qualification-matriculation"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-mts-matriculation"
+      ],
+      "baEnglishEligibility": "DIRECT_ACADEMIC_SUBJECT_TO_OVERQUALIFICATION_RULE",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "pay-level-1",
+        "startingBasic": 18000,
+        "maximumBasic": 56900,
+        "payLevel": "LEVEL_1"
+      },
+      "posting": {
+        "scope": "CENTRAL_GOVERNMENT",
+        "locationType": "MINISTRY_OR_OFFICE",
+        "transferProfile": "MEDIUM",
+        "kolkataStability": "POST_DEPENDENT"
+      },
+      "work": {
+        "deskField": "SUPPORT",
+        "publicInteraction": "MEDIUM",
+        "nightDuty": "ROLE_DEPENDENT",
+        "shiftDuty": "ROLE_DEPENDENT",
+        "holidayDuty": "ROLE_DEPENDENT"
+      },
+      "career": {
+        "careerGrowth": "LOW_MEDIUM",
+        "authority": "LOW",
+        "socialStatus": "LOW_MEDIUM"
+      },
+      "physical": {
+        "physicalTest": false,
+        "medical": "GENERAL_CENTRAL_SERVICE_REQUIREMENTS"
+      },
+      "housing": {
+        "housingProfileId": "housing-central-office"
+      },
+      "promotion": {
+        "promotionProfileId": "promotion-support-staff"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-central-regular-service"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "MEDIUM_HIGH",
+      "sourceIds": [
+        "src-ssc-calendar-2026"
+      ]
+    },
+    {
+      "id": "job-ssc-selection-post-generic-graduate",
+      "governmentId": "central-government",
+      "departmentId": null,
+      "organisationId": "org-ssc",
+      "serviceCadreId": "service-selection-post-graduate",
+      "examIds": [
+        "exam-ssc-selection-post-xiv"
+      ],
+      "post": {
+        "name": "Selection Post — Graduation & Above Category",
+        "abbreviation": "Selection Post"
+      },
+      "jobCategory": "MULTI_DEPARTMENT",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "qualification-post_specific"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-selection-post-post_specific"
+      ],
+      "baEnglishEligibility": "POST_SPECIFIC",
+      "recruitmentRoute": "DIRECT_EXAMINATION",
+      "pay": {
+        "payId": "post-specific",
+        "startingBasic": null,
+        "maximumBasic": null,
+        "payLevel": "POST_SPECIFIC"
+      },
+      "posting": {
+        "scope": "ALL_INDIA_OR_REGION_SPECIFIC",
+        "locationType": "POST_SPECIFIC",
+        "transferProfile": "POST_SPECIFIC",
+        "kolkataStability": "POST_SPECIFIC"
+      },
+      "work": {
+        "deskField": "POST_SPECIFIC",
+        "publicInteraction": "POST_SPECIFIC",
+        "nightDuty": "POST_SPECIFIC",
+        "shiftDuty": "POST_SPECIFIC",
+        "holidayDuty": "POST_SPECIFIC"
+      },
+      "career": {
+        "careerGrowth": "POST_SPECIFIC",
+        "authority": "POST_SPECIFIC",
+        "socialStatus": "POST_SPECIFIC"
+      },
+      "physical": {
+        "physicalTest": "POST_SPECIFIC",
+        "medical": "POST_SPECIFIC"
+      },
+      "housing": {
+        "housingProfileId": "post-specific"
+      },
+      "promotion": {
+        "promotionProfileId": "post-specific"
+      },
+      "benefits": {
+        "benefitsProfileId": "benefits-post-specific"
+      },
+      "currentStatus": "FRAMEWORK_RECURRING",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-ssc-selection-post-xiii",
+        "src-ssc-calendar-2026"
+      ],
+      "notes": "This record is intentionally a framework record. Individual Selection Post vacancies must be expanded into individual job records only after their exact qualification and pay are extracted from the applicable cycle."
+    }
+  ]
+}
