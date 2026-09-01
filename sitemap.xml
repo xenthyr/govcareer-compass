@@ -1,88 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/career-finder.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/career-finder.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/exams.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/exams.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/jobs.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/jobs.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/compare.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/compare.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/rankings.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/rankings.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/salary.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/salary.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/eligibility.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/eligibility.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/family.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/family.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/parents.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/parents.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/location.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/location.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/housing.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/housing.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/preparation.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/preparation.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/confusion-center.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/confusion-center.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/states.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/states.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/ai.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/ai.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/sources.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/sources.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/glossary.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/glossary.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/methodology.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/methodology.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/about.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/about.html</loc>
   </url>
 
   <url>
-    <loc>https://YOUR-PRODUCTION-DOMAIN.example/pages/privacy.html</loc>
+    <loc>https://YOUR-ACTUAL-DOMAIN/pages/privacy.html</loc>
   </url>
 
 </urlset>
