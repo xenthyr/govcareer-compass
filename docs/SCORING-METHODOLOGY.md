@@ -1619,6 +1619,12 @@ How well does it fit me?
 
 RANKING
     ↓
-Which suitable options should I consider first?ted attributes become more influential.
+Which suitable options should I consider first?
 
-Kolka
+EXPLANATION
+    ↓
+Why did the system reach this result?
+
+EVIDENCE
+    ↓
+What supports the underlying facts?
