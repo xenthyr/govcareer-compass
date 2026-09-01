@@ -4,39 +4,123 @@
  * Source / Evidence Card Component
  * ============================================================
  *
- * Purpose:
- * Display the evidence behind government-career information.
+ * Displays the evidence behind career-data claims.
  *
- * The project explicitly distinguishes:
+ * Evidence vocabulary:
  *
- *   OFFICIAL CURRENT
- *   OFFICIAL HISTORICAL
- *   OFFICIAL RULE
- *   SECONDARY
+ *   HIGH
+ *   MEDIUM_HIGH
+ *   MEDIUM
+ *   LOW
  *   ESTIMATE
- *   NOT VERIFIED
- *
- * A source card therefore needs to make evidence quality visible
- * without pretending that every piece of information has equal
- * authority.
+ *   NOT_VERIFIED
+ *   UNKNOWN
  */
 
-import {
-  getLocalizedText as _unused
-} from './source-card-internal.js';
+const CONFIDENCE_META =
+  Object.freeze({
+    HIGH: {
+      label:
+        'High confidence',
 
-/*
- * The project does not currently require a separate internal
- * helper module. The local implementation below intentionally
- * avoids relying on a future file.
- */
+      shortLabel:
+        'High',
 
-/* ============================================================
- * UTILITIES
- * ============================================================
- */
+      tone:
+        'positive',
 
-function escapeHtml(value) {
+      description:
+        'Supported by current authoritative official evidence.'
+    },
+
+    MEDIUM_HIGH: {
+      label:
+        'Official historical',
+
+      shortLabel:
+        'Official historical',
+
+      tone:
+        'historical',
+
+      description:
+        'Based on official historical documentation whose continuing applicability should be checked against newer rules.'
+    },
+
+    MEDIUM: {
+      label:
+        'Official information',
+
+      shortLabel:
+        'Official',
+
+      tone:
+        'official',
+
+      description:
+        'Official departmental information is available, but some current applicability may require additional verification.'
+    },
+
+    LOW: {
+      label:
+        'Low confidence',
+
+      shortLabel:
+        'Low',
+
+      tone:
+        'caution',
+
+      description:
+        'The available evidence is less conclusive.'
+    },
+
+    ESTIMATE: {
+      label:
+        'Current estimate',
+
+      shortLabel:
+        'Estimate',
+
+      tone:
+        'estimate',
+
+      description:
+        'This value is calculated or estimated and is not an official fixed figure.'
+    },
+
+    NOT_VERIFIED: {
+      label:
+        'Not publicly verified',
+
+      shortLabel:
+        'Not verified',
+
+      tone:
+        'unverified',
+
+      description:
+        'A sufficiently authoritative public confirmation was not located.'
+    },
+
+    UNKNOWN: {
+      label:
+        'Confidence not specified',
+
+      shortLabel:
+        'Unknown',
+
+      tone:
+        'neutral',
+
+      description:
+        'The source record does not specify an evidence confidence level.'
+    }
+  });
+
+function escapeHtml(
+  value
+) {
   return String(
     value ?? ''
   )
@@ -86,7 +170,9 @@ function getLocalizedText(
     Object.values(
       value
     ).find(
-      (item) =>
+      (
+        item
+      ) =>
         typeof item ===
         'string'
     ) ||
@@ -106,15 +192,6 @@ function firstValue(
       object?.[
         field
       ];
-
-    if (
-      value ===
-        undefined ||
-      value ===
-        null
-    ) {
-      continue;
-    }
 
     const text =
       getLocalizedText(
@@ -219,17 +296,25 @@ function getSourceDescription(
 function getUrl(
   source
 ) {
-  const candidate =
+  const value =
     source?.url ||
     source?.officialUrl ||
     source?.link;
 
-  return typeof candidate ===
-    'string' &&
-    /^https?:\/\//i.test(
-      candidate.trim()
-    )
-    ? candidate.trim()
+  if (
+    typeof value !==
+    'string'
+  ) {
+    return null;
+  }
+
+  const trimmed =
+    value.trim();
+
+  return /^https?:\/\//i.test(
+    trimmed
+  )
+    ? trimmed
     : null;
 }
 
@@ -246,111 +331,70 @@ function getSourcePriority(
   );
 }
 
-/* ============================================================
- * EVIDENCE DEFINITIONS
- * ============================================================
- */
+function normalizeConfidence(
+  value
+) {
+  const normalized =
+    String(
+      value ||
+        'UNKNOWN'
+    )
+      .trim()
+      .toUpperCase()
+      .replace(
+        /[\s-]+/g,
+        '_'
+      );
 
-const CONFIDENCE_META =
-  Object.freeze({
-    HIGH: {
-      label:
-        'High confidence',
+  const aliases = {
+    OFFICIAL_CURRENT:
+      'HIGH',
 
-      explanation:
-        'Supported by current official government documentation.',
+    CURRENT_OFFICIAL:
+      'HIGH',
 
-      className:
-        'high'
-    },
+    OFFICIAL_HISTORICAL:
+      'MEDIUM_HIGH',
 
-    MEDIUM_HIGH: {
-      label:
-        'Official historical',
+    OFFICIAL_RULE:
+      'HIGH',
 
-      explanation:
-        'Official documentation is historical; continued applicability must be checked against newer rules.',
+    SECONDARY:
+      'LOW'
+  };
 
-      className:
-        'medium-high'
-    },
-
-    MEDIUM: {
-      label:
-        'Official information',
-
-      explanation:
-        'Official departmental information is available, but current recruitment applicability may require additional verification.',
-
-      className:
-        'medium'
-    },
-
-    LOW: {
-      label:
-        'Low confidence',
-
-      explanation:
-        'Evidence is less conclusive and should be checked against the applicable official notification.',
-
-      className:
-        'low'
-    },
-
-    ESTIMATE: {
-      label:
-        'Current estimate',
-
-      explanation:
-        'This value is calculated or estimated and should not be treated as an official figure.',
-
-      className:
-        'estimate'
-    },
-
-    NOT_VERIFIED: {
-      label:
-        'Not publicly verified',
-
-      explanation:
-        'A sufficiently authoritative public source was not located.',
-
-      className:
-        'not-verified'
-    },
-
-    UNKNOWN: {
-      label:
-        'Confidence not specified',
-
-      explanation:
-        'The source record does not specify an evidence-confidence level.',
-
-      className:
-        'unknown'
-    }
-  });
+  return (
+    aliases[
+      normalized
+    ] ||
+    (
+      CONFIDENCE_META[
+        normalized
+      ]
+        ? normalized
+        : 'UNKNOWN'
+    )
+  );
+}
 
 function createConfidenceBlock(
   confidence
 ) {
   const normalized =
-    String(
-      confidence ||
-        'UNKNOWN'
-    )
-      .trim()
-      .toUpperCase();
+    normalizeConfidence(
+      confidence
+    );
 
-  const metadata =
+  const meta =
     CONFIDENCE_META[
       normalized
-    ] ||
-    CONFIDENCE_META.UNKNOWN;
+    ];
 
   return `
     <div
-      class="source-card__confidence source-card__confidence--${metadata.className}"
+      class="source-card__confidence source-card__confidence--${escapeHtml(
+        meta.tone
+      )}"
       data-confidence="${escapeHtml(
         normalized
       )}"
@@ -359,7 +403,7 @@ function createConfidenceBlock(
         class="source-card__confidence-label"
       >
         ${escapeHtml(
-          metadata.label
+          meta.label
         )}
       </span>
 
@@ -367,24 +411,22 @@ function createConfidenceBlock(
         class="source-card__confidence-explanation"
       >
         ${escapeHtml(
-          metadata.explanation
+          meta.description
         )}
       </span>
     </div>
   `;
 }
 
-/* ============================================================
- * SOURCE CARD
- * ============================================================
- */
-
 function createSourceCardMarkup(
   source,
   {
-    compact = false,
+    compact =
+      false,
+
     showDescription =
       true,
+
     showEvidenceExplanation =
       true
   } = {}
@@ -594,15 +636,10 @@ function createSourceCardMarkup(
               <p>
                 ${escapeHtml(
                   CONFIDENCE_META[
-                    String(
+                    normalizeConfidence(
                       confidence
                     )
-                      .trim()
-                      .toUpperCase()
-                  ]?.explanation ||
-                    CONFIDENCE_META
-                      .UNKNOWN
-                      .explanation
+                  ].description
                 )}
               </p>
             </details>
@@ -664,11 +701,6 @@ function createSourceCardMarkup(
   `;
 }
 
-/* ============================================================
- * COMPONENT FACTORY
- * ============================================================
- */
-
 function createSourceCard(
   source,
   options = {}
@@ -684,18 +716,18 @@ function createSourceCard(
       options
     );
 
-  const card =
+  const element =
     wrapper.firstElementChild;
 
   if (
-    !card
+    !element
   ) {
     throw new Error(
       'Unable to create source card.'
     );
   }
 
-  return card;
+  return element;
 }
 
 function mountSourceCard(
@@ -705,7 +737,7 @@ function mountSourceCard(
 ) {
   const mount =
     typeof container ===
-      'string'
+    'string'
       ? document.querySelector(
           container
         )
@@ -740,7 +772,7 @@ function renderSourceCards(
 ) {
   const mount =
     typeof container ===
-      'string'
+    'string'
       ? document.querySelector(
           container
         )
@@ -766,7 +798,9 @@ function renderSourceCards(
   mount.innerHTML =
     sources
       .map(
-        (source) =>
+        (
+          source
+        ) =>
           createSourceCardMarkup(
             source,
             options
@@ -783,6 +817,8 @@ function renderSourceCards(
 
 export {
   CONFIDENCE_META,
+
+  normalizeConfidence,
 
   createSourceCardMarkup,
   createSourceCard,
