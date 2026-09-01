@@ -1,17 +1,26 @@
 /**
  * GovCareer Compass
- * Server-side request validation and security helpers.
+ * Server-side request validation.
  */
 
-import { AI_CONFIG } from "./config.mjs";
+import {
+  COMPASS_CONFIG
+} from "./config.mjs";
 
-const TRUSTED_METHODS = new Set(["POST", "OPTIONS"]);
+const ALLOWED_METHODS =
+  new Set([
+    "POST",
+    "OPTIONS"
+  ]);
 
-function getRequestOrigin(request) {
-  return request.headers.get("origin")?.trim() || "";
+function getOrigin(request) {
+  return (
+    request.headers.get("origin")?.trim() ||
+    ""
+  );
 }
 
-function getRequestHost(request) {
+function getHost(request) {
   try {
     return new URL(request.url).host;
   } catch {
@@ -19,79 +28,97 @@ function getRequestHost(request) {
   }
 }
 
-function isSameOrigin(request) {
-  const origin = getRequestOrigin(request);
+function sameOrigin(request) {
+  const origin = getOrigin(request);
 
   if (!origin) {
     return true;
   }
 
   try {
-    const originUrl = new URL(origin);
-    return originUrl.host === getRequestHost(request);
+    return (
+      new URL(origin).host ===
+      getHost(request)
+    );
   } catch {
     return false;
   }
 }
 
-function isAllowedConfiguredOrigin(request) {
-  const origin = getRequestOrigin(request);
+function configuredOriginAllowed(
+  request
+) {
+  const origin = getOrigin(request);
 
   if (!origin) {
     return true;
   }
 
-  if (AI_CONFIG.allowedOrigins.length === 0) {
+  if (
+    COMPASS_CONFIG.allowedOrigins
+      .length === 0
+  ) {
     return false;
   }
 
-  return AI_CONFIG.allowedOrigins.includes(origin);
+  return COMPASS_CONFIG.allowedOrigins
+    .includes(origin);
 }
 
-export function isAllowedOrigin(request) {
-  if (AI_CONFIG.allowedOrigins.length > 0) {
+export function isAllowedOrigin(
+  request
+) {
+  if (
+    COMPASS_CONFIG.allowedOrigins
+      .length > 0
+  ) {
     return (
-      isSameOrigin(request) ||
-      isAllowedConfiguredOrigin(request)
+      sameOrigin(request) ||
+      configuredOriginAllowed(request)
     );
   }
 
-  return isSameOrigin(request);
+  return sameOrigin(request);
 }
 
-export function isAllowedMethod(method) {
-  return TRUSTED_METHODS.has(
-    String(method || "").toUpperCase()
+export function isAllowedMethod(
+  method
+) {
+  return ALLOWED_METHODS.has(
+    String(method || "")
+      .toUpperCase()
   );
 }
 
-export function getClientContentLength(request) {
-  const value = request.headers.get("content-length");
+export function exceedsRequestSize(
+  request
+) {
+  const value =
+    request.headers.get(
+      "content-length"
+    );
 
   if (!value) {
-    return null;
-  }
-
-  const parsed = Number.parseInt(value, 10);
-
-  if (!Number.isFinite(parsed) || parsed < 0) {
-    return null;
-  }
-
-  return parsed;
-}
-
-export function exceedsRequestSize(request) {
-  const contentLength = getClientContentLength(request);
-
-  if (contentLength === null) {
     return false;
   }
 
-  return contentLength > AI_CONFIG.maxRequestBytes;
+  const length =
+    Number.parseInt(value, 10);
+
+  if (!Number.isFinite(length)) {
+    return false;
+  }
+
+  return (
+    length >
+    COMPASS_CONFIG.maxRequestBytes
+  );
 }
 
-export function sanitizePlainText(value, maxLength) {
+export function sanitizePlainText(
+  value,
+  maxLength
+) {
   if (typeof value !== "string") {
     return "";
   }
@@ -104,71 +131,82 @@ export function sanitizePlainText(value, maxLength) {
     .slice(0, maxLength);
 }
 
-export function sanitizeMessages(messages) {
+export function sanitizeMessages(
+  messages
+) {
   if (!Array.isArray(messages)) {
     return [];
   }
 
   return messages
-    .slice(-AI_CONFIG.maxMessages)
+    .slice(-COMPASS_CONFIG.maxMessages)
     .filter(
       (message) =>
         message &&
         typeof message === "object" &&
-        typeof message.role === "string" &&
-        typeof message.content === "string"
+        (
+          message.role === "user" ||
+          message.role === "assistant"
+        ) &&
+        typeof message.content ===
+          "string"
     )
     .map((message) => ({
-      role:
-        message.role === "assistant"
-          ? "assistant"
-          : "user",
-      content: sanitizePlainText(
-        message.content,
-        AI_CONFIG.maxMessageChars
-      )
+      role: message.role,
+      content:
+        sanitizePlainText(
+          message.content,
+          COMPASS_CONFIG.maxMessageChars
+        )
     }))
     .filter(
       (message) =>
         message.content.length >=
-        AI_CONFIG.minUserMessageChars
+        COMPASS_CONFIG
+          .minUserMessageChars
     );
 }
 
-export function sanitizeContext(context) {
-  if (context === null || context === undefined) {
+export function sanitizeContext(
+  context
+) {
+  if (
+    context === null ||
+    context === undefined
+  ) {
     return "";
   }
 
-  if (typeof context === "string") {
-    return sanitizePlainText(
-      context,
-      AI_CONFIG.maxContextChars
-    );
-  }
-
   try {
-    const serialized = JSON.stringify(context);
+    const serialized =
+      typeof context === "string"
+        ? context
+        : JSON.stringify(context);
 
     return sanitizePlainText(
       serialized,
-      AI_CONFIG.maxContextChars
+      COMPASS_CONFIG.maxContextChars
     );
   } catch {
     return "";
   }
 }
 
-export function jsonResponse(payload, status = 200) {
+export function jsonResponse(
+  payload,
+  status = 200
+) {
   return new Response(
     JSON.stringify(payload),
     {
       status,
       headers: {
-        "Content-Type": "application/json; charset=utf-8",
+        "Content-Type":
+          "application/json; charset=utf-8",
         "Cache-Control":
           "no-store, no-cache, must-revalidate, proxy-revalidate",
-        "X-Content-Type-Options": "nosniff"
+        "X-Content-Type-Options":
+          "nosniff"
       }
     }
   );
