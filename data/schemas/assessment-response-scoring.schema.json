@@ -1,0 +1,301 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "assessment-response-scoring.schema.json",
+  "title": "GovCareer Compass Assessment Response Scoring",
+  "description": "Schema for converting assessment answers into normalized candidate preferences and analytical profile indicators.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "lastUpdated",
+    "assessmentId",
+    "answerMappings",
+    "derivedIndicators",
+    "normalization"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date"
+    },
+    "schema": {
+      "type": "string"
+    },
+    "assessmentId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "principles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "answerMappings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/answerMapping"
+      }
+    },
+    "derivedIndicators": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/derivedIndicator"
+      }
+    },
+    "normalization": {
+      "$ref": "#/$defs/normalization"
+    },
+    "presentationRules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/presentationRule"
+      }
+    }
+  },
+  "$defs": {
+    "answerMapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "questionId",
+        "outputPath",
+        "mappingType"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+        },
+        "questionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outputPath": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_.-]+$"
+        },
+        "mappingType": {
+          "type": "string",
+          "enum": [
+            "DIRECT_NUMERIC",
+            "OPTION_VALUE",
+            "BOOLEAN",
+            "BOOLEAN_OR_UNKNOWN",
+            "ENUM",
+            "ENUM_ARRAY",
+            "ENUM_ARRAY_OR_UNKNOWN",
+            "STRING_OR_EMPTY",
+            "DIRECT_NUMERIC_OR_UNKNOWN",
+            "OPTION_VALUE_OR_UNKNOWN",
+            "QUALIFICATION_ARRAY",
+            "TRADE_ARRAY",
+            "REGISTRATION_ARRAY",
+            "GOVERNMENT_PREFERENCE_ARRAY"
+          ]
+        },
+        "inputRange": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "min",
+            "max"
+          ],
+          "properties": {
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            }
+          }
+        },
+        "sensitive": {
+          "type": "boolean"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mappingType": {
+                "enum": [
+                  "DIRECT_NUMERIC",
+                  "DIRECT_NUMERIC_OR_UNKNOWN"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "inputRange"
+            ]
+          }
+        }
+      ]
+    },
+    "condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "operator",
+        "value"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_.-]+$"
+        },
+        "operator": {
+          "type": "string",
+          "enum": [
+            "EQUALS",
+            "NOT_EQUALS",
+            "GREATER_THAN",
+            "GREATER_THAN_OR_EQUAL",
+            "LESS_THAN",
+            "LESS_THAN_OR_EQUAL",
+            "CONTAINS",
+            "NOT_CONTAINS",
+            "IN",
+            "NOT_IN"
+          ]
+        },
+        "value": {}
+      }
+    },
+    "derivedWhen": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "all": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/condition"
+          }
+        },
+        "any": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/condition"
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "all"
+          ]
+        },
+        {
+          "required": [
+            "any"
+          ]
+        }
+      ]
+    },
+    "derivedIndicator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "when",
+        "set"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+        },
+        "when": {
+          "$ref": "#/$defs/derivedWhen"
+        },
+        "set": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "profileTags"
+          ],
+          "properties": {
+            "profileTags": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            }
+          }
+        }
+      }
+    },
+    "normalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "minScore",
+        "maxScore",
+        "rounding",
+        "unknownHandling"
+      ],
+      "properties": {
+        "minScore": {
+          "type": "number"
+        },
+        "maxScore": {
+          "type": "number"
+        },
+        "rounding": {
+          "type": "string",
+          "enum": [
+            "HALF_UP",
+            "HALF_DOWN",
+            "FLOOR",
+            "CEIL",
+            "NONE"
+          ]
+        },
+        "unknownHandling": {
+          "type": "string",
+          "enum": [
+            "PRESERVE_UNKNOWN",
+            "IMPUTE_NEUTRAL",
+            "REJECT_UNKNOWN"
+          ]
+        }
+      }
+    },
+    "presentationRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "description"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}
