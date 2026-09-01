@@ -1,36 +1,23 @@
 /**
  * GovCareer Compass
  * ============================================================
- * State Selector Component
+ * Government / State Selector Component
  * ============================================================
  *
- * Purpose
- * -------
- * Provides the state-selection UI for the application.
+ * CURRENT PRODUCT:
+ *   West Bengal state-government data
+ *   + Central Government
  *
- * CURRENT PRODUCT SCOPE
- * ---------------------
- * - West Bengal state data is implemented first.
- * - Central Government remains available independently.
- * - Other Indian states may be displayed in the selector as
- *   future/planned states until their datasets are actually
- *   implemented.
+ * FUTURE PRODUCT:
+ *   Additional Indian states.
  *
- * IMPORTANT
- * ---------
- * A state appearing in the selector does NOT mean that its
- * government-job database is already available.
+ * IMPORTANT:
+ *   State records should ultimately come from:
  *
- * The component exposes:
- * - available
- * - planned
- * - disabled
+ *   /data/common/states.json
  *
- * Future state expansion should therefore not require a
- * component rewrite.
+ *   This component is only the UI layer.
  */
-
-import config from '../config.js';
 
 const STATE_STATUS =
   Object.freeze({
@@ -44,7 +31,7 @@ const STATE_STATUS =
       'DISABLED'
   });
 
-const DEFAULT_STATES =
+const INITIAL_FALLBACK_STATES =
   Object.freeze([
     {
       id:
@@ -58,430 +45,174 @@ const DEFAULT_STATES =
 
       status:
         STATE_STATUS.AVAILABLE
-    },
-
-    {
-      id:
-        'IN-AP',
-
-      name:
-        'Andhra Pradesh',
-
-      shortName:
-        'AP',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-AR',
-
-      name:
-        'Arunachal Pradesh',
-
-      shortName:
-        'AR',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-AS',
-
-      name:
-        'Assam',
-
-      shortName:
-        'AS',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-BR',
-
-      name:
-        'Bihar',
-
-      shortName:
-        'BR',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-CG',
-
-      name:
-        'Chhattisgarh',
-
-      shortName:
-        'CG',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-GA',
-
-      name:
-        'Goa',
-
-      shortName:
-        'GA',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-GJ',
-
-      name:
-        'Gujarat',
-
-      shortName:
-        'GJ',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-HR',
-
-      name:
-        'Haryana',
-
-      shortName:
-        'HR',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-HP',
-
-      name:
-        'Himachal Pradesh',
-
-      shortName:
-        'HP',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-JH',
-
-      name:
-        'Jharkhand',
-
-      shortName:
-        'JH',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-KA',
-
-      name:
-        'Karnataka',
-
-      shortName:
-        'KA',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-KL',
-
-      name:
-        'Kerala',
-
-      shortName:
-        'KL',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-MP',
-
-      name:
-        'Madhya Pradesh',
-
-      shortName:
-        'MP',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-MH',
-
-      name:
-        'Maharashtra',
-
-      shortName:
-        'MH',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-MN',
-
-      name:
-        'Manipur',
-
-      shortName:
-        'MN',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-ML',
-
-      name:
-        'Meghalaya',
-
-      shortName:
-        'ML',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-MZ',
-
-      name:
-        'Mizoram',
-
-      shortName:
-        'MZ',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-NL',
-
-      name:
-        'Nagaland',
-
-      shortName:
-        'NL',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-OD',
-
-      name:
-        'Odisha',
-
-      shortName:
-        'OD',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-PB',
-
-      name:
-        'Punjab',
-
-      shortName:
-        'PB',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-RJ',
-
-      name:
-        'Rajasthan',
-
-      shortName:
-        'RJ',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-SK',
-
-      name:
-        'Sikkim',
-
-      shortName:
-        'SK',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-TN',
-
-      name:
-        'Tamil Nadu',
-
-      shortName:
-        'TN',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-TS',
-
-      name:
-        'Telangana',
-
-      shortName:
-        'TS',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-TR',
-
-      name:
-        'Tripura',
-
-      shortName:
-        'TR',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-UP',
-
-      name:
-        'Uttar Pradesh',
-
-      shortName:
-        'UP',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-UK',
-
-      name:
-        'Uttarakhand',
-
-      shortName:
-        'UK',
-
-      status:
-        STATE_STATUS.PLANNED
-    },
-
-    {
-      id:
-        'IN-LD',
-
-      name:
-        'Ladakh',
-
-      shortName:
-        'LA',
-
-      status:
-        STATE_STATUS.PLANNED
     }
   ]);
 
-function getConfiguredStates() {
-  /*
-   * If config.js eventually exposes a canonical state list,
-   * use it. Otherwise use the current controlled fallback.
-   */
-  const configured =
-    config?.states;
+let configuredStates =
+  [
+    ...INITIAL_FALLBACK_STATES
+  ];
 
+function escapeHtml(
+  value
+) {
+  return String(
+    value ?? ''
+  )
+    .replace(
+      /&/g,
+      '&amp;'
+    )
+    .replace(
+      /</g,
+      '&lt;'
+    )
+    .replace(
+      />/g,
+      '&gt;'
+    )
+    .replace(
+      /"/g,
+      '&quot;'
+    )
+    .replace(
+      /'/g,
+      '&#039;'
+    );
+}
+
+function normalizeState(
+  state
+) {
   if (
-    Array.isArray(
-      configured
-    ) &&
-    configured.length
+    !state ||
+    typeof state !==
+      'object'
   ) {
-    return configured;
+    return null;
   }
 
-  return [
-    ...DEFAULT_STATES
-  ];
+  const id =
+    String(
+      state.id ||
+        ''
+    ).trim();
+
+  const name =
+    String(
+      state.name ||
+        ''
+    ).trim();
+
+  if (
+    !id ||
+    !name
+  ) {
+    return null;
+  }
+
+  const status =
+    Object.values(
+      STATE_STATUS
+    ).includes(
+      String(
+        state.status ||
+          ''
+      ).toUpperCase()
+    )
+      ? String(
+          state.status
+        ).toUpperCase()
+      : STATE_STATUS.PLANNED;
+
+  return {
+    id,
+
+    name,
+
+    shortName:
+      String(
+        state.shortName ||
+          ''
+      ).trim(),
+
+    status
+  };
+}
+
+function setStateVocabulary(
+  states
+) {
+  if (
+    !Array.isArray(
+      states
+    )
+  ) {
+    return false;
+  }
+
+  const normalized =
+    states
+      .map(
+        normalizeState
+      )
+      .filter(Boolean);
+
+  if (
+    normalized.length ===
+    0
+  ) {
+    return false;
+  }
+
+  configuredStates =
+    normalized;
+
+  document.dispatchEvent(
+    new CustomEvent(
+      'govcareer:state-vocabulary-ready',
+      {
+        detail: {
+          states:
+            getConfiguredStates()
+        }
+      }
+    )
+  );
+
+  return true;
+}
+
+function getConfiguredStates() {
+  return configuredStates.map(
+    (
+      state
+    ) => ({
+      ...state
+    })
+  );
+}
+
+function getAvailableStates() {
+  return getConfiguredStates().filter(
+    (
+      state
+    ) =>
+      state.status ===
+      STATE_STATUS.AVAILABLE
+  );
 }
 
 function createStateSelector({
   includeCentral =
     true,
+
   showPlanned =
     true,
+
   availableOnly =
     false,
+
   currentStateId =
     'IN-WB'
 } = {}) {
@@ -496,6 +227,26 @@ function createStateSelector({
   wrapper.dataset.stateSelector =
     'true';
 
+  const labelId =
+    `state-selector-label-${Math.random()
+      .toString(
+        36
+      )
+      .slice(
+        2,
+        10
+      )}`;
+
+  const selectId =
+    `state-selector-${Math.random()
+      .toString(
+        36
+      )
+      .slice(
+        2,
+        10
+      )}`;
+
   const label =
     document.createElement(
       'label'
@@ -503,6 +254,12 @@ function createStateSelector({
 
   label.className =
     'state-selector__label';
+
+  label.id =
+    labelId;
+
+  label.htmlFor =
+    selectId;
 
   label.textContent =
     'Government jurisdiction';
@@ -515,112 +272,127 @@ function createStateSelector({
   select.className =
     'state-selector__select';
 
+  select.id =
+    selectId;
+
   select.dataset.stateSelect =
     'true';
 
   select.setAttribute(
-    'aria-label',
-    'Choose government jurisdiction'
+    'aria-labelledby',
+    labelId
   );
 
   if (
     includeCentral
   ) {
-    const centralOption =
+    const option =
       document.createElement(
         'option'
       );
 
-    centralOption.value =
+    option.value =
       'CENTRAL';
 
-    centralOption.textContent =
+    option.textContent =
       'Central Government';
 
     select.append(
-      centralOption
+      option
     );
   }
 
-  const states =
-    getConfiguredStates();
+  getConfiguredStates()
+    .filter(
+      (
+        state
+      ) => {
+        if (
+          availableOnly &&
+          state.status !==
+            STATE_STATUS.AVAILABLE
+        ) {
+          return false;
+        }
 
-  states.forEach(
-    (state) => {
-      if (
-        availableOnly &&
-        state.status !==
-          STATE_STATUS.AVAILABLE
-      ) {
-        return;
+        if (
+          !showPlanned &&
+          state.status ===
+            STATE_STATUS.PLANNED
+        ) {
+          return false;
+        }
+
+        return true;
       }
+    )
+    .forEach(
+      (
+        state
+      ) => {
+        const option =
+          document.createElement(
+            'option'
+          );
 
-      if (
-        !showPlanned &&
-        state.status ===
+        option.value =
+          state.id;
+
+        option.textContent =
+          state.status ===
           STATE_STATUS.PLANNED
-      ) {
-        return;
-      }
+            ? `${state.name} — Coming later`
+            : state.name;
 
-      const option =
-        document.createElement(
-          'option'
+        option.disabled =
+          state.status !==
+          STATE_STATUS.AVAILABLE;
+
+        select.append(
+          option
         );
+      }
+    );
 
-      option.value =
-        state.id;
-
-      option.textContent =
-        state.status ===
-        STATE_STATUS.PLANNED
-          ? `${state.name} — Coming later`
-          : state.name;
-
-      option.disabled =
-        state.status !==
-        STATE_STATUS.AVAILABLE;
-
-      select.append(
-        option
-      );
-    }
-  );
-
-  const validCurrent =
+  const allowedValues =
     [
-      'CENTRAL',
-      ...states
+      ...(includeCentral
+        ? ['CENTRAL']
+        : []),
+
+      ...getConfiguredStates()
         .filter(
-          (state) =>
+          (
+            state
+          ) =>
             state.status ===
             STATE_STATUS.AVAILABLE
         )
         .map(
-          (state) =>
+          (
+            state
+          ) =>
             state.id
         )
-    ].includes(
+    ];
+
+  if (
+    allowedValues.includes(
       currentStateId
-    );
-
-  select.value =
-    validCurrent
-      ? currentStateId
-      : includeCentral
-        ? 'CENTRAL'
-        : 'IN-WB';
-
-  label.htmlFor =
-    `state-selector-${Math.random()
-      .toString(36)
-      .slice(
-        2,
-        9
-      )}`;
-
-  select.id =
-    label.htmlFor;
+    )
+  ) {
+    select.value =
+      currentStateId;
+  } else if (
+    includeCentral
+  ) {
+    select.value =
+      'CENTRAL';
+  } else {
+    select.value =
+      allowedValues[0] ||
+      '';
+  }
 
   wrapper.append(
     label,
@@ -636,7 +408,7 @@ function mountStateSelector(
 ) {
   const mount =
     typeof container ===
-      'string'
+    'string'
       ? document.querySelector(
           container
         )
@@ -666,6 +438,27 @@ function mountStateSelector(
 function bindStateSelector(
   root = document
 ) {
+  if (
+    root ===
+      document &&
+    document.documentElement
+      .dataset
+      .stateSelectorBound ===
+      'true'
+  ) {
+    return;
+  }
+
+  if (
+    root ===
+    document
+  ) {
+    document.documentElement
+      .dataset
+      .stateSelectorBound =
+      'true';
+  }
+
   root.addEventListener(
     'change',
     (event) => {
@@ -711,19 +504,23 @@ function syncStateSelector(
       '[data-state-select]'
     )
     .forEach(
-      (select) => {
-        const matchingOption =
+      (
+        select
+      ) => {
+        const option =
           [
             ...select.options
           ].find(
-            (option) =>
-              option.value ===
+            (
+              item
+            ) =>
+              item.value ===
               stateId
           );
 
         if (
-          matchingOption &&
-          !matchingOption.disabled
+          option &&
+          !option.disabled
         ) {
           select.value =
             stateId;
@@ -736,34 +533,48 @@ function initializeStateSelector() {
   bindStateSelector();
 
   document.addEventListener(
-    'govcareer:statechange',
-    (event) => {
-      const stateId =
-        event.detail?.stateId;
+    'govcareer:state-vocabulary-ready',
+    () => {
+      /*
+       * Existing selectors are refreshed by the page layer
+       * when the canonical vocabulary becomes available.
+       */
+    }
+  );
 
-      if (
-        stateId
-      ) {
-        syncStateSelector(
-          stateId
-        );
-      }
+  document.addEventListener(
+    'govcareer:statechange',
+    (
+      event
+    ) => {
+      syncStateSelector(
+        event.detail?.stateId
+      );
     }
   );
 }
 
 export {
   STATE_STATUS,
-  DEFAULT_STATES,
+
+  INITIAL_FALLBACK_STATES,
+
+  setStateVocabulary,
   getConfiguredStates,
+  getAvailableStates,
+
   createStateSelector,
   mountStateSelector,
+
   bindStateSelector,
   syncStateSelector,
+
   initializeStateSelector
 };
 
 export default {
+  setStateVocabulary,
+  getConfiguredStates,
   createStateSelector,
   mountStateSelector,
   initializeStateSelector
