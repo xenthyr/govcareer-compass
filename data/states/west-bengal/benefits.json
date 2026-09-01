@@ -1,0 +1,40 @@
+{
+  "$schema": "../../../schemas/benefits.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "west-bengal-government",
+  "stateId": "west-bengal",
+  "lastVerified": "2026-08-31",
+  "benefitsProfiles": [
+    {
+      "id": "benefits-wb-regular-service",
+      "employmentType": "REGULAR_WEST_BENGAL_GOVERNMENT_SERVICE",
+      "retirementFramework": "WEST_BENGAL_APPLICABLE_RETIREMENT_RULES",
+      "gratuity": "SUBJECT_TO_APPLICABLE_RULES",
+      "leaveEncashment": "SUBJECT_TO_APPLICABLE_RULES",
+      "familyBenefits": "SUBJECT_TO_APPLICABLE_RULES",
+      "medical": "SERVICE_AND_RULE_DEPENDENT",
+      "housing": "POSSIBLE_SUBJECT_TO_ENTITLEMENT_AND_AVAILABILITY",
+      "travelBenefits": "AS_APPLICABLE",
+      "insurance": "SERVICE_SCHEME_DEPENDENT",
+      "confidence": "HIGH",
+      "notes": {
+        "en": "Retirement and benefit treatment must be evaluated against the appointment date and current applicable West Bengal rules.",
+        "bn": "অবসর ও অন্যান্য সুবিধা নিয়োগের তারিখ এবং তৎকালীন প্রযোজ্য পশ্চিমবঙ্গ সরকারের নিয়ম অনুযায়ী মূল্যায়ন করতে হবে।"
+      }
+    },
+    {
+      "id": "benefits-wb-police",
+      "employmentType": "REGULAR_POLICE_SERVICE",
+      "retirementFramework": "WEST_BENGAL_POLICE_APPLICABLE_RULES",
+      "gratuity": "SUBJECT_TO_RULES",
+      "leaveEncashment": "SUBJECT_TO_RULES",
+      "familyBenefits": "SUBJECT_TO_RULES",
+      "medical": "POLICE_SERVICE_MEDICAL_SYSTEM",
+      "housing": "POLICE_ACCOMMODATION_WHERE_AVAILABLE",
+      "travelBenefits": "SERVICE_DEPENDENT",
+      "insurance": "SERVICE_DEPENDENT",
+      "confidence": "MEDIUM_HIGH"
+    }
+  ]
+}
