@@ -1,0 +1,76 @@
+{
+  "$schema": "../../../schemas/location.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "west-bengal-government",
+  "stateId": "west-bengal",
+  "lastVerified": "2026-08-31",
+  "locations": [
+    {
+      "id": "loc-wb-kolkata",
+      "name": {
+        "en": "Kolkata",
+        "bn": "কলকাতা"
+      },
+      "type": "METROPOLITAN",
+      "governmentId": "west-bengal-government",
+      "stateId": "west-bengal",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "loc-wb-statewide",
+      "name": {
+        "en": "West Bengal — Statewide",
+        "bn": "পশ্চিমবঙ্গ — রাজ্যব্যাপী"
+      },
+      "type": "STATEWIDE",
+      "governmentId": "west-bengal-government",
+      "stateId": "west-bengal",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "loc-wb-district",
+      "name": {
+        "en": "District-level West Bengal posting",
+        "bn": "পশ্চিমবঙ্গ জেলা-স্তরের পোস্টিং"
+      },
+      "type": "DISTRICT",
+      "governmentId": "west-bengal-government",
+      "stateId": "west-bengal",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "loc-wb-block-rural",
+      "name": {
+        "en": "Block / Rural West Bengal",
+        "bn": "ব্লক / গ্রামীণ পশ্চিমবঙ্গ"
+      },
+      "type": "RURAL_BLOCK",
+      "governmentId": "west-bengal-government",
+      "stateId": "west-bengal",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "loc-wb-police-statewide",
+      "name": {
+        "en": "West Bengal Police district/unit network",
+        "bn": "পশ্চিমবঙ্গ পুলিশের জেলা/ইউনিট নেটওয়ার্ক"
+      },
+      "type": "POLICE_NETWORK",
+      "governmentId": "west-bengal-government",
+      "stateId": "west-bengal",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "loc-kolkata-police-area",
+      "name": {
+        "en": "Kolkata Police area",
+        "bn": "কলকাতা পুলিশ এলাকা"
+      },
+      "type": "POLICE_METROPOLITAN_AREA",
+      "governmentId": "west-bengal-government",
+      "stateId": "west-bengal",
+      "confidence": "HIGH"
+    }
+  ]
+}
