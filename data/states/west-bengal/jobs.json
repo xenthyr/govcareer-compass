@@ -1,0 +1,656 @@
+{
+  "$schema": "../../../schemas/job.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "west-bengal-government",
+  "stateId": "west-bengal",
+  "lastVerified": "2026-08-31",
+  "jobs": [
+    {
+      "id": "job-wbcs-executive",
+      "governmentId": "west-bengal-government",
+      "departmentId": "dept-wb-personnel",
+      "organisationId": "org-wbpsc",
+      "serviceCadreId": "service-wbcs-executive",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "post": {
+        "name": {
+          "en": "West Bengal Civil Service (Executive)",
+          "bn": "পশ্চিমবঙ্গ সিভিল সার্ভিস (এক্সিকিউটিভ)"
+        },
+        "abbreviation": "WBCS Executive"
+      },
+      "jobCategory": "ADMINISTRATIVE",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "baEnglishEligibility": "DIRECT_WITH_BENGALI",
+      "recruitmentRoute": "WBPSC_WBCS",
+      "pay": {
+        "payLevel": "LEVEL_16",
+        "startingBasic": 56100,
+        "maximumBasic": 144300,
+        "paySystem": "ROPA_2019"
+      },
+      "posting": {
+        "scope": "STATEWIDE",
+        "locationType": "DISTRICT_OR_STATE_POSTING",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM_LOW"
+      },
+      "currentStatus": "2024_CYCLE_UNDER_PROCESS",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ]
+    },
+    {
+      "id": "job-wbcs-revenue",
+      "governmentId": "west-bengal-government",
+      "departmentId": "dept-wb-finance",
+      "organisationId": "org-wbpsc",
+      "serviceCadreId": "service-wb-revenue-service",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "post": {
+        "name": {
+          "en": "Assistant Commissioner of Revenue in the integrated West Bengal Revenue Service",
+          "bn": "সমন্বিত পশ্চিমবঙ্গ রাজস্ব পরিষেবায় সহকারী রাজস্ব কমিশনার"
+        },
+        "abbreviation": null
+      },
+      "jobCategory": "REVENUE",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "baEnglishEligibility": "DIRECT_WITH_BENGALI",
+      "recruitmentRoute": "WBPSC_WBCS",
+      "pay": {
+        "payLevel": "LEVEL_16",
+        "startingBasic": 56100,
+        "maximumBasic": 144300,
+        "paySystem": "ROPA_2019"
+      },
+      "posting": {
+        "scope": "STATEWIDE",
+        "locationType": "REVENUE_OFFICES",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM_LOW"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ]
+    },
+    {
+      "id": "job-wbcs-cooperative",
+      "governmentId": "west-bengal-government",
+      "departmentId": "dept-wb-cooperation",
+      "organisationId": "org-wbpsc",
+      "serviceCadreId": "service-wb-cooperative-service",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "post": {
+        "name": {
+          "en": "West Bengal Co-operative Service",
+          "bn": "পশ্চিমবঙ্গ সমবায় পরিষেবা"
+        },
+        "abbreviation": null
+      },
+      "jobCategory": "ADMINISTRATIVE",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "baEnglishEligibility": "DIRECT_WITH_BENGALI",
+      "recruitmentRoute": "WBPSC_WBCS",
+      "pay": {
+        "payLevel": "LEVEL_16",
+        "startingBasic": 56100,
+        "maximumBasic": 144300,
+        "paySystem": "ROPA_2019"
+      },
+      "posting": {
+        "scope": "STATEWIDE",
+        "locationType": "COOPERATIVE_ADMINISTRATION",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ]
+    },
+    {
+      "id": "job-wbcs-labour",
+      "governmentId": "west-bengal-government",
+      "departmentId": "dept-wb-labour",
+      "organisationId": "org-wbpsc",
+      "serviceCadreId": "service-wb-labour-service",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "post": {
+        "name": {
+          "en": "West Bengal Labour Service",
+          "bn": "পশ্চিমবঙ্গ শ্রম পরিষেবা"
+        },
+        "abbreviation": null
+      },
+      "jobCategory": "LABOUR_EMPLOYMENT",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "baEnglishEligibility": "DIRECT_WITH_BENGALI",
+      "recruitmentRoute": "WBPSC_WBCS",
+      "pay": {
+        "payLevel": "LEVEL_16",
+        "startingBasic": 56100,
+        "maximumBasic": 144300,
+        "paySystem": "ROPA_2019"
+      },
+      "posting": {
+        "scope": "STATEWIDE",
+        "locationType": "LABOUR_ADMINISTRATION",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ]
+    },
+    {
+      "id": "job-wbcs-food-supplies",
+      "governmentId": "west-bengal-government",
+      "departmentId": "dept-wb-food-supplies",
+      "organisationId": "org-wbpsc",
+      "serviceCadreId": "service-wb-food-supplies",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "post": {
+        "name": {
+          "en": "West Bengal Food and Supplies Service",
+          "bn": "পশ্চিমবঙ্গ খাদ্য ও সরবরাহ পরিষেবা"
+        },
+        "abbreviation": null
+      },
+      "jobCategory": "FOOD_SUPPLIES_ADMINISTRATION",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "baEnglishEligibility": "DIRECT_WITH_BENGALI",
+      "recruitmentRoute": "WBPSC_WBCS",
+      "pay": {
+        "payLevel": "LEVEL_16",
+        "startingBasic": 56100,
+        "maximumBasic": 144300,
+        "paySystem": "ROPA_2019"
+      },
+      "posting": {
+        "scope": "STATEWIDE",
+        "locationType": "FOOD_SUPPLIES_ADMINISTRATION",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ]
+    },
+    {
+      "id": "job-wbcs-employment",
+      "governmentId": "west-bengal-government",
+      "departmentId": "dept-wb-labour",
+      "organisationId": "org-wbpsc",
+      "serviceCadreId": "service-wb-employment-service",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "post": {
+        "name": {
+          "en": "West Bengal Employment Service",
+          "bn": "পশ্চিমবঙ্গ এমপ্লয়মেন্ট সার্ভিস"
+        },
+        "abbreviation": null
+      },
+      "jobCategory": "EMPLOYMENT_ADMINISTRATION",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "baEnglishEligibility": "DIRECT_WITH_BENGALI",
+      "recruitmentRoute": "WBPSC_WBCS",
+      "pay": {
+        "payLevel": "LEVEL_16",
+        "startingBasic": 56100,
+        "maximumBasic": 144300,
+        "paySystem": "ROPA_2019"
+      },
+      "posting": {
+        "scope": "STATEWIDE",
+        "locationType": "EMPLOYMENT_OFFICES",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ]
+    },
+    {
+      "id": "job-wbcs-police-service",
+      "governmentId": "west-bengal-government",
+      "departmentId": "dept-wb-home-hill-affairs",
+      "organisationId": "org-wbpsc",
+      "serviceCadreId": "service-wb-police-service",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "post": {
+        "name": {
+          "en": "West Bengal Police Service",
+          "bn": "পশ্চিমবঙ্গ পুলিশ পরিষেবা"
+        },
+        "abbreviation": "WB Police Service"
+      },
+      "jobCategory": "POLICE",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "eligibility-wbcs-degree-bengali",
+        "eligibility-wbcs-police"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali",
+        "eligibility-wbcs-police"
+      ],
+      "baEnglishEligibility": "DIRECT_ACADEMIC_WITH_PHYSICAL",
+      "recruitmentRoute": "WBPSC_WBCS",
+      "pay": {
+        "payLevel": "LEVEL_16",
+        "startingBasic": 56100,
+        "maximumBasic": 144300,
+        "paySystem": "ROPA_2019"
+      },
+      "posting": {
+        "scope": "STATEWIDE",
+        "locationType": "POLICE_POSTING",
+        "transferProfile": "VERY_HIGH",
+        "kolkataStability": "LOW_MEDIUM"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ]
+    },
+    {
+      "id": "job-wbcs-joint-bdo",
+      "governmentId": "west-bengal-government",
+      "departmentId": "dept-wb-panchayat-rural",
+      "organisationId": "org-wbpsc",
+      "serviceCadreId": "service-wb-joint-bdo",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "post": {
+        "name": {
+          "en": "Joint Block Development Officer",
+          "bn": "জয়েন্ট ব্লক ডেভেলপমেন্ট অফিসার"
+        },
+        "abbreviation": "Joint BDO"
+      },
+      "jobCategory": "RURAL_DEVELOPMENT",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "baEnglishEligibility": "DIRECT_WITH_BENGALI",
+      "recruitmentRoute": "WBPSC_WBCS",
+      "pay": {
+        "payLevel": "LEVEL_14",
+        "startingBasic": 39900,
+        "maximumBasic": 102800,
+        "paySystem": "ROPA_2019"
+      },
+      "posting": {
+        "scope": "BLOCK_AND_DISTRICT",
+        "locationType": "RURAL_BLOCK",
+        "transferProfile": "HIGH",
+        "kolkataStability": "LOW"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ]
+    },
+    {
+      "id": "job-wb-subordinate-land-revenue",
+      "governmentId": "west-bengal-government",
+      "departmentId": "dept-wb-land",
+      "organisationId": "org-wbpsc",
+      "serviceCadreId": "service-wb-subordinate-land-revenue-grade1",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "post": {
+        "name": {
+          "en": "West Bengal Subordinate Land Revenue Service, Grade I",
+          "bn": "পশ্চিমবঙ্গ সাবঅর্ডিনেট ল্যান্ড রেভিনিউ সার্ভিস, গ্রেড I"
+        },
+        "abbreviation": "WBSLRS Grade I"
+      },
+      "jobCategory": "REVENUE",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "eligibility-wbcs-degree-bengali",
+        "eligibility-land-revenue-bengali"
+      ],
+      "baEnglishEligibility": "DIRECT_WITH_BENGALI",
+      "recruitmentRoute": "WBPSC_WBCS",
+      "pay": {
+        "payLevel": "LEVEL_14",
+        "startingBasic": 39900,
+        "maximumBasic": 102800,
+        "paySystem": "ROPA_2019"
+      },
+      "posting": {
+        "scope": "DISTRICT_AND_FIELD",
+        "locationType": "LAND_REVENUE_FIELD",
+        "transferProfile": "HIGH",
+        "kolkataStability": "LOW"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ]
+    },
+    {
+      "id": "job-wb-panchayat-development-officer",
+      "governmentId": "west-bengal-government",
+      "departmentId": "dept-wb-panchayat-rural",
+      "organisationId": "org-wbpsc",
+      "serviceCadreId": "service-wb-panchayat-development-officer",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "post": {
+        "name": {
+          "en": "Panchayat Development Officer",
+          "bn": "পঞ্চায়েত ডেভেলপমেন্ট অফিসার"
+        },
+        "abbreviation": "PDO"
+      },
+      "jobCategory": "PANCHAYAT_RURAL_DEVELOPMENT",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "baEnglishEligibility": "DIRECT_WITH_BENGALI",
+      "recruitmentRoute": "WBPSC_WBCS",
+      "pay": {
+        "payLevel": "LEVEL_10",
+        "startingBasic": 32100,
+        "maximumBasic": 82900,
+        "paySystem": "ROPA_2019"
+      },
+      "posting": {
+        "scope": "DISTRICT_AND_BLOCK",
+        "locationType": "RURAL",
+        "transferProfile": "HIGH",
+        "kolkataStability": "LOW"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ]
+    },
+    {
+      "id": "job-wb-rehabilitation-officer",
+      "governmentId": "west-bengal-government",
+      "departmentId": "dept-wb-land",
+      "organisationId": "org-wbpsc",
+      "serviceCadreId": "service-wb-rehabilitation-officer",
+      "examIds": [
+        "exam-wbpsc-wbcs-2024"
+      ],
+      "post": {
+        "name": {
+          "en": "Rehabilitation Officer",
+          "bn": "রিহ্যাবিলিটেশন অফিসার"
+        },
+        "abbreviation": null
+      },
+      "jobCategory": "REHABILITATION_ADMINISTRATION",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "eligibility-wbcs-degree-bengali"
+      ],
+      "baEnglishEligibility": "DIRECT_WITH_BENGALI",
+      "recruitmentRoute": "WBPSC_WBCS",
+      "pay": {
+        "payLevel": "LEVEL_10",
+        "startingBasic": 32100,
+        "maximumBasic": 82900,
+        "paySystem": "ROPA_2019"
+      },
+      "posting": {
+        "scope": "STATEWIDE",
+        "locationType": "REHABILITATION_ADMINISTRATION",
+        "transferProfile": "HIGH",
+        "kolkataStability": "MEDIUM"
+      },
+      "currentStatus": "RECURRING_CAREER",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ]
+    },
+    {
+      "id": "job-kp-si",
+      "governmentId": "west-bengal-government",
+      "departmentId": "dept-wb-home-hill-affairs",
+      "organisationId": "org-kolkata-police",
+      "serviceCadreId": "service-kolkata-police-si",
+      "examIds": [
+        "exam-wbprb-kp-si-2023"
+      ],
+      "post": {
+        "name": {
+          "en": "Sub-Inspector/Sub-Inspectress of Kolkata Police, Unarmed Branch",
+          "bn": "কলকাতা পুলিশের সাব-ইন্সপেক্টর/সাব-ইন্সপেক্ট্রেস, আনআর্মড ব্রাঞ্চ"
+        },
+        "abbreviation": "KP SI"
+      },
+      "jobCategory": "POLICE",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "eligibility-police-graduate-bengali",
+        "eligibility-kp-si-physical"
+      ],
+      "baEnglishEligibility": "DIRECT_WITH_PHYSICAL_MEDICAL",
+      "recruitmentRoute": "WBPRB",
+      "pay": {
+        "payLevel": "LEVEL_10",
+        "startingBasic": 32100,
+        "maximumBasic": 82900,
+        "paySystem": "ROPA_2019"
+      },
+      "posting": {
+        "scope": "KOLKATA_POLICE_AREA",
+        "locationType": "KOLKATA",
+        "transferProfile": "MEDIUM",
+        "kolkataStability": "VERY_HIGH"
+      },
+      "currentStatus": "2023_RECRUITMENT_UNDER_PROCESS",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-wbprb-kp-si-2023"
+      ]
+    },
+    {
+      "id": "job-kp-si-armed",
+      "governmentId": "west-bengal-government",
+      "departmentId": "dept-wb-home-hill-affairs",
+      "organisationId": "org-kolkata-police",
+      "serviceCadreId": "service-kolkata-police-si",
+      "examIds": [
+        "exam-wbprb-kp-si-2023"
+      ],
+      "post": {
+        "name": {
+          "en": "Sub-Inspector of Kolkata Police, Armed Branch",
+          "bn": "কলকাতা পুলিশের সাব-ইন্সপেক্টর, আর্মড ব্রাঞ্চ"
+        },
+        "abbreviation": "KP SI Armed"
+      },
+      "jobCategory": "POLICE",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "eligibility-police-graduate-bengali",
+        "eligibility-kp-si-physical"
+      ],
+      "baEnglishEligibility": "DIRECT_WITH_PHYSICAL_MEDICAL",
+      "recruitmentRoute": "WBPRB",
+      "pay": {
+        "payLevel": "LEVEL_10",
+        "startingBasic": 32100,
+        "maximumBasic": 82900,
+        "paySystem": "ROPA_2019"
+      },
+      "posting": {
+        "scope": "KOLKATA_POLICE_AREA",
+        "locationType": "KOLKATA",
+        "transferProfile": "MEDIUM",
+        "kolkataStability": "HIGH"
+      },
+      "currentStatus": "2023_RECRUITMENT_UNDER_PROCESS",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-wbprb-kp-si-2023"
+      ]
+    },
+    {
+      "id": "job-wbp-si-ub",
+      "governmentId": "west-bengal-government",
+      "departmentId": "dept-wb-home-hill-affairs",
+      "organisationId": "org-west-bengal-police",
+      "serviceCadreId": "service-wbp-si",
+      "examIds": [
+        "exam-wbprb-wbp-si-2024"
+      ],
+      "post": {
+        "name": {
+          "en": "Sub-Inspector of Police, Unarmed Branch, West Bengal Police",
+          "bn": "পশ্চিমবঙ্গ পুলিশের সাব-ইন্সপেক্টর, আনআর্মড ব্রাঞ্চ"
+        },
+        "abbreviation": "WBP SI UB"
+      },
+      "jobCategory": "POLICE",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "eligibility-police-graduate-bengali",
+        "eligibility-wbp-si-physical"
+      ],
+      "baEnglishEligibility": "DIRECT_WITH_PHYSICAL_MEDICAL",
+      "recruitmentRoute": "WBPRB",
+      "pay": {
+        "payLevel": "LEVEL_10",
+        "startingBasic": 32100,
+        "maximumBasic": 82900,
+        "paySystem": "ROPA_2019"
+      },
+      "posting": {
+        "scope": "STATEWIDE",
+        "locationType": "POLICE_DISTRICT_OR_UNIT",
+        "transferProfile": "HIGH",
+        "kolkataStability": "LOW_MEDIUM"
+      },
+      "currentStatus": "2024_RECRUITMENT_UNDER_PROCESS",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-wbprb-wbp-si-2024"
+      ]
+    },
+    {
+      "id": "job-wbp-si-ab",
+      "governmentId": "west-bengal-government",
+      "departmentId": "dept-wb-home-hill-affairs",
+      "organisationId": "org-west-bengal-police",
+      "serviceCadreId": "service-wbp-si",
+      "examIds": [
+        "exam-wbprb-wbp-si-2024"
+      ],
+      "post": {
+        "name": {
+          "en": "Sub-Inspector of Police, Armed Branch, West Bengal Police",
+          "bn": "পশ্চিমবঙ্গ পুলিশের সাব-ইন্সপেক্টর, আর্মড ব্রাঞ্চ"
+        },
+        "abbreviation": "WBP SI AB"
+      },
+      "jobCategory": "POLICE",
+      "entryLevel": "GRADUATE",
+      "qualificationRuleIds": [
+        "eligibility-police-graduate-bengali",
+        "eligibility-wbp-si-physical"
+      ],
+      "baEnglishEligibility": "DIRECT_WITH_PHYSICAL_MEDICAL",
+      "recruitmentRoute": "WBPRB",
+      "pay": {
+        "payLevel": "LEVEL_10",
+        "startingBasic": 32100,
+        "maximumBasic": 82900,
+        "paySystem": "ROPA_2019"
+      },
+      "posting": {
+        "scope": "STATEWIDE",
+        "locationType": "POLICE_DISTRICT_OR_UNIT",
+        "transferProfile": "HIGH",
+        "kolkataStability": "LOW_MEDIUM"
+      },
+      "currentStatus": "2024_RECRUITMENT_UNDER_PROCESS",
+      "confidence": "HIGH",
+      "sourceIds": [
+        "src-wbprb-wbp-si-2024"
+      ]
+    }
+  ]
+}
