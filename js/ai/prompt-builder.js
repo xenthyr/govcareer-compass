@@ -1,14 +1,14 @@
 /**
  * GovCareer Compass
- * Client-side conversation preparation.
- *
- * This is NOT the authority layer.
- * The server-side system instructions remain authoritative.
+ * User-question builders for CompassAI.
  */
 
-export function buildCareerQuestion(question) {
+export function buildCareerQuestion(
+  question
+) {
   if (
-    typeof question !== "string"
+    typeof question !==
+    "string"
   ) {
     return "";
   }
@@ -21,24 +21,30 @@ export function buildEligibilityQuestion({
   candidateSummary
 } = {}) {
   const post =
-    typeof postName === "string"
+    typeof postName ===
+    "string"
       ? postName.trim()
       : "";
 
   const candidate =
-    typeof candidateSummary === "string"
+    typeof candidateSummary ===
+    "string"
       ? candidateSummary.trim()
       : "";
 
   if (!post) {
-    return "Please explain the eligibility requirements for this government career.";
+    return (
+      "Explain the documented eligibility requirements for this government career."
+    );
   }
 
   return [
-    `Please assess the documented eligibility requirements for ${post}.`,
+    `Explain whether the candidate appears eligible for ${post}.`,
     candidate
-      ? `Candidate context: ${candidate}`
-      : ""
+      ? `Candidate profile:\n${candidate}`
+      : "",
+    "",
+    "Separate hard eligibility from preference and identify any missing information."
   ]
     .filter(Boolean)
     .join("\n\n");
@@ -47,33 +53,35 @@ export function buildEligibilityQuestion({
 export function buildComparisonQuestion(
   careerNames = []
 ) {
-  if (!Array.isArray(careerNames)) {
-    return "";
-  }
-
-  const names = careerNames
-    .filter(
-      (name) =>
-        typeof name === "string" &&
-        name.trim()
-    )
-    .slice(0, 5);
+  const names =
+    Array.isArray(careerNames)
+      ? careerNames
+          .filter(
+            (name) =>
+              typeof name ===
+                "string" &&
+              name.trim()
+          )
+          .slice(0, 5)
+      : [];
 
   if (names.length < 2) {
-    return "Please compare the selected government careers.";
+    return (
+      "Compare the selected government careers using the available GovCareer Compass data."
+    );
   }
 
   return [
-    "Compare these government careers for me:",
+    "Compare these government careers:",
     ...names.map(
       (name, index) =>
         `${index + 1}. ${name.trim()}`
     ),
     "",
-    "Focus on eligibility, pay, work profile,",
-    "posting, transfer, family compatibility,",
-    "parent-care, housing, promotion, risk and",
-    "long-term career trade-offs."
+    "Compare eligibility, pay, work profile,",
+    "authority, posting, transfer, housing,",
+    "promotion, work-life, family, parent-care,",
+    "physical risk and long-term trade-offs."
   ].join("\n");
 }
 
@@ -81,24 +89,28 @@ export function buildPreparationQuestion({
   examName
 } = {}) {
   const exam =
-    typeof examName === "string"
+    typeof examName ===
+    "string"
       ? examName.trim()
       : "";
 
   if (!exam) {
-    return "Please explain the preparation strategy for this government examination.";
+    return (
+      "Explain how to prepare for this government examination using the available GovCareer Compass information."
+    );
   }
 
   return [
     `How should I prepare for ${exam}?`,
     "",
-    "Please separate:",
-    "1. Core syllabus overlap",
-    "2. Unique subjects",
-    "3. Exam stages",
-    "4. Physical/skill preparation if applicable",
-    "5. Preparation difficulty",
-    "6. Related backup examinations"
+    "Separate:",
+    "1. Syllabus",
+    "2. Common subjects",
+    "3. Unique subjects",
+    "4. Examination stages",
+    "5. Physical or skill preparation",
+    "6. Preparation difficulty",
+    "7. Related backup examinations"
   ].join("\n");
 }
 
