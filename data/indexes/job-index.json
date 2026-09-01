@@ -1,0 +1,119 @@
+{
+  "$schema": "../../schemas/shared.schema.json",
+  "indexType": "JOB_INDEX",
+  "indexVersion": "1.0.0",
+  "schemaVersion": "1.0.0",
+  "generated": false,
+  "generatedAt": null,
+  "generatedFrom": [
+    "/data/central/jobs.json",
+    "/data/states/west-bengal/jobs.json"
+  ],
+  "description": "Derived lookup index for government-job records. This file contains stable references and normalized lookup attributes rather than full job records.",
+  "sourceOfTruth": "Canonical job records in /data/central/jobs.json and /data/states/west-bengal/jobs.json.",
+  "rules": {
+    "stableId": "The job ID must remain stable across content updates unless the underlying post identity changes.",
+    "noDuplicateIds": true,
+    "canonicalDataRequired": true,
+    "unknownValuesMustNotBeInvented": true,
+    "specialistEligibilityMustRemainSeparate": true,
+    "paySystemsMustRemainDistinct": true
+  },
+  "summary": {
+    "totalRecords": 0,
+    "centralRecords": 0,
+    "westBengalRecords": 0,
+    "directEligibleRecords": 0,
+    "conditionalEligibleRecords": 0,
+    "notEligibleRecords": 0,
+    "manualVerificationRecords": 0,
+    "regularRecords": 0,
+    "contractualRecords": 0,
+    "temporaryRecords": 0,
+    "historicalRecords": 0
+  },
+  "records": [],
+  "indexes": {
+    "byId": {},
+    "byGovernmentId": {},
+    "byStateId": {},
+    "byDepartmentId": {},
+    "byOrganisationId": {},
+    "byServiceCadreId": {},
+    "byExamId": {},
+    "byCategoryId": {},
+    "byQualificationLevel": {},
+    "byEligibilityStatus": {},
+    "byEmploymentStatus": {},
+    "byRecruitmentRoute": {},
+    "byPaySystem": {},
+    "byPayLevel": {},
+    "byLocationId": {},
+    "byStatus": {},
+    "byConfidence": {},
+    "byLanguage": {},
+    "byPhysicalRequirement": {},
+    "byFamilyCompatibilityBand": {},
+    "byKolkataStabilityBand": {}
+  },
+  "recordShape": {
+    "id": "string",
+    "governmentId": "string|null",
+    "stateId": "string|null",
+    "departmentId": "string|null",
+    "organisationId": "string|null",
+    "serviceCadreId": "string|null",
+    "examIds": [
+      "string"
+    ],
+    "categoryIds": [
+      "string"
+    ],
+    "qualificationLevelIds": [
+      "string"
+    ],
+    "eligibilityStatus": "DIRECT|CONDITIONAL|NOT_ELIGIBLE|MANUAL_VERIFICATION",
+    "employmentStatus": "REGULAR|TEMPORARY|CONTRACTUAL|OUTSOURCED|SCHEME_PROJECT|UNKNOWN",
+    "recruitmentRouteIds": [
+      "string"
+    ],
+    "paySystemId": "string|null",
+    "payLevel": "string|null",
+    "locationIds": [
+      "string"
+    ],
+    "status": "ACTIVE|CURRENT_NO_RECRUITMENT|HISTORICAL|RENAMED|MERGED|REPLACED|ABOLISHED|TEMPORARY|UNKNOWN",
+    "confidence": "HIGH|MEDIUM_HIGH|MEDIUM|LOW|ESTIMATE|NOT_VERIFIED",
+    "searchText": "string"
+  },
+  "normalization": {
+    "searchText": [
+      "post name",
+      "full form",
+      "department",
+      "organisation",
+      "exam",
+      "service/cadre",
+      "qualification",
+      "eligibility conditions",
+      "job category",
+      "location",
+      "keywords"
+    ],
+    "caseSensitive": false,
+    "unicodeNormalized": true,
+    "whitespaceNormalized": true
+  },
+  "eligibilityIndexing": {
+    "direct": "Jobs where B.A. English Honours satisfies the documented academic requirement and no known mandatory condition remains unsatisfied.",
+    "conditional": "Jobs where B.A. English Honours is academically relevant but one or more additional conditions must be satisfied.",
+    "notEligible": "Jobs that require a qualification or mandatory condition not available to the baseline candidate.",
+    "manualVerification": "Jobs for which the available evidence does not justify a definitive eligibility result."
+  },
+  "negativeMetricHandling": {
+    "stress": "Higher value means more stress, not better suitability.",
+    "physicalRisk": "Higher value means greater physical risk, not better suitability.",
+    "transferBurden": "Higher value means greater transfer burden, not better suitability.",
+    "nightDutyBurden": "Higher value means greater night-duty burden, not better suitability."
+  }
+}
