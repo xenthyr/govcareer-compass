@@ -1,11 +1,12 @@
 /**
  * GovCareer Compass
- * Builds structured application context for CompassAI.
+ * Builds structured context for CompassAI.
  *
- * This module should pass only relevant application state.
+ * Only relevant structured application information
+ * should be sent to the AI.
  */
 
-function safeClone(value) {
+function clone(value) {
   if (
     value === null ||
     value === undefined
@@ -22,34 +23,40 @@ function safeClone(value) {
   }
 }
 
-function pick(object, keys) {
-  if (!object || typeof object !== "object") {
+function select(
+  object,
+  fields
+) {
+  if (
+    !object ||
+    typeof object !==
+      "object"
+  ) {
     return {};
   }
 
-  const output = {};
+  const result = {};
 
-  for (const key of keys) {
+  for (const field of fields) {
     if (
       Object.prototype.hasOwnProperty.call(
         object,
-        key
+        field
       )
     ) {
-      output[key] = safeClone(
-        object[key]
-      );
+      result[field] =
+        clone(object[field]);
     }
   }
 
-  return output;
+  return result;
 }
 
 export function buildCandidateContext(
-  candidateProfile
+  candidate
 ) {
-  return pick(
-    candidateProfile,
+  return select(
+    candidate,
     [
       "education",
       "degree",
@@ -80,7 +87,7 @@ export function buildCandidateContext(
 export function buildPreferenceContext(
   preferences
 ) {
-  return pick(
+  return select(
     preferences,
     [
       "governmentPreference",
@@ -107,11 +114,7 @@ export function buildPreferenceContext(
 export function buildCareerContext(
   career
 ) {
-  if (!career || typeof career !== "object") {
-    return null;
-  }
-
-  return pick(
+  return select(
     career,
     [
       "id",
@@ -125,34 +128,64 @@ export function buildCareerContext(
       "qualification",
       "baEligibility",
       "eligibilityStatus",
+      "conditions",
       "paySystem",
       "payLevel",
       "startingBasic",
       "maximumBasic",
+      "da",
+      "hra",
+      "allowances",
       "grossEstimate",
       "inHandEstimate",
       "jobProfile",
       "workStyle",
+      "publicInteraction",
       "nightDuty",
       "shiftDuty",
+      "holidayDuty",
+      "emergencyDuty",
       "workLife",
       "stress",
       "physicalRisk",
       "authority",
+      "socialStatus",
       "posting",
       "transfer",
       "kolkataStability",
+      "ruralPosting",
       "housing",
       "promotion",
+      "careerCeiling",
+      "training",
+      "probation",
+      "retirement",
       "familyCompatibility",
       "parentCareCompatibility",
       "englishAdvantage",
+      "advantages",
+      "disadvantages",
       "difficulty",
+      "recruitmentFrequency",
       "currentStatus",
       "confidence",
       "sources"
     ]
   );
+}
+
+export function buildExamContext(
+  exam
+) {
+  if (
+    !exam ||
+    typeof exam !==
+      "object"
+  ) {
+    return null;
+  }
+
+  return clone(exam);
 }
 
 export function buildComparisonContext(
@@ -169,18 +202,10 @@ export function buildComparisonContext(
 }
 
 export function buildEligibilityContext(
-  eligibilityResult
+  result
 ) {
-  if (
-    !eligibilityResult ||
-    typeof eligibilityResult !==
-      "object"
-  ) {
-    return null;
-  }
-
-  return pick(
-    eligibilityResult,
+  return select(
+    result,
     [
       "opportunityId",
       "overallStatus",
@@ -196,18 +221,10 @@ export function buildEligibilityContext(
 }
 
 export function buildRecommendationContext(
-  recommendationResult
+  result
 ) {
-  if (
-    !recommendationResult ||
-    typeof recommendationResult !==
-      "object"
-  ) {
-    return null;
-  }
-
-  return pick(
-    recommendationResult,
+  return select(
+    result,
     [
       "opportunityId",
       "eligibilityStatus",
@@ -234,14 +251,21 @@ export function buildCompassContext({
 } = {}) {
   return {
     application: {
-      product: "GovCareer Compass",
-      assistant: "CompassAI",
+      product:
+        "GovCareer Compass",
+
+      assistant:
+        "CompassAI",
+
       language,
+
       researchScope: [
         "Central Government",
         "West Bengal Government"
       ],
-      researchBaseline: "31 August 2026"
+
+      researchBaseline:
+        "31 August 2026"
     },
 
     candidate:
@@ -260,7 +284,9 @@ export function buildCompassContext({
       ),
 
     selectedExam:
-      safeClone(selectedExam),
+      buildExamContext(
+        selectedExam
+      ),
 
     comparison:
       buildComparisonContext(
@@ -283,6 +309,7 @@ export default {
   buildCandidateContext,
   buildPreferenceContext,
   buildCareerContext,
+  buildExamContext,
   buildComparisonContext,
   buildEligibilityContext,
   buildRecommendationContext,
