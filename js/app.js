@@ -7,39 +7,22 @@
  * FILE:
  *   /js/app.js
  *
- * PURPOSE:
- *   Central entry point for the static GovCareer Compass
- *   application.
+ * ROLE:
+ *   Central bootstrap/orchestration layer.
  *
- * RESPONSIBILITIES:
- *   1. Initialize application metadata.
- *   2. Initialize safe local storage.
- *   3. Initialize theme.
- *   4. Initialize language.
- *   5. Initialize router.
- *   6. Initialize navigation.
- *   7. Initialize search.
- *   8. Initialize filters.
- *   9. Initialize modal system.
- *  10. Initialize sharing.
- *  11. Initialize export/print helpers.
- *  12. Load the current page controller.
- *  13. Provide application-wide lifecycle events.
+ * ARCHITECTURE:
+ *
+ *   Application shell
+ *        ↓
+ *   Core services
+ *        ↓
+ *   Shared UI components
+ *        ↓
+ *   Database/page controller
  *
  * IMPORTANT:
- *   This file is an orchestration layer.
- *
- *   Business logic belongs in:
- *     /js/database/
- *     /js/recommendation/
- *     /js/calculators/
- *
- *   UI rendering belongs in:
- *     /js/components/
- *     /js/pages/
- *
- *   This application remains a static multi-page website,
- *   compatible with GitHub Pages and Vercel.
+ *   This file coordinates systems.
+ *   It does not contain government-job business rules.
  */
 
 import config from './config.js';
@@ -84,6 +67,73 @@ import {
   initializeExport
 } from './export.js';
 
+/*
+ * Shared presentation components.
+ */
+import {
+  initializeHeader
+} from './components/header.js';
+
+import {
+  initializeFooter
+} from './components/footer.js';
+
+import {
+  initializeDrawers
+} from './components/drawer.js';
+
+import {
+  initializeModalComponent
+} from './components/modal.js';
+
+import {
+  initializeToastSystem
+} from './components/toast.js';
+
+import {
+  initializeThemeSelector
+} from './components/theme-selector.js';
+
+import {
+  initializeLanguageSelector
+} from './components/language-selector.js';
+
+import {
+  initializeStateSelector
+} from './components/state-selector.js';
+
+import {
+  initializeSearchBar
+} from './components/search-bar.js';
+
+import {
+  initializeJobCardInteractions
+} from './components/job-card.js';
+
+import {
+  initializeExamCardInteractions
+} from './components/exam-card.js';
+
+import {
+  initializeCareerResultInteractions
+} from './components/career-result.js';
+
+import {
+  initializeFilterPanels
+} from './components/filter-panel.js';
+
+import {
+  initializeFilterChips
+} from './components/filter-chips.js';
+
+import {
+  initializeComparisonTables
+} from './components/comparison-table.js';
+
+import {
+  initializePagination
+} from './components/pagination.js';
+
 /* ============================================================
  * APPLICATION CONSTANTS
  * ============================================================
@@ -107,26 +157,39 @@ const APP_PAGE_ERROR_EVENT =
  */
 
 const appState = {
-  initialized: false,
-  initializing: false,
-  ready: false,
+  initializing:
+    false,
 
-  page: null,
-  route: null,
+  initialized:
+    false,
 
-  startedAt: null,
-  readyAt: null,
+  ready:
+    false,
 
-  initializationSteps: [],
+  page:
+    null,
 
-  errors: [],
+  route:
+    null,
+
+  startedAt:
+    null,
+
+  readyAt:
+    null,
+
+  initializationSteps:
+    [],
+
+  errors:
+    [],
 
   pageController:
     null
 };
 
 /* ============================================================
- * SAFE UTILITY FUNCTIONS
+ * UTILITIES
  * ============================================================
  */
 
@@ -135,8 +198,10 @@ function safeString(
   fallback = ''
 ) {
   if (
-    value === undefined ||
-    value === null
+    value ===
+      null ||
+    value ===
+      undefined
   ) {
     return fallback;
   }
@@ -146,18 +211,20 @@ function safeString(
       value
     ).trim();
 
-  return result ||
-    fallback;
+  return (
+    result ||
+    fallback
+  );
 }
 
-function dispatchEvent(
-  eventName,
+function dispatchAppEvent(
+  name,
   detail = {}
 ) {
   try {
     document.dispatchEvent(
       new CustomEvent(
-        eventName,
+        name,
         {
           detail
         }
@@ -165,16 +232,17 @@ function dispatchEvent(
     );
   } catch {
     /*
-     * The application must never fail because an application
-     * lifecycle event could not be dispatched.
+     * Lifecycle events are non-critical.
      */
   }
 }
 
 function recordStep(
   name,
-  status = 'completed',
-  detail = null
+  status =
+    'completed',
+  detail =
+    null
 ) {
   appState.initializationSteps.push({
     name,
@@ -185,42 +253,28 @@ function recordStep(
   });
 }
 
-/* ============================================================
- * ERROR MANAGEMENT
- * ============================================================
- */
-
 function normalizeError(
   error
 ) {
   if (
-    error instanceof Error
+    error instanceof
+    Error
   ) {
     return error;
   }
 
-  if (
-    error &&
-    typeof error === 'object' &&
-    typeof error.message ===
-      'string'
-  ) {
-    return new Error(
-      error.message
-    );
-  }
-
   return new Error(
-    String(
-      error ||
-        'Unknown application error.'
-    )
+    error?.message ||
+      String(
+        error ||
+          'Unknown application error.'
+      )
   );
 }
 
 function reportError(
   error,
-  context = ''
+  context
 ) {
   const normalized =
     normalizeError(
@@ -248,7 +302,7 @@ function reportError(
     entry
   );
 
-  dispatchEvent(
+  dispatchAppEvent(
     APP_ERROR_EVENT,
     {
       error:
@@ -259,10 +313,6 @@ function reportError(
     }
   );
 
-  /*
-   * During production, the user should not see raw technical
-   * errors. During development, console logging is useful.
-   */
   const environment =
     config?.app?.environment ||
     'production';
@@ -287,26 +337,19 @@ function reportError(
  */
 
 function getPageName() {
-  /*
-   * Preferred mechanism:
-   *
-   * <body data-page="jobs">
-   */
-  const bodyPage =
+  const declaredPage =
     safeString(
-      document.body?.dataset?.page
+      document.body
+        ?.dataset
+        ?.page
     );
 
   if (
-    bodyPage
+    declaredPage
   ) {
-    return bodyPage;
+    return declaredPage;
   }
 
-  /*
-   * Fallback:
-   * determine page from the current HTML filename.
-   */
   const pathname =
     window.location.pathname ||
     '';
@@ -354,128 +397,52 @@ function getCurrentRoute() {
 }
 
 /* ============================================================
- * DOCUMENT / APPLICATION METADATA
- * ============================================================
- */
-
-function initializeApplicationMetadata() {
-  const appConfig =
-    config?.app || {};
-
-  const version =
-    safeString(
-      appConfig.version,
-      '0.1.0'
-    );
-
-  const baseline =
-    safeString(
-      appConfig.researchBaseline,
-      '31 August 2026'
-    );
-
-  const defaultLanguage =
-    safeString(
-      appConfig.defaultLanguage,
-      'en'
-    );
-
-  document.documentElement.dataset.app =
-    'govcareer-compass';
-
-  document.documentElement.dataset.appVersion =
-    version;
-
-  document.documentElement.dataset.researchBaseline =
-    baseline;
-
-  /*
-   * Language manager will establish the final active language.
-   * This is only the initial document language.
-   */
-  if (
-    !document.documentElement.lang
-  ) {
-    document.documentElement.lang =
-      defaultLanguage;
-  }
-
-  /*
-   * Expose basic application metadata to the document.
-   */
-  document.body?.setAttribute(
-    'data-app-ready',
-    'false'
-  );
-
-  recordStep(
-    'application-metadata'
-  );
-}
-
-/* ============================================================
- * ACCESSIBILITY INITIALIZATION
+ * ACCESSIBILITY FOUNDATION
  * ============================================================
  */
 
 function initializeAccessibility() {
-  /*
-   * Keep the user's viewport from jumping unexpectedly when
-   * clicking navigation links with hashes.
-   */
-  document.documentElement.style.scrollBehavior =
-    document.documentElement
-      .dataset
-      .reducedMotion ===
-    'true'
-      ? 'auto'
-      : '';
-
-  /*
-   * Respect operating-system reduced-motion preferences.
-   */
   if (
-    typeof window.matchMedia ===
+    typeof window.matchMedia !==
     'function'
   ) {
-    const mediaQuery =
-      window.matchMedia(
-        '(prefers-reduced-motion: reduce)'
-      );
-
-    const applyReducedMotion =
-      () => {
-        document.documentElement.dataset.reducedMotion =
-          String(
-            mediaQuery.matches
-          );
-      };
-
-    applyReducedMotion();
-
-    if (
-      typeof mediaQuery.addEventListener ===
-      'function'
-    ) {
-      mediaQuery.addEventListener(
-        'change',
-        applyReducedMotion
-      );
-    } else if (
-      typeof mediaQuery.addListener ===
-      'function'
-    ) {
-      mediaQuery.addListener(
-        applyReducedMotion
-      );
-    }
+    return;
   }
 
-  /*
-   * Escape is broadcast globally.
-   *
-   * Modal, drawer and other UI systems can react independently.
-   */
+  const mediaQuery =
+    window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    );
+
+  const applyPreference =
+    () => {
+      document.documentElement
+        .dataset
+        .reducedMotion =
+        String(
+          mediaQuery.matches
+        );
+    };
+
+  applyPreference();
+
+  if (
+    typeof mediaQuery.addEventListener ===
+    'function'
+  ) {
+    mediaQuery.addEventListener(
+      'change',
+      applyPreference
+    );
+  } else if (
+    typeof mediaQuery.addListener ===
+    'function'
+  ) {
+    mediaQuery.addListener(
+      applyPreference
+    );
+  }
+
   document.addEventListener(
     'keydown',
     (event) => {
@@ -483,7 +450,7 @@ function initializeAccessibility() {
         event.key ===
         'Escape'
       ) {
-        dispatchEvent(
+        dispatchAppEvent(
           'govcareer:escape'
         );
       }
@@ -496,7 +463,7 @@ function initializeAccessibility() {
 }
 
 /* ============================================================
- * GLOBAL ERROR BOUNDARIES
+ * GLOBAL ERROR HANDLING
  * ============================================================
  */
 
@@ -504,10 +471,6 @@ function initializeGlobalErrorHandling() {
   window.addEventListener(
     'error',
     (event) => {
-      /*
-       * Ignore errors that have already been handled by the
-       * application's explicit error management.
-       */
       if (
         event.error
       ) {
@@ -535,13 +498,161 @@ function initializeGlobalErrorHandling() {
 }
 
 /* ============================================================
- * PAGE CONTROLLER MAP
+ * APPLICATION METADATA
  * ============================================================
- *
- * The site deliberately remains multi-page.
- *
- * Each HTML page has its own page controller.
- * Only the controller for the current page is loaded.
+ */
+
+function initializeMetadata() {
+  const appConfig =
+    config?.app ||
+    {};
+
+  document.documentElement
+    .dataset
+    .app =
+    'govcareer-compass';
+
+  document.documentElement
+    .dataset
+    .appVersion =
+    safeString(
+      appConfig.version,
+      '0.1.0'
+    );
+
+  document.documentElement
+    .dataset
+    .researchBaseline =
+    safeString(
+      appConfig.researchBaseline,
+      '31 August 2026'
+    );
+
+  document.body?.setAttribute(
+    'data-app-ready',
+    'false'
+  );
+
+  recordStep(
+    'application-metadata'
+  );
+}
+
+/* ============================================================
+ * COMPONENT INITIALIZATION
+ * ============================================================
+ */
+
+function initializeSharedComponents() {
+  /*
+   * The order intentionally follows dependency direction:
+   *
+   *   shell → controls → data presentation → interaction UI
+   */
+
+  initializeHeader();
+
+  recordStep(
+    'component-header'
+  );
+
+  initializeFooter();
+
+  recordStep(
+    'component-footer'
+  );
+
+  initializeDrawers();
+
+  recordStep(
+    'component-drawers'
+  );
+
+  /*
+   * Core modal service first, modal component second.
+   */
+  initializeModalComponent();
+
+  recordStep(
+    'component-modal'
+  );
+
+  initializeToastSystem();
+
+  recordStep(
+    'component-toast'
+  );
+
+  initializeThemeSelector();
+
+  recordStep(
+    'component-theme-selector'
+  );
+
+  initializeLanguageSelector();
+
+  recordStep(
+    'component-language-selector'
+  );
+
+  initializeStateSelector();
+
+  recordStep(
+    'component-state-selector'
+  );
+
+  initializeSearchBar();
+
+  recordStep(
+    'component-search-bar'
+  );
+
+  initializeJobCardInteractions();
+
+  recordStep(
+    'component-job-cards'
+  );
+
+  initializeExamCardInteractions();
+
+  recordStep(
+    'component-exam-cards'
+  );
+
+  initializeCareerResultInteractions();
+
+  recordStep(
+    'component-career-results'
+  );
+
+  initializeFilterPanels();
+
+  recordStep(
+    'component-filter-panels'
+  );
+
+  initializeFilterChips();
+
+  recordStep(
+    'component-filter-chips'
+  );
+
+  initializeComparisonTables();
+
+  recordStep(
+    'component-comparison-tables'
+  );
+
+  initializePagination();
+
+  recordStep(
+    'component-pagination'
+  );
+}
+
+/* ============================================================
+ * PAGE CONTROLLERS
+ * ============================================================
  */
 
 const PAGE_CONTROLLER_MAP =
@@ -610,11 +721,6 @@ const PAGE_CONTROLLER_MAP =
       './pages/methodology.js'
   });
 
-/* ============================================================
- * PAGE CONTROLLER INITIALIZATION
- * ============================================================
- */
-
 async function initializePageController(
   pageName
 ) {
@@ -629,20 +735,12 @@ async function initializePageController(
     ];
 
   /*
-   * Some pages are intentionally shell-only for now.
-   *
-   * Example:
-   *   ai.html
-   *
-   * The Compass AI client integration will be wired in when
-   * the server-side Vercel API endpoint is introduced.
+   * Pages such as AI, About and Privacy may initially be
+   * static content pages without a JavaScript controller.
    */
   if (
     !modulePath
   ) {
-    appState.pageController =
-      null;
-
     recordStep(
       'page-controller',
       'skipped',
@@ -658,36 +756,27 @@ async function initializePageController(
         modulePath
       );
 
-    /*
-     * Supported controller conventions:
-     *
-     *   export function initialize()
-     *   export function init()
-     *   export default function initialize()
-     *
-     * This keeps future page controllers flexible.
-     */
     const initializer =
       typeof module.initialize ===
       'function'
         ? module.initialize
         : typeof module.init ===
-            'function'
-          ? module.init
-          : typeof module.default ===
-              'function'
-            ? module.default
-            : null;
+          'function'
+        ? module.init
+        : typeof module.default ===
+          'function'
+        ? module.default
+        : null;
 
     if (
       !initializer
     ) {
       throw new Error(
-        `Page controller "${normalized}" does not export initialize(), init(), or a default function.`
+        `Page controller "${normalized}" does not export a supported initializer.`
       );
     }
 
-    const controllerContext = {
+    const context = {
       page:
         normalized,
 
@@ -702,22 +791,20 @@ async function initializePageController(
 
     const result =
       await initializer(
-        controllerContext
+        context
       );
 
     appState.pageController =
-      result ??
-      null;
+      result ?? null;
 
-    dispatchEvent(
+    dispatchAppEvent(
       APP_PAGE_READY_EVENT,
       {
         page:
           normalized,
 
         controller:
-          result ??
-          null
+          result ?? null
       }
     );
 
@@ -729,31 +816,27 @@ async function initializePageController(
   } catch (
     error
   ) {
-    const entry =
+    const recorded =
       reportError(
         error,
-        `Page controller initialization failed: ${normalized}`
+        `Page controller initialization: ${normalized}`
       );
 
-    dispatchEvent(
+    dispatchAppEvent(
       APP_PAGE_ERROR_EVENT,
       {
         page:
           normalized,
 
         error:
-          entry
+          recorded
       }
     );
 
-    /*
-     * The global shell remains usable even if an individual
-     * page controller fails.
-     */
     recordStep(
       'page-controller',
       'failed',
-      entry.message
+      recorded.message
     );
 
     return null;
@@ -761,23 +844,8 @@ async function initializePageController(
 }
 
 /* ============================================================
- * STARTUP PIPELINE
+ * MAIN BOOTSTRAP
  * ============================================================
- *
- * Order matters.
- *
- * 1. Storage
- * 2. Theme
- * 3. Language
- * 4. Router
- * 5. Accessibility
- * 6. Navigation
- * 7. Search
- * 8. Filters
- * 9. Modal
- * 10. Sharing
- * 11. Export
- * 12. Page controller
  */
 
 async function initializeApplication() {
@@ -800,13 +868,13 @@ async function initializeApplication() {
     new Date().toISOString();
 
   try {
-    initializeApplicationMetadata();
+    initializeMetadata();
 
     initializeGlobalErrorHandling();
 
     /*
-     * Storage must be available before theme, language,
-     * bookmarks, comparison and preferences are initialized.
+     * Persistent state must exist before controls that consume
+     * it are initialized.
      */
     try {
       initializeStorage();
@@ -829,8 +897,7 @@ async function initializeApplication() {
     }
 
     /*
-     * Theme comes before most visible UI initialization so the
-     * user is less likely to see a flash of the wrong theme.
+     * Theme should precede visible shared UI.
      */
     try {
       initializeTheme();
@@ -852,9 +919,6 @@ async function initializeApplication() {
       );
     }
 
-    /*
-     * Language may load en.json/bn.json asynchronously.
-     */
     try {
       await initializeLanguage();
 
@@ -895,17 +959,11 @@ async function initializeApplication() {
       );
     }
 
-    try {
-      initializeAccessibility();
-    } catch (
-      error
-    ) {
-      reportError(
-        error,
-        'Accessibility initialization'
-      );
-    }
+    initializeAccessibility();
 
+    /*
+     * Core application services.
+     */
     try {
       initializeNavigation();
 
@@ -957,7 +1015,7 @@ async function initializeApplication() {
     ) {
       reportError(
         error,
-        'Filter initialization'
+        'Filters initialization'
       );
 
       recordStep(
@@ -970,18 +1028,18 @@ async function initializeApplication() {
       initializeModalSystem();
 
       recordStep(
-        'modal'
+        'modal-service'
       );
     } catch (
       error
     ) {
       reportError(
         error,
-        'Modal initialization'
+        'Modal service initialization'
       );
 
       recordStep(
-        'modal',
+        'modal-service',
         'failed'
       );
     }
@@ -1027,9 +1085,24 @@ async function initializeApplication() {
     }
 
     /*
-     * Identify the actual page only after the global shell
-     * has been initialized.
+     * Shared component layer.
      */
+    try {
+      initializeSharedComponents();
+    } catch (
+      error
+    ) {
+      reportError(
+        error,
+        'Shared component initialization'
+      );
+
+      recordStep(
+        'shared-components',
+        'failed'
+      );
+    }
+
     appState.page =
       getPageName();
 
@@ -1041,9 +1114,6 @@ async function initializeApplication() {
       appState.page
     );
 
-    /*
-     * Initialize the page-specific controller.
-     */
     await initializePageController(
       appState.page
     );
@@ -1051,11 +1121,11 @@ async function initializeApplication() {
     appState.initialized =
       true;
 
-    appState.initializing =
-      false;
-
     appState.ready =
       true;
+
+    appState.initializing =
+      false;
 
     appState.readyAt =
       new Date().toISOString();
@@ -1065,10 +1135,12 @@ async function initializeApplication() {
       'true'
     );
 
-    document.documentElement.dataset.appReady =
+    document.documentElement
+      .dataset
+      .appReady =
       'true';
 
-    dispatchEvent(
+    dispatchAppEvent(
       APP_READY_EVENT,
       {
         page:
@@ -1077,13 +1149,10 @@ async function initializeApplication() {
         route:
           appState.route,
 
-        initialized:
-          true,
-
         readyAt:
           appState.readyAt,
 
-        errors:
+        errorCount:
           appState.errors.length
       }
     );
@@ -1106,21 +1175,20 @@ async function initializeApplication() {
       'error'
     );
 
-    reportError(
-      error,
-      'Application bootstrap'
-    );
+    const recorded =
+      reportError(
+        error,
+        'Fatal application bootstrap'
+      );
 
-    dispatchEvent(
+    dispatchAppEvent(
       APP_ERROR_EVENT,
       {
         fatal:
           true,
 
-        errors:
-          [
-            ...appState.errors
-          ]
+        error:
+          recorded
       }
     );
 
@@ -1129,7 +1197,7 @@ async function initializeApplication() {
 }
 
 /* ============================================================
- * PUBLIC STATE API
+ * PUBLIC STATE
  * ============================================================
  */
 
@@ -1162,15 +1230,19 @@ function getAppState() {
 
     initializationSteps:
       appState.initializationSteps.map(
-        (step) => ({
-          ...step
+        (
+          item
+        ) => ({
+          ...item
         })
       ),
 
     errors:
       appState.errors.map(
-        (error) => ({
-          ...error
+        (
+          item
+        ) => ({
+          ...item
         })
       ),
 
@@ -1191,17 +1263,14 @@ function getCurrentPage() {
 }
 
 /* ============================================================
- * AUTO-BOOTSTRAP
+ * AUTO START
  * ============================================================
  */
 
 function bootstrap() {
-  /*
-   * Prevent duplicate bootstrap calls.
-   */
   if (
-    appState.ready ||
-    appState.initializing
+    appState.initializing ||
+    appState.ready
   ) {
     return;
   }
@@ -1241,6 +1310,7 @@ export {
   getAppState,
   isApplicationReady,
   getCurrentPage,
+
   getPageName,
   getCurrentRoute,
 
