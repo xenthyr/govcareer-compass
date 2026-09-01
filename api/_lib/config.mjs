@@ -1,32 +1,45 @@
 /**
  * GovCareer Compass
- * Server-side AI configuration.
+ * CompassAI server configuration.
  *
- * This file must never expose secrets to browser code.
+ * IMPORTANT:
+ * No secret is hard-coded here.
+ * Secrets are supplied by Vercel Environment Variables.
  */
 
-function readPositiveInteger(value, fallback) {
-  const parsed = Number.parseInt(value ?? "", 10);
+function readPositiveInteger(
+  value,
+  fallback
+) {
+  const parsed = Number.parseInt(
+    value ?? "",
+    10
+  );
 
-  if (!Number.isFinite(parsed) || parsed <= 0) {
-    return fallback;
-  }
-
-  return parsed;
+  return Number.isFinite(parsed) && parsed > 0
+    ? parsed
+    : fallback;
 }
 
-function readNonNegativeInteger(value, fallback) {
-  const parsed = Number.parseInt(value ?? "", 10);
+function readNonNegativeInteger(
+  value,
+  fallback
+) {
+  const parsed = Number.parseInt(
+    value ?? "",
+    10
+  );
 
-  if (!Number.isFinite(parsed) || parsed < 0) {
-    return fallback;
-  }
-
-  return parsed;
+  return Number.isFinite(parsed) && parsed >= 0
+    ? parsed
+    : fallback;
 }
 
 function readOriginList(value) {
-  if (!value || typeof value !== "string") {
+  if (
+    typeof value !== "string" ||
+    !value.trim()
+  ) {
     return [];
   }
 
@@ -36,88 +49,97 @@ function readOriginList(value) {
     .filter(Boolean);
 }
 
-export const AI_CONFIG = Object.freeze({
-  assistantName: "CompassAI",
+export const COMPASS_CONFIG =
+  Object.freeze({
+    assistantName: "CompassAI",
 
-  researchScope: Object.freeze([
-    "Central Government",
-    "West Bengal Government"
-  ]),
+    productName:
+      "GovCareer Compass",
 
-  baselineDate: "31 August 2026",
+    researchBaseline:
+      "31 August 2026",
 
-  model:
-    process.env.OPENAI_MODEL?.trim() || "",
+    researchScope: Object.freeze([
+      "Central Government",
+      "West Bengal Government"
+    ]),
 
-  maxMessages: readPositiveInteger(
-    process.env.AI_MAX_MESSAGES,
-    12
-  ),
+    openRouterBaseUrl:
+      "https://openrouter.ai/api/v1",
 
-  maxMessageChars: readPositiveInteger(
-    process.env.AI_MAX_MESSAGE_CHARS,
-    6000
-  ),
+    openRouterModel:
+      process.env.OPENROUTER_MODEL?.trim() || "",
 
-  maxContextChars: readPositiveInteger(
-    process.env.AI_MAX_CONTEXT_CHARS,
-    30000
-  ),
+    siteUrl:
+      process.env.PUBLIC_SITE_URL?.trim() || "",
 
-  maxOutputTokens: readPositiveInteger(
-    process.env.AI_MAX_OUTPUT_TOKENS,
-    1200
-  ),
+    allowedOrigins:
+      readOriginList(
+        process.env.ALLOWED_ORIGINS
+      ),
 
-  allowedOrigins: readOriginList(
-    process.env.ALLOWED_ORIGINS
-  ),
+    maxMessages:
+      readPositiveInteger(
+        process.env.AI_MAX_MESSAGES,
+        12
+      ),
 
-  requestTimeoutMs: readPositiveInteger(
-    process.env.AI_REQUEST_TIMEOUT_MS,
-    45000
-  ),
+    maxMessageChars:
+      readPositiveInteger(
+        process.env.AI_MAX_MESSAGE_CHARS,
+        6000
+      ),
 
-  maxInputMessages: readPositiveInteger(
-    process.env.AI_MAX_MESSAGES,
-    12
-  ),
+    maxContextChars:
+      readPositiveInteger(
+        process.env.AI_MAX_CONTEXT_CHARS,
+        30000
+      ),
 
-  maxRequestBytes: readPositiveInteger(
-    process.env.AI_MAX_REQUEST_BYTES,
-    100000
-  ),
+    maxOutputTokens:
+      readPositiveInteger(
+        process.env.AI_MAX_OUTPUT_TOKENS,
+        1200
+      ),
 
-  rateLimitWindowSeconds: readPositiveInteger(
-    process.env.AI_RATE_LIMIT_WINDOW_SECONDS,
-    60
-  ),
+    requestTimeoutMs:
+      readPositiveInteger(
+        process.env.AI_REQUEST_TIMEOUT_MS,
+        45000
+      ),
 
-  rateLimitRequests:
-    readPositiveInteger(
-      process.env.AI_RATE_LIMIT_REQUESTS,
-      10
-    ),
+    maxRequestBytes:
+      readPositiveInteger(
+        process.env.AI_MAX_REQUEST_BYTES,
+        100000
+      ),
 
-  minUserMessageChars: readNonNegativeInteger(
-    process.env.AI_MIN_USER_MESSAGE_CHARS,
-    1
-  )
-});
+    minUserMessageChars:
+      readNonNegativeInteger(
+        process.env.AI_MIN_USER_MESSAGE_CHARS,
+        1
+      )
+  });
 
 export function validateServerConfiguration() {
-  const errors = [];
+  const missing = [];
 
-  if (!process.env.OPENAI_API_KEY?.trim()) {
-    errors.push("OPENAI_API_KEY is not configured.");
+  if (
+    !process.env.OPENROUTER_API_KEY?.trim()
+  ) {
+    missing.push(
+      "OPENROUTER_API_KEY"
+    );
   }
 
-  if (!AI_CONFIG.model) {
-    errors.push("OPENAI_MODEL is not configured.");
+  if (!COMPASS_CONFIG.openRouterModel) {
+    missing.push(
+      "OPENROUTER_MODEL"
+    );
   }
 
   return {
-    valid: errors.length === 0,
-    errors
+    valid: missing.length === 0,
+    missing
   };
 }
