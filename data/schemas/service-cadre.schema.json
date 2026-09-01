@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://govcareer-compass.example/schema/service-cadre.schema.json",
-  "title": "GovCareer Compass Service and Cadre",
-  "description": "Canonical schema for a government service, cadre, recruitment stream, force/cadre group, or career stream to which one or more posts may belong.",
+  "title": "GovCareer Compass Service Cadre",
+  "description": "Canonical schema for a government service or cadre. A service/cadre is distinct from an individual post and from a recruitment examination.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -17,285 +17,203 @@
     "id": {
       "$ref": "shared.schema.json#/$defs/id"
     },
+
     "name": {
+      "$ref": "shared.schema.json#/$defs/localizedTextRequiredEnglish"
+    },
+
+    "shortName": {
       "$ref": "shared.schema.json#/$defs/localizedText"
     },
-    "shortName": {
-      "type": [
-        "string",
-        "null"
-      ],
+
+    "fullForm": {
+      "type": "string",
       "minLength": 1
     },
-    "abbreviation": {
-      "type": [
-        "string",
-        "null"
-      ],
-      "minLength": 1
-    },
+
     "governmentId": {
       "$ref": "shared.schema.json#/$defs/id"
     },
+
     "stateId": {
-      "type": [
-        "string",
-        "null"
-      ]
+      "$ref": "shared.schema.json#/$defs/id"
     },
+
     "ministryId": {
-      "type": [
-        "string",
-        "null"
-      ]
+      "$ref": "shared.schema.json#/$defs/id"
     },
+
     "departmentId": {
-      "type": [
-        "string",
-        "null"
-      ]
+      "$ref": "shared.schema.json#/$defs/id"
     },
+
     "organisationId": {
-      "type": [
-        "string",
-        "null"
-      ]
+      "$ref": "shared.schema.json#/$defs/id"
     },
+
     "parentServiceCadreId": {
-      "type": [
-        "string",
-        "null"
-      ]
+      "$ref": "shared.schema.json#/$defs/id"
     },
+
     "type": {
       "type": "string",
       "enum": [
-        "ALL_INDIA_SERVICE",
-        "CENTRAL_GROUP_A_SERVICE",
-        "CENTRAL_GROUP_B_SERVICE",
-        "CENTRAL_GROUP_C_SERVICE",
-        "CENTRAL_CADRE",
-        "RECRUITMENT_STREAM",
+        "CIVIL_SERVICE",
         "POLICE_SERVICE",
-        "SECURITY_SERVICE",
-        "INTELLIGENCE_SERVICE",
-        "INVESTIGATION_SERVICE",
+        "REVENUE_SERVICE",
         "TAX_SERVICE",
         "AUDIT_SERVICE",
         "ACCOUNTS_SERVICE",
+        "ADMINISTRATIVE_SERVICE",
+        "SECRETARIAT_SERVICE",
+        "PANCHAYAT_SERVICE",
+        "EDUCATION_SERVICE",
+        "FOREST_SERVICE",
+        "CORRECTIONAL_SERVICE",
+        "FIRE_SERVICE",
         "POSTAL_SERVICE",
         "RAILWAY_SERVICE",
-        "DEFENCE_SERVICE",
-        "SECRETARIAL_CADRE",
-        "CLERICAL_CADRE",
-        "TECHNICAL_CADRE",
+        "SECURITY_SERVICE",
         "OTHER"
       ]
     },
-    "classification": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "serviceNature": {
+
+    "serviceGroup": {
       "type": "string",
       "enum": [
-        "CIVIL",
-        "POLICE",
-        "SECURITY",
-        "INTELLIGENCE",
-        "INVESTIGATION",
-        "TAX",
-        "AUDIT",
-        "ACCOUNTS",
-        "POSTAL",
-        "RAILWAY",
-        "DEFENCE",
-        "SECRETARIAL",
-        "ADMINISTRATIVE",
-        "OTHER"
+        "GROUP_A",
+        "GROUP_B",
+        "GROUP_C",
+        "GROUP_D",
+        "OTHER",
+        "UNKNOWN"
       ]
     },
-    "recruitmentRouteIds": {
-      "type": "array",
-      "items": {
-        "$ref": "shared.schema.json#/$defs/id"
-      },
-      "uniqueItems": true,
-      "default": []
+
+    "cadreControl": {
+      "type": "string",
+      "enum": [
+        "STATE",
+        "CENTRAL",
+        "JOINT",
+        "DEPARTMENTAL",
+        "ORGANISATION_SPECIFIC",
+        "UNKNOWN"
+      ]
     },
-    "examIds": {
-      "type": "array",
-      "items": {
-        "$ref": "shared.schema.json#/$defs/id"
-      },
-      "uniqueItems": true,
-      "default": []
+
+    "classification": {
+      "type": "string",
+      "enum": [
+        "STATE_GOVERNMENT_SERVICE",
+        "CENTRAL_GOVERNMENT_SERVICE",
+        "LOCAL_GOVERNMENT_SERVICE",
+        "STATUTORY_BODY_SERVICE",
+        "CORPORATION_SERVICE",
+        "PSU_SERVICE",
+        "AUTONOMOUS_BODY_SERVICE",
+        "OTHER",
+        "UNKNOWN"
+      ]
     },
+
     "postIds": {
-      "type": "array",
-      "items": {
-        "$ref": "shared.schema.json#/$defs/id"
-      },
-      "uniqueItems": true,
-      "default": []
+      "$ref": "shared.schema.json#/$defs/idArray"
     },
+
+    "examIds": {
+      "$ref": "shared.schema.json#/$defs/idArray"
+    },
+
+    "recruitmentRouteIds": {
+      "$ref": "shared.schema.json#/$defs/idArray"
+    },
+
     "eligibilityRuleIds": {
-      "type": "array",
-      "items": {
-        "$ref": "shared.schema.json#/$defs/id"
-      },
-      "uniqueItems": true,
-      "default": []
+      "$ref": "shared.schema.json#/$defs/idArray"
     },
-    "qualificationRuleIds": {
-      "type": "array",
-      "items": {
-        "$ref": "shared.schema.json#/$defs/id"
-      },
-      "uniqueItems": true,
-      "default": []
+
+    "payIds": {
+      "$ref": "shared.schema.json#/$defs/idArray"
     },
+
+    "promotionIds": {
+      "$ref": "shared.schema.json#/$defs/idArray"
+    },
+
+    "benefitIds": {
+      "$ref": "shared.schema.json#/$defs/idArray"
+    },
+
+    "locationIds": {
+      "$ref": "shared.schema.json#/$defs/idArray"
+    },
+
+    "sourceIds": {
+      "$ref": "shared.schema.json#/$defs/idArray"
+    },
+
+    "keywords": {
+      "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+    },
+
     "description": {
       "$ref": "shared.schema.json#/$defs/localizedText"
     },
-    "careerNature": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "ADMINISTRATIVE",
-          "EXECUTIVE",
-          "FIELD",
-          "OFFICE",
-          "INVESTIGATION",
-          "ENFORCEMENT",
-          "INTELLIGENCE",
-          "OPERATIONS",
-          "SUPERVISORY",
-          "INSPECTION",
-          "ACCOUNTS",
-          "AUDIT",
-          "PUBLIC_DEALING",
-          "SECRETARIAL",
-          "SECURITY",
-          "OTHER"
-        ]
-      },
-      "uniqueItems": true,
-      "default": []
-    },
-    "uniformed": {
-      "type": "boolean",
-      "default": false
-    },
-    "physicalRequirementProfile": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "medicalRequirementProfile": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "postingScope": {
-      "type": "string",
-      "enum": [
-        "CENTRAL_ONLY",
-        "ALL_INDIA",
-        "REGIONAL",
-        "STATE_OR_CIRCLE",
-        "ZONE_OR_DIVISION",
-        "STATION_BASED",
-        "MINISTRY_OR_DEPARTMENT",
-        "POST_SPECIFIC",
-        "UNKNOWN"
-      ]
-    },
-    "transferProfile": {
-      "type": "string",
-      "enum": [
-        "LOW",
-        "MODERATE",
-        "HIGH",
-        "VERY_HIGH",
-        "POST_SPECIFIC",
-        "UNKNOWN"
-      ]
-    },
-    "promotionStructure": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "retirementFramework": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "sourceIds": {
-      "type": "array",
-      "items": {
-        "$ref": "shared.schema.json#/$defs/id"
-      },
-      "uniqueItems": true,
-      "default": []
-    },
-    "effectiveFrom": {
-      "type": [
-        "string",
-        "null"
-      ],
-      "format": "date"
-    },
-    "effectiveTo": {
-      "type": [
-        "string",
-        "null"
-      ],
-      "format": "date"
-    },
+
     "status": {
       "type": "string",
       "enum": [
         "ACTIVE",
-        "CURRENT_NO_RECRUITMENT",
         "HISTORICAL",
         "RENAMED",
         "MERGED",
-        "REPLACED",
+        "REORGANISED",
         "ABOLISHED",
-        "TEMPORARY",
         "UNKNOWN"
       ]
     },
-    "version": {
-      "$ref": "shared.schema.json#/$defs/version"
+
+    "effectiveFrom": {
+      "$ref": "shared.schema.json#/$defs/date"
     },
+
+    "effectiveTo": {
+      "$ref": "shared.schema.json#/$defs/date"
+    },
+
+    "historicalNames": {
+      "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+    },
+
     "notes": {
       "$ref": "shared.schema.json#/$defs/localizedText"
+    },
+
+    "sourceReferences": {
+      "$ref": "shared.schema.json#/$defs/sourceReferenceArray"
+    },
+
+    "confidence": {
+      "$ref": "shared.schema.json#/$defs/confidence"
+    },
+
+    "version": {
+      "$ref": "shared.schema.json#/$defs/version"
     }
   },
+
   "allOf": [
     {
       "if": {
         "required": [
-          "effectiveFrom",
-          "effectiveTo"
+          "stateId"
         ]
       },
       "then": {
-        "properties": {
-          "effectiveTo": {
-            "format": "date"
-          }
-        }
+        "required": [
+          "governmentId"
+        ]
       }
     }
   ]
