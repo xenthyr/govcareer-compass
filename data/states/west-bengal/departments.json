@@ -1,0 +1,496 @@
+{
+  "$schema": "../../../schemas/department.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "west-bengal-government",
+  "stateId": "west-bengal",
+  "lastVerified": "2026-08-31",
+  "departments": [
+    {
+      "id": "dept-wb-agriculture",
+      "name": "Agriculture",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "AGRICULTURE",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-agricultural-marketing",
+      "name": "Agricultural Marketing",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "AGRICULTURE_MARKETING",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-animal-resources",
+      "name": "Animal Resources Development",
+      "abbreviation": "ARD",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "ANIMAL_RESOURCES",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-backward-classes",
+      "name": "Backward Classes Welfare",
+      "abbreviation": "BCW",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "SOCIAL_WELFARE",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-consumer-affairs",
+      "name": "Consumer Affairs",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "CONSUMER_AFFAIRS",
+      "auditStatus": "SUBSTANTIALLY_RESEARCHED"
+    },
+    {
+      "id": "dept-wb-cooperation",
+      "name": "Co-operation",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "COOPERATIVE_ADMINISTRATION",
+      "auditStatus": "SUBSTANTIALLY_RESEARCHED"
+    },
+    {
+      "id": "dept-wb-correctional",
+      "name": "Correctional Administration",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [
+        "org-west-bengal-correctional"
+      ],
+      "careerRelevance": "CORRECTIONS",
+      "auditStatus": "SUBSTANTIALLY_RESEARCHED"
+    },
+    {
+      "id": "dept-wb-disaster-management",
+      "name": "Disaster Management and Civil Defence",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "DISASTER_MANAGEMENT",
+      "auditStatus": "SUBSTANTIALLY_RESEARCHED"
+    },
+    {
+      "id": "dept-wb-environment",
+      "name": "Environment",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "ENVIRONMENT",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-finance",
+      "name": "Finance",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "FINANCE",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-fire",
+      "name": "Fire and Emergency Services",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "FIRE_EMERGENCY",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-fisheries",
+      "name": "Fisheries",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "FISHERIES",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-food-supplies",
+      "name": "Food and Supplies",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "FOOD_SUPPLIES",
+      "auditStatus": "SUBSTANTIALLY_RESEARCHED"
+    },
+    {
+      "id": "dept-wb-food-processing-horticulture",
+      "name": "Food Processing Industries and Horticulture",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "FOOD_PROCESSING",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-forest",
+      "name": "Forest",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "FOREST",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-health",
+      "name": "Health and Family Welfare",
+      "abbreviation": "HFW",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "HEALTH",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-higher-education",
+      "name": "Higher Education",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "EDUCATION",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-home-hill-affairs",
+      "name": "Home and Hill Affairs",
+      "abbreviation": "HHA",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [
+        "org-kolkata-police",
+        "org-west-bengal-police"
+      ],
+      "careerRelevance": "POLICE_HOME",
+      "auditStatus": "SUBSTANTIALLY_RESEARCHED"
+    },
+    {
+      "id": "dept-wb-housing",
+      "name": "Housing",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "HOUSING",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-industry-commerce",
+      "name": "Industry, Commerce and Enterprises",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "INDUSTRY_COMMERCE",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-information-cultural",
+      "name": "Information and Cultural Affairs",
+      "abbreviation": "ICA",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "INFORMATION_CULTURE",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-it-electronics",
+      "name": "Information Technology and Electronics",
+      "abbreviation": "IT&E",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "INFORMATION_TECHNOLOGY",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-irrigation-waterways",
+      "name": "Irrigation and Waterways",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "INFRASTRUCTURE",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-judicial",
+      "name": "Judicial",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "JUDICIAL",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-labour",
+      "name": "Labour",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "LABOUR_EMPLOYMENT",
+      "auditStatus": "SUBSTANTIALLY_RESEARCHED"
+    },
+    {
+      "id": "dept-wb-land",
+      "name": "Land and Land Reforms and Refugee Relief and Rehabilitation",
+      "abbreviation": "L&LR",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "REVENUE_LAND",
+      "auditStatus": "SUBSTANTIALLY_RESEARCHED"
+    },
+    {
+      "id": "dept-wb-law",
+      "name": "Law",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "LAW",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-mass-education-library",
+      "name": "Mass Education Extension and Library Services",
+      "abbreviation": "MEE&LS",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "MASS_EDUCATION_LIBRARY",
+      "auditStatus": "SUBSTANTIALLY_RESEARCHED"
+    },
+    {
+      "id": "dept-wb-msme-textiles",
+      "name": "Micro, Small and Medium Enterprises and Textiles",
+      "abbreviation": "MSME&T",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "INDUSTRY_TEXTILES",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-minority",
+      "name": "Minority Affairs and Madrasah Education",
+      "abbreviation": "MA&ME",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "EDUCATION_SOCIAL_WELFARE",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-north-bengal-development",
+      "name": "North Bengal Development",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "DEVELOPMENT",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-panchayat-rural",
+      "name": "Panchayats and Rural Development",
+      "abbreviation": "P&RD",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [
+        "org-wb-panchayat"
+      ],
+      "careerRelevance": "RURAL_DEVELOPMENT",
+      "auditStatus": "SUBSTANTIALLY_RESEARCHED"
+    },
+    {
+      "id": "dept-wb-parliamentary-affairs",
+      "name": "Parliamentary Affairs",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "SECRETARIAT",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-paschimanchal",
+      "name": "Paschimanchal Unnayan Affairs",
+      "abbreviation": "PUA",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "DEVELOPMENT",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-personnel",
+      "name": "Personnel and Administrative Reforms",
+      "abbreviation": "P&AR",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "ADMINISTRATION",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-planning-statistics",
+      "name": "Planning and Statistics",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "PLANNING_STATISTICS",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-programme-monitoring",
+      "name": "Programme Monitoring",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "PROGRAMME_MONITORING",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-power",
+      "name": "Power",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "POWER",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-public-enterprises",
+      "name": "Public Enterprises and Industrial Reconstruction",
+      "abbreviation": "PE&IR",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "PUBLIC_ENTERPRISES",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-public-health-engineering",
+      "name": "Public Health Engineering",
+      "abbreviation": "PHE",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "INFRASTRUCTURE",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-public-works",
+      "name": "Public Works",
+      "abbreviation": "P&WD",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "INFRASTRUCTURE",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-school-education",
+      "name": "School Education",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [
+        "org-west-bengal-school-service-commission"
+      ],
+      "careerRelevance": "EDUCATION",
+      "auditStatus": "SUBSTANTIALLY_RESEARCHED"
+    },
+    {
+      "id": "dept-wb-science-technology",
+      "name": "Science and Technology and Biotechnology",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "SCIENCE_TECHNOLOGY",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-self-help",
+      "name": "Self Help Group and Self Employment",
+      "abbreviation": "SHG&SE",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "SELF_EMPLOYMENT_DEVELOPMENT",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-sundarban",
+      "name": "Sundarban Affairs",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "DEVELOPMENT",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-technical-education",
+      "name": "Technical Education, Training and Skill Development",
+      "abbreviation": "TET&SD",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "TECHNICAL_EDUCATION",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-tourism",
+      "name": "Tourism",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "TOURISM",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-transport",
+      "name": "Transport",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "TRANSPORT",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-tribal-development",
+      "name": "Tribal Development",
+      "abbreviation": null,
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "SOCIAL_WELFARE",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-urban-development",
+      "name": "Urban Development and Municipal Affairs",
+      "abbreviation": "UD&MA",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "URBAN_LOCAL_GOVERNMENT",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-water-resources",
+      "name": "Water Resources Investigation and Development",
+      "abbreviation": "WRIDD",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "WATER_RURAL_DEVELOPMENT",
+      "auditStatus": "PARTIAL"
+    },
+    {
+      "id": "dept-wb-women-child-social-welfare",
+      "name": "Women and Child Development and Social Welfare",
+      "abbreviation": "WCD&SW",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "SOCIAL_WELFARE",
+      "auditStatus": "SUBSTANTIALLY_RESEARCHED"
+    },
+    {
+      "id": "dept-wb-youth-sports",
+      "name": "Youth Services and Sports",
+      "abbreviation": "YSS",
+      "governmentId": "west-bengal-government",
+      "organisationIds": [],
+      "careerRelevance": "YOUTH_SPORTS",
+      "auditStatus": "SUBSTANTIALLY_RESEARCHED"
+    }
+  ]
+}
