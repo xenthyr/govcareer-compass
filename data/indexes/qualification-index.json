@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "1.0.0",
+  "indexType": "QUALIFICATION_INDEX",
+  "entityType": "QUALIFICATION",
+  "generated": false,
+  "generatedAt": null,
+  "sourceOfTruth": [
+    "data/common/qualifications.json"
+  ],
+  "generator": "js/database/indexes.js",
+  "description": "Derived lookup indexes for qualifications used by candidate profiles and government-job eligibility rules.",
+  "indexes": {
+    "byId": {},
+    "byType": {},
+    "byCategory": {},
+    "byLevel": {},
+    "bySubject": {},
+    "byProfessional": {},
+    "byTeaching": {},
+    "byTechnical": {},
+    "byTrade": {},
+    "byGovernmentRecognition": {},
+    "byStatus": {},
+    "byAlias": {},
+    "bySearchToken": {}
+  }
+}
