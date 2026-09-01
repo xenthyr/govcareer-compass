@@ -1,0 +1,1144 @@
+/**
+ * GovCareer Compass
+ * ============================================================
+ * Global Base Styles
+ * ============================================================
+ *
+ * Depends on:
+ *
+ *   tokens.css
+ *   reset.css
+ *   themes.css
+ *
+ * This file establishes the visual baseline used by every page.
+ * Component-specific rules belong in later CSS layers.
+ */
+
+/* ============================================================
+   DOCUMENT
+   ============================================================ */
+
+html {
+  min-width: 320px;
+  background:
+    var(--gc-semantic-bg-page);
+
+  color:
+    var(--gc-semantic-text-primary);
+
+  font-family:
+    var(--gc-font-sans);
+
+  font-size:
+    100%;
+
+  font-synthesis:
+    none;
+
+  text-rendering:
+    optimizeLegibility;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+
+  background:
+    var(--gc-semantic-bg-page);
+
+  color:
+    var(--gc-semantic-text-primary);
+
+  font-family:
+    var(--gc-font-sans);
+
+  font-size:
+    var(--gc-font-size-base);
+
+  font-weight:
+    var(--gc-weight-regular);
+
+  line-height:
+    var(--gc-line-normal);
+
+  letter-spacing:
+    var(--gc-letter-normal);
+
+  overflow-x:
+    hidden;
+}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color:
+    var(--gc-semantic-text-primary);
+
+  font-family:
+    var(--gc-font-display);
+
+  font-weight:
+    var(--gc-weight-bold);
+
+  line-height:
+    var(--gc-line-tight);
+
+  letter-spacing:
+    var(--gc-letter-snug);
+
+  text-wrap:
+    balance;
+}
+
+h1 {
+  font-size:
+    clamp(
+      2rem,
+      5vw,
+      var(--gc-font-size-5xl)
+    );
+
+  font-weight:
+    var(--gc-weight-extrabold);
+
+  letter-spacing:
+    var(--gc-letter-tight);
+}
+
+h2 {
+  font-size:
+    clamp(
+      1.55rem,
+      3.5vw,
+      var(--gc-font-size-4xl)
+    );
+}
+
+h3 {
+  font-size:
+    clamp(
+      1.2rem,
+      2.5vw,
+      var(--gc-font-size-2xl)
+    );
+}
+
+h4 {
+  font-size:
+    var(--gc-font-size-xl);
+}
+
+h5 {
+  font-size:
+    var(--gc-font-size-lg);
+}
+
+h6 {
+  font-size:
+    var(--gc-font-size-base);
+}
+
+p {
+  color:
+    var(--gc-semantic-text-secondary);
+
+  line-height:
+    var(--gc-line-relaxed);
+
+  text-wrap:
+    pretty;
+}
+
+small {
+  font-size:
+    var(--gc-font-size-sm);
+
+  line-height:
+    var(--gc-line-normal);
+}
+
+strong,
+b {
+  font-weight:
+    var(--gc-weight-semibold);
+}
+
+/* ============================================================
+   LINKS
+   ============================================================ */
+
+a {
+  color:
+    var(--gc-semantic-text-link);
+
+  transition:
+    color
+    var(--gc-duration-fast)
+    var(--gc-ease-standard);
+}
+
+a:hover {
+  color:
+    var(--gc-semantic-text-link-hover);
+}
+
+a:focus-visible {
+  color:
+    var(--gc-semantic-text-link-hover);
+}
+
+/* ============================================================
+   SELECTION
+   ============================================================ */
+
+::selection {
+  background:
+    var(--gc-semantic-selection-bg);
+
+  color:
+    var(--gc-semantic-selection-text);
+}
+
+/* ============================================================
+   SCROLLBARS
+   ============================================================
+ *
+ * Keep them subtle so they complement rather than dominate the
+ * glass interface.
+ */
+
+* {
+  scrollbar-width:
+    thin;
+
+  scrollbar-color:
+    var(--gc-semantic-border-strong)
+    transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background:
+    transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  border:
+    2px solid
+    transparent;
+
+  border-radius:
+    var(--gc-radius-pill);
+
+  background-clip:
+    padding-box;
+
+  background-color:
+    var(--gc-semantic-border-strong);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color:
+    var(--gc-semantic-accent-primary);
+}
+
+/* ============================================================
+   IMAGES / MEDIA
+   ============================================================ */
+
+img,
+picture,
+video,
+canvas {
+  border-radius:
+    var(--gc-radius-md);
+}
+
+svg {
+  flex-shrink:
+    0;
+}
+
+/* ============================================================
+   CODE
+   ============================================================ */
+
+code,
+kbd,
+pre {
+  font-family:
+    var(--gc-font-mono);
+
+  font-size:
+    0.92em;
+}
+
+code {
+  padding:
+    0.12em
+    0.36em;
+
+  border:
+    1px solid
+    var(--gc-semantic-border-subtle);
+
+  border-radius:
+    var(--gc-radius-xs);
+
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+
+  color:
+    var(--gc-semantic-text-primary);
+}
+
+pre {
+  max-width:
+    100%;
+
+  padding:
+    var(--gc-space-5);
+
+  overflow:
+    auto;
+
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-lg);
+
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+
+  color:
+    var(--gc-semantic-text-secondary);
+
+  line-height:
+    var(--gc-line-relaxed);
+
+  tab-size:
+    2;
+}
+
+kbd {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  min-width:
+    1.5rem;
+
+  min-height:
+    1.5rem;
+
+  padding:
+    0.125rem
+    0.375rem;
+
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-bottom-width:
+    2px;
+
+  border-radius:
+    var(--gc-radius-xs);
+
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+
+  color:
+    var(--gc-semantic-text-muted);
+
+  font-size:
+    var(--gc-font-size-xs);
+
+  font-weight:
+    var(--gc-weight-semibold);
+
+  line-height:
+    1;
+}
+
+/* ============================================================
+   GENERIC INTERACTIVE FOUNDATION
+   ============================================================ */
+
+button,
+a,
+input,
+textarea,
+select,
+summary {
+  -webkit-tap-highlight-color:
+    transparent;
+}
+
+button,
+a {
+  touch-action:
+    manipulation;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline:
+    var(--gc-focus-ring-width)
+    solid
+    var(--gc-semantic-focus);
+
+  outline-offset:
+    var(--gc-focus-ring-offset);
+}
+
+/* ============================================================
+   GENERIC BUTTON BASE
+   ============================================================ */
+
+button {
+  color:
+    inherit;
+
+  font-family:
+    inherit;
+
+  font-weight:
+    var(--gc-weight-medium);
+}
+
+button:disabled {
+  opacity:
+    var(--gc-opacity-disabled);
+}
+
+/*
+ * This class establishes the global button contract.
+ * The visual variants will be enhanced in components.css.
+ */
+
+.button {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    var(--gc-space-2);
+
+  min-height:
+    var(--gc-control-height-md);
+
+  padding:
+    0
+    var(--gc-space-4);
+
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-md);
+
+  background:
+    var(--gc-semantic-bg-surface);
+
+  color:
+    var(--gc-semantic-text-primary);
+
+  font-size:
+    var(--gc-font-size-sm);
+
+  font-weight:
+    var(--gc-weight-semibold);
+
+  line-height:
+    1;
+
+  white-space:
+    nowrap;
+
+  transition:
+    background
+      var(--gc-duration-fast)
+      var(--gc-ease-standard),
+    border-color
+      var(--gc-duration-fast)
+      var(--gc-ease-standard),
+    color
+      var(--gc-duration-fast)
+      var(--gc-ease-standard),
+    transform
+      var(--gc-duration-fast)
+      var(--gc-ease-standard),
+    box-shadow
+      var(--gc-duration-fast)
+      var(--gc-ease-standard);
+}
+
+.button:hover {
+  background:
+    var(--gc-semantic-bg-surface-raised);
+
+  border-color:
+    var(--gc-semantic-border-strong);
+
+  transform:
+    translateY(-1px);
+}
+
+.button:active {
+  transform:
+    translateY(0);
+}
+
+.button--primary {
+  border-color:
+    transparent;
+
+  background:
+    var(--gc-gradient-brand);
+
+  color:
+    #ffffff;
+
+  box-shadow:
+    var(--gc-shadow-sm);
+}
+
+.button--primary:hover {
+  box-shadow:
+    var(--gc-shadow-md),
+    var(--gc-shadow-glow-cyan);
+
+  color:
+    #ffffff;
+}
+
+.button--secondary {
+  background:
+    var(--gc-semantic-bg-surface);
+
+  color:
+    var(--gc-semantic-text-primary);
+}
+
+.button--ghost {
+  border-color:
+    transparent;
+
+  background:
+    transparent;
+
+  color:
+    var(--gc-semantic-text-secondary);
+}
+
+.button--ghost:hover {
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+
+  color:
+    var(--gc-semantic-text-primary);
+}
+
+.button--small {
+  min-height:
+    2.25rem;
+
+  padding:
+    0
+    var(--gc-space-3);
+
+  border-radius:
+    var(--gc-radius-sm);
+
+  font-size:
+    var(--gc-font-size-xs);
+}
+
+/* ============================================================
+   ICON BUTTON FOUNDATION
+   ============================================================ */
+
+.icon-button {
+  display:
+    inline-grid;
+
+  place-items:
+    center;
+
+  width:
+    var(--gc-touch-target);
+
+  height:
+    var(--gc-touch-target);
+
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-md);
+
+  background:
+    var(--gc-semantic-bg-surface);
+
+  color:
+    var(--gc-semantic-text-secondary);
+
+  transition:
+    background
+      var(--gc-duration-fast)
+      var(--gc-ease-standard),
+    border-color
+      var(--gc-duration-fast)
+      var(--gc-ease-standard),
+    color
+      var(--gc-duration-fast)
+      var(--gc-ease-standard),
+    transform
+      var(--gc-duration-fast)
+      var(--gc-ease-standard);
+}
+
+.icon-button:hover {
+  background:
+    var(--gc-semantic-bg-surface-raised);
+
+  border-color:
+    var(--gc-semantic-border-strong);
+
+  color:
+    var(--gc-semantic-text-primary);
+
+  transform:
+    translateY(-1px);
+}
+
+/* ============================================================
+   SURFACE FOUNDATION
+   ============================================================ */
+
+.surface {
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-xl);
+
+  background:
+    var(--gc-semantic-bg-surface);
+
+  box-shadow:
+    var(--gc-shadow-sm);
+}
+
+.surface--raised {
+  background:
+    var(--gc-semantic-bg-surface-raised);
+
+  box-shadow:
+    var(--gc-shadow-md);
+}
+
+.surface--glass {
+  background:
+    var(--gc-semantic-glass-bg);
+
+  border-color:
+    var(--gc-semantic-glass-border);
+
+  backdrop-filter:
+    blur(var(--gc-glass-blur-md))
+    saturate(var(--gc-glass-saturation));
+
+  -webkit-backdrop-filter:
+    blur(var(--gc-glass-blur-md))
+    saturate(var(--gc-glass-saturation));
+}
+
+/* ============================================================
+   STATUS / SEMANTIC HELPERS
+   ============================================================ */
+
+.text-primary {
+  color:
+    var(--gc-semantic-text-primary) !important;
+}
+
+.text-secondary {
+  color:
+    var(--gc-semantic-text-secondary) !important;
+}
+
+.text-muted {
+  color:
+    var(--gc-semantic-text-muted) !important;
+}
+
+.text-success {
+  color:
+    var(--gc-semantic-success) !important;
+}
+
+.text-warning {
+  color:
+    var(--gc-semantic-warning) !important;
+}
+
+.text-danger {
+  color:
+    var(--gc-semantic-danger) !important;
+}
+
+.text-info {
+  color:
+    var(--gc-semantic-info) !important;
+}
+
+/* ============================================================
+   BADGE FOUNDATION
+   ============================================================ */
+
+.badge {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    var(--gc-space-1);
+
+  min-height:
+    1.75rem;
+
+  padding:
+    0
+    var(--gc-space-2);
+
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-pill);
+
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+
+  color:
+    var(--gc-semantic-text-secondary);
+
+  font-size:
+    var(--gc-font-size-xs);
+
+  font-weight:
+    var(--gc-weight-semibold);
+
+  line-height:
+    1;
+
+  white-space:
+    nowrap;
+}
+
+.badge--success {
+  border-color:
+    var(--gc-semantic-success-border);
+
+  background:
+    var(--gc-semantic-success-bg);
+
+  color:
+    var(--gc-semantic-success);
+}
+
+.badge--warning {
+  border-color:
+    var(--gc-semantic-warning-border);
+
+  background:
+    var(--gc-semantic-warning-bg);
+
+  color:
+    var(--gc-semantic-warning);
+}
+
+.badge--danger {
+  border-color:
+    var(--gc-semantic-danger-border);
+
+  background:
+    var(--gc-semantic-danger-bg);
+
+  color:
+    var(--gc-semantic-danger);
+}
+
+.badge--info {
+  border-color:
+    var(--gc-semantic-info-border);
+
+  background:
+    var(--gc-semantic-info-bg);
+
+  color:
+    var(--gc-semantic-info);
+}
+
+/* ============================================================
+   DIVIDERS
+   ============================================================ */
+
+.divider {
+  width:
+    100%;
+
+  height:
+    1px;
+
+  border: 0;
+
+  background:
+    var(--gc-semantic-border-subtle);
+}
+
+/* ============================================================
+   EMPTY / UNAVAILABLE CONTENT
+   ============================================================ */
+
+.empty-state {
+  display:
+    grid;
+
+  place-items:
+    center;
+
+  min-height:
+    12rem;
+
+  padding:
+    var(--gc-space-8);
+
+  border:
+    1px dashed
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-xl);
+
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+
+  text-align:
+    center;
+}
+
+.empty-state__title {
+  margin-bottom:
+    var(--gc-space-2);
+
+  color:
+    var(--gc-semantic-text-primary);
+
+  font-weight:
+    var(--gc-weight-semibold);
+}
+
+.empty-state__description {
+  max-width:
+    var(--gc-content-readable);
+
+  color:
+    var(--gc-semantic-text-muted);
+}
+
+/* ============================================================
+   LOADING FOUNDATION
+   ============================================================ */
+
+.skeleton {
+  position:
+    relative;
+
+  overflow:
+    hidden;
+
+  border-radius:
+    var(--gc-radius-sm);
+
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+}
+
+.skeleton::after {
+  content:
+    "";
+
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  transform:
+    translateX(-100%);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgb(255 255 255 / 0.08),
+      transparent
+    );
+
+  animation:
+    gc-skeleton-shimmer
+    1.5s
+    infinite;
+}
+
+@keyframes gc-skeleton-shimmer {
+  100% {
+    transform:
+      translateX(100%);
+  }
+}
+
+/* ============================================================
+   UTILITY CLASSES
+   ============================================================ */
+
+.gc-flex {
+  display:
+    flex;
+}
+
+.gc-inline-flex {
+  display:
+    inline-flex;
+}
+
+.gc-grid {
+  display:
+    grid;
+}
+
+.gc-hidden {
+  display:
+    none !important;
+}
+
+.gc-nowrap {
+  white-space:
+    nowrap;
+}
+
+.gc-truncate {
+  overflow:
+    hidden;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+}
+
+.gc-text-center {
+  text-align:
+    center;
+}
+
+.gc-text-left {
+  text-align:
+    left;
+}
+
+.gc-text-right {
+  text-align:
+    right;
+}
+
+/* ============================================================
+   CONTAINER FOUNDATION
+   ============================================================ */
+
+.container {
+  width:
+    min(
+      calc(100% - 2rem),
+      var(--gc-container-2xl)
+    );
+
+  margin-inline:
+    auto;
+}
+
+.container--wide {
+  width:
+    min(
+      calc(100% - 2rem),
+      var(--gc-container-max)
+    );
+}
+
+.container--readable {
+  width:
+    min(
+      calc(100% - 2rem),
+      var(--gc-content-readable)
+    );
+}
+
+/* ============================================================
+   SAFE AREAS FOR MOBILE DEVICES
+   ============================================================ */
+
+@supports (
+  padding: env(safe-area-inset-top)
+) {
+  .safe-area-top {
+    padding-top:
+      max(
+        var(--gc-space-4),
+        env(safe-area-inset-top)
+      );
+  }
+
+  .safe-area-bottom {
+    padding-bottom:
+      max(
+        var(--gc-space-4),
+        env(safe-area-inset-bottom)
+      );
+  }
+
+  .safe-area-horizontal {
+    padding-inline:
+      max(
+        var(--gc-space-4),
+        env(safe-area-inset-left)
+      )
+      max(
+        var(--gc-space-4),
+        env(safe-area-inset-right)
+      );
+  }
+}
+
+/* ============================================================
+   MOBILE BASE ADJUSTMENTS
+   ============================================================ */
+
+@media (max-width: 767px) {
+  html {
+    font-size:
+      15px;
+  }
+
+  h1 {
+    line-height:
+      1.1;
+  }
+
+  .container,
+  .container--wide,
+  .container--readable {
+    width:
+      min(
+        calc(100% - 1.25rem),
+        var(--gc-container-2xl)
+      );
+  }
+
+  .button {
+    min-height:
+      var(--gc-touch-target);
+
+    padding-inline:
+      var(--gc-space-4);
+  }
+
+  .surface {
+    border-radius:
+      var(--gc-radius-lg);
+  }
+}
+
+/* ============================================================
+   LARGE DESKTOP REFINEMENT
+   ============================================================ */
+
+@media (min-width: 1536px) {
+  html {
+    font-size:
+      17px;
+  }
+
+  .container {
+    width:
+      min(
+        calc(100% - 4rem),
+        var(--gc-container-2xl)
+      );
+  }
+
+  .container--wide {
+    width:
+      min(
+        calc(100% - 5rem),
+        var(--gc-container-max)
+      );
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after {
+    animation:
+      none;
+  }
+
+  .button,
+  .icon-button,
+  a {
+    transition:
+      none;
+  }
+}
