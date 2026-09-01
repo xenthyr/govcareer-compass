@@ -1,0 +1,64 @@
+{
+  "$schema": "../../../schemas/promotion.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "west-bengal-government",
+  "stateId": "west-bengal",
+  "lastVerified": "2026-08-31",
+  "promotionProfiles": [
+    {
+      "id": "promotion-wbcs-executive",
+      "careerType": "WBCS_EXECUTIVE",
+      "entryMechanism": "WBPSC_WBCS",
+      "promotionMethod": "STATE_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "VERY_HIGH",
+      "confidence": "HIGH",
+      "notes": {
+        "en": "Exact promotion ladder depends on the applicable service rules and cadre structure.",
+        "bn": "সঠিক পদোন্নতির ধাপ প্রযোজ্য সার্ভিস রুল ও ক্যাডার কাঠামোর উপর নির্ভরশীল।"
+      }
+    },
+    {
+      "id": "promotion-wb-police-service",
+      "careerType": "WEST_BENGAL_POLICE_SERVICE",
+      "entryMechanism": "WBPSC_WBCS",
+      "promotionMethod": "POLICE_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "HIGH",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "promotion-wbp-si",
+      "careerType": "WEST_BENGAL_POLICE_SI",
+      "entryMechanism": "WBPRB",
+      "promotionMethod": "POLICE_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "HIGH",
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "promotion-kp-si",
+      "careerType": "KOLKATA_POLICE_SI",
+      "entryMechanism": "WBPRB",
+      "promotionMethod": "KOLKATA_POLICE_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "HIGH",
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "promotion-panchayat-development-officer",
+      "careerType": "PANCHAYAT_DEVELOPMENT_OFFICER",
+      "entryMechanism": "WBPSC_WBCS",
+      "promotionMethod": "PANCHAYAT_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "MEDIUM_HIGH",
+      "confidence": "MEDIUM"
+    }
+  ]
+}
