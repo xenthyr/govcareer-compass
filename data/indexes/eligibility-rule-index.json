@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0.0",
+  "indexType": "ELIGIBILITY_RULE_INDEX",
+  "entityType": "ELIGIBILITY_RULE",
+  "generated": false,
+  "generatedAt": null,
+  "sourceOfTruth": [
+    "data/central/eligibility-rules.json",
+    "data/states/west-bengal/eligibility-rules.json"
+  ],
+  "generator": "js/database/indexes.js",
+  "description": "Derived lookup indexes for government eligibility rules. Eligibility-rule records remain authoritative only in their canonical government-specific datasets.",
+  "indexes": {
+    "byId": {},
+    "byTargetId": {},
+    "byTargetType": {},
+    "byRuleClass": {},
+    "byConditionType": {},
+    "byOperator": {},
+    "byQualificationId": {},
+    "bySubjectId": {},
+    "byGovernmentId": {},
+    "byStateId": {},
+    "byStatus": {},
+    "byPriority": {},
+    "bySourceId": {},
+    "byDependsOnRuleId": {}
+  }
+}
