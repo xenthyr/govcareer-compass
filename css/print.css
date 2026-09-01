@@ -1,0 +1,818 @@
+/**
+ * GovCareer Compass
+ * ============================================================
+ * Print / PDF Presentation Layer
+ * ============================================================
+ *
+ * Purpose:
+ *   Produce readable, professional printed reports and
+ *   browser-generated PDFs from:
+ *
+ *   • Career profiles
+ *   • Comparisons
+ *   • Salary analysis
+ *   • Eligibility reports
+ *   • Rankings
+ *   • Research/source pages
+ *
+ * Rules:
+ *   • Hide navigation and interactive clutter.
+ *   • Preserve factual content.
+ *   • Preserve source URLs.
+ *   • Use high-contrast print colors.
+ *   • Avoid breaking critical blocks where possible.
+ */
+
+/* ============================================================
+   PRINT PAGE
+   ============================================================ */
+
+@page {
+  size: A4;
+  margin: 14mm 12mm 16mm;
+}
+
+@media print {
+  /* ==========================================================
+     GLOBAL PRINT RESET
+     ========================================================== */
+
+  html,
+  body {
+    min-width: 0 !important;
+    width: auto !important;
+
+    background:
+      #ffffff !important;
+
+    color:
+      #111111 !important;
+
+    font-family:
+      Arial,
+      Helvetica,
+      sans-serif !important;
+
+    font-size:
+      10pt !important;
+
+    line-height:
+      1.45 !important;
+
+    overflow:
+      visible !important;
+  }
+
+  /*
+   * Remove screen atmosphere and glass effects.
+   */
+
+  body::before,
+  body::after {
+    display:
+      none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    background-image:
+      none !important;
+
+    box-shadow:
+      none !important;
+
+    text-shadow:
+      none !important;
+
+    filter:
+      none !important;
+
+    backdrop-filter:
+      none !important;
+
+    -webkit-backdrop-filter:
+      none !important;
+  }
+
+  /* ==========================================================
+     SCREEN-ONLY UI
+     ========================================================== */
+
+  nav,
+  .site-nav,
+  .primary-nav,
+  .header-actions,
+  .header-search,
+  .global-search,
+  .drawer,
+  [data-drawer],
+  .drawer-backdrop,
+  .modal-backdrop,
+  [data-modal-backdrop],
+  .toast-container,
+  .mobile-only,
+  .screen-only,
+  .pagination,
+  .filter-panel,
+  .filter-chips,
+  .table-toolbar,
+  .chart-tooltip,
+  .floating-action,
+  .back-to-top,
+  [data-no-print],
+  button[data-no-print],
+  .share-actions,
+  .comparison-controls {
+    display:
+      none !important;
+  }
+
+  /* ==========================================================
+     LINKS
+     ========================================================== */
+
+  a {
+    color:
+      #111111 !important;
+
+    text-decoration:
+      none !important;
+  }
+
+  /*
+   * For source/research URLs, preserve the actual URL after
+   * the source link.
+   */
+
+  .source-card a[href^="http"]::after,
+  .source-table a[href^="http"]::after,
+  .source-url a[href^="http"]::after,
+  .print-source-url::after {
+    content:
+      " (" attr(href) ")";
+
+    color:
+      #444444 !important;
+
+    font-size:
+      8pt !important;
+
+    overflow-wrap:
+      anywhere;
+  }
+
+  /* ==========================================================
+     HEADER
+     ========================================================== */
+
+  .site-header,
+  .app-header,
+  header[data-site-header] {
+    position:
+      static !important;
+
+    width:
+      100% !important;
+
+    border:
+      0 !important;
+
+    background:
+      #ffffff !important;
+  }
+
+  .site-header__inner,
+  .app-header__inner {
+    width:
+      100% !important;
+
+    min-height:
+      auto !important;
+
+    padding:
+      0 0 5mm !important;
+  }
+
+  .brand__name,
+  .site-brand__name,
+  .header-brand__name {
+    color:
+      #111111 !important;
+  }
+
+  .brand__tagline,
+  .site-brand__tagline,
+  .header-brand__tagline {
+    color:
+      #555555 !important;
+  }
+
+  /* ==========================================================
+     MAIN / CONTAINERS
+     ========================================================== */
+
+  main,
+  .site-main,
+  .app-main,
+  .page-content,
+  .container,
+  .container--wide,
+  .container--readable,
+  .layout-container,
+  .layout-container--wide {
+    width:
+      100% !important;
+
+    max-width:
+      none !important;
+
+    margin:
+      0 !important;
+
+    padding-left:
+      0 !important;
+
+    padding-right:
+      0 !important;
+  }
+
+  .page-section,
+  .page-section--compact,
+  .page-section--large,
+  .page-section--hero {
+    padding-block:
+      6mm !important;
+  }
+
+  /* ==========================================================
+     TYPOGRAPHY
+     ========================================================== */
+
+  h1 {
+    color:
+      #0d1724 !important;
+
+    font-size:
+      24pt !important;
+
+    line-height:
+      1.12 !important;
+  }
+
+  h2 {
+    color:
+      #111827 !important;
+
+    font-size:
+      18pt !important;
+
+    margin-top:
+      8mm !important;
+  }
+
+  h3 {
+    color:
+      #182233 !important;
+
+    font-size:
+      14pt !important;
+  }
+
+  h4 {
+    font-size:
+      11.5pt !important;
+  }
+
+  p {
+    color:
+      #303945 !important;
+  }
+
+  small,
+  .text-muted,
+  .gc-text-muted {
+    color:
+      #4b5563 !important;
+  }
+
+  /* ==========================================================
+     SURFACES
+     ========================================================== */
+
+  .glass-panel,
+  .surface,
+  .surface--raised,
+  .surface--glass,
+  .job-card,
+  .exam-card,
+  .source-card,
+  .career-result,
+  .score-card,
+  .chart-card,
+  .question-card,
+  .form-section,
+  .calculator-result,
+  .comparison-table-wrapper,
+  .data-table {
+    border:
+      0.5pt solid
+      #b8c0cb !important;
+
+    border-radius:
+      4pt !important;
+
+    background:
+      #ffffff !important;
+
+    color:
+      #111111 !important;
+  }
+
+  /* ==========================================================
+     BADGES
+     ========================================================== */
+
+  .badge,
+  .eligibility-badge,
+  .confidence-badge,
+  .status-badge,
+  .filter-chip {
+    border:
+      0.5pt solid
+      #9da6b2 !important;
+
+    background:
+      #f6f7f9 !important;
+
+    color:
+      #1b2430 !important;
+  }
+
+  /* ==========================================================
+     SCORE BARS
+     ========================================================== */
+
+  .score-bar__track,
+  .career-result__metric-track,
+  .bar-chart__track,
+  .pay-chart__track,
+  .ranking-chart__track {
+    background:
+      #e5e7eb !important;
+
+    border:
+      0.5pt solid
+      #cbd0d7 !important;
+  }
+
+  .score-bar__fill,
+  .career-result__metric-fill,
+  .bar-chart__fill,
+  .pay-chart__fill,
+  .ranking-chart__fill,
+  .vertical-bar-chart__bar {
+    background:
+      #355f8a !important;
+  }
+
+  /* ==========================================================
+     SCORE / STATUS COLORS
+     ========================================================== */
+
+  .text-success,
+  .text-warning,
+  .text-danger,
+  .text-info,
+  .source-card__confidence,
+  .calculator-note {
+    color:
+      #20242a !important;
+  }
+
+  /* ==========================================================
+     CAREER RESULT
+     ========================================================== */
+
+  .career-result__top,
+  .career-result__meta,
+  .career-result__metrics {
+    page-break-inside:
+      avoid;
+
+    break-inside:
+      avoid;
+  }
+
+  .career-result__condition,
+  .career-result__blocked,
+  .career-result__eligible-note {
+    border:
+      0.75pt solid
+      #a8afb8 !important;
+
+    background:
+      #f7f8fa !important;
+
+    color:
+      #1f2937 !important;
+  }
+
+  /* ==========================================================
+     TABLES
+     ========================================================== */
+
+  .data-table,
+  .comparison-table-wrapper {
+    width:
+      100% !important;
+
+    overflow:
+      visible !important;
+
+    display:
+      block !important;
+  }
+
+  .data-table__scroll,
+  .comparison-table__scroll {
+    width:
+      100% !important;
+
+    overflow:
+      visible !important;
+
+    display:
+      block !important;
+  }
+
+  .data-table table,
+  .comparison-table,
+  .salary-table table,
+  .jobs-table table,
+  .exam-table table,
+  .eligibility-table table,
+  .source-table table {
+    width:
+      100% !important;
+
+    min-width:
+      0 !important;
+
+    table-layout:
+      auto !important;
+
+    font-size:
+      7.5pt !important;
+  }
+
+  .data-table th,
+  .data-table td,
+  .comparison-table th,
+  .comparison-table td {
+    padding:
+      2.5mm !important;
+
+    border:
+      0.5pt solid
+      #c8cdd4 !important;
+
+    color:
+      #17202b !important;
+
+    background:
+      #ffffff !important;
+  }
+
+  .data-table thead th,
+  .comparison-table thead th {
+    position:
+      static !important;
+
+    background:
+      #eef1f5 !important;
+
+    color:
+      #101722 !important;
+
+    font-weight:
+      bold !important;
+  }
+
+  .comparison-table__metric,
+  .comparison-table__metric-header,
+  .data-table__sticky {
+    position:
+      static !important;
+
+    min-width:
+      0 !important;
+
+    width:
+      auto !important;
+  }
+
+  .comparison-table td.is-best {
+    background:
+      #f2f7f4 !important;
+  }
+
+  .comparison-table__best-label {
+    color:
+      #166534 !important;
+
+    background:
+      #ecfdf3 !important;
+  }
+
+  /* ==========================================================
+     CHARTS
+     ========================================================== */
+
+  .chart-card {
+    page-break-inside:
+      avoid;
+
+    break-inside:
+      avoid;
+  }
+
+  .chart {
+    min-height:
+      12rem !important;
+
+    page-break-inside:
+      avoid;
+
+    break-inside:
+      avoid;
+  }
+
+  .chart-card__header {
+    margin-bottom:
+      4mm !important;
+  }
+
+  /*
+   * Preserve text fallback/summary under charts.
+   */
+
+  .chart__accessible-summary,
+  .chart-data-note {
+    color:
+      #303945 !important;
+  }
+
+  /* ==========================================================
+     SOURCE CARDS
+     ========================================================== */
+
+  .source-card {
+    page-break-inside:
+      avoid;
+
+    break-inside:
+      avoid;
+
+    margin-bottom:
+      4mm;
+  }
+
+  .source-card__confidence--positive,
+  .source-card__confidence--historical,
+  .source-card__confidence--official,
+  .source-card__confidence--estimate,
+  .source-card__confidence--unverified {
+    border:
+      0.5pt solid
+      #b4bac2 !important;
+
+    background:
+      #f7f8fa !important;
+  }
+
+  /* ==========================================================
+     SOURCE IDs / CODE
+     ========================================================== */
+
+  code,
+  pre,
+  kbd {
+    background:
+      #f3f4f6 !important;
+
+    color:
+      #111827 !important;
+  }
+
+  pre {
+    overflow:
+      visible !important;
+
+    white-space:
+      pre-wrap !important;
+
+    overflow-wrap:
+      anywhere !important;
+  }
+
+  /* ==========================================================
+     PAGE BREAK MANAGEMENT
+     ========================================================== */
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    page-break-after:
+      avoid;
+
+    break-after:
+      avoid;
+  }
+
+  article,
+  section,
+  .job-card,
+  .exam-card,
+  .career-result,
+  .source-card,
+  .chart-card,
+  .score-card,
+  .question-card {
+    page-break-inside:
+      avoid;
+
+    break-inside:
+      avoid;
+  }
+
+  table {
+    page-break-inside:
+      auto;
+  }
+
+  thead {
+    display:
+      table-header-group;
+  }
+
+  tr {
+    page-break-inside:
+      avoid;
+
+    break-inside:
+      avoid;
+  }
+
+  /* ==========================================================
+     FOOTER
+     ========================================================== */
+
+  .site-footer,
+  .app-footer,
+  footer[data-site-footer] {
+    margin-top:
+      8mm;
+
+    border-top:
+      0.75pt solid
+      #b8c0ca;
+
+    background:
+      #ffffff !important;
+  }
+
+  .site-footer__inner,
+  .app-footer__inner {
+    width:
+      100% !important;
+
+    padding:
+      6mm 0 0 !important;
+  }
+
+  .site-footer__grid,
+  .app-footer__grid {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      );
+
+    gap:
+      5mm;
+  }
+
+  .site-footer__bottom,
+  .app-footer__bottom {
+    margin-top:
+      5mm;
+
+    padding-top:
+      3mm;
+
+    color:
+      #4b5563 !important;
+  }
+
+  /* ==========================================================
+     PRINT-ONLY ELEMENTS
+     ========================================================== */
+
+  .print-only {
+    display:
+      block !important;
+  }
+
+  .print-title {
+    display:
+      block !important;
+
+    margin-bottom:
+      5mm;
+
+    color:
+      #0f172a !important;
+
+    font-size:
+      20pt !important;
+
+    font-weight:
+      bold !important;
+  }
+
+  .print-meta {
+    display:
+      flex !important;
+
+    flex-wrap:
+      wrap;
+
+    gap:
+      2mm 5mm;
+
+    margin-bottom:
+      5mm;
+
+    color:
+      #4b5563 !important;
+
+    font-size:
+      8pt !important;
+  }
+
+  /* ==========================================================
+     COLOR / INK ECONOMY
+     ========================================================== */
+
+  * {
+    -webkit-print-color-adjust:
+      exact;
+
+    print-color-adjust:
+      exact;
+  }
+
+  /* ==========================================================
+     HIDE EMPTY / SCREEN-ONLY DECORATION
+     ========================================================== */
+
+  [aria-hidden="true"].screen-decoration,
+  .decorative-only,
+  .hero__visual::before,
+  .hero__visual::after {
+    display:
+      none !important;
+  }
+
+  /* ==========================================================
+     SMALL SCREEN PRINT SAFETY
+     ========================================================== */
+
+  @media (max-width: 767px) {
+    @page {
+      size:
+        A4
+        portrait;
+
+      margin:
+        10mm;
+    }
+
+    .site-footer__grid,
+    .app-footer__grid {
+      grid-template-columns:
+        1fr;
+    }
+
+    .data-table table,
+    .comparison-table {
+      font-size:
+        7pt !important;
+      }
+  }
+}
