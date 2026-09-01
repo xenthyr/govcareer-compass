@@ -1,0 +1,107 @@
+{
+  "$schema": "../../schemas/shared.schema.json",
+  "indexType": "EXAM_INDEX",
+  "indexVersion": "1.0.0",
+  "schemaVersion": "1.0.0",
+  "generated": false,
+  "generatedAt": null,
+  "generatedFrom": [
+    "/data/central/exams.json",
+    "/data/states/west-bengal/exams.json"
+  ],
+  "description": "Derived lookup index for government recruitment examinations and examination cycles.",
+  "sourceOfTruth": "Canonical examination records in /data/central/exams.json and /data/states/west-bengal/exams.json.",
+  "rules": {
+    "examIdentityIsStable": true,
+    "examCycleMustRemainDistinctWhenRulesDiffer": true,
+    "examIsNotTheSameAsPost": true,
+    "examIsNotTheSameAsServiceCadre": true,
+    "noDuplicateIds": true,
+    "currentAndHistoricalCyclesMustRemainDistinguishable": true
+  },
+  "summary": {
+    "totalRecords": 0,
+    "centralRecords": 0,
+    "westBengalRecords": 0,
+    "activeRecords": 0,
+    "historicalRecords": 0,
+    "directGraduateExams": 0,
+    "conditionalExams": 0,
+    "physicalExams": 0,
+    "skillTestExams": 0,
+    "interviewExams": 0
+  },
+  "records": [],
+  "indexes": {
+    "byId": {},
+    "byGovernmentId": {},
+    "byStateId": {},
+    "byRecruitingAuthorityId": {},
+    "byDepartmentId": {},
+    "byOrganisationId": {},
+    "byExamFamilyId": {},
+    "byQualificationLevel": {},
+    "byEligibilityStatus": {},
+    "byYear": {},
+    "byCycle": {},
+    "byStatus": {},
+    "byDifficulty": {},
+    "byPhysicalRequirement": {},
+    "bySkillTest": {},
+    "byInterview": {},
+    "byLanguage": {},
+    "byPostId": {},
+    "bySourceId": {}
+  },
+  "recordShape": {
+    "id": "string",
+    "governmentId": "string|null",
+    "stateId": "string|null",
+    "recruitingAuthorityId": "string|null",
+    "departmentId": "string|null",
+    "organisationId": "string|null",
+    "examFamilyId": "string|null",
+    "qualificationLevelIds": [
+      "string"
+    ],
+    "eligibilityStatus": "DIRECT|CONDITIONAL|NOT_ELIGIBLE|MANUAL_VERIFICATION",
+    "year": "number|null",
+    "cycle": "string|null",
+    "status": "OPEN|CLOSED|UNDER_PROCESS|RECENTLY_COMPLETED|EXPECTED_PERIODIC|IRREGULAR|HISTORICAL|DISCONTINUED|UNKNOWN",
+    "difficulty": "EASY|MODERATE|HARD|VERY_HARD|EXTREME|UNKNOWN",
+    "physicalRequirement": "NONE|REQUIRED|ROLE_DEPENDENT|UNKNOWN",
+    "skillTest": "NONE|TYPING|SHORTHAND|COMPUTER|DRIVING|OTHER|ROLE_DEPENDENT|UNKNOWN",
+    "interview": "YES|NO|ROLE_DEPENDENT|UNKNOWN",
+    "postIds": [
+      "string"
+    ],
+    "sourceIds": [
+      "string"
+    ]
+  },
+  "searchFields": [
+    "officialName",
+    "shortName",
+    "fullForm",
+    "recruitingAuthority",
+    "government",
+    "department",
+    "organisation",
+    "postNames",
+    "serviceNames",
+    "qualificationTerms",
+    "locationTerms",
+    "skillTerms"
+  ],
+  "cycleRule": {
+    "useSeparateExamIdWhen": [
+      "scheme changes",
+      "syllabus changes materially",
+      "eligibility changes materially",
+      "post list changes materially",
+      "recruitment authority changes",
+      "official cycle identity changes"
+    ],
+    "historicalCyclesMustRemainSearchable": true
+  }
+}
