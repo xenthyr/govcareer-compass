@@ -1,266 +1,44 @@
 /**
  * GovCareer Compass
- * Accessible modal manager
+ * ============================================================
+ * Accessible Modal Manager
+ * ============================================================
  */
 
 let activeModal = null;
-let lastFocusedElement = null;
-
-function createModal({
-  id = `gcc-modal-${Date.now()}`,
-  title = '',
-  content = '',
-  size = 'medium',
-  closeOnBackdrop = true,
-  closeOnEscape = true
-} = {}) {
-  const existing =
-    document.getElementById(id);
-
-  if (existing) {
-    existing.remove();
-  }
-
-  const modal =
-    document.createElement('div');
-
-  modal.id = id;
-  modal.className =
-    `gcc-modal gcc-modal--${size}`;
-  modal.hidden = true;
-
-  modal.innerHTML = `
-    <div
-      class="gcc-modal__backdrop"
-      data-modal-backdrop
-    ></div>
-
-    <section
-      class="gcc-modal__dialog"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="${id}-title"
-      tabindex="-1"
-    >
-      <header class="gcc-modal__header">
-        <h2
-          id="${id}-title"
-          class="gcc-modal__title"
-        >
-          ${escapeHtml(title)}
-        </h2>
-
-        <button
-          type="button"
-          class="gcc-modal__close"
-          data-modal-close
-          aria-label="Close dialog"
-        >
-          <span aria-hidden="true">×</span>
-        </button>
-      </header>
-
-      <div class="gcc-modal__body">
-        ${content}
-      </div>
-    </section>
-  `;
-
-  document.body.appendChild(
-    modal
-  );
-
-  const closeButton =
-    modal.querySelector(
-      '[data-modal-close]'
-    );
-
-  const backdrop =
-    modal.querySelector(
-      '[data-modal-backdrop]'
-    );
-
-  closeButton.addEventListener(
-    'click',
-    () => closeModal(id)
-  );
-
-  if (closeOnBackdrop) {
-    backdrop.addEventListener(
-      'click',
-      () => closeModal(id)
-    );
-  }
-
-  modal.dataset.closeOnEscape =
-    String(closeOnEscape);
-
-  return modal;
-}
-
-function openModal(
-  modalOrId,
-  options = {}
-) {
-  let modal =
-    typeof modalOrId === 'string'
-      ? document.getElementById(
-          modalOrId
-        )
-      : modalOrId;
-
-  if (!modal) {
-    modal = createModal(options);
-  }
-
-  if (activeModal) {
-    closeModal(
-      activeModal.id,
-      {
-        restoreFocus: false
-      }
-    );
-  }
-
-  lastFocusedElement =
-    document.activeElement;
-
-  activeModal = modal;
-
-  modal.hidden = false;
-
-  document.body.classList.add(
-    'modal-open'
-  );
-
-  requestAnimationFrame(() => {
-    modal.classList.add(
-      'is-open'
-    );
-  });
-
-  const dialog =
-    modal.querySelector(
-      '[role="dialog"]'
-    );
-
-  window.setTimeout(
-    () => dialog?.focus(),
-    30
-  );
-
-  return modal;
-}
-
-function closeModal(
-  modalId = null,
-  {
-    restoreFocus = true
-  } = {}
-) {
-  const modal =
-    modalId
-      ? document.getElementById(
-          modalId
-        )
-      : activeModal;
-
-  if (!modal) {
-    return;
-  }
-
-  modal.classList.remove(
-    'is-open'
-  );
-
-  window.setTimeout(() => {
-    modal.hidden = true;
-
-    if (
-      modal.dataset.destroyOnClose ===
-      'true'
-    ) {
-      modal.remove();
-    }
-  }, 220);
-
-  activeModal = null;
-
-  document.body.classList.remove(
-    'modal-open'
-  );
-
-  if (
-    restoreFocus &&
-    lastFocusedElement &&
-    document.contains(
-      lastFocusedElement
-    )
-  ) {
-    lastFocusedElement.focus();
-  }
-
-  lastFocusedElement = null;
-}
-
-function destroyModal(modalId) {
-  const modal =
-    document.getElementById(
-      modalId
-    );
-
-  if (!modal) {
-    return;
-  }
-
-  if (
-    activeModal?.id ===
-    modalId
-  ) {
-    closeModal(
-      modalId,
-      {
-        restoreFocus: false
-      }
-    );
-  }
-
-  modal.remove();
-}
+let previouslyFocusedElement = null;
 
 function getFocusableElements(
-  modal
+  container
 ) {
+  if (
+    !container
+  ) {
+    return [];
+  }
+
   return [
-    ...modal.querySelectorAll(
-      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    ...container.querySelectorAll(
+      [
+        'a[href]',
+        'button:not([disabled])',
+        'input:not([disabled])',
+        'select:not([disabled])',
+        'textarea:not([disabled])',
+        '[tabindex]:not([tabindex="-1"])'
+      ].join(',')
     )
-  ].filter(
-    (element) =>
-      !element.hasAttribute(
-        'hidden'
-      )
-  );
+  ];
 }
 
-function handleModalKeyboard(
+function trapFocus(
   event
 ) {
-  if (!activeModal) {
-    return;
-  }
-
   if (
-    event.key ===
-      'Escape' &&
-    activeModal.dataset
-      .closeOnEscape !== 'false'
+    !activeModal ||
+    event.key !==
+      'Tab'
   ) {
-    closeModal();
-    return;
-  }
-
-  if (event.key !== 'Tab') {
     return;
   }
 
@@ -269,7 +47,12 @@ function handleModalKeyboard(
       activeModal
     );
 
-  if (!focusable.length) {
+  if (
+    focusable.length ===
+    0
+  ) {
+    event.preventDefault();
+    activeModal.focus();
     return;
   }
 
@@ -278,7 +61,8 @@ function handleModalKeyboard(
 
   const last =
     focusable[
-      focusable.length - 1
+      focusable.length -
+        1
     ];
 
   if (
@@ -298,89 +82,245 @@ function handleModalKeyboard(
   }
 }
 
-function bindModalTriggers(
-  root = document
+function openModal(
+  modalOrId,
+  {
+    focus = true
+  } = {}
 ) {
-  root
-    .querySelectorAll(
-      '[data-modal-open]'
-    )
-    .forEach((trigger) => {
-      if (
-        trigger.dataset.modalBound ===
-        'true'
-      ) {
-        return;
-      }
+  const modal =
+    typeof modalOrId ===
+      'string'
+      ? document.getElementById(
+          modalOrId
+        )
+      : modalOrId;
 
-      trigger.dataset.modalBound =
-        'true';
+  if (
+    !modal
+  ) {
+    return false;
+  }
 
-      trigger.addEventListener(
-        'click',
-        () => {
-          const id =
-            trigger.dataset.modalOpen;
+  previouslyFocusedElement =
+    document.activeElement;
 
-          openModal(id);
-        }
-      );
-    });
+  activeModal =
+    modal;
 
-  root
-    .querySelectorAll(
-      '[data-modal-close]'
-    )
-    .forEach((button) => {
-      if (
-        button.dataset.modalBound ===
-        'true'
-      ) {
-        return;
-      }
-
-      button.dataset.modalBound =
-        'true';
-
-      button.addEventListener(
-        'click',
-        () => closeModal()
-      );
-    });
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
-function initModal() {
-  document.addEventListener(
-    'keydown',
-    handleModalKeyboard
+  modal.classList.add(
+    'is-open'
   );
 
-  bindModalTriggers();
+  modal.removeAttribute(
+    'hidden'
+  );
+
+  modal.setAttribute(
+    'aria-hidden',
+    'false'
+  );
+
+  document.documentElement.classList.add(
+    'modal-open'
+  );
+
+  if (
+    focus
+  ) {
+    const focusable =
+      getFocusableElements(
+        modal
+      );
+
+    (
+      focusable[0] ||
+      modal
+    ).focus();
+  }
+
+  document.dispatchEvent(
+    new CustomEvent(
+      'govcareer:modalopen',
+      {
+        detail: {
+          modal
+        }
+      }
+    )
+  );
+
+  return true;
+}
+
+function closeModal(
+  modalOrId =
+    activeModal
+) {
+  const modal =
+    typeof modalOrId ===
+      'string'
+      ? document.getElementById(
+          modalOrId
+        )
+      : modalOrId;
+
+  if (
+    !modal
+  ) {
+    return false;
+  }
+
+  modal.classList.remove(
+    'is-open'
+  );
+
+  modal.setAttribute(
+    'aria-hidden',
+    'true'
+  );
+
+  modal.setAttribute(
+    'hidden',
+    ''
+  );
+
+  if (
+    modal ===
+    activeModal
+  ) {
+    activeModal =
+      null;
+
+    document.documentElement.classList.remove(
+      'modal-open'
+    );
+
+    if (
+      previouslyFocusedElement &&
+      document.contains(
+        previouslyFocusedElement
+      )
+    ) {
+      previouslyFocusedElement.focus();
+    }
+
+    previouslyFocusedElement =
+      null;
+  }
+
+  document.dispatchEvent(
+    new CustomEvent(
+      'govcareer:modalclose',
+      {
+        detail: {
+          modal
+        }
+      }
+    )
+  );
+
+  return true;
+}
+
+function closeActiveModal() {
+  return closeModal(
+    activeModal
+  );
+}
+
+function bindModalControls() {
+  document.addEventListener(
+    'click',
+    (event) => {
+      const opener =
+        event.target.closest(
+          '[data-modal-open]'
+        );
+
+      if (
+        opener
+      ) {
+        event.preventDefault();
+
+        openModal(
+          opener.dataset.modalOpen
+        );
+
+        return;
+      }
+
+      const closer =
+        event.target.closest(
+          '[data-modal-close]'
+        );
+
+      if (
+        closer
+      ) {
+        event.preventDefault();
+
+        closeModal(
+          closer.closest(
+            '[role="dialog"], [data-modal]'
+          )
+        );
+
+        return;
+      }
+
+      if (
+        activeModal &&
+        event.target ===
+          activeModal &&
+        activeModal.dataset.modalBackdropClose !==
+          'false'
+      ) {
+        closeActiveModal();
+      }
+    }
+  );
+
+  document.addEventListener(
+    'keydown',
+    trapFocus
+  );
+
+  document.addEventListener(
+    'govcareer:escape',
+    () => {
+      closeActiveModal();
+    }
+  );
+}
+
+function initializeModalSystem() {
+  bindModalControls();
+
+  document
+    .querySelectorAll(
+      '[data-modal][hidden]'
+    )
+    .forEach(
+      (modal) => {
+        modal.setAttribute(
+          'aria-hidden',
+          'true'
+        );
+      }
+    );
 }
 
 export {
-  initModal,
-  createModal,
   openModal,
   closeModal,
-  destroyModal,
-  bindModalTriggers
+  closeActiveModal,
+  initializeModalSystem
 };
 
 export default {
-  initModal,
-  createModal,
   openModal,
   closeModal,
-  destroyModal,
-  bindModalTriggers
+  closeActiveModal,
+  initializeModalSystem
 };
