@@ -1,6 +1,6 @@
 /**
  * GovCareer Compass
- * Normalizes CompassAI server responses for the UI.
+ * CompassAI response normalization.
  */
 
 export function parseCompassResponse(
@@ -8,14 +8,17 @@ export function parseCompassResponse(
 ) {
   if (
     !response ||
-    typeof response !== "object"
+    typeof response !==
+      "object"
   ) {
     throw new Error(
       "Invalid CompassAI response."
     );
   }
 
-  if (response.ok === false) {
+  if (
+    response.ok === false
+  ) {
     throw new Error(
       response.error?.message ||
         "CompassAI request failed."
@@ -23,30 +26,50 @@ export function parseCompassResponse(
   }
 
   const answer =
-    typeof response.answer === "string"
+    typeof response.answer ===
+      "string"
       ? response.answer.trim()
       : "";
 
   if (!answer) {
     throw new Error(
-      "CompassAI did not return an answer."
+      "CompassAI returned an empty answer."
     );
   }
 
   return {
     answer,
+
     assistant:
       response.assistant ||
       "CompassAI",
-    language:
-      response.language || "en",
+
+    provider:
+      response.provider ||
+      "OpenRouter",
+
     model:
-      response.model || null,
-    scope: Array.isArray(response.scope)
-      ? response.scope
-      : [],
+      response.model ||
+      null,
+
+    language:
+      response.language ||
+      "en",
+
+    scope:
+      Array.isArray(
+        response.scope
+      )
+        ? response.scope
+        : [],
+
     researchBaseline:
-      response.researchBaseline || null
+      response.researchBaseline ||
+      null,
+
+    usage:
+      response.usage ||
+      null
   };
 }
 
