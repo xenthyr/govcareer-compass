@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "assessment-profile-field.schema.json",
+  "title": "GovCareer Compass Assessment Profile Field Catalogue",
+  "description": "Schema for the mappings between assessment answers and the normalized candidate profile.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "lastUpdated",
+    "profileNamespace",
+    "fields"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date"
+    },
+    "schema": {
+      "type": "string"
+    },
+    "profileNamespace": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "principles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "fields": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/field"
+      }
+    }
+  },
+  "$defs": {
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "path",
+        "type",
+        "source"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]*$"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_.-]+$"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "STRING",
+            "STRING_OR_EMPTY",
+            "BOOLEAN",
+            "BOOLEAN_OR_UNKNOWN",
+            "NUMBER",
+            "ENUM",
+            "ENUM_ARRAY",
+            "SCORE",
+            "SCORE_OR_UNKNOWN",
+            "STATE_ID",
+            "GOVERNMENT_ID_ARRAY",
+            "GOVERNMENT_PREFERENCE_ARRAY",
+            "CATEGORY_ID_ARRAY",
+            "WORK_STYLE_ARRAY",
+            "QUALIFICATION_ARRAY",
+            "TRADE_ARRAY",
+            "REGISTRATION_ARRAY"
+          ]
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceRegistry": {
+          "type": "string"
+        },
+        "qualificationSource": {
+          "type": "string"
+        },
+        "description": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "en"
+          ],
+          "properties": {
+            "en": {
+              "type": "string"
+            },
+            "bn": {
+              "type": "string"
+            }
+          }
+        },
+        "range": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "min",
+            "max"
+          ],
+          "properties": {
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            }
+          }
+        },
+        "sensitive": {
+          "type": "boolean"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "SCORE",
+                  "SCORE_OR_UNKNOWN"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "range"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
