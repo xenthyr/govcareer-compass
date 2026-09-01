@@ -1361,4 +1361,164 @@ The Recommendation Model depends on:
 /data/common/
     categories.json
     governments.json
-    stat
+    states.json
+    locations.json
+    scoring-rules.json
+    confidence-levels.json
+
+/data/assessment/
+    profile-fields.json
+    response-scoring.json
+
+/data/central/
+    jobs.json
+    exams.json
+    recruitment.json
+    pay.json
+    locations.json
+    housing.json
+    promotion.json
+    benefits.json
+
+/data/states/west-bengal/
+    jobs.json
+    exams.json
+    recruitment.json
+    pay.json
+    locations.json
+    housing.json
+    promotion.json
+    benefits.json
+
+
+---
+
+50. Recommendation Testing
+
+The system must test at least:
+
+Family-first profile
+
+Increasing family and parent-care priority should increase the influence of compatible careers.
+
+Salary-first profile
+
+Increasing salary importance should increase salary influence.
+
+Authority-first profile
+
+Increasing authority importance should increase authority influence.
+
+Kolkata-first profile
+
+Increasing Kolkata importance should increase the influence of validated Kolkata stability.
+
+Low-risk profile
+
+Increasing low-risk importance should reduce the suitability of high-risk careers.
+
+Low-night-duty profile
+
+Increasing night-duty avoidance should reduce the suitability of careers with higher validated night-duty burden.
+
+Low-transfer profile
+
+Increasing transfer avoidance should reduce suitability of transfer-heavy careers.
+
+Central Government profile
+
+Central Government careers should receive stronger government-fit when Central preference is high.
+
+Eligibility protection
+
+Preference changes must never turn:
+
+NOT_ELIGIBLE
+
+into:
+
+ELIGIBLE
+
+
+---
+
+51. Recommendation Acceptance Criteria
+
+The Recommendation Model is correctly implemented when:
+
+hard eligibility is evaluated before normal recommendation;
+
+soft preferences remain separate;
+
+State and Central preferences work independently;
+
+Kolkata preference works independently from general state preference;
+
+family and parent-care priorities can influence ranking;
+
+salary can be prioritised;
+
+authority can be prioritised;
+
+prestige can be prioritised;
+
+work-life can be prioritised;
+
+transfer can be considered;
+
+night duty can be considered;
+
+physical risk can be considered;
+
+housing can be considered;
+
+career growth can be considered;
+
+English background can be considered;
+
+exam difficulty can be shown;
+
+uncertainty is preserved;
+
+major trade-offs are visible;
+
+recommendation explanations are data-derived;
+
+no universal winner is hard-coded;
+
+the engine remains expandable to additional states;
+
+AI does not override deterministic eligibility logic.
+
+
+
+---
+
+52. Final Recommendation Rule
+
+> GovCareer Compass should recommend careers because their verified characteristics align with the candidate's explicitly stated priorities, not because the system assumes those careers are universally superior.
+
+
+
+The recommendation engine must optimise for:
+
+Candidate priorities
+        +
+Verified career characteristics
+        +
+Eligibility status
+        +
+Transparent scoring
+        +
+Evidence quality
+        +
+Explicit uncertainty
+
+and never for:
+
+Popularity
+Salary alone
+Prestige alone
+Developer preference
+Hidden assumptions
+Unverified claims
