@@ -1,208 +1,260 @@
 /**
  * GovCareer Compass
- * Global search controller
+ * ============================================================
+ * Global Search Engine
+ * ============================================================
  *
- * The canonical search source is the derived:
- * /data/indexes/search-index.json
+ * Searches across:
+ * - Jobs
+ * - Exams
+ * - Departments
+ * - Organisations
+ * - Service Cadres
+ * - Qualifications
  *
- * Search never decides eligibility.
- * Search only discovers records.
+ * Search is intentionally tolerant of incomplete index files.
+ * Canonical registry records remain the fallback.
  */
 
-import config from './config.js';
+import registry from './database/registry.js';
+import {
+  tokenize
+} from './database/indexes.js';
 
-let searchIndex = null;
-let searchLoaded = false;
-let searchLoadingPromise = null;
+const SEARCHABLE_ENTITIES =
+  Object.freeze([
+    {
+      type: 'JOB',
+      label: 'Job'
+    },
+    {
+      type: 'EXAM',
+      label: 'Exam'
+    },
+    {
+      type: 'DEPARTMENT',
+      label: 'Department'
+    },
+    {
+      type: 'ORGANISATION',
+      label: 'Organisation'
+    },
+    {
+      type: 'SERVICE_CADRE',
+      label: 'Service / Cadre'
+    },
+    {
+      type: 'QUALIFICATION',
+      label: 'Qualification'
+    }
+  ]);
 
-function normalizeText(value) {
-  return String(value ?? '')
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
+function normalizeText(
+  value
+) {
+  return String(
+    value || ''
+  )
+    .normalize(
+      'NFKD'
+    )
+    .replace(
+      /[\u0300-\u036f]/g,
+      ''
+    )
     .toLowerCase()
-    .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
-    .replace(/\s+/g, ' ')
     .trim();
 }
 
-function tokenize(query) {
-  return normalizeText(query)
-    .split(' ')
-    .filter(
-      (token) =>
-        token.length >= 2
-    );
-}
-
-async function loadSearchIndex() {
-  if (searchLoaded) {
-    return searchIndex;
-  }
-
-  if (searchLoadingPromise) {
-    return searchLoadingPromise;
-  }
-
-  searchLoadingPromise =
-    fetch(
-      config.data.indexes.search,
-      {
-        cache: 'no-store'
-      }
-    )
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error(
-            `Search index failed: ${response.status}`
-          );
-        }
-
-        const data =
-          await response.json();
-
-        searchIndex = data;
-        searchLoaded = true;
-
-        return data;
-      })
-      .finally(() => {
-        searchLoadingPromise = null;
-      });
-
-  return searchLoadingPromise;
-}
-
-function getDocuments() {
+function getLocalizedText(
+  value
+) {
   if (
-    !searchIndex ||
-    !Array.isArray(
-      searchIndex.documents
+    typeof value ===
+    'string'
+  ) {
+    return value;
+  }
+
+  if (
+    value &&
+    typeof value ===
+      'object'
+  ) {
+    return (
+      value.en ||
+      value.bn ||
+      Object.values(
+        value
+      )[0] ||
+      ''
+    );
+  }
+
+  return '';
+}
+
+function getRecordSearchText(
+  record
+) {
+  if (
+    !record ||
+    typeof record !==
+      'object'
+  ) {
+    return '';
+  }
+
+  const parts = [];
+
+  const directFields = [
+    'id',
+    'post',
+    'postName',
+    'name',
+    'title',
+    'shortName',
+    'fullForm',
+    'description',
+    'keywords',
+    'searchText',
+    'departmentName',
+    'organisationName',
+    'serviceCadreName',
+    'examName',
+    'abbreviation',
+    'category',
+    'jobCategory',
+    'qualification',
+    'status',
+    'payLevel',
+    'governmentId',
+    'stateId'
+  ];
+
+  directFields.forEach(
+    (field) => {
+      const value =
+        record[
+          field
+        ];
+
+      if (
+        Array.isArray(
+          value
+        )
+      ) {
+        value.forEach(
+          (item) => {
+            parts.push(
+              getLocalizedText(
+                item
+              )
+            );
+          }
+        );
+      } else {
+        parts.push(
+          getLocalizedText(
+            value
+          )
+        );
+      }
+    }
+  );
+
+  if (
+    Array.isArray(
+      record.aliases
     )
   ) {
-    return [];
+    parts.push(
+      ...record.aliases
+    );
   }
 
-  return searchIndex.documents;
+  return normalizeText(
+    parts
+      .filter(Boolean)
+      .join(' ')
+  );
 }
 
-function scoreDocument(
-  document,
-  query
+function scoreRecord(
+  record,
+  queryTokens
 ) {
-  const normalizedQuery =
-    normalizeText(query);
+  const text =
+    getRecordSearchText(
+      record
+    );
 
-  if (!normalizedQuery) {
+  if (
+    !text
+  ) {
     return 0;
   }
 
-  const tokens =
-    tokenize(query);
-
-  const name =
+  const normalizedId =
     normalizeText(
-      document.displayName?.en ||
-        document.displayName ||
-        ''
+      record.id
     );
 
-  const aliases =
-    Array.isArray(
-      document.aliases
-    )
-      ? document.aliases.map(
-          normalizeText
-        )
-      : [];
-
-  const abbreviations =
-    Array.isArray(
-      document.abbreviations
-    )
-      ? document.abbreviations.map(
-          normalizeText
-        )
-      : [];
-
-  const fullForms =
-    Array.isArray(
-      document.fullForms
-    )
-      ? document.fullForms.map(
-          normalizeText
-        )
-      : [];
-
-  const searchText =
+  const primaryName =
     normalizeText(
-      document.searchText ||
-        ''
-    );
-
-  let score = 0;
-
-  if (name === normalizedQuery) {
-    score += 900;
-  } else if (
-    name.startsWith(
-      normalizedQuery
-    )
-  ) {
-    score += 700;
-  } else if (
-    name.includes(
-      normalizedQuery
-    )
-  ) {
-    score += 600;
-  }
-
-  if (
-    aliases.includes(
-      normalizedQuery
-    )
-  ) {
-    score += 450;
-  }
-
-  if (
-    abbreviations.includes(
-      normalizedQuery
-    )
-  ) {
-    score += 850;
-  }
-
-  if (
-    fullForms.includes(
-      normalizedQuery
-    )
-  ) {
-    score += 840;
-  }
-
-  tokens.forEach((token) => {
-    if (
-      name.includes(token)
-    ) {
-      score += 100;
-    }
-
-    if (
-      searchText.includes(token)
-    ) {
-      score += 40;
-    }
-
-    if (
-      aliases.some(
-        (alias) =>
-          alias.includes(token)
+      getLocalizedText(
+        record.name ||
+          record.post ||
+          record.title
       )
-    ) {
-      score += 30;
+    );
+
+  let score =
+    0;
+
+  queryTokens.forEach(
+    (token) => {
+      if (
+        normalizedId ===
+        token
+      ) {
+        score += 100;
+      } else if (
+        normalizedId.includes(
+          token
+        )
+      ) {
+        score += 35;
+      }
+
+      if (
+        primaryName ===
+        token
+      ) {
+        score += 90;
+      } else if (
+        primaryName.startsWith(
+          token
+        )
+      ) {
+        score += 55;
+      } else if (
+        primaryName.includes(
+          token
+        )
+      ) {
+        score += 40;
+      }
+
+      if (
+        text.includes(
+          token
+        )
+      ) {
+        score += 15;
+      }
     }
-  });
+  );
 
   return score;
 }
@@ -210,269 +262,253 @@ function scoreDocument(
 function search(
   query,
   {
-    type = null,
-    governmentId = null,
-    stateId = null,
-    limit = 25
+    entities =
+      SEARCHABLE_ENTITIES.map(
+        (item) =>
+          item.type
+      ),
+    limit = 30
   } = {}
 ) {
   const normalizedQuery =
-    normalizeText(query);
+    normalizeText(
+      query
+    );
 
   if (
-    !normalizedQuery ||
-    !searchIndex
+    normalizedQuery.length <
+    1
   ) {
     return [];
   }
 
-  const documents =
-    getDocuments();
+  const queryTokens =
+    tokenize(
+      normalizedQuery
+    );
 
-  return documents
-    .filter((document) => {
-      if (
-        type &&
-        document.type !== type
-      ) {
-        return false;
-      }
-
-      if (
-        governmentId &&
-        document.governmentId !==
-          governmentId
-      ) {
-        return false;
-      }
-
-      if (
-        stateId &&
-        document.stateId !==
-          stateId
-      ) {
-        return false;
-      }
-
-      return true;
-    })
-    .map((document) => ({
-      ...document,
-      _score:
-        scoreDocument(
-          document,
-          normalizedQuery
-        )
-    }))
-    .filter(
-      (document) =>
-        document._score > 0
-    )
-    .sort(
-      (a, b) =>
-        b._score - a._score
-    )
-    .slice(0, limit);
-}
-
-function renderSearchResults(
-  results,
-  container,
-  {
-    emptyMessage = 'No results found.'
-  } = {}
-) {
-  if (!container) {
-    return;
+  if (
+    queryTokens.length ===
+    0
+  ) {
+    return [];
   }
 
-  if (!results.length) {
-    container.innerHTML = `
-      <div class="search-empty">
-        ${escapeHtml(
-          emptyMessage
-        )}
-      </div>
-    `;
-    return;
-  }
+  const results = [];
 
-  container.innerHTML =
-    results
-      .map(
-        (result) => `
-          <article
-            class="search-result"
-            data-search-result-id="${escapeHtml(
-              result.canonicalId ||
-                result.id
-            )}"
-          >
-            <div class="search-result__type">
-              ${escapeHtml(
-                result.type ||
-                  ''
-              )}
-            </div>
+  entities.forEach(
+    (entityType) => {
+      const meta =
+        SEARCHABLE_ENTITIES.find(
+          (item) =>
+            item.type ===
+            entityType
+        );
 
-            <h3 class="search-result__title">
-              ${escapeHtml(
-                result.displayName
-                  ?.en ||
-                  result.displayName ||
-                  ''
-              )}
-            </h3>
+      if (
+        !meta
+      ) {
+        return;
+      }
 
-            ${
-              result.abbreviations
-                ?.length
-                ? `
-                <div class="search-result__meta">
-                  ${result.abbreviations
-                    .map(
-                      (item) =>
-                        `<span>${escapeHtml(
-                          item
-                        )}</span>`
-                    )
-                    .join('')}
-                </div>
-              `
-                : ''
-            }
+      const records =
+        registry.getAll(
+          entityType
+        );
 
-            <button
-              type="button"
-              class="search-result__action"
-              data-search-open
-              data-search-type="${escapeHtml(
-                result.type
-              )}"
-              data-search-id="${escapeHtml(
-                result.canonicalId ||
-                  result.id
-              )}"
-            >
-              View details
-            </button>
-          </article>
-        `
-      )
-      .join('');
-}
-
-function bindSearch(
-  input,
-  resultsContainer,
-  options = {}
-) {
-  if (!input) {
-    return;
-  }
-
-  let timer = null;
-
-  input.addEventListener(
-    'input',
-    () => {
-      window.clearTimeout(
-        timer
-      );
-
-      timer = window.setTimeout(
-        () => {
-          const results =
-            search(
-              input.value,
-              options
+      records.forEach(
+        (record) => {
+          const score =
+            scoreRecord(
+              record,
+              queryTokens
             );
 
-          renderSearchResults(
-            results,
-            resultsContainer,
-            options
-          );
+          if (
+            score <= 0
+          ) {
+            return;
+          }
 
-          window.dispatchEvent(
-            new CustomEvent(
-              'gcc:search',
-              {
-                detail: {
-                  query:
-                    input.value,
-                  results
-                }
-              }
-            )
-          );
-        },
-        config.ui.searchDebounceMs
+          results.push({
+            id:
+              record.id,
+
+            type:
+              entityType,
+
+            typeLabel:
+              meta.label,
+
+            title:
+              getLocalizedText(
+                record.post ||
+                  record.name ||
+                  record.title
+              ),
+
+            record,
+
+            score
+          });
+        }
+      );
+    }
+  );
+
+  return results
+    .sort(
+      (a, b) =>
+        b.score -
+        a.score ||
+        a.title.localeCompare(
+          b.title
+        )
+    )
+    .slice(
+      0,
+      Math.max(
+        1,
+        Number(
+          limit
+        ) || 30
+      )
+    );
+}
+
+function highlightText(
+  text,
+  query
+) {
+  const source =
+    String(
+      text || ''
+    );
+
+  const normalized =
+    String(
+      query || ''
+    ).trim();
+
+  if (
+    !normalized
+  ) {
+    return escapeHtml(
+      source
+    );
+  }
+
+  const escaped =
+    escapeRegExp(
+      normalized
+    );
+
+  return escapeHtml(
+    source
+  ).replace(
+    new RegExp(
+      `(${escaped})`,
+      'ig'
+    ),
+    '<mark>$1</mark>'
+  );
+}
+
+function escapeRegExp(
+  value
+) {
+  return String(
+    value
+  ).replace(
+    /[.*+?^${}()|[\]\\]/g,
+    '\\$&'
+  );
+}
+
+function escapeHtml(
+  value
+) {
+  return String(
+    value
+  )
+    .replace(
+      /&/g,
+      '&amp;'
+    )
+    .replace(
+      /</g,
+      '&lt;'
+    )
+    .replace(
+      />/g,
+      '&gt;'
+    )
+    .replace(
+      /"/g,
+      '&quot;'
+    )
+    .replace(
+      /'/g,
+      '&#039;'
+    );
+}
+
+function initializeSearch() {
+  document.addEventListener(
+    'input',
+    (event) => {
+      const input =
+        event.target.closest(
+          '[data-search-input]'
+        );
+
+      if (
+        !input
+      ) {
+        return;
+      }
+
+      const query =
+        input.value;
+
+      const results =
+        search(
+          query,
+          {
+            limit:
+              Number(
+                input.dataset.searchLimit
+              ) || 8
+          }
+        );
+
+      document.dispatchEvent(
+        new CustomEvent(
+          'govcareer:search',
+          {
+            detail: {
+              query,
+              results
+            }
+          }
+        )
       );
     }
   );
 }
 
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
-async function initSearch() {
-  try {
-    await loadSearchIndex();
-
-    document
-      .querySelectorAll(
-        '[data-global-search]'
-      )
-      .forEach((input) => {
-        const resultsId =
-          input.dataset
-            .globalSearchResults;
-
-        const resultsContainer =
-          resultsId
-            ? document.getElementById(
-                resultsId
-              )
-            : null;
-
-        bindSearch(
-          input,
-          resultsContainer
-        );
-      });
-
-    return true;
-  } catch (error) {
-    console.error(
-      'Search initialization failed:',
-      error
-    );
-
-    return false;
-  }
-}
-
 export {
-  initSearch,
-  loadSearchIndex,
-  search,
-  bindSearch,
-  renderSearchResults,
+  SEARCHABLE_ENTITIES,
   normalizeText,
-  tokenize
+  getRecordSearchText,
+  search,
+  highlightText,
+  escapeHtml,
+  initializeSearch
 };
 
 export default {
-  initSearch,
-  loadSearchIndex,
   search,
-  bindSearch,
-  renderSearchResults
+  highlightText,
+  initializeSearch
 };
