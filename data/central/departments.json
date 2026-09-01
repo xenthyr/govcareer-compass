@@ -1,0 +1,178 @@
+{
+  "$schema": "../../schemas/department.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "central-government",
+  "lastVerified": "2026-08-31",
+  "departments": [
+    {
+      "id": "dept-dopt",
+      "name": "Department of Personnel and Training",
+      "abbreviation": "DoPT",
+      "governmentId": "central-government",
+      "ministry": "Ministry of Personnel, Public Grievances and Pensions",
+      "organisationIds": [
+        "org-dopt"
+      ],
+      "careerRelevance": "ADMINISTRATIVE",
+      "sourceIds": [
+        "src-ssc-cgl-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "dept-revenue",
+      "name": "Department of Revenue",
+      "governmentId": "central-government",
+      "ministry": "Ministry of Finance",
+      "organisationIds": [
+        "org-cbdt",
+        "org-cbic",
+        "org-ed"
+      ],
+      "careerRelevance": "TAX_ENFORCEMENT_REVENUE",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final",
+        "src-cbic"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "dept-home",
+      "name": "Ministry of Home Affairs",
+      "abbreviation": "MHA",
+      "governmentId": "central-government",
+      "organisationIds": [
+        "org-ib",
+        "org-capf"
+      ],
+      "careerRelevance": "SECURITY_INTELLIGENCE",
+      "sourceIds": [
+        "src-ib-sa-2025"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "dept-mopg",
+      "name": "Ministry of Personnel, Public Grievances and Pensions",
+      "governmentId": "central-government",
+      "organisationIds": [
+        "org-cbi"
+      ],
+      "careerRelevance": "INVESTIGATION_ADMINISTRATION",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "dept-labour",
+      "name": "Ministry of Labour and Employment",
+      "governmentId": "central-government",
+      "organisationIds": [
+        "org-epfo"
+      ],
+      "careerRelevance": "SOCIAL_SECURITY_ADMINISTRATION",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "dept-communications",
+      "name": "Ministry of Communications",
+      "governmentId": "central-government",
+      "organisationIds": [
+        "org-india-post"
+      ],
+      "careerRelevance": "POSTAL_ADMINISTRATION",
+      "sourceIds": [
+        "src-india-post-rr"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "dept-railways",
+      "name": "Ministry of Railways",
+      "governmentId": "central-government",
+      "organisationIds": [
+        "org-rrb",
+        "org-rpf"
+      ],
+      "careerRelevance": "RAILWAY_OPERATIONS_SECURITY",
+      "sourceIds": [
+        "src-rrb-employment-notices"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "dept-defence",
+      "name": "Ministry of Defence",
+      "governmentId": "central-government",
+      "organisationIds": [
+        "org-defence-services"
+      ],
+      "careerRelevance": "DEFENCE",
+      "sourceIds": [
+        "src-upsc-cds-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "dept-external-affairs",
+      "name": "Ministry of External Affairs",
+      "governmentId": "central-government",
+      "organisationIds": [
+        "org-mea"
+      ],
+      "careerRelevance": "FOREIGN_SERVICE_ADMINISTRATION",
+      "sourceIds": [
+        "src-upsc-cse-2026",
+        "src-ssc-steno-2025"
+      ],
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "dept-cag",
+      "name": "Comptroller and Auditor General of India",
+      "abbreviation": "CAG",
+      "governmentId": "central-government",
+      "organisationIds": [
+        "org-cag"
+      ],
+      "careerRelevance": "AUDIT_ACCOUNTS",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final",
+        "src-ssc-cgl-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "dept-posts",
+      "name": "Department of Posts",
+      "governmentId": "central-government",
+      "organisationIds": [
+        "org-india-post"
+      ],
+      "careerRelevance": "POSTAL",
+      "sourceIds": [
+        "src-india-post-rr"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "dept-ndma",
+      "name": "National Disaster Management Authority",
+      "abbreviation": "NDMA",
+      "governmentId": "central-government",
+      "organisationIds": [
+        "org-ndma"
+      ],
+      "careerRelevance": "DISASTER_MANAGEMENT",
+      "sourceIds": [
+        "src-employment-news"
+      ],
+      "confidence": "MEDIUM"
+    }
+  ]
+}
