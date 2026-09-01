@@ -1,584 +1,515 @@
 /**
  * GovCareer Compass
- * Generic multi-filter engine
+ * ============================================================
+ * Career Filter State
+ * ============================================================
  *
- * Filters are intentionally separate from recommendation scoring.
+ * Filters are presentation/discovery controls.
  *
- * Eligibility:
- *   hard rules
- *
- * Filtering:
- *   user-selected data constraints
- *
- * Recommendation:
- *   preference/scoring engine
+ * They NEVER replace the eligibility engine.
  */
 
-import storage from './storage.js';
-import config from './config.js';
+import {
+  getItem,
+  setItem
+} from './storage.js';
 
-function normalizeArray(value) {
-  if (Array.isArray(value)) {
-    return value;
-  }
+import {
+  STORAGE_KEYS
+} from './config.js';
 
+const DEFAULT_FILTERS =
+  Object.freeze({
+    government:
+      [],
+
+    state:
+      [],
+
+    educationalLevel:
+      [],
+
+    eligibility:
+      [],
+
+    category:
+      [],
+
+    department:
+      [],
+
+    organisation:
+      [],
+
+    serviceCadre:
+      [],
+
+    paySystem:
+      [],
+
+    payLevel:
+      [],
+
+    location:
+      [],
+
+    workStyle:
+      [],
+
+    physical:
+      [],
+
+    family:
+      [],
+
+    stress:
+      [],
+
+    housing:
+      [],
+
+    recruitmentStatus:
+      [],
+
+    employmentStatus:
+      []
+  });
+
+let activeFilters =
+  {
+    ...DEFAULT_FILTERS
+  };
+
+function normalizeFilterValues(
+  values
+) {
   if (
-    value === undefined ||
-    value === null ||
-    value === ''
+    values ===
+      undefined ||
+    values ===
+      null
   ) {
     return [];
   }
 
-  return [value];
-}
+  const array =
+    Array.isArray(
+      values
+    )
+      ? values
+      : [
+          values
+        ];
 
-function getNestedValue(
-  object,
-  path
-) {
-  return String(path)
-    .split('.')
-    .reduce(
-      (current, key) =>
-        current !== undefined &&
-        current !== null
-          ? current[key]
-          : undefined,
-      object
-    );
-}
-
-function matchesValue(
-  itemValue,
-  expected
-) {
-  const expectedValues =
-    normalizeArray(expected);
-
-  if (
-    expectedValues.length === 0
-  ) {
-    return true;
-  }
-
-  const itemValues =
-    normalizeArray(
-      itemValue
-    );
-
-  return expectedValues.some(
-    (expectedValue) =>
-      itemValues.some(
-        (actualValue) =>
-          String(
-            actualValue
-          ) ===
-          String(
-            expectedValue
-          )
-      )
-  );
-}
-
-function matchesText(
-  item,
-  query,
-  fields = []
-) {
-  if (!query) {
-    return true;
-  }
-
-  const normalized =
-    String(query)
-      .toLowerCase()
-      .trim();
-
-  if (!normalized) {
-    return true;
-  }
-
-  const searchable =
-    fields
-      .map((field) =>
-        getNestedValue(
-          item,
-          field
+  return [
+    ...new Set(
+      array
+        .map(
+          (value) =>
+            String(
+              value
+            ).trim()
         )
-      )
-      .flatMap((value) =>
-        Array.isArray(value)
-          ? value
-          : [value]
-      )
-      .filter(
-        (value) =>
-          value !== undefined &&
-          value !== null
-      )
-      .join(' ')
-      .toLowerCase();
-
-  return searchable.includes(
-    normalized
-  );
+        .filter(Boolean)
+    )
+  ];
 }
 
-function compareNumeric(
-  value,
-  operator,
-  target
-) {
-  const actual =
-    Number(value);
-  const expected =
-    Number(target);
-
-  if (
-    !Number.isFinite(actual) ||
-    !Number.isFinite(expected)
-  ) {
-    return false;
-  }
-
-  switch (operator) {
-    case 'gte':
-      return actual >= expected;
-
-    case 'gt':
-      return actual > expected;
-
-    case 'lte':
-      return actual <= expected;
-
-    case 'lt':
-      return actual < expected;
-
-    case 'eq':
-      return actual === expected;
-
-    default:
-      return false;
-  }
-}
-
-function applyFilterSet(
-  items,
-  filters = {},
-  schema = {}
-) {
-  if (!Array.isArray(items)) {
-    return [];
-  }
-
-  return items.filter(
-    (item) => {
-      if (
-        filters.search &&
-        !matchesText(
-          item,
-          filters.search,
-          schema.searchFields || []
-        )
-      ) {
-        return false;
-      }
-
-      for (const [
-        filterKey,
-        filterConfig
-      ] of Object.entries(
-        schema.fields || {}
-      )) {
-        const selected =
-          filters[
-            filterKey
-          ];
-
-        if (
-          selected === undefined ||
-          selected === null ||
-          selected === '' ||
-          (
-            Array.isArray(
-              selected
-            ) &&
-            selected.length === 0
-          )
-        ) {
-          continue;
-        }
-
-        const actual =
-          getNestedValue(
-            item,
-            filterConfig.path ||
-              filterKey
-          );
-
-        switch (
-          filterConfig.type
-        ) {
-          case 'select':
-          case 'multi-select':
-            if (
-              !matchesValue(
-                actual,
-                selected
-              )
-            ) {
-              return false;
-            }
-            break;
-
-          case 'boolean':
-            if (
-              Boolean(actual) !==
-              Boolean(selected)
-            ) {
-              return false;
-            }
-            break;
-
-          case 'number':
-            if (
-              !compareNumeric(
-                actual,
-                filterConfig.operator ||
-                  'eq',
-                selected
-              )
-            ) {
-              return false;
-            }
-            break;
-
-          case 'range': {
-            const min =
-              selected.min;
-            const max =
-              selected.max;
-
-            if (
-              min !== undefined &&
-              !compareNumeric(
-                actual,
-                'gte',
-                min
-              )
-            ) {
-              return false;
-            }
-
-            if (
-              max !== undefined &&
-              !compareNumeric(
-                actual,
-                'lte',
-                max
-              )
-            ) {
-              return false;
-            }
-
-            break;
-          }
-
-          case 'text':
-            if (
-              !matchesText(
-                item,
-                selected,
-                [
-                  filterConfig.path ||
-                    filterKey
-                ]
-              )
-            ) {
-              return false;
-            }
-            break;
-
-          case 'custom':
-            if (
-              typeof filterConfig.test ===
-              'function' &&
-              !filterConfig.test(
-                actual,
-                item,
-                selected
-              )
-            ) {
-              return false;
-            }
-            break;
-
-          default:
-            break;
-        }
-      }
-
-      return true;
-    }
-  );
-}
-
-function getFilterState(
-  storageKey = config.storageKeys.filters
-) {
-  return storage.get(
-    storageKey,
-    {}
-  );
-}
-
-function saveFilterState(
-  filters,
-  storageKey = config.storageKeys.filters
-) {
-  storage.set(
-    storageKey,
-    filters
-  );
-}
-
-function clearFilterState(
-  storageKey = config.storageKeys.filters
-) {
-  storage.remove(
-    storageKey
-  );
-}
-
-function collectFormFilters(
-  form
-) {
-  const filters = {};
-
-  if (!form) {
-    return filters;
-  }
-
-  const elements =
-    form.querySelectorAll(
-      'input[name], select[name], textarea[name]'
-    );
-
-  elements.forEach(
-    (element) => {
-      const {
-        name,
-        type
-      } = element;
-
-      if (!name) {
-        return;
-      }
-
-      if (
-        type === 'checkbox'
-      ) {
-        const group =
-          form.querySelectorAll(
-            `input[name="${CSS.escape(
-              name
-            )}"][type="checkbox"]:checked`
-          );
-
-        filters[name] =
-          [...group].map(
-            (input) =>
-              input.value
-          );
-
-        return;
-      }
-
-      if (
-        type === 'radio'
-      ) {
-        if (!element.checked) {
-          return;
-        }
-      }
-
-      filters[name] =
-        element.value;
-    }
-  );
-
-  return filters;
-}
-
-function populateFormFromFilters(
-  form,
+function normalizeFilters(
   filters = {}
 ) {
-  if (!form) {
-    return;
+  const normalized = {};
+
+  Object.keys(
+    DEFAULT_FILTERS
+  ).forEach(
+    (key) => {
+      normalized[
+        key
+      ] =
+        normalizeFilterValues(
+          filters[
+            key
+          ]
+        );
+    }
+  );
+
+  return normalized;
+}
+
+function getFilters() {
+  return {
+    ...normalizeFilters(
+      activeFilters
+    )
+  };
+}
+
+function setFilters(
+  filters,
+  {
+    persist = true
+  } = {}
+) {
+  activeFilters =
+    normalizeFilters(
+      {
+        ...activeFilters,
+        ...(filters || {})
+      }
+    );
+
+  if (
+    persist
+  ) {
+    setItem(
+      STORAGE_KEYS.filters,
+      activeFilters
+    );
   }
 
-  Object.entries(
-    filters
-  ).forEach(
-    ([name, value]) => {
-      const elements =
-        form.querySelectorAll(
-          `[name="${CSS.escape(
-            name
-          )}"]`
-        );
+  document.dispatchEvent(
+    new CustomEvent(
+      'govcareer:filterschange',
+      {
+        detail: {
+          filters:
+            getFilters()
+        }
+      }
+    )
+  );
 
-      elements.forEach(
-        (element) => {
-          if (
-            element.type ===
-            'checkbox'
-          ) {
-            element.checked =
-              normalizeArray(
-                value
-              ).includes(
-                element.value
-              );
-          } else if (
-            element.type ===
-            'radio'
-          ) {
-            element.checked =
-              String(
-                value
-              ) ===
-              String(
-                element.value
-              );
-          } else {
-            element.value =
-              value ?? '';
-          }
+  return getFilters();
+}
+
+function resetFilters(
+  {
+    persist = true
+  } = {}
+) {
+  activeFilters =
+    normalizeFilters(
+      DEFAULT_FILTERS
+    );
+
+  if (
+    persist
+  ) {
+    setItem(
+      STORAGE_KEYS.filters,
+      activeFilters
+    );
+  }
+
+  document.dispatchEvent(
+    new CustomEvent(
+      'govcareer:filterschange',
+      {
+        detail: {
+          filters:
+            getFilters()
+        }
+      }
+    )
+  );
+
+  return getFilters();
+}
+
+function addFilter(
+  category,
+  value
+) {
+  const current =
+    activeFilters[
+      category
+    ] || [];
+
+  return setFilters({
+    [category]:
+      [
+        ...current,
+        value
+      ]
+  });
+}
+
+function removeFilter(
+  category,
+  value
+) {
+  const current =
+    activeFilters[
+      category
+    ] || [];
+
+  return setFilters({
+    [category]:
+      current.filter(
+        (item) =>
+          item !==
+          String(
+            value
+          )
+      )
+  });
+}
+
+function getActiveFilterChips() {
+  const chips = [];
+
+  Object.entries(
+    activeFilters
+  ).forEach(
+    ([
+      category,
+      values
+    ]) => {
+      values.forEach(
+        (value) => {
+          chips.push({
+            category,
+            value
+          });
         }
       );
     }
   );
+
+  return chips;
 }
 
-function renderFilterChips(
-  filters,
-  container,
-  labels = {}
+function recordMatchesFilter(
+  record,
+  category,
+  allowedValues
 ) {
-  if (!container) {
-    return;
+  if (
+    !allowedValues?.length
+  ) {
+    return true;
   }
 
-  const entries =
-    Object.entries(
-      filters || {}
-    ).filter(
-      ([, value]) =>
-        value !== undefined &&
-        value !== null &&
-        value !== '' &&
-        !(
-          Array.isArray(
-            value
-          ) &&
-          value.length === 0
-        )
-    );
+  const fieldMap = {
+    government:
+      'governmentId',
 
-  container.innerHTML =
-    entries
-      .map(
-        ([key, value]) => {
-          const label =
-            labels[key] ||
-            key;
+    state:
+      'stateId',
 
-          const display =
-            Array.isArray(value)
-              ? value.join(', ')
-              : typeof value ===
-                'object'
-              ? JSON.stringify(
-                  value
-                )
-              : value;
+    educationalLevel:
+      'qualificationLevelIds',
 
-          return `
-            <button
-              type="button"
-              class="filter-chip"
-              data-remove-filter="${escapeHtml(
-                key
-              )}"
-              title="Remove ${escapeHtml(
-                label
-              )}"
-            >
-              <span>
-                ${escapeHtml(
-                  label
-                )}: ${escapeHtml(
-                  display
-                )}
-              </span>
-              <span
-                aria-hidden="true"
-              >
-                ×
-              </span>
-            </button>
-          `;
-        }
-      )
-      .join('');
-}
+    eligibility:
+      'eligibilityStatus',
 
-function removeFilter(
-  filters,
-  key
-) {
-  const next = {
-    ...filters
+    category:
+      'categoryIds',
+
+    department:
+      'departmentId',
+
+    organisation:
+      'organisationId',
+
+    serviceCadre:
+      'serviceCadreId',
+
+    paySystem:
+      'paySystemId',
+
+    payLevel:
+      'payLevel',
+
+    location:
+      'locationIds',
+
+    workStyle:
+      'workStyle',
+
+    physical:
+      'physicalRequirement',
+
+    family:
+      'familyCategory',
+
+    stress:
+      'stressCategory',
+
+    housing:
+      'housingCategory',
+
+    recruitmentStatus:
+      'currentStatus',
+
+    employmentStatus:
+      'employmentStatus'
   };
 
-  delete next[key];
+  const field =
+    fieldMap[
+      category
+    ];
 
-  return next;
+  if (
+    !field
+  ) {
+    return true;
+  }
+
+  let actual =
+    record[
+      field
+    ];
+
+  /*
+   * Some records use alternative field names while the canonical
+   * schema is being populated. These fallbacks improve resilience.
+   */
+  if (
+    actual ===
+      undefined &&
+    category ===
+      'eligibility'
+  ) {
+    actual =
+      record.baEligibility;
+  }
+
+  if (
+    actual ===
+      undefined &&
+    category ===
+      'physical'
+  ) {
+    actual =
+      record.physicalTest;
+  }
+
+  if (
+    actual ===
+      undefined &&
+    category ===
+      'housing'
+  ) {
+    actual =
+      record.housingType;
+  }
+
+  const actualValues =
+    Array.isArray(
+      actual
+    )
+      ? actual
+      : [
+          actual
+        ];
+
+  return allowedValues.some(
+    (allowed) =>
+      actualValues.some(
+        (value) =>
+          String(
+            value
+          ).toLowerCase() ===
+          String(
+            allowed
+          ).toLowerCase()
+      )
+  );
 }
 
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+function applyFilters(
+  records,
+  filters =
+    activeFilters
+) {
+  if (
+    !Array.isArray(
+      records
+    )
+  ) {
+    return [];
+  }
+
+  const normalized =
+    normalizeFilters(
+      filters
+    );
+
+  return records.filter(
+    (record) =>
+      Object.entries(
+        normalized
+      ).every(
+        ([
+          category,
+          values
+        ]) =>
+          recordMatchesFilter(
+            record,
+            category,
+            values
+          )
+      )
+  );
+}
+
+function getFilterCount() {
+  return getActiveFilterChips()
+    .length;
+}
+
+function initializeFilters() {
+  const persisted =
+    getItem(
+      STORAGE_KEYS.filters,
+      DEFAULT_FILTERS
+    );
+
+  activeFilters =
+    normalizeFilters(
+      persisted
+    );
+
+  document.dispatchEvent(
+    new CustomEvent(
+      'govcareer:filtersready',
+      {
+        detail: {
+          filters:
+            getFilters()
+        }
+      }
+    )
+  );
 }
 
 export {
-  applyFilterSet,
-  getFilterState,
-  saveFilterState,
-  clearFilterState,
-  collectFormFilters,
-  populateFormFromFilters,
-  renderFilterChips,
+  DEFAULT_FILTERS,
+
+  getFilters,
+  setFilters,
+  resetFilters,
+
+  addFilter,
   removeFilter,
-  matchesValue,
-  matchesText,
-  compareNumeric
+
+  getActiveFilterChips,
+  getFilterCount,
+
+  recordMatchesFilter,
+  applyFilters,
+
+  initializeFilters
 };
 
 export default {
-  applyFilterSet,
-  getFilterState,
-  saveFilterState,
-  clearFilterState,
-  collectFormFilters,
-  populateFormFromFilters,
-  renderFilterChips,
-  removeFilter
+  getFilters,
+  setFilters,
+  resetFilters,
+  applyFilters,
+  initializeFilters
 };
