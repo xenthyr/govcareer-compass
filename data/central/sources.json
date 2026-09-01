@@ -1,0 +1,347 @@
+{
+  "$schema": "../../schemas/source.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "central-government",
+  "lastVerified": "2026-08-31",
+  "sources": [
+    {
+      "id": "src-upsc-cse-2026",
+      "organisation": "Union Public Service Commission",
+      "title": "Civil Services (Preliminary) Examination, 2026",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "EXAMINATION_PAGE_AND_NOTIFICATION",
+      "publicationDate": "2026-02-04",
+      "effectiveDate": "2026",
+      "url": "https://www.upsc.gov.in/examinations/Civil%20Services%20%28Preliminary%29%20Examination%2C%202026",
+      "relevance": [
+        "Civil Services Examination",
+        "graduate eligibility",
+        "current 2026 recruitment cycle"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-upsc-capf-2026",
+      "organisation": "Union Public Service Commission",
+      "title": "Central Armed Police Forces (ACs) Examination, 2026",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "EXAMINATION_PAGE_AND_NOTIFICATION",
+      "publicationDate": "2026-02-20",
+      "effectiveDate": "2026",
+      "url": "https://www.upsc.gov.in/examinations/Central%20Armed%20Police%20Forces%20%28ACs%29%20Examination%2C%202026",
+      "relevance": [
+        "Assistant Commandant",
+        "graduate eligibility",
+        "physical requirements"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-upsc-cds-2026",
+      "organisation": "Union Public Service Commission",
+      "title": "Combined Defence Services Examination (II), 2026 and examination archive",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "EXAMINATION_NOTIFICATION_ARCHIVE",
+      "publicationDate": "2026-05-20",
+      "effectiveDate": "2026",
+      "url": "https://www.upsc.gov.in/exams-related-info/exam-notification/archives",
+      "relevance": [
+        "Combined Defence Services",
+        "academy-specific qualification"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-upsc-active-exams",
+      "organisation": "Union Public Service Commission",
+      "title": "Active Examinations",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "OFFICIAL_EXAMINATION_INDEX",
+      "publicationDate": null,
+      "effectiveDate": "2026",
+      "url": "https://www.upsc.gov.in/examinations/active-exams",
+      "relevance": [
+        "current examination inventory"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-ssc-cgl-2026",
+      "organisation": "Staff Selection Commission",
+      "title": "Combined Graduate Level Examination, 2026",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "RECRUITMENT_NOTIFICATION",
+      "publicationDate": "2026-05-21",
+      "effectiveDate": "2026",
+      "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_cgl_2026.pdf",
+      "relevance": [
+        "SSC CGL",
+        "graduate recruitment"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-ssc-cgl-2025-final",
+      "organisation": "Staff Selection Commission",
+      "title": "Final Vacancies for Combined Graduate Level Examination, 2025",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "FINAL_VACANCY_STATEMENT",
+      "publicationDate": "2026-03-09",
+      "effectiveDate": "2026",
+      "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/CGLE_2025_Final_Vacancies_09032026.pdf",
+      "relevance": [
+        "post existence",
+        "pay levels",
+        "vacancies",
+        "age limits"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-ssc-calendar-2026",
+      "organisation": "Staff Selection Commission",
+      "title": "Tentative Calendar of Examinations for the Year 2026-2027",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "EXAMINATION_CALENDAR",
+      "publicationDate": "2026-01-08",
+      "effectiveDate": "2026-2027",
+      "url": "https://ssc.gov.in/api/attachment/uploads/masterData/ExamCalendar/Tentative_Calendar2026_27_08012026.pdf",
+      "relevance": [
+        "exam frequency",
+        "2026 examination schedule"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-ssc-selection-post-xiii",
+      "organisation": "Staff Selection Commission",
+      "title": "Selection Post Examination, Phase XIII, 2025",
+      "sourceType": "OFFICIAL_HISTORICAL",
+      "documentType": "SELECTION_POST_NOTIFICATION",
+      "publicationDate": "2025-06-02",
+      "effectiveDate": "2025",
+      "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_RHQ_2025_phase_xiii.pdf",
+      "relevance": [
+        "Selection Post architecture",
+        "post-by-post qualification and pay discovery"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-ssc-steno-2025",
+      "organisation": "Staff Selection Commission",
+      "title": "Stenographer Grade C and D Examination, 2025",
+      "sourceType": "OFFICIAL_HISTORICAL",
+      "documentType": "RECRUITMENT_NOTIFICATION_AND_VACANCY",
+      "publicationDate": "2025",
+      "effectiveDate": "2025-2026",
+      "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_steno_2025.pdf",
+      "relevance": [
+        "stenographer qualification",
+        "skill test",
+        "pay-level-specific posts"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-rrb-employment-notices",
+      "organisation": "Railway Recruitment Boards",
+      "title": "Official Railway Recruitment Notices",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "RECRUITMENT_PORTAL_INDEX",
+      "publicationDate": null,
+      "effectiveDate": "2026",
+      "url": "https://www.rrbcdg.gov.in/employment-notices.php",
+      "relevance": [
+        "NTPC",
+        "RPF",
+        "Level-1",
+        "ALP",
+        "Technician",
+        "Ministerial and Isolated Categories"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-rrb-ntpc-graduate-2025",
+      "organisation": "Railway Recruitment Boards",
+      "title": "CEN 06/2025 NTPC Graduate",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "CENTRALISED_EMPLOYMENT_NOTICE",
+      "publicationDate": "2025-10-21",
+      "effectiveDate": "2025-2026",
+      "url": "https://www.rrbcdg.gov.in/2025-06-ntpcg.php",
+      "relevance": [
+        "Station Master",
+        "Chief Commercial cum Ticket Supervisor",
+        "Goods Train Manager",
+        "Junior Accounts Assistant cum Typist",
+        "Senior Clerk cum Typist"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-rrb-ntpc-graduate-cbt1-2026",
+      "organisation": "Railway Recruitment Boards",
+      "title": "CEN 06/2025 NTPC Graduate CBT-I Schedule",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "EXAMINATION_SCHEDULE",
+      "publicationDate": "2026",
+      "effectiveDate": "2026",
+      "url": "https://www.rrbcdg.gov.in/uploads/2025/06-NTPCG/062025NTPCG-CBT1_Schedule.pdf",
+      "relevance": [
+        "current recruitment status"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-rrb-ntpc-undergraduate-2025",
+      "organisation": "Railway Recruitment Boards",
+      "title": "CEN 07/2025 NTPC Undergraduate",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "CENTRALISED_EMPLOYMENT_NOTICE",
+      "publicationDate": "2025-10-28",
+      "effectiveDate": "2025-2026",
+      "url": "https://www.rrbcdg.gov.in/2025-07-ntpcug.php",
+      "relevance": [
+        "undergraduate railway recruitment",
+        "current recruitment status"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-india-post-rr",
+      "organisation": "Department of Posts",
+      "title": "Recruitment Rules",
+      "sourceType": "OFFICIAL_RULE",
+      "documentType": "RECRUITMENT_RULES_INDEX",
+      "publicationDate": null,
+      "effectiveDate": "CURRENT_RULES_WITH_HISTORICAL_COMPONENTS",
+      "url": "https://www.indiapost.gov.in/documents/recruitmentrules",
+      "relevance": [
+        "Postal Assistant",
+        "Sorting Assistant",
+        "MTS",
+        "Postman",
+        "Mail Guard",
+        "Inspector Posts"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-ib-sa-2025",
+      "organisation": "Intelligence Bureau, Ministry of Home Affairs",
+      "title": "Security Assistant / Executive Examination 2025 and Corrigendum",
+      "sourceType": "OFFICIAL_HISTORICAL",
+      "documentType": "RECRUITMENT_NOTIFICATION_CORRIGENDUM",
+      "publicationDate": "2025-07-26",
+      "effectiveDate": "2025",
+      "url": "https://www.mha.gov.in/sites/default/files/SAExeIB_25072025.pdf",
+      "relevance": [
+        "Security Assistant / Executive",
+        "recruitment",
+        "regional intelligence offices"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-ib-deputation-2024",
+      "organisation": "Intelligence Bureau, Ministry of Home Affairs",
+      "title": "Assistant Central Intelligence Officer recruitment rules / deputation circular",
+      "sourceType": "OFFICIAL_RULE",
+      "documentType": "RECRUITMENT_RULES",
+      "publicationDate": "2024",
+      "effectiveDate": "2024_AND_RULE_CONTEXT",
+      "url": "https://www.mha.gov.in/sites/default/files/IBCircular_15032024.pdf",
+      "relevance": [
+        "Assistant Central Intelligence Officer-I",
+        "Assistant Central Intelligence Officer-II",
+        "deputation versus direct recruitment distinction"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-nia-recruitment-2026",
+      "organisation": "National Investigation Agency",
+      "title": "Recruitment Notices Archive / Recruitment Rules",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "RECRUITMENT_ARCHIVE_AND_RULES",
+      "publicationDate": "2026",
+      "effectiveDate": "2026",
+      "url": "https://nia.gov.in/recruitment-rules",
+      "relevance": [
+        "NIA recruitment route",
+        "Inspector",
+        "Sub-Inspector",
+        "Assistant Sub-Inspector",
+        "ministerial staff"
+      ],
+      "confidence": "HIGH",
+      "notes": "Current published NIA material shows several listed Inspector/Sub-Inspector/ASI opportunities through deputation. These are not treated as fresh-entry BA opportunities in the primary job database."
+    },
+    {
+      "id": "src-cbic",
+      "organisation": "Central Board of Indirect Taxes and Customs",
+      "title": "Official CBIC website and recruitment/allocation records",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "DEPARTMENTAL_INFORMATION",
+      "publicationDate": "2026",
+      "effectiveDate": "2026",
+      "url": "https://www.cbic.gov.in/entities/cbic-content-mst/MzYyNjk%3D",
+      "relevance": [
+        "Inspector",
+        "Preventive Officer",
+        "Examiner",
+        "Executive Assistant",
+        "Tax Assistant"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-ed",
+      "organisation": "Directorate of Enforcement",
+      "title": "Directorate of Enforcement official website",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "ORGANISATIONAL_INFORMATION",
+      "publicationDate": "2026",
+      "effectiveDate": "2026",
+      "url": "https://enforcementdirectorate.gov.in/about-us",
+      "relevance": [
+        "Directorate identity",
+        "enforcement context"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-employment-news",
+      "organisation": "Employment News",
+      "title": "All Jobs Index",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "CENTRALISED_RECRUITMENT_INDEX",
+      "publicationDate": "2026",
+      "effectiveDate": "2026",
+      "url": "https://employmentnews.gov.in/newemp/AllJobs.aspx?k=All",
+      "relevance": [
+        "department-specific recruitment discovery",
+        "current vacancies",
+        "recruitment route discovery"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-central-pay-matrix",
+      "organisation": "Government of India",
+      "title": "Seventh Central Pay Commission Pay Matrix",
+      "sourceType": "OFFICIAL_RULE",
+      "documentType": "PAY_MATRIX",
+      "publicationDate": null,
+      "effectiveDate": "CURRENT_7TH_CPC_FRAMEWORK",
+      "url": "https://doe.gov.in/",
+      "relevance": [
+        "Central Government basic pay levels"
+      ],
+      "confidence": "HIGH"
+    }
+  ]
+}
