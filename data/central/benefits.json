@@ -1,0 +1,62 @@
+{
+  "$schema": "../../schemas/benefits.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "central-government",
+  "lastVerified": "2026-08-31",
+  "benefitsProfiles": [
+    {
+      "id": "benefits-central-regular-service",
+      "employmentType": "REGULAR_GOVERNMENT_SERVICE",
+      "retirementFramework": "APPLICABLE_CENTRAL_GOVERNMENT_RETIREMENT_FRAMEWORK",
+      "gratuity": "SUBJECT_TO_APPLICABLE_RULES",
+      "leaveEncashment": "SUBJECT_TO_APPLICABLE_RULES",
+      "familyBenefits": "SUBJECT_TO_APPLICABLE_RULES",
+      "medical": "SERVICE_SPECIFIC_CENTRAL_GOVERNMENT_RULES",
+      "housing": "POSSIBLE_SUBJECT_TO_ENTITLEMENT_AND_AVAILABILITY",
+      "travelBenefits": "AS_APPLICABLE_TO_SERVICE",
+      "insurance": "SCHEME_AND_SERVICE_DEPENDENT",
+      "confidence": "HIGH",
+      "notes": "Exact retirement and benefit treatment must be evaluated by appointment date and the applicable rule."
+    },
+    {
+      "id": "benefits-capf",
+      "employmentType": "UNIFORMED_CENTRAL_SECURITY_SERVICE",
+      "retirementFramework": "CENTRAL_GOVERNMENT_RETIREMENT_FRAMEWORK_AS_APPLICABLE",
+      "gratuity": "SUBJECT_TO_RULES",
+      "leaveEncashment": "SUBJECT_TO_RULES",
+      "familyBenefits": "SUBJECT_TO_RULES",
+      "medical": "FORCE_MEDICAL_SYSTEM",
+      "housing": "FORCE_ACCOMMODATION_WHERE_AVAILABLE",
+      "travelBenefits": "SERVICE_DEPENDENT",
+      "insurance": "SERVICE_DEPENDENT",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "benefits-railway-service",
+      "employmentType": "REGULAR_RAILWAY_SERVICE",
+      "retirementFramework": "CENTRAL_GOVERNMENT_RAILWAY_RULES_AS_APPLICABLE",
+      "gratuity": "SUBJECT_TO_RULES",
+      "leaveEncashment": "SUBJECT_TO_RULES",
+      "familyBenefits": "SUBJECT_TO_RULES",
+      "medical": "RAILWAY_MEDICAL_SYSTEM",
+      "housing": "RAILWAY_QUARTERS_SUBJECT_TO_AVAILABILITY",
+      "travelBenefits": "RAILWAY_SERVICE_BENEFITS_AS_APPLICABLE",
+      "insurance": "SERVICE_DEPENDENT",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "benefits-postal-service",
+      "employmentType": "REGULAR_POSTAL_SERVICE",
+      "retirementFramework": "CENTRAL_GOVERNMENT_RETIREMENT_FRAMEWORK_AS_APPLICABLE",
+      "gratuity": "SUBJECT_TO_RULES",
+      "leaveEncashment": "SUBJECT_TO_RULES",
+      "familyBenefits": "SUBJECT_TO_RULES",
+      "medical": "CENTRAL_GOVERNMENT_SERVICE_RULES",
+      "housing": "POSTAL_ACCOMMODATION_WHERE_AVAILABLE",
+      "travelBenefits": "AS_APPLICABLE",
+      "insurance": "SERVICE_DEPENDENT",
+      "confidence": "HIGH"
+    }
+  ]
+}
