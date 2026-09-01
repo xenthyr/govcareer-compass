@@ -1,0 +1,220 @@
+{
+  "$schema": "../../../schemas/source.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "west-bengal-government",
+  "stateId": "west-bengal",
+  "lastVerified": "2026-08-31",
+  "sources": [
+    {
+      "id": "src-wb-government-departments",
+      "organisation": "Government of West Bengal",
+      "title": "Government Departments Directory",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "GOVERNMENT_DIRECTORY",
+      "publicationDate": null,
+      "effectiveDate": "2026",
+      "url": "https://wb.gov.in/government-departments-page.aspx",
+      "relevance": [
+        "West Bengal department universe",
+        "department discovery"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-wbpsc-wbcs-2024",
+      "organisation": "Public Service Commission, West Bengal",
+      "title": "West Bengal Civil Service (Executive) etc. Examination, 2024 — Advertisement No. 08/2024",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "RECRUITMENT_ADVERTISEMENT",
+      "publicationDate": "2025-11-14",
+      "effectiveDate": "2024_EXAMINATION_CYCLE",
+      "url": "https://psc.wb.gov.in/Download?param1=Ad_20251114122448_Advertisement_2024_Final.pdf&param2=advertisement",
+      "relevance": [
+        "WBCS services",
+        "Group A/B/C/D posts",
+        "pay levels",
+        "qualification",
+        "Bengali",
+        "age",
+        "physical standard",
+        "training",
+        "posting"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-wbpsc-misc-2024",
+      "organisation": "Public Service Commission, West Bengal",
+      "title": "Miscellaneous Services Recruitment Examination, 2024 — Advertisement No. 13/2024",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "RECRUITMENT_ADVERTISEMENT",
+      "publicationDate": "2026-04-25",
+      "effectiveDate": "2024_RECRUITMENT_CYCLE",
+      "url": "https://psc.wb.gov.in/Download?param1=Ad_20260425125928_Detailed_Advt_13_2024.pdf&param2=advertisement",
+      "relevance": [
+        "Miscellaneous Services post universe",
+        "pay level 10 and 9",
+        "qualification",
+        "selection stages"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-wbpsc-misc-2024-edit",
+      "organisation": "Public Service Commission, West Bengal",
+      "title": "Miscellaneous Services Recruitment Examination, 2024 — Edit Window Extension",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "RECRUITMENT_STATUS_NOTICE",
+      "publicationDate": "2026-06-22",
+      "effectiveDate": "2026",
+      "url": "https://psc.wb.gov.in/Download?param1=An_20260622162043_MSRE_24_notice.pdf&param2=advertisement",
+      "relevance": [
+        "current 2026 recruitment status"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-wbpsc-clerkship-2024",
+      "organisation": "Public Service Commission, West Bengal",
+      "title": "Indicative Advertisement for Clerkship Examination, 2024",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "RECRUITMENT_ANNOUNCEMENT",
+      "publicationDate": "2024-12-23",
+      "effectiveDate": "2024",
+      "url": "https://www.psc.wb.gov.in/notification_announcement.jsp",
+      "relevance": [
+        "Clerkship examination",
+        "clerical career route"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-ro-p-a-2019",
+      "organisation": "Finance Department, Government of West Bengal",
+      "title": "West Bengal Services (Revision of Pay and Allowance) Rules, 2019",
+      "sourceType": "OFFICIAL_RULE",
+      "documentType": "PAY_RULES",
+      "publicationDate": "2019",
+      "effectiveDate": "2019_AND_APPLICABLE_PAY_FRAMEWORK",
+      "url": "https://finance.wb.gov.in/writereaddata/ROPA-2019.pdf",
+      "relevance": [
+        "ROPA 2019 pay matrix",
+        "West Bengal pay levels"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-wbprb-wbp-si-2024",
+      "organisation": "West Bengal Police Recruitment Board",
+      "title": "Recruitment to the posts of Sub-Inspector of Police (Unarmed and Armed Branch) in West Bengal Police — 2024",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "RECRUITMENT_PAGE_AND_NOTICE",
+      "publicationDate": "2024-2026",
+      "effectiveDate": "2024_RECRUITMENT_CYCLE",
+      "url": "https://prb.wb.gov.in/recruitments/9b380303ea68fda3",
+      "relevance": [
+        "WBP SI",
+        "vacancies",
+        "preliminary examination",
+        "PMT/PET",
+        "final examination",
+        "current status"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-wbprb-wbp-constable-2024",
+      "organisation": "West Bengal Police Recruitment Board",
+      "title": "Recruitment to the post of Constables in West Bengal Police — 2024",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "RECRUITMENT_PAGE_AND_NOTICE",
+      "publicationDate": "2024-2026",
+      "effectiveDate": "2024_RECRUITMENT_CYCLE",
+      "url": "https://prb.wb.gov.in/recruitments/12bf94a84e003c37",
+      "relevance": [
+        "WBP Constable",
+        "current recruitment status",
+        "revised vacancy"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-wbprb-kp-si-2023",
+      "organisation": "West Bengal Police Recruitment Board",
+      "title": "Recruitment to the posts of Sub-Inspector/Sub-Inspectress and Sergeant in Kolkata Police — 2023",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "RECRUITMENT_PAGE_AND_NOTICE",
+      "publicationDate": "2023-2026",
+      "effectiveDate": "2023_RECRUITMENT_CYCLE",
+      "url": "https://prb.wb.gov.in/recruitments/1ccd26097f52ee30",
+      "relevance": [
+        "Kolkata Police SI",
+        "Kolkata Police Sergeant",
+        "current process"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-wbprb-kp-constable-2024",
+      "organisation": "West Bengal Police Recruitment Board",
+      "title": "Recruitment to the posts of Constables/Lady Constables in Kolkata Police — 2024",
+      "sourceType": "OFFICIAL_CURRENT",
+      "documentType": "RECRUITMENT_PAGE_AND_NOTICE",
+      "publicationDate": "2024-2026",
+      "effectiveDate": "2024_RECRUITMENT_CYCLE",
+      "url": "https://prb.wb.gov.in/recruitments/6e50c07d61e0194f",
+      "relevance": [
+        "Kolkata Police Constable",
+        "Lady Constable",
+        "current recruitment"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-wbprb-warder-2023",
+      "organisation": "West Bengal Police Recruitment Board",
+      "title": "Recruitment to the posts of Warders/Female Warders in the Department of Correctional Administration — 2023",
+      "sourceType": "OFFICIAL_HISTORICAL",
+      "documentType": "RECRUITMENT_NOTICE",
+      "publicationDate": "2023-07",
+      "effectiveDate": "2023",
+      "url": "https://prb.wb.gov.in/uploads/recruitment/169095786646021.pdf",
+      "relevance": [
+        "Correctional Warder",
+        "Female Warder",
+        "eligibility",
+        "age"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-wbprb-wbp-si-2020",
+      "organisation": "West Bengal Police Recruitment Board",
+      "title": "Sub-Inspector / Lady Sub-Inspector in West Bengal Police — 2020",
+      "sourceType": "OFFICIAL_HISTORICAL",
+      "documentType": "RECRUITMENT_INFORMATION",
+      "publicationDate": "2020",
+      "effectiveDate": "2020",
+      "url": "https://www.wbpolice.gov.in/writereaddata/wbp/On-line-SI21.pdf",
+      "relevance": [
+        "ROPA pay level for West Bengal Police SI"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "src-wbprb-police-constable-historical",
+      "organisation": "West Bengal Police Recruitment Board",
+      "title": "Historical West Bengal Police Constable recruitment pay information",
+      "sourceType": "OFFICIAL_HISTORICAL",
+      "documentType": "RECRUITMENT_INFORMATION",
+      "publicationDate": "2020-2023",
+      "effectiveDate": "HISTORICAL_PAY_REFERENCE",
+      "url": "https://prb.wb.gov.in/storage/04-2023/Information-to-applicants..pdf",
+      "relevance": [
+        "Constable Level 6 pay"
+      ],
+      "confidence": "HIGH"
+    }
+  ]
+}
