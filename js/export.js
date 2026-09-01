@@ -1,214 +1,128 @@
 /**
  * GovCareer Compass
- * CSV export utilities
- *
- * Supports:
- * - current filtered job results
- * - generic arrays of objects
- * - UTF-8 BOM for spreadsheet compatibility
+ * ============================================================
+ * Data Export Utilities
+ * ============================================================
  */
 
 function escapeCsvValue(
   value
 ) {
   if (
-    value === undefined ||
-    value === null
+    value ===
+      undefined ||
+    value ===
+      null
   ) {
     return '';
   }
 
-  let normalized;
+  let normalized =
+    value;
 
   if (
-    Array.isArray(value)
-  ) {
-    normalized =
-      value
-        .map((item) =>
-          stringifyExportValue(
-            item
-          )
-        )
-        .join('; ');
-  } else if (
-    typeof value ===
+    typeof normalized ===
     'object'
   ) {
-    normalized =
-      JSON.stringify(
-        value
-      );
-  } else {
-    normalized = String(
-      value
-    );
+    try {
+      normalized =
+        JSON.stringify(
+          normalized
+        );
+    } catch {
+      normalized =
+        String(
+          normalized
+        );
+    }
   }
 
-  normalized =
-    normalized
-      .replace(/\r?\n/g, ' ')
-      .replace(/\r/g, ' ');
+  const text =
+    String(
+      normalized
+    );
 
-  return `"${normalized.replace(
+  return `"${text.replace(
     /"/g,
     '""'
   )}"`;
 }
 
-function stringifyExportValue(
-  value
+function rowsToCsv(
+  rows,
+  columns = null
 ) {
   if (
-    value === undefined ||
-    value === null
+    !Array.isArray(
+      rows
+    ) ||
+    rows.length ===
+      0
   ) {
     return '';
   }
 
-  if (
-    typeof value ===
-    'object'
-  ) {
-    return JSON.stringify(
-      value
-    );
-  }
-
-  return String(value);
-}
-
-function flattenObject(
-  object,
-  prefix = '',
-  output = {}
-) {
-  Object.entries(
-    object || {}
-  ).forEach(
-    ([key, value]) => {
-      const path =
-        prefix
-          ? `${prefix}.${key}`
-          : key;
-
-      if (
-        value &&
-        typeof value ===
-          'object' &&
-        !Array.isArray(
-          value
+  const inferredColumns =
+    columns ||
+    [
+      ...new Set(
+        rows.flatMap(
+          (row) =>
+            row &&
+            typeof row ===
+              'object'
+              ? Object.keys(
+                  row
+                )
+              : []
         )
-      ) {
-        flattenObject(
-          value,
-          path,
-          output
-        );
-      } else {
-        output[path] = value;
-      }
-    }
-  );
-
-  return output;
-}
-
-function collectColumns(
-  rows
-) {
-  const columns =
-    new Set();
-
-  rows.forEach((row) => {
-    const flat =
-      flattenObject(row);
-
-    Object.keys(
-      flat
-    ).forEach((column) =>
-      columns.add(
-        column
       )
+    ];
+
+  const header =
+    inferredColumns
+      .map(
+        escapeCsvValue
+      )
+      .join(',');
+
+  const body =
+    rows.map(
+      (row) =>
+        inferredColumns
+          .map(
+            (column) =>
+              escapeCsvValue(
+                row?.[
+                  column
+                ]
+              )
+          )
+          .join(',')
     );
-  });
 
   return [
-    ...columns
-  ];
+    header,
+    ...body
+  ].join('\r\n');
 }
 
-function objectsToCsv(
-  rows,
-  {
-    columns = null,
-    includeHeaders = true
-  } = {}
-) {
-  if (
-    !Array.isArray(rows) ||
-    rows.length === 0
-  ) {
-    return '';
-  }
-
-  const resolvedColumns =
-    columns ||
-    collectColumns(
-      rows
-    );
-
-  const lines = [];
-
-  if (includeHeaders) {
-    lines.push(
-      resolvedColumns
-        .map(
-          escapeCsvValue
-        )
-        .join(',')
-    );
-  }
-
-  rows.forEach((row) => {
-    const flat =
-      flattenObject(
-        row
-      );
-
-    lines.push(
-      resolvedColumns
-        .map((column) =>
-          escapeCsvValue(
-            flat[
-              column
-            ]
-          )
-        )
-        .join(',')
-    );
-  });
-
-  return (
-    '\uFEFF' +
-    lines.join('\r\n')
-  );
-}
-
-function downloadBlob(
+function downloadTextFile(
   content,
   filename,
-  mimeType = 'text/csv;charset=utf-8'
+  mimeType =
+    'text/plain;charset=utf-8'
 ) {
   const blob =
-    content instanceof Blob
-      ? content
-      : new Blob(
-          [content],
-          {
-            type: mimeType
-          }
-        );
+    new Blob(
+      [
+        content
+      ],
+      {
+        type:
+          mimeType
+      }
+    );
 
   const url =
     URL.createObjectURL(
@@ -220,9 +134,14 @@ function downloadBlob(
       'a'
     );
 
-  anchor.href = url;
+  anchor.href =
+    url;
+
   anchor.download =
     filename;
+
+  anchor.rel =
+    'noopener';
 
   document.body.appendChild(
     anchor
@@ -232,32 +151,41 @@ function downloadBlob(
 
   anchor.remove();
 
-  window.setTimeout(
-    () =>
-      URL.revokeObjectURL(
-        url
-      ),
-    1000
+  URL.revokeObjectURL(
+    url
   );
 }
 
 function exportCsv(
   rows,
-  filename = 'govcareer-compass-export.csv',
-  options = {}
+  {
+    filename =
+      'govcareer-compass-export.csv',
+    columns =
+      null
+  } = {}
 ) {
   const csv =
-    objectsToCsv(
+    rowsToCsv(
       rows,
-      options
+      columns
     );
 
-  if (!csv) {
+  if (
+    !csv
+  ) {
     return false;
   }
 
-  downloadBlob(
-    csv,
+  /*
+   * UTF-8 BOM helps spreadsheet software correctly recognize
+   * Bengali text.
+   */
+  const withBom =
+    `\uFEFF${csv}`;
+
+  downloadTextFile(
+    withBom,
     filename,
     'text/csv;charset=utf-8'
   );
@@ -265,62 +193,144 @@ function exportCsv(
   return true;
 }
 
-function bindExportButtons(
-  root = document
+function printElement(
+  elementOrId
 ) {
-  root
-    .querySelectorAll(
-      '[data-export-csv]'
-    )
-    .forEach((button) => {
+  const element =
+    typeof elementOrId ===
+      'string'
+      ? document.getElementById(
+          elementOrId
+        )
+      : elementOrId;
+
+  if (
+    !element
+  ) {
+    return false;
+  }
+
+  /*
+   * print.css should handle actual print styling.
+   * We mark the current print target for that stylesheet.
+   */
+  document.body.dataset.printTarget =
+    element.id ||
+    '';
+
+  window.print();
+
+  window.setTimeout(
+    () => {
+      delete document.body.dataset
+        .printTarget;
+    },
+    1000
+  );
+
+  return true;
+}
+
+function initializeExport() {
+  document.addEventListener(
+    'click',
+    (event) => {
+      const button =
+        event.target.closest(
+          '[data-export-csv]'
+        );
+
       if (
-        button.dataset.exportBound ===
-        'true'
+        !button
       ) {
         return;
       }
 
-      button.dataset.exportBound =
-        'true';
+      const sourceId =
+        button.dataset.exportSource;
 
-      button.addEventListener(
-        'click',
-        () => {
-          const event =
-            new CustomEvent(
-              'gcc:requestexport',
-              {
-                detail: {
-                  button
-                }
-              }
-            );
+      if (
+        !sourceId
+      ) {
+        return;
+      }
 
-          window.dispatchEvent(
-            event
-          );
+      const sourceElement =
+        document.getElementById(
+          sourceId
+        );
+
+      if (
+        !sourceElement
+      ) {
+        return;
+      }
+
+      /*
+       * The page controller should place the exportable rows
+       * on the element as a property.
+       */
+      const rows =
+        sourceElement.__exportRows;
+
+      if (
+        !Array.isArray(
+          rows
+        )
+      ) {
+        return;
+      }
+
+      const columns =
+        sourceElement.__exportColumns ||
+        null;
+
+      exportCsv(
+        rows,
+        {
+          filename:
+            button.dataset.exportFilename ||
+            'govcareer-compass-export.csv',
+
+          columns
         }
       );
-    });
-}
+    }
+  );
 
-function initExport() {
-  bindExportButtons();
+  document.addEventListener(
+    'click',
+    (event) => {
+      const button =
+        event.target.closest(
+          '[data-print-target]'
+        );
+
+      if (
+        !button
+      ) {
+        return;
+      }
+
+      printElement(
+        button.dataset.printTarget
+      );
+    }
+  );
 }
 
 export {
-  initExport,
+  escapeCsvValue,
+  rowsToCsv,
+  downloadTextFile,
   exportCsv,
-  objectsToCsv,
-  downloadBlob,
-  bindExportButtons,
-  flattenObject
+  printElement,
+  initializeExport
 };
 
 export default {
-  initExport,
   exportCsv,
-  objectsToCsv,
-  downloadBlob,
-  bindExportButtons
+  rowsToCsv,
+  printElement,
+  initializeExport
 };
