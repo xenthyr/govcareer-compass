@@ -1,0 +1,122 @@
+{
+  "$schema": "../../schemas/shared.schema.json",
+  "indexType": "SOURCE_INDEX",
+  "indexVersion": "1.0.0",
+  "schemaVersion": "1.0.0",
+  "generated": false,
+  "generatedAt": null,
+  "generatedFrom": [
+    "/data/central/sources.json",
+    "/data/states/west-bengal/sources.json",
+    "/data/common/source-types.json"
+  ],
+  "description": "Derived evidence index linking factual records to their supporting sources.",
+  "sourceOfTruth": "Canonical source records stored in government-specific sources.json files.",
+  "rules": {
+    "sourceIdMustBeStable": true,
+    "urlMustNeverBeInvented": true,
+    "sourceClassMustBeExplicit": true,
+    "publicationDateMustNotBeInvented": true,
+    "historicalSourcesMustRemainTraceable": true,
+    "oneSourceMaySupportMultipleClaims": true,
+    "oneClaimMayRequireMultipleSources": true
+  },
+  "summary": {
+    "totalRecords": 0,
+    "officialCurrent": 0,
+    "officialHistorical": 0,
+    "officialRule": 0,
+    "secondary": 0,
+    "estimate": 0,
+    "notVerified": 0
+  },
+  "records": [],
+  "indexes": {
+    "byId": {},
+    "byGovernmentId": {},
+    "byStateId": {},
+    "byOrganisationId": {},
+    "byDepartmentId": {},
+    "byExamId": {},
+    "byJobId": {},
+    "byServiceCadreId": {},
+    "bySourceTypeId": {},
+    "byConfidence": {},
+    "byPublicationYear": {},
+    "byEffectiveYear": {},
+    "byDomain": {},
+    "byStatus": {}
+  },
+  "recordShape": {
+    "id": "string",
+    "governmentId": "string|null",
+    "stateId": "string|null",
+    "organisationId": "string|null",
+    "departmentId": "string|null",
+    "examIds": [
+      "string"
+    ],
+    "jobIds": [
+      "string"
+    ],
+    "serviceCadreIds": [
+      "string"
+    ],
+    "sourceTypeId": "string",
+    "confidence": "HIGH|MEDIUM_HIGH|MEDIUM|LOW|ESTIMATE|NOT_VERIFIED",
+    "publicationDate": "YYYY-MM-DD|null",
+    "effectiveDate": "YYYY-MM-DD|null",
+    "status": "ACTIVE|HISTORICAL|SUPERSEDED|UNAVAILABLE|UNKNOWN",
+    "domain": "string|null"
+  },
+  "evidenceRules": {
+    "officialCurrent": {
+      "priority": 1,
+      "preferredFor": [
+        "current eligibility",
+        "current recruitment",
+        "current post information",
+        "current pay where applicable"
+      ]
+    },
+    "officialRule": {
+      "priority": 2,
+      "preferredFor": [
+        "service rules",
+        "recruitment rules",
+        "pay rules",
+        "statutory conditions"
+      ]
+    },
+    "officialHistorical": {
+      "priority": 3,
+      "preferredFor": [
+        "historical examination cycles",
+        "historical post existence",
+        "historical recruitment"
+      ]
+    },
+    "secondary": {
+      "priority": 4,
+      "preferredFor": [
+        "discovery",
+        "cross-checking"
+      ]
+    },
+    "estimate": {
+      "priority": 5,
+      "preferredFor": [
+        "analytical estimates only"
+      ]
+    }
+  },
+  "claimTraceability": {
+    "requiredForHardEligibility": true,
+    "requiredForCurrentPay": true,
+    "requiredForCurrentRecruitmentStatus": true,
+    "requiredForPhysicalStandards": true,
+    "requiredForPromotionRules": true,
+    "requiredForHousingRules": true,
+    "analyticalScoresMayUseMultipleSources": true
+  }
+}
