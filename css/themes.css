@@ -1,0 +1,521 @@
+/**
+ * GovCareer Compass
+ * ============================================================
+ * Theme System
+ * ============================================================
+ *
+ * Supports:
+ *
+ *   Light
+ *   Dark
+ *   System preference
+ *
+ * The JavaScript theme controller should eventually set:
+ *
+ *   <html data-theme="light">
+ *   <html data-theme="dark">
+ *
+ * When data-theme is omitted, the system preference is used.
+ */
+
+/* ============================================================
+   DARK THEME
+   ============================================================ */
+
+:root,
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Page */
+  --gc-semantic-bg-page:
+    #08111f;
+
+  --gc-semantic-bg-surface:
+    rgb(15 28 46 / 0.78);
+
+  --gc-semantic-bg-surface-raised:
+    rgb(21 38 61 / 0.88);
+
+  --gc-semantic-bg-surface-subtle:
+    rgb(12 24 41 / 0.62);
+
+  --gc-semantic-bg-overlay:
+    rgb(4 10 19 / 0.72);
+
+  /* Text */
+  --gc-semantic-text-primary:
+    #f5f8fc;
+
+  --gc-semantic-text-secondary:
+    #c7d1df;
+
+  --gc-semantic-text-muted:
+    #8e9bad;
+
+  --gc-semantic-text-inverse:
+    #09111d;
+
+  --gc-semantic-text-link:
+    #55d6eb;
+
+  --gc-semantic-text-link-hover:
+    #8be4f2;
+
+  /* Borders */
+  --gc-semantic-border-subtle:
+    rgb(177 204 235 / 0.09);
+
+  --gc-semantic-border-default:
+    rgb(177 204 235 / 0.16);
+
+  --gc-semantic-border-strong:
+    rgb(177 204 235 / 0.26);
+
+  /* Accent */
+  --gc-semantic-accent-primary:
+    #2ac4df;
+
+  --gc-semantic-accent-secondary:
+    #6874ec;
+
+  /* Status */
+  --gc-semantic-success:
+    #48d49f;
+
+  --gc-semantic-success-bg:
+    rgb(16 168 117 / 0.13);
+
+  --gc-semantic-success-border:
+    rgb(50 192 142 / 0.28);
+
+  --gc-semantic-warning:
+    #efba55;
+
+  --gc-semantic-warning-bg:
+    rgb(215 151 24 / 0.13);
+
+  --gc-semantic-warning-border:
+    rgb(237 177 61 / 0.28);
+
+  --gc-semantic-danger:
+    #ed7480;
+
+  --gc-semantic-danger-bg:
+    rgb(218 74 92 / 0.13);
+
+  --gc-semantic-danger-border:
+    rgb(232 107 121 / 0.28);
+
+  --gc-semantic-info:
+    #78c8ff;
+
+  --gc-semantic-info-bg:
+    rgb(66 151 220 / 0.13);
+
+  --gc-semantic-info-border:
+    rgb(82 170 238 / 0.28);
+
+  /* Focus */
+  --gc-semantic-focus:
+    #65d8ea;
+
+  /* Glass */
+  --gc-semantic-glass-bg:
+    rgb(16 31 51 / var(--gc-glass-opacity-default));
+
+  --gc-semantic-glass-border:
+    rgb(185 215 246 / 0.13);
+
+  --gc-semantic-glass-highlight:
+    rgb(255 255 255 / 0.075);
+
+  /* Selection */
+  --gc-semantic-selection-bg:
+    rgb(42 196 223 / 0.32);
+
+  --gc-semantic-selection-text:
+    #ffffff;
+
+  /* Inputs */
+  --gc-semantic-input-bg:
+    rgb(9 20 34 / 0.72);
+
+  --gc-semantic-input-border:
+    rgb(177 204 235 / 0.16);
+
+  --gc-semantic-input-focus-border:
+    rgb(42 196 223 / 0.72);
+}
+
+/* ============================================================
+   LIGHT THEME
+   ============================================================ */
+
+html[data-theme="light"] {
+  color-scheme: light;
+
+  /* Page */
+  --gc-semantic-bg-page:
+    #f2f6fb;
+
+  --gc-semantic-bg-surface:
+    rgb(255 255 255 / 0.76);
+
+  --gc-semantic-bg-surface-raised:
+    rgb(255 255 255 / 0.92);
+
+  --gc-semantic-bg-surface-subtle:
+    rgb(246 249 253 / 0.84);
+
+  --gc-semantic-bg-overlay:
+    rgb(20 31 46 / 0.28);
+
+  /* Text */
+  --gc-semantic-text-primary:
+    #111827;
+
+  --gc-semantic-text-secondary:
+    #445168;
+
+  --gc-semantic-text-muted:
+    #6c7890;
+
+  --gc-semantic-text-inverse:
+    #ffffff;
+
+  --gc-semantic-text-link:
+    #087f98;
+
+  --gc-semantic-text-link-hover:
+    #075f73;
+
+  /* Borders */
+  --gc-semantic-border-subtle:
+    rgb(35 64 96 / 0.08);
+
+  --gc-semantic-border-default:
+    rgb(35 64 96 / 0.14);
+
+  --gc-semantic-border-strong:
+    rgb(35 64 96 / 0.22);
+
+  /* Accent */
+  --gc-semantic-accent-primary:
+    #0a9bb7;
+
+  --gc-semantic-accent-secondary:
+    #5662d5;
+
+  /* Status */
+  --gc-semantic-success:
+    #087c5a;
+
+  --gc-semantic-success-bg:
+    rgb(16 168 117 / 0.10);
+
+  --gc-semantic-success-border:
+    rgb(8 124 90 / 0.20);
+
+  --gc-semantic-warning:
+    #966508;
+
+  --gc-semantic-warning-bg:
+    rgb(215 151 24 / 0.11);
+
+  --gc-semantic-warning-border:
+    rgb(150 101 8 / 0.21);
+
+  --gc-semantic-danger:
+    #ae3042;
+
+  --gc-semantic-danger-bg:
+    rgb(218 74 92 / 0.10);
+
+  --gc-semantic-danger-border:
+    rgb(174 48 66 / 0.20);
+
+  --gc-semantic-info:
+    #166a9e;
+
+  --gc-semantic-info-bg:
+    rgb(22 106 158 / 0.09);
+
+  --gc-semantic-info-border:
+    rgb(22 106 158 / 0.19);
+
+  /* Focus */
+  --gc-semantic-focus:
+    #087f98;
+
+  /* Glass */
+  --gc-semantic-glass-bg:
+    rgb(255 255 255 / var(--gc-glass-opacity-default));
+
+  --gc-semantic-glass-border:
+    rgb(63 91 122 / 0.12);
+
+  --gc-semantic-glass-highlight:
+    rgb(255 255 255 / 0.72);
+
+  /* Selection */
+  --gc-semantic-selection-bg:
+    rgb(10 155 183 / 0.20);
+
+  --gc-semantic-selection-text:
+    #102438;
+
+  /* Inputs */
+  --gc-semantic-input-bg:
+    rgb(255 255 255 / 0.88);
+
+  --gc-semantic-input-border:
+    rgb(35 64 96 / 0.16);
+
+  --gc-semantic-input-focus-border:
+    rgb(10 155 183 / 0.66);
+}
+
+/* ============================================================
+   SYSTEM PREFERENCE
+   ============================================================
+ *
+ * Applies only when JavaScript has not explicitly selected a
+ * theme.
+ */
+
+@media (prefers-color-scheme: light) {
+  :root:not(
+    [data-theme="dark"]
+  ) {
+    color-scheme: light;
+
+    --gc-semantic-bg-page:
+      #f2f6fb;
+
+    --gc-semantic-bg-surface:
+      rgb(255 255 255 / 0.76);
+
+    --gc-semantic-bg-surface-raised:
+      rgb(255 255 255 / 0.92);
+
+    --gc-semantic-bg-surface-subtle:
+      rgb(246 249 253 / 0.84);
+
+    --gc-semantic-bg-overlay:
+      rgb(20 31 46 / 0.28);
+
+    --gc-semantic-text-primary:
+      #111827;
+
+    --gc-semantic-text-secondary:
+      #445168;
+
+    --gc-semantic-text-muted:
+      #6c7890;
+
+    --gc-semantic-text-inverse:
+      #ffffff;
+
+    --gc-semantic-text-link:
+      #087f98;
+
+    --gc-semantic-text-link-hover:
+      #075f73;
+
+    --gc-semantic-border-subtle:
+      rgb(35 64 96 / 0.08);
+
+    --gc-semantic-border-default:
+      rgb(35 64 96 / 0.14);
+
+    --gc-semantic-border-strong:
+      rgb(35 64 96 / 0.22);
+
+    --gc-semantic-accent-primary:
+      #0a9bb7;
+
+    --gc-semantic-accent-secondary:
+      #5662d5;
+
+    --gc-semantic-success:
+      #087c5a;
+
+    --gc-semantic-success-bg:
+      rgb(16 168 117 / 0.10);
+
+    --gc-semantic-success-border:
+      rgb(8 124 90 / 0.20);
+
+    --gc-semantic-warning:
+      #966508;
+
+    --gc-semantic-warning-bg:
+      rgb(215 151 24 / 0.11);
+
+    --gc-semantic-warning-border:
+      rgb(150 101 8 / 0.21);
+
+    --gc-semantic-danger:
+      #ae3042;
+
+    --gc-semantic-danger-bg:
+      rgb(218 74 92 / 0.10);
+
+    --gc-semantic-danger-border:
+      rgb(174 48 66 / 0.20);
+
+    --gc-semantic-info:
+      #166a9e;
+
+    --gc-semantic-info-bg:
+      rgb(22 106 158 / 0.09);
+
+    --gc-semantic-info-border:
+      rgb(22 106 158 / 0.19);
+
+    --gc-semantic-focus:
+      #087f98;
+
+    --gc-semantic-glass-bg:
+      rgb(255 255 255 / var(--gc-glass-opacity-default));
+
+    --gc-semantic-glass-border:
+      rgb(63 91 122 / 0.12);
+
+    --gc-semantic-glass-highlight:
+      rgb(255 255 255 / 0.72);
+
+    --gc-semantic-selection-bg:
+      rgb(10 155 183 / 0.20);
+
+    --gc-semantic-selection-text:
+      #102438;
+
+    --gc-semantic-input-bg:
+      rgb(255 255 255 / 0.88);
+
+    --gc-semantic-input-border:
+      rgb(35 64 96 / 0.16);
+
+    --gc-semantic-input-focus-border:
+      rgb(10 155 183 / 0.66);
+  }
+}
+
+/* ============================================================
+   APPLICATION BACKDROP SYSTEM
+   ============================================================
+ *
+ * The actual geometry is implemented later in layout.css.
+ * These theme-level background layers establish the palette.
+ */
+
+html {
+  background:
+    var(--gc-semantic-bg-page);
+
+  color:
+    var(--gc-semantic-text-primary);
+}
+
+body {
+  background:
+    var(--gc-semantic-bg-page);
+}
+
+/*
+ * Decorative atmosphere is intentionally subtle so text remains
+ * highly readable. It is disabled in print and can be suppressed
+ * by reduced-motion / low-power presentation later.
+ */
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto;
+  pointer-events: none;
+  z-index: -1;
+}
+
+body::before {
+  top: -12rem;
+  left: -10rem;
+  width: 30rem;
+  height: 30rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle,
+      rgb(18 183 211 / 0.10) 0%,
+      rgb(18 183 211 / 0.045) 34%,
+      transparent 70%
+    );
+}
+
+body::after {
+  right: -14rem;
+  bottom: -12rem;
+  width: 34rem;
+  height: 34rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle,
+      rgb(94 104 229 / 0.10) 0%,
+      rgb(149 100 223 / 0.045) 34%,
+      transparent 70%
+    );
+}
+
+/* ============================================================
+   GLASS UTILITY FOUNDATION
+   ============================================================ */
+
+.gc-glass {
+  background:
+    var(--gc-semantic-glass-bg);
+
+  border:
+    var(--gc-border-thin)
+    solid
+    var(--gc-semantic-glass-border);
+
+  backdrop-filter:
+    blur(var(--gc-glass-blur-md))
+    saturate(var(--gc-glass-saturation));
+
+  -webkit-backdrop-filter:
+    blur(var(--gc-glass-blur-md))
+    saturate(var(--gc-glass-saturation));
+}
+
+.gc-glass--strong {
+  background:
+    color-mix(
+      in srgb,
+      var(--gc-semantic-glass-bg) 92%,
+      var(--gc-semantic-bg-surface-raised)
+    );
+
+  backdrop-filter:
+    blur(var(--gc-glass-blur-lg))
+    saturate(var(--gc-glass-saturation));
+
+  -webkit-backdrop-filter:
+    blur(var(--gc-glass-blur-lg))
+    saturate(var(--gc-glass-saturation));
+}
+
+/*
+ * Fallback for browsers without backdrop-filter.
+ */
+@supports not (
+  backdrop-filter: blur(1px)
+) {
+  .gc-glass,
+  .gc-glass--strong {
+    background:
+      var(--gc-semantic-bg-surface-raised);
+  }
+}
