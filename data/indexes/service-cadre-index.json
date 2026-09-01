@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0.0",
+  "indexType": "SERVICE_CADRE_INDEX",
+  "entityType": "SERVICE_CADRE",
+  "generated": false,
+  "generatedAt": null,
+  "sourceOfTruth": [
+    "data/central/service-cadres.json",
+    "data/states/west-bengal/service-cadres.json"
+  ],
+  "generator": "js/database/indexes.js",
+  "description": "Derived lookup indexes for service and cadre records. Canonical service/cadre information remains in the source JSON datasets.",
+  "indexes": {
+    "byId": {},
+    "byGovernmentId": {},
+    "byStateId": {},
+    "byMinistryId": {},
+    "byDepartmentId": {},
+    "byOrganisationId": {},
+    "byParentServiceCadreId": {},
+    "byType": {},
+    "byServiceGroup": {},
+    "byCadreControl": {},
+    "byClassification": {},
+    "byStatus": {},
+    "bySourceId": {},
+    "bySearchToken": {}
+  }
+}
