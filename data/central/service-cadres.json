@@ -1,0 +1,982 @@
+{
+  "$schema": "../../schemas/service-cadre.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "central-government",
+  "lastVerified": "2026-08-31",
+  "serviceCadres": [
+    {
+      "id": "service-ias",
+      "name": {
+        "en": "Indian Administrative Service",
+        "bn": "ভারতীয় প্রশাসনিক পরিষেবা"
+      },
+      "shortName": "Indian Administrative Service",
+      "abbreviation": "IAS",
+      "governmentId": "central-government",
+      "organisationId": "org-upsc",
+      "type": "ALL_INDIA_SERVICE",
+      "serviceNature": "ADMINISTRATIVE",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "postIds": [
+        "job-cse-ias"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "EXECUTIVE",
+        "FIELD",
+        "SUPERVISORY",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": false,
+      "postingScope": "ALL_INDIA",
+      "transferProfile": "VERY_HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-ips",
+      "name": {
+        "en": "Indian Police Service",
+        "bn": "ভারতীয় পুলিশ পরিষেবা"
+      },
+      "shortName": "Indian Police Service",
+      "abbreviation": "IPS",
+      "governmentId": "central-government",
+      "organisationId": "org-upsc",
+      "type": "ALL_INDIA_SERVICE",
+      "serviceNature": "POLICE",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "postIds": [
+        "job-cse-ips"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "careerNature": [
+        "EXECUTIVE",
+        "FIELD",
+        "SUPERVISORY",
+        "SECURITY",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": true,
+      "physicalRequirementProfile": "physical-upsc-cse-police-service",
+      "medicalRequirementProfile": "medical-upsc-cse-police-service",
+      "postingScope": "ALL_INDIA",
+      "transferProfile": "VERY_HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-irs-it",
+      "name": {
+        "en": "Indian Revenue Service (Income Tax)",
+        "bn": "ভারতীয় রাজস্ব পরিষেবা (আয়কর)"
+      },
+      "abbreviation": "IRS (IT)",
+      "governmentId": "central-government",
+      "organisationId": "org-cbdt",
+      "type": "CENTRAL_GROUP_A_SERVICE",
+      "serviceNature": "TAX",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "postIds": [
+        "job-cse-irs-income-tax"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "INSPECTION",
+        "ENFORCEMENT",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": false,
+      "postingScope": "ALL_INDIA",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-irs-cic",
+      "name": {
+        "en": "Indian Revenue Service (Customs and Indirect Taxes)",
+        "bn": "ভারতীয় রাজস্ব পরিষেবা (শুল্ক ও পরোক্ষ কর)"
+      },
+      "abbreviation": "IRS (C&IT)",
+      "governmentId": "central-government",
+      "organisationId": "org-cbic",
+      "type": "CENTRAL_GROUP_A_SERVICE",
+      "serviceNature": "TAX",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "postIds": [
+        "job-cse-irs-customs"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "INSPECTION",
+        "ENFORCEMENT",
+        "FIELD"
+      ],
+      "uniformed": false,
+      "postingScope": "ALL_INDIA",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-iaas",
+      "name": {
+        "en": "Indian Audit and Accounts Service",
+        "bn": "ভারতীয় অডিট ও অ্যাকাউন্টস পরিষেবা"
+      },
+      "abbreviation": "IA&AS",
+      "governmentId": "central-government",
+      "organisationId": "org-cag",
+      "type": "CENTRAL_GROUP_A_SERVICE",
+      "serviceNature": "AUDIT",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "postIds": [
+        "job-cse-iaas"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "careerNature": [
+        "AUDIT",
+        "ACCOUNTS",
+        "INSPECTION",
+        "SUPERVISORY"
+      ],
+      "uniformed": false,
+      "postingScope": "ALL_INDIA",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-icas",
+      "name": {
+        "en": "Indian Civil Accounts Service",
+        "bn": "ভারতীয় সিভিল অ্যাকাউন্টস পরিষেবা"
+      },
+      "abbreviation": "ICAS",
+      "governmentId": "central-government",
+      "departmentId": "dept-finance",
+      "organisationId": null,
+      "type": "CENTRAL_GROUP_A_SERVICE",
+      "serviceNature": "ACCOUNTS",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "postIds": [
+        "job-cse-icas"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "ACCOUNTS",
+        "SUPERVISORY"
+      ],
+      "uniformed": false,
+      "postingScope": "ALL_INDIA",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-idas",
+      "name": {
+        "en": "Indian Defence Accounts Service",
+        "bn": "ভারতীয় প্রতিরক্ষা অ্যাকাউন্টস পরিষেবা"
+      },
+      "abbreviation": "IDAS",
+      "governmentId": "central-government",
+      "organisationId": "org-defence-services",
+      "type": "CENTRAL_GROUP_A_SERVICE",
+      "serviceNature": "ACCOUNTS",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "postIds": [
+        "job-cse-idas"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "ACCOUNTS",
+        "INSPECTION",
+        "SUPERVISORY"
+      ],
+      "uniformed": false,
+      "postingScope": "ALL_INDIA",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-iis",
+      "name": {
+        "en": "Indian Information Service",
+        "bn": "ভারতীয় তথ্য পরিষেবা"
+      },
+      "abbreviation": "IIS",
+      "governmentId": "central-government",
+      "type": "CENTRAL_GROUP_A_SERVICE",
+      "serviceNature": "ADMINISTRATIVE",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "postIds": [
+        "job-cse-iis"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "PUBLIC_DEALING",
+        "OFFICE"
+      ],
+      "uniformed": false,
+      "postingScope": "ALL_INDIA",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-ipos",
+      "name": {
+        "en": "Indian Postal Service",
+        "bn": "ভারতীয় ডাক পরিষেবা"
+      },
+      "abbreviation": "IPoS",
+      "governmentId": "central-government",
+      "organisationId": "org-india-post",
+      "type": "CENTRAL_GROUP_A_SERVICE",
+      "serviceNature": "POSTAL",
+      "examIds": [
+        "exam-upsc-cse"
+      ],
+      "postIds": [
+        "job-cse-ipos"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-cse-general-degree"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "FIELD",
+        "SUPERVISORY",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": false,
+      "postingScope": "ALL_INDIA",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-capf-ac",
+      "name": {
+        "en": "Central Armed Police Forces Assistant Commandant",
+        "bn": "কেন্দ্রীয় সশস্ত্র পুলিশ বাহিনী সহকারী কমান্ড্যান্ট"
+      },
+      "abbreviation": "CAPF AC",
+      "governmentId": "central-government",
+      "organisationId": "org-capf",
+      "type": "SECURITY_SERVICE",
+      "serviceNature": "SECURITY",
+      "examIds": [
+        "exam-upsc-capf-ac"
+      ],
+      "postIds": [
+        "job-capf-ac"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-capf-ac-degree",
+        "eligibility-capf-ac-physical",
+        "eligibility-capf-ac-medical"
+      ],
+      "careerNature": [
+        "FIELD",
+        "SECURITY",
+        "SUPERVISORY",
+        "EXECUTIVE"
+      ],
+      "uniformed": true,
+      "physicalRequirementProfile": "physical-capf-ac",
+      "medicalRequirementProfile": "medical-capf-ac",
+      "postingScope": "ALL_INDIA",
+      "transferProfile": "VERY_HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-upsc-capf-2026"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-ssc-cgl-general",
+      "name": {
+        "en": "Staff Selection Commission Combined Graduate Level General Recruitment Stream",
+        "bn": "স্টাফ সিলেকশন কমিশন কম্বাইন্ড গ্র্যাজুয়েট লেভেল সাধারণ নিয়োগ ধারা"
+      },
+      "abbreviation": "SSC CGL",
+      "governmentId": "central-government",
+      "organisationId": "org-ssc",
+      "type": "RECRUITMENT_STREAM",
+      "serviceNature": "ADMINISTRATIVE",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "postIds": [],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "careerNature": [
+        "ADMINISTRATIVE",
+        "OFFICE",
+        "FIELD",
+        "INSPECTION",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": false,
+      "postingScope": "POST_SPECIFIC",
+      "transferProfile": "POST_SPECIFIC",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-ssc-cgl-2026"
+      ],
+      "version": "1.0.0",
+      "notes": {
+        "en": "Recruitment stream containing multiple distinct posts and cadres. Individual post records must carry the exact pay, age, physical and eligibility conditions.",
+        "bn": "একাধিক পৃথক পোস্ট ও ক্যাডার অন্তর্ভুক্ত একটি নিয়োগ ধারা। প্রতিটি পোস্টের সঠিক বেতন, বয়স, শারীরিক ও যোগ্যতার শর্ত পৃথকভাবে সংরক্ষণ করতে হবে।"
+      }
+    },
+    {
+      "id": "service-cbdt-inspector",
+      "name": {
+        "en": "Income Tax Inspector Cadre",
+        "bn": "আয়কর পরিদর্শক ক্যাডার"
+      },
+      "abbreviation": null,
+      "governmentId": "central-government",
+      "departmentId": "dept-revenue",
+      "organisationId": "org-cbdt",
+      "type": "CENTRAL_CADRE",
+      "serviceNature": "TAX",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "postIds": [
+        "job-ssc-cgl-income-tax-inspector"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "careerNature": [
+        "INSPECTION",
+        "FIELD",
+        "OFFICE",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": false,
+      "postingScope": "REGIONAL",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-ssc-cgl-2026",
+        "src-ssc-cgl-2025-final"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-cbic-inspector",
+      "name": {
+        "en": "Central Board of Indirect Taxes and Customs Inspector Cadres",
+        "bn": "কেন্দ্রীয় পরোক্ষ কর ও শুল্ক পর্ষদ পরিদর্শক ক্যাডারসমূহ"
+      },
+      "governmentId": "central-government",
+      "departmentId": "dept-revenue",
+      "organisationId": "org-cbic",
+      "type": "CENTRAL_CADRE",
+      "serviceNature": "TAX",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "postIds": [
+        "job-ssc-cgl-central-excise",
+        "job-ssc-cgl-preventive-officer",
+        "job-ssc-cgl-examiner"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree",
+        "eligibility-ssc-cgl-post-specific-physical"
+      ],
+      "careerNature": [
+        "INSPECTION",
+        "ENFORCEMENT",
+        "FIELD",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": false,
+      "postingScope": "ALL_INDIA",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-ssc-cgl-2026"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-ed-aeo",
+      "name": {
+        "en": "Assistant Enforcement Officer Stream",
+        "bn": "সহকারী এনফোর্সমেন্ট অফিসার ধারা"
+      },
+      "abbreviation": "AEO",
+      "governmentId": "central-government",
+      "departmentId": "dept-revenue",
+      "organisationId": "org-ed",
+      "type": "INVESTIGATION_SERVICE",
+      "serviceNature": "ENFORCEMENT",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "postIds": [
+        "job-ssc-cgl-aeo"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "careerNature": [
+        "ENFORCEMENT",
+        "INVESTIGATION",
+        "FIELD",
+        "OFFICE"
+      ],
+      "uniformed": false,
+      "postingScope": "ALL_INDIA",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-ssc-cgl-2026",
+        "src-ed"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-cbi-si",
+      "name": {
+        "en": "Central Bureau of Investigation Sub-Inspector Cadre",
+        "bn": "কেন্দ্রীয় তদন্ত ব্যুরো সাব-ইন্সপেক্টর ক্যাডার"
+      },
+      "abbreviation": "CBI SI",
+      "governmentId": "central-government",
+      "departmentId": "dept-mopg",
+      "organisationId": "org-cbi",
+      "type": "INVESTIGATION_SERVICE",
+      "serviceNature": "INVESTIGATION",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "postIds": [
+        "job-ssc-cgl-cbi-si"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree",
+        "eligibility-cgl-cbi-si"
+      ],
+      "careerNature": [
+        "INVESTIGATION",
+        "FIELD",
+        "ENFORCEMENT",
+        "OFFICE"
+      ],
+      "uniformed": false,
+      "postingScope": "ALL_INDIA",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-ssc-cgl-2026"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-inspector-posts",
+      "name": {
+        "en": "Inspector Posts Cadre",
+        "bn": "ইন্সপেক্টর পোস্টস ক্যাডার"
+      },
+      "governmentId": "central-government",
+      "departmentId": "dept-posts",
+      "organisationId": "org-india-post",
+      "type": "CENTRAL_CADRE",
+      "serviceNature": "POSTAL",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "postIds": [
+        "job-ssc-cgl-inspector-posts"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "careerNature": [
+        "INSPECTION",
+        "FIELD",
+        "PUBLIC_DEALING",
+        "SUPERVISORY"
+      ],
+      "uniformed": false,
+      "postingScope": "STATE_OR_CIRCLE",
+      "transferProfile": "MEDIUM_HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-ssc-cgl-2026",
+        "src-india-post-rr"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-rpf-si",
+      "name": {
+        "en": "Railway Protection Force Sub-Inspector Cadre",
+        "bn": "রেলওয়ে প্রোটেকশন ফোর্স সাব-ইন্সপেক্টর ক্যাডার"
+      },
+      "abbreviation": "RPF SI",
+      "governmentId": "central-government",
+      "organisationId": "org-rpf",
+      "type": "POLICE_SERVICE",
+      "serviceNature": "SECURITY",
+      "examIds": [
+        "exam-rpf-si"
+      ],
+      "postIds": [
+        "job-rpf-si"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-rpf-si-degree",
+        "eligibility-rpf-si-physical",
+        "eligibility-rpf-si-medical"
+      ],
+      "careerNature": [
+        "SECURITY",
+        "FIELD",
+        "ENFORCEMENT",
+        "SUPERVISORY"
+      ],
+      "uniformed": true,
+      "physicalRequirementProfile": "physical-rpf-si",
+      "medicalRequirementProfile": "medical-rpf-si",
+      "postingScope": "ZONE_OR_DIVISION",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-rrb-employment-notices"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-railway-operations",
+      "name": {
+        "en": "Railway Traffic and Operations Cadre",
+        "bn": "রেলওয়ে ট্রাফিক ও অপারেশনস ক্যাডার"
+      },
+      "abbreviation": null,
+      "governmentId": "central-government",
+      "departmentId": "dept-railways",
+      "organisationId": "org-rrb",
+      "type": "RAILWAY_SERVICE",
+      "serviceNature": "RAILWAY",
+      "examIds": [
+        "exam-rrb-ntpc-graduate"
+      ],
+      "postIds": [
+        "job-rrb-station-master",
+        "job-rrb-goods-train-manager"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-rrb-ntpc-graduate"
+      ],
+      "careerNature": [
+        "OPERATIONS",
+        "FIELD",
+        "SUPERVISORY",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": false,
+      "postingScope": "ZONE_OR_DIVISION",
+      "transferProfile": "HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-rrb-ntpc-graduate-2025"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-railway-commercial",
+      "name": {
+        "en": "Railway Commercial Cadre",
+        "bn": "রেলওয়ে কমার্শিয়াল ক্যাডার"
+      },
+      "abbreviation": null,
+      "governmentId": "central-government",
+      "departmentId": "dept-railways",
+      "organisationId": "org-rrb",
+      "type": "RAILWAY_SERVICE",
+      "serviceNature": "RAILWAY",
+      "examIds": [
+        "exam-rrb-ntpc-graduate"
+      ],
+      "postIds": [
+        "job-rrb-chief-commercial-ticket-supervisor"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-rrb-ntpc-graduate"
+      ],
+      "careerNature": [
+        "PUBLIC_DEALING",
+        "OPERATIONS",
+        "SUPERVISORY"
+      ],
+      "uniformed": false,
+      "postingScope": "ZONE_OR_DIVISION",
+      "transferProfile": "MEDIUM_HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-rrb-ntpc-graduate-2025"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-railway-accounts",
+      "name": {
+        "en": "Railway Accounts Cadre",
+        "bn": "রেলওয়ে অ্যাকাউন্টস ক্যাডার"
+      },
+      "abbreviation": null,
+      "governmentId": "central-government",
+      "departmentId": "dept-railways",
+      "organisationId": "org-rrb",
+      "type": "RAILWAY_SERVICE",
+      "serviceNature": "ACCOUNTS",
+      "examIds": [
+        "exam-rrb-ntpc-graduate"
+      ],
+      "postIds": [
+        "job-rrb-jaa-typist"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-rrb-ntpc-graduate",
+        "eligibility-typing-required"
+      ],
+      "careerNature": [
+        "ACCOUNTS",
+        "OFFICE",
+        "SUPERVISORY"
+      ],
+      "uniformed": false,
+      "postingScope": "ZONE_OR_DIVISION",
+      "transferProfile": "MEDIUM",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-rrb-ntpc-graduate-2025"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-railway-clerical",
+      "name": {
+        "en": "Railway Clerical Cadre",
+        "bn": "রেলওয়ে ক্লারিক্যাল ক্যাডার"
+      },
+      "abbreviation": null,
+      "governmentId": "central-government",
+      "departmentId": "dept-railways",
+      "organisationId": "org-rrb",
+      "type": "CLERICAL_CADRE",
+      "serviceNature": "RAILWAY",
+      "examIds": [
+        "exam-rrb-ntpc-graduate"
+      ],
+      "postIds": [
+        "job-rrb-senior-clerk-typist"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-rrb-ntpc-graduate",
+        "eligibility-typing-required"
+      ],
+      "careerNature": [
+        "OFFICE",
+        "SECRETARIAL"
+      ],
+      "uniformed": false,
+      "postingScope": "ZONE_OR_DIVISION",
+      "transferProfile": "MEDIUM",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-rrb-ntpc-graduate-2025"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-postal-assistant",
+      "name": {
+        "en": "Postal Assistant / Sorting Assistant Cadre",
+        "bn": "পোস্টাল অ্যাসিস্ট্যান্ট / সর্টিং অ্যাসিস্ট্যান্ট ক্যাডার"
+      },
+      "abbreviation": "PA / SA",
+      "governmentId": "central-government",
+      "departmentId": "dept-posts",
+      "organisationId": "org-india-post",
+      "type": "POSTAL_CADRE",
+      "serviceNature": "POSTAL",
+      "examIds": [
+        "exam-ssc-cgl"
+      ],
+      "postIds": [
+        "job-postal-assistant",
+        "job-sorting-assistant"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ssc-cgl-general-degree"
+      ],
+      "careerNature": [
+        "OFFICE",
+        "OPERATIONS",
+        "PUBLIC_DEALING"
+      ],
+      "uniformed": false,
+      "postingScope": "STATE_OR_CIRCLE",
+      "transferProfile": "MEDIUM",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-india-post-rr",
+        "src-ssc-cgl-2026"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-ib-sa-exe",
+      "name": {
+        "en": "Intelligence Bureau Security Assistant / Executive Cadre",
+        "bn": "ইন্টেলিজেন্স ব্যুরো সিকিউরিটি অ্যাসিস্ট্যান্ট / এক্সিকিউটিভ ক্যাডার"
+      },
+      "abbreviation": "SA/Exe",
+      "governmentId": "central-government",
+      "departmentId": "dept-home",
+      "organisationId": "org-ib",
+      "type": "INTELLIGENCE_SERVICE",
+      "serviceNature": "INTELLIGENCE",
+      "examIds": [
+        "exam-ib-sa-exe"
+      ],
+      "postIds": [
+        "job-ib-security-assistant"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-ib-sa-matriculation",
+        "eligibility-ib-sa-local-language"
+      ],
+      "careerNature": [
+        "INTELLIGENCE",
+        "FIELD",
+        "SECURITY",
+        "OFFICE"
+      ],
+      "uniformed": false,
+      "postingScope": "REGIONAL",
+      "transferProfile": "MEDIUM_HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-ib-sa-2025"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-stenographer-c",
+      "name": {
+        "en": "Stenographer Grade C Cadre",
+        "bn": "স্টেনোগ্রাফার গ্রেড সি ক্যাডার"
+      },
+      "abbreviation": "Steno Grade C",
+      "governmentId": "central-government",
+      "organisationId": "org-ssc",
+      "type": "SECRETARIAL_CADRE",
+      "serviceNature": "SECRETARIAL",
+      "examIds": [
+        "exam-ssc-stenographer"
+      ],
+      "postIds": [
+        "job-ssc-steno-c"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-stenographer-class12",
+        "eligibility-stenographer-skill"
+      ],
+      "careerNature": [
+        "SECRETARIAL",
+        "OFFICE"
+      ],
+      "uniformed": false,
+      "postingScope": "MINISTRY_OR_DEPARTMENT",
+      "transferProfile": "MEDIUM_HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-ssc-steno-2025"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-stenographer-d",
+      "name": {
+        "en": "Stenographer Grade D Cadre",
+        "bn": "স্টেনোগ্রাফার গ্রেড ডি ক্যাডার"
+      },
+      "abbreviation": "Steno Grade D",
+      "governmentId": "central-government",
+      "organisationId": "org-ssc",
+      "type": "SECRETARIAL_CADRE",
+      "serviceNature": "SECRETARIAL",
+      "examIds": [
+        "exam-ssc-stenographer"
+      ],
+      "postIds": [
+        "job-ssc-steno-d"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-stenographer-class12",
+        "eligibility-stenographer-skill"
+      ],
+      "careerNature": [
+        "SECRETARIAL",
+        "OFFICE"
+      ],
+      "uniformed": false,
+      "postingScope": "MINISTRY_OR_DEPARTMENT",
+      "transferProfile": "MEDIUM_HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-ssc-steno-2025"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-ldc-jsa",
+      "name": {
+        "en": "Lower Divisional Clerk / Junior Secretariat Assistant Cadre",
+        "bn": "লোয়ার ডিভিশনাল ক্লার্ক / জুনিয়র সেক্রেটারিয়েট অ্যাসিস্ট্যান্ট ক্যাডার"
+      },
+      "abbreviation": "LDC / JSA",
+      "governmentId": "central-government",
+      "organisationId": "org-ssc",
+      "type": "CLERICAL_CADRE",
+      "serviceNature": "SECRETARIAL",
+      "examIds": [
+        "exam-ssc-chsl"
+      ],
+      "postIds": [
+        "job-ssc-chsl-ldc"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-chsl-class12",
+        "eligibility-chsl-typing"
+      ],
+      "careerNature": [
+        "OFFICE",
+        "SECRETARIAL"
+      ],
+      "uniformed": false,
+      "postingScope": "MINISTRY_OR_DEPARTMENT",
+      "transferProfile": "MEDIUM_HIGH",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-ssc-calendar-2026"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "id": "service-mts",
+      "name": {
+        "en": "Multi-Tasking Staff Cadre",
+        "bn": "মাল্টি-টাস্কিং স্টাফ ক্যাডার"
+      },
+      "abbreviation": "MTS",
+      "governmentId": "central-government",
+      "organisationId": "org-ssc",
+      "type": "CENTRAL_GROUP_C_SERVICE",
+      "serviceNature": "OTHER",
+      "examIds": [
+        "exam-ssc-mts-havaldar"
+      ],
+      "postIds": [
+        "job-ssc-mts"
+      ],
+      "eligibilityRuleIds": [
+        "eligibility-mts-matriculation"
+      ],
+      "careerNature": [
+        "OFFICE",
+        "FIELD",
+        "OTHER"
+      ],
+      "uniformed": false,
+      "postingScope": "MINISTRY_OR_DEPARTMENT",
+      "transferProfile": "MEDIUM",
+      "status": "ACTIVE",
+      "sourceIds": [
+        "src-ssc-calendar-2026"
+      ],
+      "version": "1.0.0"
+    }
+  ]
+}
