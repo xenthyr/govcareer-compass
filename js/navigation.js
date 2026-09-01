@@ -1,527 +1,334 @@
 /**
  * GovCareer Compass
- * Global navigation and mobile menu controller
+ * ============================================================
+ * Global Navigation Controller
+ * ============================================================
  */
 
-import config from './config.js';
 import {
-  navigate,
-  markActiveNavigation
+  getRoute
+} from './config.js';
+
+import {
+  navigate
 } from './router.js';
 
-let drawer = null;
-let overlay = null;
-let lastFocusedElement = null;
+const OPEN_CLASS =
+  'is-open';
 
-function getFocusableElements(
-  container
-) {
-  return [
-    ...container.querySelectorAll(
-      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-    )
-  ].filter(
-    (element) =>
-      !element.hasAttribute(
-        'hidden'
-      )
-  );
-}
+const ACTIVE_CLASS =
+  'is-active';
 
-function createMenuStructure() {
-  return {
-    primary: [
-      ['home', 'Home', config.routes.home],
-      [
-        'careerFinder',
-        'Find My Career',
-        config.routes.careerFinder
-      ],
-      [
-        'jobs',
-        'Government Jobs',
-        config.routes.jobs
-      ],
-      [
-        'exams',
-        'Government Exams',
-        config.routes.exams
-      ],
-      [
-        'compare',
-        'Compare Careers',
-        config.routes.compare
-      ],
-      [
-        'rankings',
-        'Rankings',
-        config.routes.rankings
-      ],
-      [
-        'salary',
-        'Salary',
-        config.routes.salary
-      ],
-      [
-        'eligibility',
-        'Eligibility Checker',
-        config.routes.eligibility
-      ],
-      [
-        'location',
-        'Location & Transfers',
-        config.routes.location
-      ],
-      [
-        'housing',
-        'Housing',
-        config.routes.housing
-      ],
-      [
-        'preparation',
-        'Preparation',
-        config.routes.preparation
-      ],
-      [
-        'ai',
-        'Compass AI',
-        config.routes.ai
-      ]
-    ],
-    secondary: [
-      [
-        'confusionCenter',
-        'Confusion Center',
-        config.routes.confusionCenter
-      ],
-      [
-        'states',
-        'States',
-        config.routes.states
-      ],
-      [
-        'sources',
-        'Sources',
-        config.routes.sources
-      ],
-      [
-        'glossary',
-        'Glossary',
-        config.routes.glossary
-      ],
-      [
-        'methodology',
-        'Methodology',
-        config.routes.methodology
-      ],
-      [
-        'about',
-        'About',
-        config.routes.about
-      ],
-      [
-        'privacy',
-        'Privacy',
-        config.routes.privacy
-      ]
-    ]
-  };
-}
-
-function renderNavigation(
-  target
-) {
-  const menu =
-    createMenuStructure();
-
-  const makeGroup = (
-    title,
-    items
-  ) => `
-    <section class="nav-group">
-      <h2 class="nav-group__title">${escapeHtml(
-        title
-      )}</h2>
-      <div class="nav-group__items">
-        ${items
-          .map(
-            ([
-              key,
-              label,
-              route
-            ]) => `
-            <a
-              class="nav-link"
-              href="${escapeAttribute(
-                route
-              )}"
-              data-route="${escapeAttribute(
-                route
-              )}"
-              data-nav-key="${escapeAttribute(
-                key
-              )}"
-            >
-              <span>${escapeHtml(
-                label
-              )}</span>
-            </a>
-          `
-          )
-          .join('')}
-      </div>
-    </section>
-  `;
-
-  target.innerHTML = `
-    <div class="navigation-panel__header">
-      <div>
-        <span class="navigation-panel__eyebrow">
-          Explore
-        </span>
-        <h2 class="navigation-panel__title">
-          GovCareer Compass
-        </h2>
-      </div>
-
-      <button
-        type="button"
-        class="navigation-close"
-        data-nav-close
-        aria-label="Close navigation"
-      >
-        <span aria-hidden="true">×</span>
-      </button>
-    </div>
-
-    <div class="navigation-panel__body">
-      ${makeGroup(
-        'Career Discovery',
-        menu.primary
-      )}
-
-      ${makeGroup(
-        'Information',
-        menu.secondary
-      )}
-    </div>
-
-    <div class="navigation-panel__footer">
-      <span>Research baseline: ${escapeHtml(
-        config.app.researchBaseline
-      )}</span>
-      <span>© 2026 GovCareer Compass</span>
-    </div>
-  `;
-
-  bindNavigationActions();
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
-function escapeAttribute(value) {
-  return escapeHtml(value);
-}
-
-function ensureNavigationElements() {
-  if (!drawer) {
-    drawer =
-      document.createElement('aside');
-
-    drawer.className =
-      'navigation-drawer';
-
-    drawer.setAttribute(
-      'aria-hidden',
-      'true'
-    );
-
-    drawer.setAttribute(
-      'role',
-      'dialog'
-    );
-
-    drawer.setAttribute(
-      'aria-label',
-      'Main navigation'
-    );
-
-    document.body.appendChild(
-      drawer
-    );
-
-    renderNavigation(
-      drawer
-    );
-  }
-
-  if (!overlay) {
-    overlay =
-      document.createElement('div');
-
-    overlay.className =
-      'navigation-overlay';
-
-    overlay.hidden = true;
-
-    document.body.appendChild(
-      overlay
-    );
-
-    overlay.addEventListener(
-      'click',
-      closeNavigation
-    );
-  }
-}
-
-function openNavigation() {
-  ensureNavigationElements();
-
-  lastFocusedElement =
-    document.activeElement;
-
-  drawer.classList.add(
-    'is-open'
-  );
-
-  overlay.hidden = false;
-
-  requestAnimationFrame(() => {
-    overlay.classList.add(
-      'is-visible'
-    );
-  });
-
-  drawer.setAttribute(
-    'aria-hidden',
-    'false'
-  );
-
-  document.body.classList.add(
-    'navigation-open'
-  );
-
-  const firstFocusable =
-    getFocusableElements(
-      drawer
-    )[0];
-
-  firstFocusable?.focus();
-
-  window.dispatchEvent(
-    new CustomEvent(
-      'gcc:navigationopen'
-    )
-  );
-}
-
-function closeNavigation() {
-  if (!drawer) {
-    return;
-  }
-
-  drawer.classList.remove(
-    'is-open'
-  );
-
-  overlay?.classList.remove(
-    'is-visible'
-  );
-
-  drawer.setAttribute(
-    'aria-hidden',
-    'true'
-  );
-
-  document.body.classList.remove(
-    'navigation-open'
-  );
-
-  window.setTimeout(() => {
-    if (overlay) {
-      overlay.hidden = true;
-    }
-  }, config.ui.animationDuration);
-
-  if (
-    lastFocusedElement &&
-    typeof lastFocusedElement.focus ===
-      'function'
-  ) {
-    lastFocusedElement.focus();
-  }
-
-  window.dispatchEvent(
-    new CustomEvent(
-      'gcc:navigationclose'
-    )
-  );
-}
-
-function toggleNavigation() {
-  if (
-    drawer?.classList.contains(
-      'is-open'
-    )
-  ) {
-    closeNavigation();
-  } else {
-    openNavigation();
-  }
-}
-
-function bindNavigationActions() {
-  drawer
-    ?.querySelectorAll(
-      '[data-nav-close]'
-    )
-    .forEach((button) => {
-      button.addEventListener(
-        'click',
-        closeNavigation
+function setActiveNavigation() {
+  const currentPath =
+    window.location.pathname
+      .replace(
+        /\/+$/,
+        ''
       );
-    });
 
-  drawer
-    ?.querySelectorAll(
-      '[data-route]'
-    )
-    .forEach((link) => {
-      link.addEventListener(
-        'click',
-        (event) => {
-          event.preventDefault();
+  const links =
+    document.querySelectorAll(
+      '[data-nav-route], [data-nav-link]'
+    );
 
-          const route =
-            link.dataset.route;
+  links.forEach(
+    (link) => {
+      const href =
+        link.getAttribute(
+          'href'
+        );
 
-          closeNavigation();
-
-          window.setTimeout(
-            () => navigate(route),
-            config.ui.animationDuration
-          );
-        }
-      );
-    });
-}
-
-function bindMenuButtons(
-  root = document
-) {
-  root
-    .querySelectorAll(
-      '[data-menu-toggle]'
-    )
-    .forEach((button) => {
       if (
-        button.dataset.menuBound ===
-        'true'
+        !href
       ) {
         return;
       }
 
-      button.dataset.menuBound =
-        'true';
+      let resolved;
 
-      button.addEventListener(
-        'click',
-        toggleNavigation
+      try {
+        resolved =
+          new URL(
+            href,
+            window.location.href
+          ).pathname;
+      } catch {
+        resolved =
+          href;
+      }
+
+      const isActive =
+        resolved.replace(
+          /\/+$/,
+          ''
+        ) ===
+        currentPath;
+
+      link.classList.toggle(
+        ACTIVE_CLASS,
+        isActive
       );
 
-      button.setAttribute(
-        'aria-expanded',
-        'false'
+      link.setAttribute(
+        'aria-current',
+        isActive
+          ? 'page'
+          : 'false'
       );
-    });
+    }
+  );
 }
 
-function handleKeyboard(event) {
-  if (
-    event.key === 'Escape' &&
-    drawer?.classList.contains(
-      'is-open'
-    )
-  ) {
-    closeNavigation();
-    return;
-  }
-
-  if (
-    event.key !== 'Tab' ||
-    !drawer?.classList.contains(
-      'is-open'
-    )
-  ) {
-    return;
-  }
-
-  const focusable =
-    getFocusableElements(
-      drawer
+function closeAllDrawers() {
+  const elements =
+    document.querySelectorAll(
+      '[data-drawer]'
     );
 
-  if (!focusable.length) {
-    return;
-  }
+  elements.forEach(
+    (drawer) => {
+      drawer.classList.remove(
+        OPEN_CLASS
+      );
 
-  const first =
-    focusable[0];
-
-  const last =
-    focusable[
-      focusable.length - 1
-    ];
-
-  if (
-    event.shiftKey &&
-    document.activeElement === first
-  ) {
-    event.preventDefault();
-    last.focus();
-  } else if (
-    !event.shiftKey &&
-    document.activeElement === last
-  ) {
-    event.preventDefault();
-    first.focus();
-  }
-}
-
-function initNavigation() {
-  ensureNavigationElements();
-
-  bindMenuButtons();
-
-  document.addEventListener(
-    'keydown',
-    handleKeyboard
+      drawer.setAttribute(
+        'aria-hidden',
+        'true'
+      );
+    }
   );
 
-  markActiveNavigation();
+  document.documentElement.classList.remove(
+    'drawer-open'
+  );
+}
+
+function bindDrawerTriggers() {
+  const triggers =
+    document.querySelectorAll(
+      '[data-drawer-open]'
+    );
+
+  triggers.forEach(
+    (trigger) => {
+      trigger.addEventListener(
+        'click',
+        () => {
+          const targetId =
+            trigger.getAttribute(
+              'data-drawer-open'
+            );
+
+          if (
+            !targetId
+          ) {
+            return;
+          }
+
+          const drawer =
+            document.getElementById(
+              targetId
+            );
+
+          if (
+            !drawer
+          ) {
+            return;
+          }
+
+          drawer.classList.add(
+            OPEN_CLASS
+          );
+
+          drawer.setAttribute(
+            'aria-hidden',
+            'false'
+          );
+
+          document.documentElement.classList.add(
+            'drawer-open'
+          );
+
+          const firstFocusable =
+            drawer.querySelector(
+              'button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+
+          firstFocusable?.focus();
+        }
+      );
+    }
+  );
+
+  document.addEventListener(
+    'click',
+    (event) => {
+      const closeTrigger =
+        event.target.closest(
+          '[data-drawer-close]'
+        );
+
+      if (
+        closeTrigger
+      ) {
+        closeAllDrawers();
+        return;
+      }
+
+      const drawer =
+        event.target.closest(
+          '[data-drawer]'
+        );
+
+      if (
+        !drawer
+      ) {
+        return;
+      }
+
+      if (
+        event.target ===
+        drawer
+      ) {
+        closeAllDrawers();
+      }
+    }
+  );
+
+  document.addEventListener(
+    'govcareer:escape',
+    () => {
+      closeAllDrawers();
+    }
+  );
+}
+
+function bindNavigationLinks() {
+  const links =
+    document.querySelectorAll(
+      '[data-route]'
+    );
+
+  links.forEach(
+    (link) => {
+      link.addEventListener(
+        'click',
+        (event) => {
+          const route =
+            link.dataset.route;
+
+          if (
+            !route
+          ) {
+            return;
+          }
+
+          /*
+           * Let normal browser behavior handle modified clicks.
+           */
+          if (
+            event.ctrlKey ||
+            event.metaKey ||
+            event.shiftKey ||
+            event.altKey ||
+            event.button !==
+              0
+          ) {
+            return;
+          }
+
+          event.preventDefault();
+
+          closeAllDrawers();
+
+          navigate(
+            route
+          );
+        }
+      );
+    }
+  );
+}
+
+function bindQuickActions() {
+  const buttons =
+    document.querySelectorAll(
+      '[data-quick-action]'
+    );
+
+  buttons.forEach(
+    (button) => {
+      button.addEventListener(
+        'click',
+        () => {
+          const route =
+            button.dataset.quickAction;
+
+          if (
+            route
+          ) {
+            navigate(
+              route
+            );
+          }
+        }
+      );
+    }
+  );
+}
+
+function ensureRouteLinks() {
+  document
+    .querySelectorAll(
+      '[data-route-link]'
+    )
+    .forEach(
+      (element) => {
+        const route =
+          element.dataset.routeLink;
+
+        if (
+          !route
+        ) {
+          return;
+        }
+
+        try {
+          element.setAttribute(
+            'href',
+            getRoute(
+              route
+            )
+          );
+        } catch {
+          element.removeAttribute(
+            'href'
+          );
+        }
+      }
+    );
+}
+
+function initializeNavigation() {
+  ensureRouteLinks();
+
+  bindDrawerTriggers();
+
+  bindNavigationLinks();
+
+  bindQuickActions();
+
+  setActiveNavigation();
 }
 
 export {
-  initNavigation,
-  openNavigation,
-  closeNavigation,
-  toggleNavigation,
-  bindMenuButtons,
-  markActiveNavigation
+  initializeNavigation,
+  closeAllDrawers,
+  setActiveNavigation
 };
 
 export default {
-  initNavigation,
-  openNavigation,
-  closeNavigation,
-  toggleNavigation,
-  bindMenuButtons
+  initializeNavigation,
+  closeAllDrawers
 };
