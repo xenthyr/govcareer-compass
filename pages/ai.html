@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
+
   <meta charset="UTF-8">
 
   <meta
@@ -10,32 +11,72 @@
 
   <meta
     name="description"
-    content="CompassAI — the GovCareer Compass AI assistant for government exams, jobs, eligibility, pay, career comparisons and preparation."
+    content="CompassAI — the GovCareer Compass AI assistant for government exams, eligibility, government jobs, pay, preparation and career comparisons."
   >
 
   <title>CompassAI — GovCareer Compass</title>
 
-  <link rel="stylesheet" href="../css/tokens.css">
-  <link rel="stylesheet" href="../css/reset.css">
-  <link rel="stylesheet" href="../css/base.css">
-  <link rel="stylesheet" href="../css/layout.css">
-  <link rel="stylesheet" href="../css/components.css">
-  <link rel="stylesheet" href="../css/forms.css">
-  <link rel="stylesheet" href="../css/themes.css">
-  <link rel="stylesheet" href="../css/responsive.css">
-  <link rel="stylesheet" href="../css/print.css">
+  <link
+    rel="stylesheet"
+    href="../css/tokens.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../css/reset.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../css/base.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../css/layout.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../css/components.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../css/forms.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../css/themes.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../css/responsive.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../css/print.css"
+  >
+
 </head>
 
 <body>
 
-  <header id="site-header"></header>
+  <header
+    id="site-header"
+    aria-label="Site header"
+  ></header>
 
-  <main id="main-content">
+  <main>
 
     <section
       class="ai-hero"
       aria-labelledby="ai-title"
     >
+
       <div class="container">
 
         <p class="eyebrow">
@@ -47,67 +88,86 @@
         </h1>
 
         <p>
-          Your dedicated AI assistant for government
-          exams, jobs, eligibility, pay, preparation,
-          comparisons and career decisions.
+          Your dedicated AI assistant for
+          government exams, jobs, eligibility,
+          pay, preparation and career decisions.
         </p>
 
         <div
           class="ai-scope"
-          aria-label="CompassAI scope"
+          aria-label="CompassAI capabilities"
         >
           <span>Eligibility</span>
           <span>Government Jobs</span>
           <span>Exams</span>
           <span>Pay</span>
-          <span>Career Comparison</span>
+          <span>Comparison</span>
           <span>Preparation</span>
         </div>
 
       </div>
+
     </section>
 
     <section
       class="ai-chat-section"
-      aria-labelledby="chat-title"
+      aria-labelledby="chat-heading"
     >
+
       <div class="container">
 
         <div class="ai-shell">
 
-          <header class="ai-shell-header">
-            <div>
-              <span class="ai-status-dot"></span>
-              <strong>CompassAI</strong>
-            </div>
+          <div class="ai-shell-header">
 
             <div>
-              <small>
-                GovCareer Compass Career Intelligence
-              </small>
+              <span
+                class="ai-status-dot"
+                aria-hidden="true"
+              ></span>
+
+              <strong>
+                CompassAI
+              </strong>
             </div>
-          </header>
+
+            <span>
+              GovCareer Compass
+            </span>
+
+          </div>
 
           <div
             id="ai-messages"
             class="ai-messages"
             aria-live="polite"
+            aria-relevant="additions"
             aria-label="CompassAI conversation"
           >
-            <article class="ai-message ai-message-assistant">
-              <div class="ai-message-author">
+
+            <article
+              class="ai-message ai-message-assistant"
+            >
+
+              <div
+                class="ai-message-author"
+              >
                 CompassAI
               </div>
 
-              <div class="ai-message-content">
-                Hello. I'm CompassAI, the AI career
-                assistant for GovCareer Compass.
-                Ask me about government exams,
-                eligibility, jobs, pay, postings,
-                family compatibility, preparation
-                or career comparisons.
+              <div
+                class="ai-message-content"
+              >
+                Hello. I'm CompassAI, the AI
+                career assistant for GovCareer
+                Compass. Ask me about government
+                exams, jobs, eligibility, pay,
+                postings, preparation or career
+                comparisons.
               </div>
+
             </article>
+
           </div>
 
           <form
@@ -129,10 +189,13 @@
               rows="3"
               maxlength="6000"
               placeholder="Ask CompassAI about a government exam or career..."
+              autocomplete="off"
               required
             ></textarea>
 
-            <div class="ai-input-actions">
+            <div
+              class="ai-input-actions"
+            >
 
               <span
                 id="ai-character-count"
@@ -155,13 +218,17 @@
         </div>
 
       </div>
+
     </section>
 
   </main>
 
-  <footer id="site-footer"></footer>
+  <footer
+    id="site-footer"
+  ></footer>
 
   <script type="module">
+
     import {
       askCompassAI
     } from "../js/ai/client.js";
@@ -172,7 +239,8 @@
 
     import {
       isIdentityQuestion,
-      getIdentityResponse
+      getIdentityResponse,
+      normalizeLanguage
     } from "../js/ai/safety.js";
 
     const form =
@@ -190,17 +258,24 @@
         "ai-messages"
       );
 
-    const sendButton =
+    const button =
       document.getElementById(
         "ai-send-button"
       );
 
-    const characterCount =
+    const counter =
       document.getElementById(
         "ai-character-count"
       );
 
     const history = [];
+
+    function getLanguage() {
+      return normalizeLanguage(
+        document.documentElement
+          .lang || "en"
+      );
+    }
 
     function addMessage(
       role,
@@ -235,7 +310,8 @@
       content.className =
         "ai-message-content";
 
-      content.textContent = text;
+      content.textContent =
+        text;
 
       article.append(
         author,
@@ -253,7 +329,7 @@
     input.addEventListener(
       "input",
       () => {
-        characterCount.textContent =
+        counter.textContent =
           `${input.value.length} / 6000`;
       }
     );
@@ -261,6 +337,7 @@
     form.addEventListener(
       "submit",
       async (event) => {
+
         event.preventDefault();
 
         const question =
@@ -269,6 +346,9 @@
         if (!question) {
           return;
         }
+
+        const language =
+          getLanguage();
 
         addMessage(
           "user",
@@ -281,19 +361,29 @@
         });
 
         input.value = "";
-        characterCount.textContent =
+
+        counter.textContent =
           "0 / 6000";
 
-        sendButton.disabled = true;
-        sendButton.textContent =
-          "Thinking...";
+        button.disabled =
+          true;
+
+        button.textContent =
+          language.startsWith("bn")
+            ? "ভাবছে..."
+            : "Thinking...";
 
         try {
+
           if (
-            isIdentityQuestion(question)
+            isIdentityQuestion(
+              question
+            )
           ) {
             const answer =
-              getIdentityResponse();
+              getIdentityResponse(
+                language
+              );
 
             addMessage(
               "assistant",
@@ -308,18 +398,17 @@
             return;
           }
 
+          const context =
+            buildCompassContext({
+              language
+            });
+
           const response =
             await askCompassAI({
-              messages: history,
-              context:
-                buildCompassContext({
-                  language:
-                    document.documentElement
-                      .lang || "en"
-                }),
-              language:
-                document.documentElement
-                  .lang || "en"
+              messages:
+                history,
+              context,
+              language
             });
 
           addMessage(
@@ -332,20 +421,42 @@
             content:
               response.answer
           });
+
         } catch (error) {
+
+          console.error(
+            "CompassAI UI error:",
+            error
+          );
+
           addMessage(
             "assistant",
             error?.message ||
-              "CompassAI is temporarily unavailable. Please try again."
+              (
+                language.startsWith(
+                  "bn"
+                )
+                  ? "CompassAI বর্তমানে উপলব্ধ নয়। অনুগ্রহ করে আবার চেষ্টা করুন।"
+                  : "CompassAI is currently unavailable. Please try again."
+              )
           );
+
         } finally {
-          sendButton.disabled = false;
-          sendButton.textContent =
-            "Ask CompassAI";
+
+          button.disabled =
+            false;
+
+          button.textContent =
+            language.startsWith("bn")
+              ? "CompassAI-কে জিজ্ঞাসা করুন"
+              : "Ask CompassAI";
+
           input.focus();
+
         }
       }
     );
+
   </script>
 
 </body>
