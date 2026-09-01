@@ -1,0 +1,118 @@
+{
+  "$schema": "../../../schemas/pay.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "west-bengal-government",
+  "stateId": "west-bengal",
+  "paySystem": "ROPA_2019",
+  "lastVerified": "2026-08-31",
+  "payStructures": [
+    {
+      "id": "wb-pay-level-6",
+      "system": "ROPA_2019",
+      "level": "LEVEL_6",
+      "startingBasic": 22700,
+      "maximumBasic": 58500,
+      "currency": "INR",
+      "sourceIds": [
+        "src-ro-p-a-2019",
+        "src-wbprb-police-constable-historical"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "wb-pay-level-9",
+      "system": "ROPA_2019",
+      "level": "LEVEL_9",
+      "startingBasic": 28900,
+      "maximumBasic": 74500,
+      "currency": "INR",
+      "sourceIds": [
+        "src-wbpsc-misc-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "wb-pay-level-10",
+      "system": "ROPA_2019",
+      "level": "LEVEL_10",
+      "startingBasic": 32100,
+      "maximumBasic": 82900,
+      "currency": "INR",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024",
+        "src-wbprb-kp-si-2023",
+        "src-wbprb-wbp-si-2020"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "wb-pay-level-12",
+      "system": "ROPA_2019",
+      "level": "LEVEL_12",
+      "startingBasic": 35800,
+      "maximumBasic": 92100,
+      "currency": "INR",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "wb-pay-level-14",
+      "system": "ROPA_2019",
+      "level": "LEVEL_14",
+      "startingBasic": 39900,
+      "maximumBasic": 102800,
+      "currency": "INR",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "wb-pay-level-15",
+      "system": "ROPA_2019",
+      "level": "LEVEL_15",
+      "startingBasic": 42600,
+      "maximumBasic": 109800,
+      "currency": "INR",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "wb-pay-level-16",
+      "system": "ROPA_2019",
+      "level": "LEVEL_16",
+      "startingBasic": 56100,
+      "maximumBasic": 144300,
+      "currency": "INR",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "confidence": "HIGH"
+    }
+  ],
+  "allowances": {
+    "da": {
+      "status": "TIME_VERSIONED",
+      "value": null,
+      "sourceIds": [],
+      "confidence": "NOT_VERIFIED"
+    },
+    "hra": {
+      "status": "POSTING_AND_RULE_DEPENDENT",
+      "value": null,
+      "sourceIds": [],
+      "confidence": "NOT_VERIFIED"
+    },
+    "medical": {
+      "status": "POST_AND_SERVICE_DEPENDENT",
+      "value": null,
+      "sourceIds": [],
+      "confidence": "NOT_VERIFIED"
+    }
+  }
+}
