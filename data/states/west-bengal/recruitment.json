@@ -1,0 +1,112 @@
+{
+  "$schema": "../../../schemas/recruitment.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "west-bengal-government",
+  "stateId": "west-bengal",
+  "lastVerified": "2026-08-31",
+  "recruitments": [
+    {
+      "id": "recruitment-wbpsc-wbcs-2024",
+      "examId": "exam-wbpsc-wbcs-2024",
+      "authorityId": "org-wbpsc",
+      "notificationYear": 2024,
+      "notificationDate": "2025-11-14",
+      "status": "UNDER_PROCESS",
+      "vacancyStatus": "DEPARTMENTAL_VACANCIES_TO_BE_FILLED_AS_REPORTED",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-wbpsc-misc-2024",
+      "examId": "exam-wbpsc-misc-2024",
+      "authorityId": "org-wbpsc",
+      "notificationYear": 2024,
+      "notificationDate": "2026-04-25",
+      "editWindowClosingDate": "2026-06-24",
+      "status": "ADMINISTRATIVE_PROCESS_UNDERWAY",
+      "vacancyStatus": "TO_BE_ANNOUNCED",
+      "sourceIds": [
+        "src-wbpsc-misc-2024",
+        "src-wbpsc-misc-2024-edit"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-wbpsc-clerkship-2024",
+      "examId": "exam-wbpsc-clerkship-2024",
+      "authorityId": "org-wbpsc",
+      "notificationYear": 2024,
+      "notificationDate": "2024-12-23",
+      "status": "RECRUITMENT_FRAMEWORK",
+      "vacancyStatus": "POST_SPECIFIC",
+      "sourceIds": [
+        "src-wbpsc-clerkship-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-wbprb-wbp-si-2024",
+      "examId": "exam-wbprb-wbp-si-2024",
+      "authorityId": "org-wbprb",
+      "notificationYear": 2024,
+      "notificationDate": "2024",
+      "status": "FINAL_EXAMINATION_PROCESS",
+      "vacancyStatus": 1131,
+      "sourceIds": [
+        "src-wbprb-wbp-si-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-wbprb-kp-si-2023",
+      "examId": "exam-wbprb-kp-si-2023",
+      "authorityId": "org-wbprb",
+      "notificationYear": 2023,
+      "status": "POST_FINAL_EXAMINATION_PROCESS",
+      "vacancyStatus": "REVISED_VACANCY",
+      "sourceIds": [
+        "src-wbprb-kp-si-2023"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-wbprb-wbp-constable-2024",
+      "examId": "exam-wbprb-wbp-constable-2024",
+      "authorityId": "org-wbprb",
+      "notificationYear": 2024,
+      "status": "UNDER_PROCESS",
+      "vacancyStatus": "REVISED_2026_DATA",
+      "sourceIds": [
+        "src-wbprb-wbp-constable-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-wbprb-kp-constable-2024",
+      "examId": "exam-wbprb-kp-constable-2024",
+      "authorityId": "org-wbprb",
+      "notificationYear": 2024,
+      "status": "PRELIMINARY_EXAMINATION_PROCESS",
+      "vacancyStatus": "REVISED",
+      "sourceIds": [
+        "src-wbprb-kp-constable-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-wbprb-warder-2023",
+      "examId": "exam-wbprb-warders-2023",
+      "authorityId": "org-wbprb",
+      "notificationYear": 2023,
+      "status": "HISTORICAL_COMPLETED_OR_POST_PROCESS",
+      "vacancyStatus": "HISTORICAL",
+      "sourceIds": [
+        "src-wbprb-warder-2023"
+      ],
+      "confidence": "HIGH"
+    }
+  ]
+}
