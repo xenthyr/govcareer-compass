@@ -1,0 +1,739 @@
+/**
+ * GovCareer Compass
+ * ============================================================
+ * Data Table System
+ * ============================================================
+ *
+ * Built for:
+ * - All Jobs database
+ * - Exam database
+ * - Salary database
+ * - Eligibility database
+ * - Department database
+ * - Source database
+ * - Complete Data View
+ * - comparison tables
+ */
+
+/* ============================================================
+   TABLE CONTAINER
+   ============================================================ */
+
+.data-table {
+  width: 100%;
+  min-width: 0;
+
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-xl);
+
+  background:
+    var(--gc-semantic-bg-surface);
+
+  box-shadow:
+    var(--gc-shadow-sm);
+
+  overflow: hidden;
+}
+
+.data-table__scroll {
+  width: 100%;
+
+  overflow-x: auto;
+  overflow-y: visible;
+
+  overscroll-behavior-inline: contain;
+
+  scrollbar-gutter:
+    stable;
+}
+
+.data-table table {
+  width: 100%;
+  min-width: 60rem;
+}
+
+/* ============================================================
+   TABLE BASE
+   ============================================================ */
+
+.data-table th,
+.data-table td {
+  padding:
+    var(--gc-space-4);
+
+  border-bottom:
+    1px solid
+    var(--gc-semantic-border-subtle);
+
+  vertical-align:
+    top;
+}
+
+.data-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: var(--gc-z-sticky);
+
+  background:
+    var(--gc-semantic-bg-surface-raised);
+
+  color:
+    var(--gc-semantic-text-primary);
+
+  font-size:
+    var(--gc-font-size-xs);
+
+  font-weight:
+    var(--gc-weight-bold);
+
+  letter-spacing:
+    0.015em;
+
+  white-space:
+    nowrap;
+}
+
+.data-table tbody td {
+  color:
+    var(--gc-semantic-text-secondary);
+
+  font-size:
+    var(--gc-font-size-sm);
+}
+
+.data-table tbody tr {
+  transition:
+    background
+      var(--gc-duration-fast)
+      var(--gc-ease-standard);
+}
+
+.data-table tbody tr:hover {
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom:
+    0;
+}
+
+/* ============================================================
+   ZEBRA
+   ============================================================ */
+
+.data-table--zebra
+  tbody tr:nth-child(even) {
+  background:
+    color-mix(
+      in srgb,
+      var(--gc-semantic-bg-surface-subtle) 55%,
+      transparent
+    );
+}
+
+.data-table--zebra
+  tbody tr:hover {
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+}
+
+/* ============================================================
+   STICKY FIRST COLUMN
+   ============================================================ */
+
+.data-table__sticky {
+  position: sticky;
+  left: 0;
+  z-index: calc(
+    var(--gc-z-sticky) + 1
+  );
+
+  background:
+    var(--gc-semantic-bg-surface-raised);
+}
+
+.data-table thead
+  .data-table__sticky {
+  z-index: calc(
+    var(--gc-z-sticky) + 2
+  );
+}
+
+/* ============================================================
+   SORT CONTROLS
+   ============================================================ */
+
+.table-sort {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    var(--gc-space-2);
+
+  color:
+    inherit;
+
+  font:
+    inherit;
+}
+
+.table-sort::after {
+  content:
+    "↕";
+
+  color:
+    var(--gc-semantic-text-muted);
+
+  font-size:
+    0.8em;
+}
+
+.table-sort[aria-sort="ascending"]::after {
+  content:
+    "↑";
+
+  color:
+    var(--gc-semantic-accent-primary);
+}
+
+.table-sort[aria-sort="descending"]::after {
+  content:
+    "↓";
+
+  color:
+    var(--gc-semantic-accent-primary);
+}
+
+/* ============================================================
+   CELL TYPES
+   ============================================================ */
+
+.table-cell--primary {
+  color:
+    var(--gc-semantic-text-primary);
+
+  font-weight:
+    var(--gc-weight-semibold);
+}
+
+.table-cell--numeric {
+  font-variant-numeric:
+    tabular-nums;
+
+  white-space:
+    nowrap;
+
+  text-align:
+    right;
+}
+
+.table-cell--center {
+  text-align:
+    center;
+}
+
+.table-cell--muted {
+  color:
+    var(--gc-semantic-text-muted);
+}
+
+.table-cell--positive {
+  color:
+    var(--gc-semantic-success);
+
+  font-weight:
+    var(--gc-weight-semibold);
+}
+
+.table-cell--warning {
+  color:
+    var(--gc-semantic-warning);
+
+  font-weight:
+    var(--gc-weight-semibold);
+}
+
+.table-cell--negative {
+  color:
+    var(--gc-semantic-danger);
+
+  font-weight:
+    var(--gc-weight-semibold);
+}
+
+/* ============================================================
+   JOB DATABASE TABLE
+   ============================================================ */
+
+.jobs-table table {
+  min-width:
+    100rem;
+}
+
+.jobs-table .job-name {
+  min-width:
+    18rem;
+
+  color:
+    var(--gc-semantic-text-primary);
+
+  font-weight:
+    var(--gc-weight-semibold);
+}
+
+.jobs-table .job-government,
+.jobs-table .job-department {
+  color:
+    var(--gc-semantic-text-muted);
+}
+
+/* ============================================================
+   COMPLETE DATA VIEW
+   ============================================================ */
+
+.complete-data-table table {
+  min-width:
+    140rem;
+}
+
+.complete-data-table th,
+.complete-data-table td {
+  white-space:
+    normal;
+
+  min-width:
+    10rem;
+
+  max-width:
+    24rem;
+}
+
+.complete-data-table .data-table__id {
+  min-width:
+    10rem;
+
+  font-family:
+    var(--gc-font-mono);
+
+  font-size:
+    var(--gc-font-size-xs);
+}
+
+/* ============================================================
+   SALARY TABLE
+   ============================================================ */
+
+.salary-table table {
+  min-width:
+    68rem;
+}
+
+.salary-table .currency {
+  font-variant-numeric:
+    tabular-nums;
+
+  white-space:
+    nowrap;
+}
+
+.salary-table .currency--strong {
+  color:
+    var(--gc-semantic-text-primary);
+
+  font-weight:
+    var(--gc-weight-bold);
+}
+
+/* ============================================================
+   ELIGIBILITY TABLE
+   ============================================================ */
+
+.eligibility-table table {
+  min-width:
+    72rem;
+}
+
+.eligibility-table .eligibility-status {
+  min-width:
+    12rem;
+}
+
+/* ============================================================
+   EXAM TABLE
+   ============================================================ */
+
+.exam-table table {
+  min-width:
+    78rem;
+}
+
+/* ============================================================
+   SOURCE TABLE
+   ============================================================ */
+
+.source-table table {
+  min-width:
+    72rem;
+}
+
+.source-table .source-title {
+  min-width:
+    18rem;
+}
+
+.source-table .source-url {
+  max-width:
+    24rem;
+
+  overflow:
+    hidden;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+}
+
+/* ============================================================
+   TABLE TOOLBAR
+   ============================================================ */
+
+.table-toolbar {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    var(--gc-space-3);
+
+  padding:
+    var(--gc-space-4);
+
+  border-bottom:
+    1px solid
+    var(--gc-semantic-border-subtle);
+
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+}
+
+.table-toolbar__left,
+.table-toolbar__right {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    var(--gc-space-2);
+}
+
+.table-toolbar__right {
+  margin-left:
+    auto;
+}
+
+/* ============================================================
+   COLUMN SELECTOR
+   ============================================================ */
+
+.column-selector {
+  position:
+    relative;
+}
+
+.column-selector__menu {
+  position:
+    absolute;
+
+  top:
+    calc(
+      100% + var(--gc-space-2)
+    );
+
+  right:
+    0;
+
+  z-index:
+    var(--gc-z-popover);
+
+  width:
+    min(
+      20rem,
+      90vw
+    );
+
+  max-height:
+    24rem;
+
+  overflow-y:
+    auto;
+
+  padding:
+    var(--gc-space-3);
+
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-lg);
+
+  background:
+    var(--gc-semantic-bg-surface-raised);
+
+  box-shadow:
+    var(--gc-shadow-lg);
+}
+
+/* ============================================================
+   TABLE EXPANDABLE ROWS
+   ============================================================ */
+
+.data-table__expand-button {
+  display:
+    inline-grid;
+
+  place-items:
+    center;
+
+  width:
+    2rem;
+
+  height:
+    2rem;
+
+  border:
+    1px solid
+    var(--gc-semantic-border-subtle);
+
+  border-radius:
+    var(--gc-radius-sm);
+
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+
+  color:
+    var(--gc-semantic-text-secondary);
+}
+
+.data-table__expand-button:hover {
+  background:
+    var(--gc-semantic-bg-surface);
+
+  color:
+    var(--gc-semantic-text-primary);
+}
+
+.data-table__details-row td {
+  padding:
+    var(--gc-space-5);
+
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+}
+
+.data-table__details {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap:
+    var(--gc-space-4);
+}
+
+/* ============================================================
+   EMPTY TABLE
+   ============================================================ */
+
+.data-table__empty {
+  min-height:
+    16rem;
+
+  display:
+    grid;
+
+  place-items:
+    center;
+
+  padding:
+    var(--gc-space-8);
+
+  text-align:
+    center;
+}
+
+.data-table__empty-title {
+  color:
+    var(--gc-semantic-text-primary);
+
+  font-size:
+    var(--gc-font-size-lg);
+
+  font-weight:
+    var(--gc-weight-bold);
+}
+
+.data-table__empty-description {
+  max-width:
+    34rem;
+
+  margin-top:
+    var(--gc-space-2);
+
+  color:
+    var(--gc-semantic-text-muted);
+}
+
+/* ============================================================
+   TABLE LOADING
+   ============================================================ */
+
+.data-table__loading {
+  min-height:
+    16rem;
+
+  display:
+    grid;
+
+  place-items:
+    center;
+
+  padding:
+    var(--gc-space-8);
+
+  color:
+    var(--gc-semantic-text-muted);
+}
+
+.table-loading-indicator {
+  width:
+    2rem;
+
+  height:
+    2rem;
+
+  border:
+    3px solid
+    var(--gc-semantic-border-subtle);
+
+  border-top-color:
+    var(--gc-semantic-accent-primary);
+
+  border-radius:
+    50%;
+
+  animation:
+    gc-table-spinner
+    0.9s
+    linear
+    infinite;
+}
+
+@keyframes gc-table-spinner {
+  to {
+    transform:
+      rotate(360deg);
+  }
+}
+
+/* ============================================================
+   TABLE CAPTION
+   ============================================================ */
+
+.data-table caption {
+  padding:
+    var(--gc-space-3)
+    var(--gc-space-4);
+
+  color:
+    var(--gc-semantic-text-muted);
+
+  font-size:
+    var(--gc-font-size-xs);
+
+  text-align:
+    left;
+}
+
+/* ============================================================
+   MOBILE TABLE BEHAVIOUR
+   ============================================================ */
+
+@media (max-width: 767px) {
+  .data-table {
+    border-radius:
+      var(--gc-radius-lg);
+  }
+
+  .data-table th,
+  .data-table td {
+    padding:
+      var(--gc-space-3);
+  }
+
+  .table-toolbar {
+    align-items:
+      stretch;
+  }
+
+  .table-toolbar__left,
+  .table-toolbar__right {
+    width:
+      100%;
+  }
+
+  .table-toolbar__right {
+    margin-left:
+      0;
+  }
+
+  .data-table__details {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .data-table tbody tr,
+  .table-loading-indicator {
+    transition:
+      none;
+
+    animation:
+      none;
+  }
+}
