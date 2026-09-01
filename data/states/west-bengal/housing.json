@@ -1,0 +1,57 @@
+{
+  "$schema": "../../../schemas/housing.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "west-bengal-government",
+  "stateId": "west-bengal",
+  "lastVerified": "2026-08-31",
+  "housingProfiles": [
+    {
+      "id": "housing-wb-general-government",
+      "type": "STATE_GOVERNMENT_QUARTER_POSSIBLE",
+      "eligibility": "SERVICE_LEVEL_STATION_AND_AVAILABILITY_DEPENDENT",
+      "automatic": false,
+      "availability": "VACANCY_DEPENDENT",
+      "allotment": "DEPARTMENTAL_OR_GENERAL_ALLOTMENT_RULES",
+      "hraImpact": "RULE_DEPENDENT",
+      "licenceFee": "NOT_PUBLICLY_VERIFIED_AS_SINGLE_UNIVERSAL_VALUE",
+      "utilities": "USER_DEPENDENT",
+      "confidence": "MEDIUM",
+      "notes": {
+        "en": "Employment in West Bengal Government does not by itself guarantee a quarter. Entitlement, availability, allotment and financial effect must be treated separately.",
+        "bn": "পশ্চিমবঙ্গ সরকারের চাকরি থাকলেই কোয়ার্টার নিশ্চিত হয় না। অধিকার, প্রাপ্যতা, বরাদ্দ এবং আর্থিক প্রভাব পৃথকভাবে বিবেচনা করতে হবে।"
+      }
+    },
+    {
+      "id": "housing-kolkata-police",
+      "type": "POLICE_HOUSING",
+      "eligibility": "POLICE_SERVICE_AND_AVAILABILITY_DEPENDENT",
+      "automatic": false,
+      "availability": "NOT_UNIVERSALLY_GUARANTEED",
+      "allotment": "POLICE_HOUSING_RULES_AND_AVAILABILITY",
+      "hraImpact": "RULE_DEPENDENT",
+      "licenceFee": "NOT_PUBLICLY_VERIFIED_AS_SINGLE_UNIVERSAL_VALUE",
+      "utilities": "USER_DEPENDENT",
+      "confidence": "MEDIUM",
+      "notes": {
+        "en": "Police accommodation may exist, but individual allotment cannot be treated as guaranteed without a service-specific entitlement and actual availability.",
+        "bn": "পুলিশ আবাসন থাকতে পারে, কিন্তু নির্দিষ্ট কর্মীর বরাদ্দকে সার্ভিস-নির্দিষ্ট অধিকার ও বাস্তব প্রাপ্যতা ছাড়া নিশ্চিত বলা যাবে না।"
+      }
+    },
+    {
+      "id": "housing-rural-block-posting",
+      "type": "DEPARTMENTAL_OR_BLOCK_ACCOMMODATION_POSSIBLE",
+      "eligibility": "POST_AND_LOCATION_DEPENDENT",
+      "automatic": false,
+      "availability": "NOT_PUBLICLY_VERIFIED_UNIVERSALLY",
+      "allotment": "DEPARTMENT_SPECIFIC",
+      "hraImpact": "RULE_DEPENDENT",
+      "licenceFee": "NOT_PUBLICLY_VERIFIED",
+      "utilities": "USER_DEPENDENT",
+      "confidence": "LOW_MEDIUM",
+      "notes": {
+        "en": "Do not assume that a rural field posting automatically provides official housing."
+      }
+    }
+  ]
+}
