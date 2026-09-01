@@ -1,224 +1,318 @@
 /**
  * GovCareer Compass
- * Theme manager
- *
- * Supported values:
- * - light
- * - dark
- * - system
+ * ============================================================
+ * Theme Manager
+ * ============================================================
  */
 
-import config from './config.js';
-import storage from './storage.js';
+import config, {
+  STORAGE_KEYS
+} from './config.js';
 
-const STORAGE_KEY = config.storageKeys.theme;
-const THEMES = ['light', 'dark', 'system'];
+import {
+  getItem,
+  setItem
+} from './storage.js';
+
+const THEME_ATTRIBUTE =
+  'data-theme';
+
+const SYSTEM_THEME =
+  'system';
 
 function getSystemTheme() {
-  if (
-    typeof window === 'undefined' ||
-    !window.matchMedia
-  ) {
-    return 'light';
-  }
-
-  return window.matchMedia(
+  return window.matchMedia?.(
     '(prefers-color-scheme: dark)'
   ).matches
     ? 'dark'
     : 'light';
 }
 
-function getEffectiveTheme(theme) {
-  return theme === 'system'
-    ? getSystemTheme()
-    : theme;
+function getStoredTheme() {
+  const stored =
+    getItem(
+      STORAGE_KEYS.theme,
+      null
+    );
+
+  if (
+    config.app.supportedThemes.includes(
+      stored
+    )
+  ) {
+    return stored;
+  }
+
+  return config.app.defaultTheme;
 }
 
-function normalizeTheme(theme) {
-  return THEMES.includes(theme)
-    ? theme
-    : config.app.defaultTheme;
+function resolveTheme(
+  preference
+) {
+  if (
+    preference ===
+    SYSTEM_THEME
+  ) {
+    return getSystemTheme();
+  }
+
+  if (
+    preference ===
+      'dark' ||
+    preference ===
+      'light'
+  ) {
+    return preference;
+  }
+
+  return getSystemTheme();
 }
 
-function applyTheme(theme, { persist = true } = {}) {
-  const normalized = normalizeTheme(theme);
-  const effective = getEffectiveTheme(normalized);
+function applyTheme(
+  preference,
+  {
+    persist = true,
+    announce = true
+  } = {}
+) {
+  const normalized =
+    config.app.supportedThemes.includes(
+      preference
+    )
+      ? preference
+      : config.app.defaultTheme;
 
-  document.documentElement.dataset.theme = effective;
+  const resolved =
+    resolveTheme(
+      normalized
+    );
+
+  document.documentElement.setAttribute(
+    THEME_ATTRIBUTE,
+    resolved
+  );
+
   document.documentElement.dataset.themePreference =
     normalized;
 
-  document.documentElement.style.colorScheme = effective;
-
-  updateThemeControls(normalized);
-
-  if (persist) {
-    storage.set(STORAGE_KEY, normalized);
+  if (
+    persist
+  ) {
+    setItem(
+      STORAGE_KEYS.theme,
+      normalized
+    );
   }
 
-  window.dispatchEvent(
-    new CustomEvent('gcc:themechange', {
-      detail: {
-        preference: normalized,
-        effective
-      }
-    })
+  updateThemeControls(
+    normalized
   );
 
+  if (
+    announce
+  ) {
+    document.dispatchEvent(
+      new CustomEvent(
+        'govcareer:themechange',
+        {
+          detail: {
+            preference:
+              normalized,
+            resolved
+          }
+        }
+      )
+    );
+  }
+
   return {
-    preference: normalized,
-    effective
+    preference:
+      normalized,
+    resolved
   };
 }
 
-function getTheme() {
-  return normalizeTheme(
-    storage.get(STORAGE_KEY, config.app.defaultTheme)
-  );
-}
+function updateThemeControls(
+  activeTheme
+) {
+  document
+    .querySelectorAll(
+      '[data-theme-value]'
+    )
+    .forEach(
+      (control) => {
+        const value =
+          control.dataset.themeValue;
 
-function toggleTheme() {
-  const current = getEffectiveTheme(getTheme());
-  return applyTheme(
-    current === 'dark'
-      ? 'light'
-      : 'dark'
-  );
-}
+        const active =
+          value ===
+          activeTheme;
 
-function updateThemeControls(theme) {
-  const controls = document.querySelectorAll(
-    '[data-theme-control]'
-  );
+        control.classList.toggle(
+          'is-active',
+          active
+        );
 
-  controls.forEach((control) => {
-    const value = control.dataset.themeControl;
-
-    control.setAttribute(
-      'aria-pressed',
-      String(value === theme)
+        if (
+          control.matches(
+            'button, [role="button"], input, option'
+          )
+        ) {
+          control.setAttribute(
+            'aria-pressed',
+            String(
+              active
+            )
+          );
+        }
+      }
     );
 
-    if (
-      control instanceof HTMLSelectElement ||
-      control instanceof HTMLInputElement
-    ) {
-      if (control.type === 'radio') {
-        control.checked = value === theme;
-      } else if (control.tagName === 'SELECT') {
-        control.value = theme;
+  document
+    .querySelectorAll(
+      '[data-theme-select]'
+    )
+    .forEach(
+      (select) => {
+        if (
+          select.value !==
+          activeTheme
+        ) {
+          select.value =
+            activeTheme;
+        }
       }
-    }
-  });
-
-  document.querySelectorAll(
-    '[data-theme-label]'
-  ).forEach((element) => {
-    element.textContent = theme;
-  });
+    );
 }
 
-function bindThemeControls(root = document) {
-  root
-    .querySelectorAll('[data-theme-control]')
-    .forEach((control) => {
-      if (control.dataset.themeBound === 'true') {
-        return;
-      }
-
-      control.dataset.themeBound = 'true';
-
-      control.addEventListener('click', () => {
-        const theme = control.dataset.themeControl;
-
-        if (THEMES.includes(theme)) {
-          applyTheme(theme);
-        }
-      });
+function bindThemeControls() {
+  document.addEventListener(
+    'click',
+    (event) => {
+      const control =
+        event.target.closest(
+          '[data-theme-value]'
+        );
 
       if (
-        control instanceof HTMLSelectElement
+        !control
       ) {
-        control.addEventListener(
-          'change',
-          () => {
-            applyTheme(control.value);
-          }
-        );
-      }
-    });
-
-  root
-    .querySelectorAll('[data-theme-toggle]')
-    .forEach((control) => {
-      if (control.dataset.themeBound === 'true') {
         return;
       }
 
-      control.dataset.themeBound = 'true';
+      const value =
+        control.dataset.themeValue;
 
-      control.addEventListener(
-        'click',
-        toggleTheme
+      if (
+        !value
+      ) {
+        return;
+      }
+
+      applyTheme(
+        value
       );
-    });
+    }
+  );
+
+  document.addEventListener(
+    'change',
+    (event) => {
+      const select =
+        event.target.closest(
+          '[data-theme-select]'
+        );
+
+      if (
+        !select
+      ) {
+        return;
+      }
+
+      applyTheme(
+        select.value
+      );
+    }
+  );
 }
 
-function watchSystemTheme() {
-  if (!window.matchMedia) {
+function bindSystemThemeChanges() {
+  const mediaQuery =
+    window.matchMedia?.(
+      '(prefers-color-scheme: dark)'
+    );
+
+  if (
+    !mediaQuery
+  ) {
     return;
   }
 
-  const media = window.matchMedia(
-    '(prefers-color-scheme: dark)'
-  );
+  const handler =
+    () => {
+      const preference =
+        document.documentElement
+          .dataset
+          .themePreference;
 
-  const handler = () => {
-    const currentPreference = getTheme();
+      if (
+        preference ===
+        SYSTEM_THEME
+      ) {
+        applyTheme(
+          SYSTEM_THEME,
+          {
+            persist: false
+          }
+        );
+      }
+    };
 
-    if (currentPreference === 'system') {
-      applyTheme('system', {
-        persist: false
-      });
-    }
-  };
-
-  if (typeof media.addEventListener === 'function') {
-    media.addEventListener(
+  if (
+    typeof mediaQuery.addEventListener ===
+    'function'
+  ) {
+    mediaQuery.addEventListener(
       'change',
       handler
     );
   } else if (
-    typeof media.addListener === 'function'
+    typeof mediaQuery.addListener ===
+    'function'
   ) {
-    media.addListener(handler);
+    mediaQuery.addListener(
+      handler
+    );
   }
 }
 
-function initTheme() {
-  applyTheme(getTheme(), {
-    persist: false
-  });
+function initializeTheme() {
+  const preference =
+    getStoredTheme();
+
+  applyTheme(
+    preference,
+    {
+      persist: false,
+      announce: false
+    }
+  );
 
   bindThemeControls();
-  watchSystemTheme();
+
+  bindSystemThemeChanges();
 }
 
 export {
-  initTheme,
+  getSystemTheme,
+  getStoredTheme,
+  resolveTheme,
   applyTheme,
-  getTheme,
-  toggleTheme,
-  bindThemeControls,
-  getEffectiveTheme
+  initializeTheme
 };
 
 export default {
-  initTheme,
   applyTheme,
-  getTheme,
-  toggleTheme,
-  bindThemeControls,
-  getEffectiveTheme
+  initializeTheme,
+  getStoredTheme
 };
