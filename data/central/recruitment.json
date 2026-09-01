@@ -1,0 +1,186 @@
+{
+  "$schema": "../../schemas/recruitment.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "central-government",
+  "lastVerified": "2026-08-31",
+  "recruitments": [
+    {
+      "id": "recruitment-ssc-cgl-2026",
+      "examId": "exam-ssc-cgl",
+      "authorityId": "org-ssc",
+      "notificationYear": 2026,
+      "notificationDate": "2026-05-21",
+      "applicationStartDate": "2026-05-21",
+      "applicationEndDate": "2026-06-22",
+      "tier1Expected": "2026-08/09",
+      "tier2Expected": "2026-12",
+      "status": "UNDER_PROCESS",
+      "vacancyStatus": "POSTS_AND_VACANCIES_SUBJECT_TO_OFFICIAL_CYCLE",
+      "sourceIds": [
+        "src-ssc-cgl-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-ssc-cgl-2025-final",
+      "examId": "exam-ssc-cgl",
+      "authorityId": "org-ssc",
+      "notificationYear": 2025,
+      "notificationDate": "2025",
+      "status": "FINAL_VACANCIES_PUBLISHED",
+      "vacancyStatus": "FINAL",
+      "finalVacancySourceId": "src-ssc-cgl-2025-final",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-ssc-calendar-2026-selection-post",
+      "examId": "exam-ssc-selection-post-xiv",
+      "authorityId": "org-ssc",
+      "notificationYear": 2026,
+      "notificationDate": "2026",
+      "applicationWindow": "2026",
+      "status": "RECRUITMENT_CYCLE",
+      "vacancyStatus": "POST_SPECIFIC",
+      "sourceIds": [
+        "src-ssc-calendar-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-ssc-calendar-2026-chsl",
+      "examId": "exam-ssc-chsl",
+      "authorityId": "org-ssc",
+      "notificationYear": 2026,
+      "notificationDate": "2026",
+      "applicationWindow": "APRIL-MAY_2026_PLANNED",
+      "status": "RECRUITMENT_CYCLE",
+      "vacancyStatus": "TO_BE_VERIFIED_FROM_FINAL_NOTICE",
+      "sourceIds": [
+        "src-ssc-calendar-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-ssc-calendar-2026-steno",
+      "examId": "exam-ssc-stenographer",
+      "authorityId": "org-ssc",
+      "notificationYear": 2026,
+      "notificationDate": "2026",
+      "status": "RECRUITMENT_CYCLE",
+      "vacancyStatus": "TO_BE_VERIFIED_FROM_FINAL_NOTICE",
+      "sourceIds": [
+        "src-ssc-calendar-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-rrb-ntpc-graduate-2025",
+      "examId": "exam-rrb-ntpc-graduate",
+      "authorityId": "org-rrb",
+      "notificationYear": 2025,
+      "notificationDate": "2025-10-21",
+      "applicationStartDate": "2025-10-21",
+      "applicationEndDate": "2025-11-20",
+      "status": "UNDER_PROCESS",
+      "currentMilestone": "CBT_I_COMPLETED_RESULT_STAGE",
+      "sourceIds": [
+        "src-rrb-ntpc-graduate-2025",
+        "src-rrb-ntpc-graduate-cbt1-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-rrb-ntpc-undergraduate-2025",
+      "examId": "exam-rrb-ntpc-undergraduate",
+      "authorityId": "org-rrb",
+      "notificationYear": 2025,
+      "notificationDate": "2025-10-28",
+      "applicationStartDate": "2025-10-28",
+      "applicationEndDate": "2025-11-27",
+      "status": "UNDER_PROCESS",
+      "currentMilestone": "CBT_I_SCHEDULED_COMPLETED_STAGE",
+      "sourceIds": [
+        "src-rrb-ntpc-undergraduate-2025"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-rpf-si-2024",
+      "examId": "exam-rpf-si",
+      "authorityId": "org-rrb-rpf",
+      "notificationYear": 2024,
+      "status": "POST_SELECTION_ACTIVITY",
+      "sourceIds": [
+        "src-rrb-employment-notices"
+      ],
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "recruitment-rpf-constable-2024",
+      "examId": "exam-rpf-constable",
+      "authorityId": "org-rrb-rpf",
+      "notificationYear": 2024,
+      "status": "POST_SELECTION_ACTIVITY",
+      "sourceIds": [
+        "src-rrb-employment-notices"
+      ],
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "recruitment-ib-sa-2025",
+      "examId": "exam-ib-sa-exe",
+      "authorityId": "org-ib",
+      "notificationYear": 2025,
+      "notificationDate": "2025-07-26",
+      "status": "HISTORICAL_RECRUITMENT_CYCLE",
+      "vacancyStatus": "REVISED_TO_4987",
+      "sourceIds": [
+        "src-ib-sa-2025"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-upsc-cse-2026",
+      "examId": "exam-upsc-cse",
+      "authorityId": "org-upsc",
+      "notificationYear": 2026,
+      "notificationDate": "2026-02-04",
+      "applicationEndDate": "2026-02-27",
+      "status": "MAIN_EXAM_PROCESS",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-upsc-capf-2026",
+      "examId": "exam-upsc-capf-ac",
+      "authorityId": "org-upsc",
+      "notificationYear": 2026,
+      "notificationDate": "2026-02-20",
+      "applicationEndDate": "2026-03-12",
+      "status": "WRITTEN_RESULT_STAGE",
+      "sourceIds": [
+        "src-upsc-capf-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "recruitment-upsc-cds-ii-2026",
+      "examId": "exam-upsc-cds-ii",
+      "authorityId": "org-upsc",
+      "notificationYear": 2026,
+      "notificationDate": "2026-05-20",
+      "applicationEndDate": "2026-06-11",
+      "status": "EXAM_SCHEDULED",
+      "sourceIds": [
+        "src-upsc-cds-2026"
+      ],
+      "confidence": "HIGH"
+    }
+  ]
+}
