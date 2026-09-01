@@ -1,0 +1,388 @@
+{
+  "$schema": "../../schemas/exam.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "central-government",
+  "lastVerified": "2026-08-31",
+  "exams": [
+    {
+      "id": "exam-upsc-cse",
+      "name": "Civil Services Examination",
+      "abbreviation": "CSE",
+      "authorityId": "org-upsc",
+      "governmentId": "central-government",
+      "qualificationSummary": "Bachelor's degree from a recognised university or equivalent, subject to the applicable annual notification.",
+      "baEnglishEligibility": "DIRECT",
+      "entryLevel": "GRADUATE",
+      "selectionStages": [
+        "PRELIMINARY",
+        "MAINS",
+        "PERSONALITY_TEST"
+      ],
+      "physicalRequirement": false,
+      "skillRequirement": false,
+      "frequency": "ANNUAL",
+      "currentStatus": "COMPLETED_WRITTEN_PRELIMINARY_AND_MAIN_IN_PROGRESS",
+      "latestNotificationYear": 2026,
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "exam-upsc-capf-ac",
+      "name": "Central Armed Police Forces (Assistant Commandants) Examination",
+      "abbreviation": "CAPF AC",
+      "authorityId": "org-upsc",
+      "governmentId": "central-government",
+      "qualificationSummary": "Bachelor's degree from a recognised university or equivalent, subject to the applicable annual notification.",
+      "baEnglishEligibility": "DIRECT_ACADEMIC",
+      "entryLevel": "GRADUATE",
+      "selectionStages": [
+        "WRITTEN",
+        "PHYSICAL_STANDARD_AND_PHYSICAL_EFFICIENCY",
+        "MEDICAL",
+        "INTERVIEW_PERSONALITY_TEST"
+      ],
+      "physicalRequirement": true,
+      "skillRequirement": false,
+      "frequency": "ANNUAL",
+      "currentStatus": "2026_EXAM_COMPLETED_WRITTEN_RESULT_STAGE",
+      "latestNotificationYear": 2026,
+      "sourceIds": [
+        "src-upsc-capf-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "exam-upsc-cds-i",
+      "name": "Combined Defence Services Examination (I)",
+      "abbreviation": "CDS I",
+      "authorityId": "org-upsc",
+      "governmentId": "central-government",
+      "qualificationSummary": "Qualification varies by academy. Indian Military Academy and Officer Training Academy accept a recognised university degree; Air Force Academy requires a degree with Physics and Mathematics at 10+2 level or Bachelor of Engineering; Naval Academy requires an engineering degree.",
+      "baEnglishEligibility": "CONDITIONAL",
+      "entryLevel": "GRADUATE",
+      "selectionStages": [
+        "WRITTEN",
+        "SENS",
+        "MEDICAL",
+        "SSB_INTERVIEW"
+      ],
+      "physicalRequirement": true,
+      "skillRequirement": false,
+      "frequency": "TWICE_YEARLY",
+      "currentStatus": "HISTORICAL_2026_CYCLE",
+      "latestNotificationYear": 2026,
+      "sourceIds": [
+        "src-upsc-cds-2026"
+      ],
+      "confidence": "HIGH",
+      "notes": "For a plain B.A. English candidate, eligibility primarily exists for the academy routes whose notification accepts a general degree; academy-specific conditions must be checked."
+    },
+    {
+      "id": "exam-upsc-cds-ii",
+      "name": "Combined Defence Services Examination (II)",
+      "abbreviation": "CDS II",
+      "authorityId": "org-upsc",
+      "governmentId": "central-government",
+      "qualificationSummary": "Qualification varies by academy and must be checked against the annual notification.",
+      "baEnglishEligibility": "CONDITIONAL",
+      "entryLevel": "GRADUATE",
+      "selectionStages": [
+        "WRITTEN",
+        "SSB_INTERVIEW",
+        "MEDICAL"
+      ],
+      "physicalRequirement": true,
+      "skillRequirement": false,
+      "frequency": "TWICE_YEARLY",
+      "currentStatus": "2026_APPLICATION_CLOSED_EXAM_SCHEDULED",
+      "latestNotificationYear": 2026,
+      "sourceIds": [
+        "src-upsc-cds-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "exam-ssc-cgl",
+      "name": "Combined Graduate Level Examination",
+      "abbreviation": "CGL",
+      "authorityId": "org-ssc",
+      "governmentId": "central-government",
+      "qualificationSummary": "Bachelor's degree for the general graduate posts, with subject-specific qualifications for certain statistical posts.",
+      "baEnglishEligibility": "DIRECT_FOR_GENERAL_POSTS",
+      "entryLevel": "GRADUATE",
+      "selectionStages": [
+        "TIER_I",
+        "TIER_II",
+        "DOCUMENT_VERIFICATION",
+        "POST_SPECIFIC_REQUIREMENTS_WHERE_APPLICABLE"
+      ],
+      "physicalRequirement": "POST_DEPENDENT",
+      "skillRequirement": "POST_DEPENDENT",
+      "frequency": "ANNUAL",
+      "currentStatus": "2026_APPLICATION_CLOSED_TIER_I_SCHEDULED",
+      "latestNotificationYear": 2026,
+      "sourceIds": [
+        "src-ssc-cgl-2026",
+        "src-ssc-cgl-2025-final"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "exam-ssc-cpo",
+      "name": "Sub-Inspector in Delhi Police and Central Armed Police Forces Examination",
+      "abbreviation": "CPO",
+      "authorityId": "org-ssc",
+      "governmentId": "central-government",
+      "qualificationSummary": "Bachelor's degree, with post-specific and physical requirements.",
+      "baEnglishEligibility": "DIRECT_ACADEMIC",
+      "entryLevel": "GRADUATE",
+      "selectionStages": [
+        "PAPER_I",
+        "PHYSICAL_STANDARD_TEST_AND_PHYSICAL_ENDURANCE_TEST",
+        "PAPER_II",
+        "MEDICAL",
+        "DOCUMENT_VERIFICATION"
+      ],
+      "physicalRequirement": true,
+      "skillRequirement": false,
+      "frequency": "ANNUAL",
+      "currentStatus": "2026_RECRUITMENT_CYCLE",
+      "latestNotificationYear": 2026,
+      "sourceIds": [
+        "src-ssc-calendar-2026"
+      ],
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "exam-ssc-chsl",
+      "name": "Combined Higher Secondary (10+2) Level Examination",
+      "abbreviation": "CHSL",
+      "authorityId": "org-ssc",
+      "governmentId": "central-government",
+      "qualificationSummary": "Higher Secondary / 10+2 or equivalent, with post-specific technical or subject requirements where applicable.",
+      "baEnglishEligibility": "DIRECT_ACADEMIC",
+      "entryLevel": "CLASS_12",
+      "selectionStages": [
+        "TIER_I",
+        "TIER_II",
+        "SKILL_OR_TYPING_TEST_WHERE_APPLICABLE"
+      ],
+      "physicalRequirement": false,
+      "skillRequirement": true,
+      "frequency": "ANNUAL",
+      "currentStatus": "2026_RECRUITMENT_CYCLE",
+      "latestNotificationYear": 2026,
+      "sourceIds": [
+        "src-ssc-calendar-2026"
+      ],
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "exam-ssc-selection-post-xiv",
+      "name": "Selection Post Examination, Phase XIV",
+      "abbreviation": "Selection Post",
+      "authorityId": "org-ssc",
+      "governmentId": "central-government",
+      "qualificationSummary": "Varies by individual post: Matriculation, Higher Secondary or Graduation & Above.",
+      "baEnglishEligibility": "POST_SPECIFIC",
+      "entryLevel": "MULTI_LEVEL",
+      "selectionStages": [
+        "COMPUTER_BASED_EXAMINATION",
+        "DOCUMENT_VERIFICATION",
+        "POST_SPECIFIC_SKILL_OR_OTHER_TEST_WHERE_APPLICABLE"
+      ],
+      "physicalRequirement": "POST_DEPENDENT",
+      "skillRequirement": "POST_DEPENDENT",
+      "frequency": "ANNUAL_OR_PERIODIC",
+      "currentStatus": "2026_RECRUITMENT_CYCLE",
+      "latestNotificationYear": 2026,
+      "sourceIds": [
+        "src-ssc-selection-post-xiii",
+        "src-ssc-calendar-2026"
+      ],
+      "confidence": "HIGH",
+      "notes": "This is an examination framework rather than one job. Each post must be represented individually in jobs.json."
+    },
+    {
+      "id": "exam-ssc-stenographer",
+      "name": "Stenographer Grade C and Grade D Examination",
+      "abbreviation": "Stenographer Grade C & D",
+      "authorityId": "org-ssc",
+      "governmentId": "central-government",
+      "qualificationSummary": "Higher Secondary / 10+2 or equivalent, plus stenography skill requirement.",
+      "baEnglishEligibility": "DIRECT_ACADEMIC_CONDITIONAL_SKILL",
+      "entryLevel": "CLASS_12",
+      "selectionStages": [
+        "COMPUTER_BASED_EXAMINATION",
+        "STENOGRAPHY_SKILL_TEST"
+      ],
+      "physicalRequirement": false,
+      "skillRequirement": true,
+      "frequency": "ANNUAL",
+      "currentStatus": "2026_RECRUITMENT_CYCLE",
+      "latestNotificationYear": 2026,
+      "sourceIds": [
+        "src-ssc-steno-2025",
+        "src-ssc-calendar-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "exam-ssc-mts-havaldar",
+      "name": "Multi-Tasking Staff (Non-Technical) Staff and Havaldar Examination",
+      "abbreviation": "MTS",
+      "authorityId": "org-ssc",
+      "governmentId": "central-government",
+      "qualificationSummary": "Matriculation / Class 10 for the relevant posts.",
+      "baEnglishEligibility": "DIRECT_ACADEMIC_SUBJECT_TO_OVERQUALIFICATION_RULE",
+      "entryLevel": "CLASS_10",
+      "selectionStages": [
+        "COMPUTER_BASED_EXAMINATION",
+        "PHYSICAL_STANDARD_AND_PHYSICAL_EFFICIENCY_FOR_HAVALDAR"
+      ],
+      "physicalRequirement": "HAVALDAR_ONLY",
+      "skillRequirement": false,
+      "frequency": "ANNUAL",
+      "currentStatus": "2026_RECRUITMENT_CYCLE",
+      "latestNotificationYear": 2026,
+      "sourceIds": [
+        "src-ssc-calendar-2026"
+      ],
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "exam-rrb-ntpc-graduate",
+      "name": "Non-Technical Popular Categories (Graduate)",
+      "abbreviation": "NTPC Graduate",
+      "authorityId": "org-rrb",
+      "governmentId": "central-government",
+      "qualificationSummary": "Bachelor's degree for the graduate-level posts, with typing requirement for typist-designated posts.",
+      "baEnglishEligibility": "DIRECT_FOR_GENERAL_GRADUATE_POSTS",
+      "entryLevel": "GRADUATE",
+      "selectionStages": [
+        "CBT_I",
+        "CBT_II",
+        "CBAT_OR_TYPING_WHERE_APPLICABLE",
+        "DOCUMENT_VERIFICATION",
+        "MEDICAL"
+      ],
+      "physicalRequirement": "MEDICAL_CATEGORY",
+      "skillRequirement": "POST_DEPENDENT",
+      "frequency": "PERIODIC",
+      "currentStatus": "2025_RECRUITMENT_UNDER_PROCESS",
+      "latestNotificationYear": 2025,
+      "sourceIds": [
+        "src-rrb-ntpc-graduate-2025",
+        "src-rrb-ntpc-graduate-cbt1-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "exam-rrb-ntpc-undergraduate",
+      "name": "Non-Technical Popular Categories (Undergraduate)",
+      "abbreviation": "NTPC Undergraduate",
+      "authorityId": "org-rrb",
+      "governmentId": "central-government",
+      "qualificationSummary": "Class 12 / Higher Secondary for applicable posts.",
+      "baEnglishEligibility": "DIRECT_ACADEMIC_SUBJECT_TO_RULES",
+      "entryLevel": "CLASS_12",
+      "selectionStages": [
+        "CBT_I",
+        "CBT_II",
+        "TYPING_WHERE_APPLICABLE",
+        "DOCUMENT_VERIFICATION",
+        "MEDICAL"
+      ],
+      "physicalRequirement": "MEDICAL_CATEGORY",
+      "skillRequirement": "POST_DEPENDENT",
+      "frequency": "PERIODIC",
+      "currentStatus": "2025_RECRUITMENT_UNDER_PROCESS",
+      "latestNotificationYear": 2025,
+      "sourceIds": [
+        "src-rrb-ntpc-undergraduate-2025"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "exam-rpf-si",
+      "name": "Railway Protection Force Sub-Inspector Recruitment",
+      "abbreviation": "RPF SI",
+      "authorityId": "org-rrb-rpf",
+      "governmentId": "central-government",
+      "qualificationSummary": "Bachelor's degree with physical and medical requirements.",
+      "baEnglishEligibility": "DIRECT_ACADEMIC",
+      "entryLevel": "GRADUATE",
+      "selectionStages": [
+        "COMPUTER_BASED_TEST",
+        "PHYSICAL_MEASUREMENT_TEST",
+        "PHYSICAL_EFFICIENCY_TEST",
+        "DOCUMENT_VERIFICATION",
+        "MEDICAL"
+      ],
+      "physicalRequirement": true,
+      "skillRequirement": false,
+      "frequency": "IRREGULAR",
+      "currentStatus": "2024_RECRUITMENT_POST_SELECTION_ACTIVITY",
+      "latestNotificationYear": 2024,
+      "sourceIds": [
+        "src-rrb-employment-notices"
+      ],
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "exam-rpf-constable",
+      "name": "Railway Protection Force Constable Recruitment",
+      "abbreviation": "RPF Constable",
+      "authorityId": "org-rrb-rpf",
+      "governmentId": "central-government",
+      "qualificationSummary": "Matriculation / Class 10, with physical and medical requirements.",
+      "baEnglishEligibility": "DIRECT_ACADEMIC_SUBJECT_TO_OVERQUALIFICATION_RULE",
+      "entryLevel": "CLASS_10",
+      "selectionStages": [
+        "COMPUTER_BASED_TEST",
+        "PHYSICAL_MEASUREMENT_TEST",
+        "PHYSICAL_EFFICIENCY_TEST",
+        "DOCUMENT_VERIFICATION",
+        "MEDICAL"
+      ],
+      "physicalRequirement": true,
+      "skillRequirement": false,
+      "frequency": "IRREGULAR",
+      "currentStatus": "2024_RECRUITMENT_POST_SELECTION_ACTIVITY",
+      "latestNotificationYear": 2024,
+      "sourceIds": [
+        "src-rrb-employment-notices"
+      ],
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "exam-ib-sa-exe",
+      "name": "Security Assistant / Executive Examination",
+      "abbreviation": "IB SA/Exe",
+      "authorityId": "org-ib",
+      "governmentId": "central-government",
+      "qualificationSummary": "Class 10 plus applicable local-language and other conditions specified in the recruitment notice.",
+      "baEnglishEligibility": "DIRECT_ACADEMIC_CONDITION_DEPENDENT",
+      "entryLevel": "CLASS_10",
+      "selectionStages": [
+        "TIER_I",
+        "TIER_II",
+        "INTERVIEW",
+        "DOCUMENT_VERIFICATION",
+        "MEDICAL"
+      ],
+      "physicalRequirement": "ROLE_DEPENDENT",
+      "skillRequirement": "POST_DEPENDENT",
+      "frequency": "PERIODIC",
+      "currentStatus": "2025_RECRUITMENT_HISTORICAL_CURRENT_CADRE",
+      "latestNotificationYear": 2025,
+      "sourceIds": [
+        "src-ib-sa-2025"
+      ],
+      "confidence": "HIGH"
+    }
+  ]
+}
