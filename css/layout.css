@@ -1,0 +1,880 @@
+/**
+ * GovCareer Compass
+ * ============================================================
+ * Global Layout System
+ * ============================================================
+ *
+ * Depends on:
+ *   tokens.css
+ *   reset.css
+ *   themes.css
+ *   base.css
+ *
+ * This file controls macro page geometry only.
+ * Component-specific visuals belong in components.css.
+ */
+
+/* ============================================================
+   APPLICATION SHELL
+   ============================================================ */
+
+.gc-app,
+.app-shell,
+#app {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================================
+   SITE HEADER / STICKY HEADER FOUNDATION
+   ============================================================ */
+
+.site-header,
+.app-header,
+header[data-site-header] {
+  position: sticky;
+  top: 0;
+  z-index: var(--gc-z-header);
+  width: 100%;
+}
+
+.site-header__inner,
+.app-header__inner {
+  width: min(
+    calc(100% - 2rem),
+    var(--gc-container-max)
+  );
+  min-height: var(--gc-header-height);
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--gc-space-4);
+}
+
+/* ============================================================
+   MAIN
+   ============================================================ */
+
+main,
+.site-main,
+.app-main {
+  position: relative;
+  flex: 1 0 auto;
+  width: 100%;
+  z-index: var(--gc-z-content);
+}
+
+.page-content {
+  width: 100%;
+}
+
+/* ============================================================
+   CONTAINER VARIANTS
+   ============================================================ */
+
+.layout-container {
+  width: min(
+    calc(100% - 2rem),
+    var(--gc-container-2xl)
+  );
+  margin-inline: auto;
+}
+
+.layout-container--wide {
+  width: min(
+    calc(100% - 2rem),
+    var(--gc-container-max)
+  );
+  margin-inline: auto;
+}
+
+.layout-container--full {
+  width: 100%;
+  margin-inline: auto;
+}
+
+/* ============================================================
+   SECTION SYSTEM
+   ============================================================ */
+
+.page-section {
+  position: relative;
+  padding-block: var(--gc-space-16);
+}
+
+.page-section--compact {
+  padding-block: var(--gc-space-10);
+}
+
+.page-section--large {
+  padding-block: var(--gc-space-20);
+}
+
+.page-section--hero {
+  padding-block:
+    clamp(
+      var(--gc-space-10),
+      8vw,
+      var(--gc-space-20)
+    );
+}
+
+.page-section__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--gc-space-6);
+  margin-bottom: var(--gc-space-8);
+}
+
+.page-section__heading {
+  min-width: 0;
+  max-width: 52rem;
+}
+
+.page-section__eyebrow {
+  display: block;
+  margin-bottom: var(--gc-space-2);
+  color: var(--gc-semantic-accent-primary);
+  font-size: var(--gc-font-size-sm);
+  font-weight: var(--gc-weight-bold);
+  letter-spacing: var(--gc-letter-wide);
+  text-transform: uppercase;
+}
+
+.page-section__title {
+  margin: 0;
+}
+
+.page-section__description {
+  max-width: 58rem;
+  margin-top: var(--gc-space-3);
+  color: var(--gc-semantic-text-secondary);
+}
+
+/* ============================================================
+   HERO LAYOUT
+   ============================================================ */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.25fr)
+    minmax(20rem, 0.75fr);
+  align-items: center;
+  gap: var(--gc-space-12);
+}
+
+.hero__content {
+  min-width: 0;
+}
+
+.hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gc-space-2);
+  min-height: 2rem;
+  padding-inline: var(--gc-space-3);
+  border: 1px solid var(--gc-semantic-border-default);
+  border-radius: var(--gc-radius-pill);
+  background: var(--gc-semantic-bg-surface-subtle);
+  color: var(--gc-semantic-accent-primary);
+  font-size: var(--gc-font-size-xs);
+  font-weight: var(--gc-weight-bold);
+  letter-spacing: var(--gc-letter-wide);
+  text-transform: uppercase;
+}
+
+.hero__title {
+  margin-top: var(--gc-space-5);
+  max-width: 14ch;
+}
+
+.hero__description {
+  max-width: 48rem;
+  margin-top: var(--gc-space-5);
+  font-size: clamp(
+    1rem,
+    1.5vw,
+    var(--gc-font-size-lg)
+  );
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gc-space-3);
+  margin-top: var(--gc-space-7);
+}
+
+.hero__aside {
+  min-width: 0;
+}
+
+.hero__visual {
+  position: relative;
+  min-height: 22rem;
+}
+
+/* Decorative halo used only as layout geometry.
+   Actual palette comes from themes.css. */
+
+.hero__visual::before,
+.hero__visual::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero__visual::before {
+  width: 18rem;
+  height: 18rem;
+  top: 8%;
+  left: 8%;
+  background:
+    radial-gradient(
+      circle,
+      rgb(18 183 211 / 0.15),
+      transparent 68%
+    );
+}
+
+.hero__visual::after {
+  width: 20rem;
+  height: 20rem;
+  right: 3%;
+  bottom: -5%;
+  background:
+    radial-gradient(
+      circle,
+      rgb(94 104 229 / 0.14),
+      transparent 68%
+    );
+}
+
+/* ============================================================
+   DASHBOARD METRIC LAYOUT
+   ============================================================ */
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: var(--gc-space-4);
+}
+
+.metrics-grid--3 {
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+}
+
+.metrics-grid--5 {
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
+}
+
+.metric-grid--dense {
+  gap: var(--gc-space-3);
+}
+
+/* ============================================================
+   GENERIC GRID SYSTEM
+   ============================================================ */
+
+.auto-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(
+        min(100%, 17rem),
+        1fr
+      )
+    );
+  gap: var(--gc-space-5);
+}
+
+.auto-grid--compact {
+  gap: var(--gc-space-4);
+}
+
+.auto-grid--large {
+  gap: var(--gc-space-7);
+}
+
+.two-column {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: var(--gc-space-6);
+}
+
+.three-column {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+  gap: var(--gc-space-6);
+}
+
+.four-column {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: var(--gc-space-5);
+}
+
+/* ============================================================
+   SIDEBAR / CONTENT LAYOUTS
+   ============================================================ */
+
+.sidebar-layout {
+  display: grid;
+  grid-template-columns:
+    minmax(15rem, var(--gc-sidebar-width))
+    minmax(0, 1fr);
+  align-items: start;
+  gap: var(--gc-space-7);
+}
+
+.sidebar-layout--wide {
+  grid-template-columns:
+    minmax(16rem, var(--gc-sidebar-wide))
+    minmax(0, 1fr);
+}
+
+.sidebar-layout__sidebar {
+  position: sticky;
+  top:
+    calc(
+      var(--gc-header-height)
+      + var(--gc-space-5)
+    );
+  min-width: 0;
+}
+
+.sidebar-layout__content {
+  min-width: 0;
+}
+
+/* ============================================================
+   THREE-PANE RESEARCH LAYOUT
+   ============================================================ */
+
+.research-layout {
+  display: grid;
+  grid-template-columns:
+    minmax(15rem, 18rem)
+    minmax(0, 1fr)
+    minmax(17rem, 22rem);
+  gap: var(--gc-space-6);
+  align-items: start;
+}
+
+.research-layout__left,
+.research-layout__center,
+.research-layout__right {
+  min-width: 0;
+}
+
+.research-layout__left,
+.research-layout__right {
+  position: sticky;
+  top:
+    calc(
+      var(--gc-header-height)
+      + var(--gc-space-5)
+    );
+}
+
+/* ============================================================
+   TOOLBAR LAYOUT
+   ============================================================ */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--gc-space-4);
+}
+
+.toolbar__left,
+.toolbar__right {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--gc-space-3);
+}
+
+.toolbar__right {
+  margin-left: auto;
+}
+
+/* ============================================================
+   SEARCH / COMMAND LAYOUT
+   ============================================================ */
+
+.command-layout {
+  position: relative;
+  width: min(
+    100%,
+    56rem
+  );
+  margin-inline: auto;
+}
+
+.command-layout--wide {
+  width: min(
+    100%,
+    72rem
+  );
+}
+
+/* ============================================================
+   FILTER + RESULTS
+   ============================================================ */
+
+.filter-results-layout {
+  display: grid;
+  grid-template-columns:
+    minmax(16rem, 20rem)
+    minmax(0, 1fr);
+  gap: var(--gc-space-6);
+  align-items: start;
+}
+
+.filter-results-layout__filters {
+  position: sticky;
+  top:
+    calc(
+      var(--gc-header-height)
+      + var(--gc-space-5)
+    );
+  min-width: 0;
+}
+
+.filter-results-layout__results {
+  min-width: 0;
+}
+
+/* ============================================================
+   CAREER FINDER LAYOUT
+   ============================================================ */
+
+.career-finder-layout {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(15rem, 22rem);
+  gap: var(--gc-space-8);
+  align-items: start;
+}
+
+.career-finder-layout__main,
+.career-finder-layout__aside {
+  min-width: 0;
+}
+
+.career-finder-layout__aside {
+  position: sticky;
+  top:
+    calc(
+      var(--gc-header-height)
+      + var(--gc-space-5)
+    );
+}
+
+/* ============================================================
+   DETAIL PAGE LAYOUT
+   ============================================================ */
+
+.detail-layout {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(16rem, 24rem);
+  gap: var(--gc-space-7);
+  align-items: start;
+}
+
+.detail-layout__main,
+.detail-layout__aside {
+  min-width: 0;
+}
+
+.detail-layout__aside {
+  position: sticky;
+  top:
+    calc(
+      var(--gc-header-height)
+      + var(--gc-space-5)
+    );
+}
+
+/* ============================================================
+   COMPARISON PAGE LAYOUT
+   ============================================================ */
+
+.comparison-layout {
+  display: grid;
+  gap: var(--gc-space-6);
+}
+
+.comparison-layout__summary {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+  gap: var(--gc-space-4);
+}
+
+.comparison-layout__table {
+  min-width: 0;
+}
+
+/* ============================================================
+   FULL-WIDTH DATA AREAS
+   ============================================================ */
+
+.data-section {
+  width: 100%;
+  min-width: 0;
+}
+
+.data-section--overflow {
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+/* ============================================================
+   CONTENT WIDTHS
+   ============================================================ */
+
+.content-readable {
+  width: min(
+    100%,
+    var(--gc-content-readable)
+  );
+}
+
+.content-wide {
+  width: min(
+    100%,
+    var(--gc-container-xl)
+  );
+}
+
+/* ============================================================
+   STACK
+   ============================================================ */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gc-space-4);
+}
+
+.stack--2 {
+  gap: var(--gc-space-2);
+}
+
+.stack--3 {
+  gap: var(--gc-space-3);
+}
+
+.stack--5 {
+  gap: var(--gc-space-5);
+}
+
+.stack--6 {
+  gap: var(--gc-space-6);
+}
+
+.stack--8 {
+  gap: var(--gc-space-8);
+}
+
+/* ============================================================
+   INLINE FLEX GROUP
+   ============================================================ */
+
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gc-space-3);
+}
+
+.cluster--2 {
+  gap: var(--gc-space-2);
+}
+
+.cluster--4 {
+  gap: var(--gc-space-4);
+}
+
+.cluster--6 {
+  gap: var(--gc-space-6);
+}
+
+/* ============================================================
+   CENTERING
+   ============================================================ */
+
+.center-content {
+  display: grid;
+  place-items: center;
+}
+
+.center-content--vertical {
+  min-height: 100%;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+.site-footer,
+.app-footer,
+footer[data-site-footer] {
+  position: relative;
+  z-index: var(--gc-z-content);
+  width: 100%;
+}
+
+.site-footer__inner,
+.app-footer__inner {
+  width: min(
+    calc(100% - 2rem),
+    var(--gc-container-max)
+  );
+  margin-inline: auto;
+  padding-block:
+    var(--gc-space-10)
+    var(--gc-space-6);
+}
+
+.site-footer__grid,
+.app-footer__grid {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.5fr)
+    repeat(3, minmax(0, 1fr));
+  gap: var(--gc-space-8);
+}
+
+.site-footer__bottom,
+.app-footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--gc-space-3);
+  margin-top: var(--gc-space-8);
+  padding-top: var(--gc-space-5);
+  border-top:
+    1px solid
+    var(--gc-semantic-border-subtle);
+}
+
+/* ============================================================
+   FULL-SCREEN CENTER STATES
+   ============================================================ */
+
+.page-state {
+  min-height:
+    calc(
+      100vh
+      - var(--gc-header-height)
+      - 10rem
+    );
+  display: grid;
+  place-items: center;
+  padding: var(--gc-space-10);
+}
+
+/* ============================================================
+   MOBILE DRAWER / OVERLAY SUPPORT
+   ============================================================ */
+
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--gc-z-overlay);
+}
+
+/* ============================================================
+   RESPONSIVE LAYOUT BREAKPOINTS
+   ============================================================ */
+
+@media (max-width: 1279px) {
+  .research-layout {
+    grid-template-columns:
+      minmax(14rem, 18rem)
+      minmax(0, 1fr);
+  }
+
+  .research-layout__right {
+    position: static;
+    grid-column: 1 / -1;
+  }
+
+  .metrics-grid--5 {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1023px) {
+  .hero__inner {
+    grid-template-columns:
+      1fr;
+  }
+
+  .hero__aside {
+    max-width: 48rem;
+  }
+
+  .sidebar-layout,
+  .sidebar-layout--wide,
+  .filter-results-layout {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  .sidebar-layout__sidebar,
+  .filter-results-layout__filters,
+  .career-finder-layout__aside,
+  .detail-layout__aside {
+    position: static;
+  }
+
+  .career-finder-layout,
+  .detail-layout {
+    grid-template-columns:
+      1fr;
+  }
+
+  .comparison-layout__summary {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .metrics-grid,
+  .metrics-grid--3,
+  .metrics-grid--5 {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .three-column {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .four-column {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .site-header__inner,
+  .app-header__inner,
+  .site-footer__inner,
+  .app-footer__inner {
+    width:
+      min(
+        calc(100% - 1.25rem),
+        var(--gc-container-max)
+      );
+  }
+
+  .page-section {
+    padding-block:
+      var(--gc-space-10);
+  }
+
+  .page-section--large {
+    padding-block:
+      var(--gc-space-12);
+  }
+
+  .page-section__header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--gc-space-4);
+  }
+
+  .hero__title {
+    max-width: none;
+  }
+
+  .metrics-grid,
+  .metrics-grid--3,
+  .metrics-grid--5,
+  .comparison-layout__summary,
+  .two-column,
+  .three-column,
+  .four-column {
+    grid-template-columns:
+      1fr;
+  }
+
+  .site-footer__grid,
+  .app-footer__grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .site-footer__bottom,
+  .app-footer__bottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .hero__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .hero__actions .button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 479px) {
+  .site-footer__grid,
+  .app-footer__grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .page-state {
+    padding:
+      var(--gc-space-5);
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__visual::before,
+  .hero__visual::after {
+    transition: none;
+  }
+}
