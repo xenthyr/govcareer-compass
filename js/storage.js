@@ -1,193 +1,385 @@
 /**
  * GovCareer Compass
- * Safe localStorage abstraction
+ * ============================================================
+ * Local Storage Manager
+ * ============================================================
+ *
+ * No login.
+ * No server tracking.
+ * No sensitive personal data should be persisted by default.
+ *
+ * Storage format:
+ *
+ *   govcareer-compass:<key>
  */
 
 import config from './config.js';
 
-const namespace = config.app.storageNamespace;
+const STORAGE_PREFIX =
+  `${config.app.storageNamespace}:`;
 
-function makeKey(key) {
-  return `${namespace}:${key}`;
-}
+let memoryFallback =
+  new Map();
 
-function isStorageAvailable() {
+function getStorage() {
   try {
-    const testKey = '__gcc_storage_test__';
-    window.localStorage.setItem(testKey, '1');
-    window.localStorage.removeItem(testKey);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function serialize(value) {
-  return JSON.stringify(value);
-}
-
-function deserialize(value, fallback = null) {
-  if (value === null || value === undefined) {
-    return fallback;
-  }
-
-  try {
-    return JSON.parse(value);
-  } catch {
-    return fallback;
-  }
-}
-
-function get(key, fallback = null) {
-  if (!isStorageAvailable()) {
-    return fallback;
-  }
-
-  try {
-    const raw = window.localStorage.getItem(makeKey(key));
-    return deserialize(raw, fallback);
-  } catch {
-    return fallback;
-  }
-}
-
-function set(key, value) {
-  if (!isStorageAvailable()) {
-    return false;
-  }
-
-  try {
-    window.localStorage.setItem(
-      makeKey(key),
-      serialize(value)
-    );
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function remove(key) {
-  if (!isStorageAvailable()) {
-    return false;
-  }
-
-  try {
-    window.localStorage.removeItem(makeKey(key));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function clearNamespace() {
-  if (!isStorageAvailable()) {
-    return false;
-  }
-
-  try {
-    const prefix = `${namespace}:`;
-    const keys = [];
-
-    for (let i = 0; i < window.localStorage.length; i += 1) {
-      const key = window.localStorage.key(i);
-
-      if (key && key.startsWith(prefix)) {
-        keys.push(key);
-      }
+    if (
+      typeof window !==
+        'undefined' &&
+      window.localStorage
+    ) {
+      return window.localStorage;
     }
-
-    keys.forEach((key) => {
-      window.localStorage.removeItem(key);
-    });
-
-    return true;
   } catch {
+    // Storage unavailable.
+  }
+
+  return null;
+}
+
+function makeKey(
+  key
+) {
+  return `${STORAGE_PREFIX}${String(
+    key
+  )}`;
+}
+
+function serialize(
+  value
+) {
+  try {
+    return JSON.stringify(
+      value
+    );
+  } catch {
+    return null;
+  }
+}
+
+function deserialize(
+  value,
+  fallback = null
+) {
+  if (
+    value === null ||
+    value === undefined
+  ) {
+    return fallback;
+  }
+
+  try {
+    return JSON.parse(
+      value
+    );
+  } catch {
+    return fallback;
+  }
+}
+
+function getItem(
+  key,
+  fallback = null
+) {
+  const normalized =
+    makeKey(key);
+
+  const storage =
+    getStorage();
+
+  if (
+    storage
+  ) {
+    try {
+      const value =
+        storage.getItem(
+          normalized
+        );
+
+      return deserialize(
+        value,
+        fallback
+      );
+    } catch {
+      // Fall through to memory.
+    }
+  }
+
+  return memoryFallback.has(
+    normalized
+  )
+    ? memoryFallback.get(
+        normalized
+      )
+    : fallback;
+}
+
+function setItem(
+  key,
+  value
+) {
+  const normalized =
+    makeKey(key);
+
+  const serialized =
+    serialize(
+      value
+    );
+
+  if (
+    serialized ===
+    null
+  ) {
     return false;
   }
-}
 
-function addToList(key, item, maxItems = 50) {
-  const list = get(key, []);
+  const storage =
+    getStorage();
 
-  if (!Array.isArray(list)) {
-    return set(key, [item]);
+  if (
+    storage
+  ) {
+    try {
+      storage.setItem(
+        normalized,
+        serialized
+      );
+
+      memoryFallback.set(
+        normalized,
+        value
+      );
+
+      return true;
+    } catch {
+      // Fall through to memory.
+    }
   }
 
-  const itemId =
-    typeof item === 'object' && item !== null
-      ? item.id
-      : item;
+  memoryFallback.set(
+    normalized,
+    value
+  );
 
-  const filtered = list.filter((existing) => {
-    const existingId =
-      typeof existing === 'object' && existing !== null
-        ? existing.id
-        : existing;
-
-    return existingId !== itemId;
-  });
-
-  filtered.unshift(item);
-
-  return set(key, filtered.slice(0, maxItems));
+  return true;
 }
 
-function removeFromList(key, itemId) {
-  const list = get(key, []);
+function removeItem(
+  key
+) {
+  const normalized =
+    makeKey(key);
 
-  if (!Array.isArray(list)) {
-    return false;
+  const storage =
+    getStorage();
+
+  let removed =
+    false;
+
+  if (
+    storage
+  ) {
+    try {
+      storage.removeItem(
+        normalized
+      );
+
+      removed =
+        true;
+    } catch {
+      removed =
+        false;
+    }
   }
 
-  const filtered = list.filter((item) => {
-    const id =
-      typeof item === 'object' && item !== null
-        ? item.id
-        : item;
+  memoryFallback.delete(
+    normalized
+  );
 
-    return id !== itemId;
-  });
-
-  return set(key, filtered);
+  return removed;
 }
 
-function hasInList(key, itemId) {
-  const list = get(key, []);
+function clearApplicationStorage() {
+  const storage =
+    getStorage();
 
-  if (!Array.isArray(list)) {
-    return false;
+  if (
+    storage
+  ) {
+    try {
+      const keys = [];
+
+      for (
+        let i = 0;
+        i < storage.length;
+        i += 1
+      ) {
+        const key =
+          storage.key(i);
+
+        if (
+          key?.startsWith(
+            STORAGE_PREFIX
+          )
+        ) {
+          keys.push(
+            key
+          );
+        }
+      }
+
+      keys.forEach(
+        (key) =>
+          storage.removeItem(
+            key
+          )
+      );
+    } catch {
+      // Ignore storage errors.
+    }
   }
 
-  return list.some((item) => {
-    const id =
-      typeof item === 'object' && item !== null
-        ? item.id
-        : item;
+  memoryFallback.clear();
 
-    return id === itemId;
-  });
+  return true;
 }
 
-const storage = Object.freeze({
-  isAvailable: isStorageAvailable,
-  get,
-  set,
-  remove,
-  clearNamespace,
-  addToList,
-  removeFromList,
-  hasInList
-});
+function addToArray(
+  key,
+  value,
+  {
+    maxItems = null,
+    unique = true
+  } = {}
+) {
+  const existing =
+    getItem(
+      key,
+      []
+    );
 
-export default storage;
+  const array =
+    Array.isArray(
+      existing
+    )
+      ? existing
+      : [];
+
+  let next =
+    unique
+      ? [
+          value,
+          ...array.filter(
+            (item) =>
+              item !==
+              value
+          )
+        ]
+      : [
+          ...array,
+          value
+        ];
+
+  if (
+    Number.isInteger(
+      maxItems
+    ) &&
+    maxItems > 0
+  ) {
+    next =
+      next.slice(
+        0,
+        maxItems
+      );
+  }
+
+  setItem(
+    key,
+    next
+  );
+
+  return next;
+}
+
+function removeFromArray(
+  key,
+  value
+) {
+  const existing =
+    getItem(
+      key,
+      []
+    );
+
+  const array =
+    Array.isArray(
+      existing
+    )
+      ? existing
+      : [];
+
+  const next =
+    array.filter(
+      (item) =>
+        item !==
+        value
+    );
+
+  setItem(
+    key,
+    next
+  );
+
+  return next;
+}
+
+function initializeStorage() {
+  /*
+   * Verify storage access without crashing the application.
+   */
+  try {
+    const testKey =
+      `${STORAGE_PREFIX}__test__`;
+
+    const storage =
+      getStorage();
+
+    if (
+      storage
+    ) {
+      storage.setItem(
+        testKey,
+        '1'
+      );
+
+      storage.removeItem(
+        testKey
+      );
+    }
+  } catch {
+    // Memory fallback remains available.
+  }
+}
+
 export {
-  isStorageAvailable,
-  get,
-  set,
-  remove,
-  clearNamespace,
-  addToList,
-  removeFromList,
-  hasInList
+  STORAGE_PREFIX,
+
+  getItem,
+  setItem,
+  removeItem,
+
+  clearApplicationStorage,
+
+  addToArray,
+  removeFromArray,
+
+  initializeStorage
+};
+
+export default {
+  getItem,
+  setItem,
+  removeItem,
+  addToArray,
+  removeFromArray
 };
