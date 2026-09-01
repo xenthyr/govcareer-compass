@@ -1,0 +1,1172 @@
+/**
+ * GovCareer Compass
+ * ============================================================
+ * Forms, Inputs & Assessment UI
+ * ============================================================
+ *
+ * Covers:
+ * - search inputs
+ * - Career Finder questions
+ * - eligibility checker
+ * - salary calculator
+ * - housing calculator
+ * - preference sliders
+ * - radio/checkbox controls
+ * - validation states
+ */
+
+/* ============================================================
+   FORM LAYOUT
+   ============================================================ */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gc-space-6);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: var(--gc-space-5);
+}
+
+.form-grid--3 {
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+}
+
+.form-grid--4 {
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gc-space-4);
+
+  padding:
+    var(--gc-space-5);
+
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-xl);
+
+  background:
+    var(--gc-semantic-bg-surface);
+}
+
+/* ============================================================
+   FIELD
+   ============================================================ */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gc-space-2);
+  min-width: 0;
+}
+
+.field__label,
+.field > label {
+  color:
+    var(--gc-semantic-text-primary);
+
+  font-size:
+    var(--gc-font-size-sm);
+
+  font-weight:
+    var(--gc-weight-semibold);
+}
+
+.field__hint,
+.field__help {
+  color:
+    var(--gc-semantic-text-muted);
+
+  font-size:
+    var(--gc-font-size-xs);
+
+  line-height:
+    var(--gc-line-relaxed);
+}
+
+/* ============================================================
+   INPUT FOUNDATION
+   ============================================================ */
+
+.form input[type="text"],
+.form input[type="search"],
+.form input[type="email"],
+.form input[type="number"],
+.form input[type="tel"],
+.form input[type="url"],
+.form input[type="date"],
+.form input[type="password"],
+.form select,
+.form textarea,
+.input,
+.select,
+.textarea {
+  width: 100%;
+  min-height:
+    var(--gc-control-height-lg);
+
+  padding:
+    0
+    var(--gc-space-4);
+
+  border:
+    1px solid
+    var(--gc-semantic-input-border);
+
+  border-radius:
+    var(--gc-radius-md);
+
+  background:
+    var(--gc-semantic-input-bg);
+
+  color:
+    var(--gc-semantic-text-primary);
+
+  font-size:
+    var(--gc-font-size-sm);
+
+  line-height:
+    1.4;
+
+  box-shadow:
+    inset
+    0 1px 0
+    rgb(255 255 255 / 0.035);
+
+  transition:
+    border-color
+      var(--gc-duration-fast)
+      var(--gc-ease-standard),
+    box-shadow
+      var(--gc-duration-fast)
+      var(--gc-ease-standard),
+    background
+      var(--gc-duration-fast)
+      var(--gc-ease-standard);
+}
+
+.form textarea,
+.textarea {
+  min-height:
+    9rem;
+
+  padding-block:
+    var(--gc-space-3);
+}
+
+.form input::placeholder,
+.form textarea::placeholder,
+.input::placeholder,
+.textarea::placeholder {
+  color:
+    var(--gc-semantic-text-muted);
+}
+
+.form input:hover,
+.form select:hover,
+.form textarea:hover,
+.input:hover,
+.select:hover,
+.textarea:hover {
+  border-color:
+    var(--gc-semantic-border-strong);
+}
+
+.form input:focus,
+.form select:focus,
+.form textarea:focus,
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color:
+    var(--gc-semantic-input-focus-border);
+
+  box-shadow:
+    0 0 0 3px
+    color-mix(
+      in srgb,
+      var(--gc-semantic-focus) 15%,
+      transparent
+    );
+}
+
+/* ============================================================
+   NUMBER INPUT
+   ============================================================ */
+
+input[type="number"] {
+  font-variant-numeric:
+    tabular-nums;
+}
+
+/* ============================================================
+   SELECT
+   ============================================================ */
+
+.form select,
+.select {
+  appearance: auto;
+}
+
+/* ============================================================
+   CHECKBOX / RADIO
+   ============================================================ */
+
+.option-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gc-space-3);
+}
+
+.option-group--inline {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.option-card {
+  position: relative;
+}
+
+.option-card > input {
+  position:
+    absolute;
+
+  opacity:
+    0;
+
+  pointer-events:
+    none;
+}
+
+.option-card__label {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gc-space-3);
+
+  min-height:
+    3.25rem;
+
+  padding:
+    var(--gc-space-3);
+
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-lg);
+
+  background:
+    var(--gc-semantic-bg-surface);
+
+  cursor:
+    pointer;
+
+  transition:
+    background
+      var(--gc-duration-fast)
+      var(--gc-ease-standard),
+    border-color
+      var(--gc-duration-fast)
+      var(--gc-ease-standard),
+    transform
+      var(--gc-duration-fast)
+      var(--gc-ease-standard);
+}
+
+.option-card__label:hover {
+  border-color:
+    var(--gc-semantic-border-strong);
+
+  background:
+    var(--gc-semantic-bg-surface-raised);
+
+  transform:
+    translateY(-1px);
+}
+
+.option-card__indicator {
+  width:
+    1.15rem;
+
+  height:
+    1.15rem;
+
+  flex:
+    0 0 auto;
+
+  margin-top:
+    0.1rem;
+
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-xs);
+
+  background:
+    var(--gc-semantic-input-bg);
+}
+
+.option-card input[type="radio"]
+  + .option-card__label
+  .option-card__indicator {
+  border-radius:
+    50%;
+}
+
+.option-card input:checked
+  + .option-card__label {
+  border-color:
+    var(--gc-semantic-input-focus-border);
+
+  background:
+    var(--gc-semantic-bg-surface-raised);
+
+  box-shadow:
+    var(--gc-shadow-glow-cyan);
+}
+
+.option-card input:checked
+  + .option-card__label
+  .option-card__indicator {
+  border-color:
+    var(--gc-semantic-accent-primary);
+
+  background:
+    var(--gc-gradient-brand);
+  position:
+    relative;
+}
+
+.option-card input:checked
+  + .option-card__label
+  .option-card__indicator::after {
+  content:
+    "";
+
+  position:
+    absolute;
+
+  inset:
+    0.28rem;
+
+  border-radius:
+    50%;
+
+  background:
+    #ffffff;
+}
+
+.option-card
+  input[type="checkbox"]:checked
+  + .option-card__label
+  .option-card__indicator {
+  border-radius:
+    var(--gc-radius-xs);
+}
+
+.option-card
+  input[type="checkbox"]:checked
+  + .option-card__label
+  .option-card__indicator::after {
+  content:
+    "";
+
+  position:
+    absolute;
+
+  width:
+    0.35rem;
+
+  height:
+    0.65rem;
+
+  left:
+    0.34rem;
+
+  top:
+    0.14rem;
+
+  border:
+    solid
+    #ffffff;
+
+  border-width:
+    0
+    2px
+    2px
+    0;
+
+  transform:
+    rotate(45deg);
+}
+
+/* ============================================================
+   INLINE TOGGLE
+   ============================================================ */
+
+.switch {
+  position:
+    relative;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    var(--gc-space-3);
+
+  cursor:
+    pointer;
+}
+
+.switch input {
+  position:
+    absolute;
+
+  opacity:
+    0;
+}
+
+.switch__track {
+  position:
+    relative;
+
+  width:
+    2.75rem;
+
+  height:
+    1.5rem;
+
+  flex:
+    0 0 auto;
+
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-pill);
+
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+
+  transition:
+    background
+      var(--gc-duration-fast)
+      var(--gc-ease-standard),
+    border-color
+      var(--gc-duration-fast)
+      var(--gc-ease-standard);
+}
+
+.switch__thumb {
+  position:
+    absolute;
+
+  top:
+    0.17rem;
+
+  left:
+    0.17rem;
+
+  width:
+    1rem;
+
+  height:
+    1rem;
+
+  border-radius:
+    50%;
+
+  background:
+    var(--gc-semantic-text-muted);
+
+  transition:
+    transform
+      var(--gc-duration-fast)
+      var(--gc-ease-standard),
+    background
+      var(--gc-duration-fast)
+      var(--gc-ease-standard);
+}
+
+.switch input:checked
+  + .switch__track {
+  border-color:
+    var(--gc-semantic-accent-primary);
+
+  background:
+    var(--gc-gradient-brand);
+}
+
+.switch input:checked
+  + .switch__track
+  .switch__thumb {
+  transform:
+    translateX(1.25rem);
+
+  background:
+    #ffffff;
+}
+
+/* ============================================================
+   RANGE SLIDER
+   ============================================================ */
+
+.range-field {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    var(--gc-space-3);
+}
+
+.range-field__header {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  gap:
+    var(--gc-space-3);
+}
+
+.range-field__value {
+  color:
+    var(--gc-semantic-accent-primary);
+
+  font-weight:
+    var(--gc-weight-bold);
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+input[type="range"] {
+  width:
+    100%;
+
+  height:
+    1.5rem;
+
+  padding:
+    0;
+
+  background:
+    transparent;
+
+  appearance:
+    none;
+
+  -webkit-appearance:
+    none;
+
+  cursor:
+    pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height:
+    0.42rem;
+
+  border-radius:
+    var(--gc-radius-pill);
+
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+}
+
+input[type="range"]::-moz-range-track {
+  height:
+    0.42rem;
+
+  border-radius:
+    var(--gc-radius-pill);
+
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  width:
+    1.15rem;
+
+  height:
+    1.15rem;
+
+  margin-top:
+    -0.36rem;
+
+  border:
+    2px solid
+    var(--gc-semantic-bg-surface-raised);
+
+  border-radius:
+    50%;
+
+  background:
+    var(--gc-semantic-accent-primary);
+
+  box-shadow:
+    var(--gc-shadow-glow-cyan);
+
+  appearance:
+    none;
+
+  -webkit-appearance:
+    none;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width:
+    1.15rem;
+
+  height:
+    1.15rem;
+
+  border:
+    2px solid
+    var(--gc-semantic-bg-surface-raised);
+
+  border-radius:
+    50%;
+
+  background:
+    var(--gc-semantic-accent-primary);
+
+  box-shadow:
+    var(--gc-shadow-glow-cyan);
+}
+
+/* ============================================================
+   SCALE QUESTION
+   ============================================================ */
+
+.scale-options {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(
+        3rem,
+        1fr
+      )
+    );
+
+  gap:
+    var(--gc-space-2);
+}
+
+.scale-option {
+  position:
+    relative;
+}
+
+.scale-option input {
+  position:
+    absolute;
+
+  opacity:
+    0;
+
+  pointer-events:
+    none;
+}
+
+.scale-option label {
+  min-height:
+    2.75rem;
+
+  display:
+    grid;
+
+  place-items:
+    center;
+
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-md);
+
+  background:
+    var(--gc-semantic-bg-surface);
+
+  color:
+    var(--gc-semantic-text-secondary);
+
+  font-weight:
+    var(--gc-weight-semibold);
+
+  cursor:
+    pointer;
+
+  transition:
+    background
+      var(--gc-duration-fast)
+      var(--gc-ease-standard),
+    border-color
+      var(--gc-duration-fast)
+      var(--gc-ease-standard),
+    transform
+      var(--gc-duration-fast)
+      var(--gc-ease-standard);
+}
+
+.scale-option label:hover {
+  transform:
+    translateY(-1px);
+
+  border-color:
+    var(--gc-semantic-border-strong);
+}
+
+.scale-option input:checked
+  + label {
+  border-color:
+    var(--gc-semantic-accent-primary);
+
+  background:
+    var(--gc-gradient-brand);
+
+  color:
+    #ffffff;
+
+  box-shadow:
+    var(--gc-shadow-glow-cyan);
+}
+
+/* ============================================================
+   QUESTION CARD
+   ============================================================ */
+
+.question-card {
+  position:
+    relative;
+
+  padding:
+    var(--gc-space-6);
+
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-2xl);
+
+  background:
+    var(--gc-semantic-bg-surface);
+
+  box-shadow:
+    var(--gc-shadow-sm);
+}
+
+.question-card__progress {
+  height:
+    0.35rem;
+
+  overflow:
+    hidden;
+
+  border-radius:
+    var(--gc-radius-pill);
+
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+}
+
+.question-card__progress-fill {
+  display:
+    block;
+
+  height:
+    100%;
+
+  border-radius:
+    inherit;
+
+  background:
+    var(--gc-gradient-brand);
+
+  transition:
+    width
+      var(--gc-duration-slow)
+      var(--gc-ease-emphasis);
+}
+
+.question-card__number {
+  margin-top:
+    var(--gc-space-5);
+
+  color:
+    var(--gc-semantic-accent-primary);
+
+  font-size:
+    var(--gc-font-size-xs);
+
+  font-weight:
+    var(--gc-weight-bold);
+
+  letter-spacing:
+    var(--gc-letter-wide);
+
+  text-transform:
+    uppercase;
+}
+
+.question-card__question {
+  margin-top:
+    var(--gc-space-2);
+
+  font-size:
+    clamp(
+      1.25rem,
+      2.5vw,
+      var(--gc-font-size-2xl)
+    );
+}
+
+.question-card__help {
+  margin-top:
+    var(--gc-space-3);
+
+  color:
+    var(--gc-semantic-text-muted);
+
+  font-size:
+    var(--gc-font-size-sm);
+}
+
+.question-card__options {
+  margin-top:
+    var(--gc-space-6);
+}
+
+/* ============================================================
+   FORM VALIDATION
+   ============================================================ */
+
+.field--error input,
+.field--error select,
+.field--error textarea,
+.input[aria-invalid="true"],
+.select[aria-invalid="true"],
+.textarea[aria-invalid="true"] {
+  border-color:
+    var(--gc-semantic-danger);
+}
+
+.field--success input,
+.field--success select,
+.field--success textarea {
+  border-color:
+    var(--gc-semantic-success);
+}
+
+.field__error {
+  display:
+    flex;
+
+  gap:
+    var(--gc-space-2);
+
+  color:
+    var(--gc-semantic-danger);
+
+  font-size:
+    var(--gc-font-size-xs);
+
+  font-weight:
+    var(--gc-weight-medium);
+}
+
+.field__success {
+  color:
+    var(--gc-semantic-success);
+
+  font-size:
+    var(--gc-font-size-xs);
+
+  font-weight:
+    var(--gc-weight-medium);
+}
+
+/* ============================================================
+   DISABLED
+   ============================================================ */
+
+.form input:disabled,
+.form select:disabled,
+.form textarea:disabled,
+.form button:disabled {
+  cursor:
+    not-allowed;
+
+  opacity:
+    var(--gc-opacity-disabled);
+}
+
+/* ============================================================
+   FORM ACTIONS
+   ============================================================ */
+
+.form-actions {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    flex-end;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    var(--gc-space-3);
+
+  padding-top:
+    var(--gc-space-4);
+
+  border-top:
+    1px solid
+    var(--gc-semantic-border-subtle);
+}
+
+/* ============================================================
+   CALCULATOR OUTPUT
+   ============================================================ */
+
+.calculator-result {
+  display:
+    grid;
+
+  gap:
+    var(--gc-space-4);
+
+  padding:
+    var(--gc-space-5);
+
+  border:
+    1px solid
+    var(--gc-semantic-border-default);
+
+  border-radius:
+    var(--gc-radius-xl);
+
+  background:
+    var(--gc-semantic-bg-surface-raised);
+
+  box-shadow:
+    var(--gc-shadow-md);
+}
+
+.calculator-result__headline {
+  display:
+    flex;
+
+  align-items:
+    flex-start;
+
+  justify-content:
+    space-between;
+
+  gap:
+    var(--gc-space-4);
+}
+
+.calculator-result__amount {
+  color:
+    var(--gc-semantic-text-primary);
+
+  font-size:
+    clamp(
+      1.75rem,
+      5vw,
+      2.5rem
+    );
+
+  font-weight:
+    var(--gc-weight-extrabold);
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+.calculator-result__breakdown {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap:
+    var(--gc-space-3);
+}
+
+.calculator-result__line {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  gap:
+    var(--gc-space-3);
+
+  padding:
+    var(--gc-space-3);
+
+  border:
+    1px solid
+    var(--gc-semantic-border-subtle);
+
+  border-radius:
+    var(--gc-radius-md);
+
+  background:
+    var(--gc-semantic-bg-surface-subtle);
+}
+
+.calculator-result__line-label {
+  color:
+    var(--gc-semantic-text-muted);
+
+  font-size:
+    var(--gc-font-size-xs);
+}
+
+.calculator-result__line-value {
+  color:
+    var(--gc-semantic-text-primary);
+
+  font-size:
+    var(--gc-font-size-sm);
+
+  font-weight:
+    var(--gc-weight-semibold);
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+.calculator-note {
+  padding:
+    var(--gc-space-3);
+
+  border:
+    1px solid
+    var(--gc-semantic-warning-border);
+
+  border-radius:
+    var(--gc-radius-md);
+
+  background:
+    var(--gc-semantic-warning-bg);
+
+  color:
+    var(--gc-semantic-text-secondary);
+
+  font-size:
+    var(--gc-font-size-xs);
+}
+
+/* ============================================================
+   RESPONSIVE FORMS
+   ============================================================ */
+
+@media (max-width: 1023px) {
+  .form-grid--3,
+  .form-grid--4 {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      );
+  }
+}
+
+@media (max-width: 767px) {
+  .form-grid,
+  .form-grid--3,
+  .form-grid--4,
+  .calculator-result__breakdown {
+    grid-template-columns:
+      1fr;
+  }
+
+  .form-section,
+  .question-card,
+  .calculator-result {
+    padding:
+      var(--gc-space-4);
+  }
+
+  .form-actions {
+    align-items:
+      stretch;
+
+    flex-direction:
+      column;
+  }
+
+  .form-actions .button {
+    width:
+      100%;
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .option-card__label,
+  .switch__track,
+  .switch__thumb,
+  .scale-option label,
+  .question-card__progress-fill {
+    transition:
+      none;
+  }
+}
