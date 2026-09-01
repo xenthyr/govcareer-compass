@@ -1,0 +1,201 @@
+{
+  "$schema": "../../schemas/organisation.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "central-government",
+  "lastVerified": "2026-08-31",
+  "organisations": [
+    {
+      "id": "org-upsc",
+      "name": "Union Public Service Commission",
+      "abbreviation": "UPSC",
+      "type": "CONSTITUTIONAL_BODY",
+      "departmentId": null,
+      "sourceIds": [
+        "src-upsc-cse-2026",
+        "src-upsc-capf-2026",
+        "src-upsc-cds-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-ssc",
+      "name": "Staff Selection Commission",
+      "abbreviation": "SSC",
+      "type": "RECRUITMENT_COMMISSION",
+      "departmentId": "dept-dopt",
+      "sourceIds": [
+        "src-ssc-cgl-2026",
+        "src-ssc-calendar-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-rrb",
+      "name": "Railway Recruitment Boards",
+      "abbreviation": "RRB",
+      "type": "RECRUITMENT_BOARD",
+      "departmentId": "dept-railways",
+      "sourceIds": [
+        "src-rrb-employment-notices"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-rpf",
+      "name": "Railway Protection Force",
+      "abbreviation": "RPF",
+      "type": "SECURITY_FORCE",
+      "departmentId": "dept-railways",
+      "sourceIds": [
+        "src-rrb-employment-notices"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-ib",
+      "name": "Intelligence Bureau",
+      "abbreviation": "IB",
+      "type": "INTELLIGENCE_ORGANISATION",
+      "departmentId": "dept-home",
+      "sourceIds": [
+        "src-ib-sa-2025",
+        "src-ib-deputation-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-cbi",
+      "name": "Central Bureau of Investigation",
+      "abbreviation": "CBI",
+      "type": "INVESTIGATION_AGENCY",
+      "departmentId": "dept-mopg",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-nia",
+      "name": "National Investigation Agency",
+      "abbreviation": "NIA",
+      "type": "INVESTIGATION_AGENCY",
+      "departmentId": "dept-home",
+      "sourceIds": [
+        "src-nia-recruitment-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-ncb",
+      "name": "Narcotics Control Bureau",
+      "abbreviation": "NCB",
+      "type": "ENFORCEMENT_AGENCY",
+      "departmentId": "dept-home",
+      "sourceIds": [
+        "src-ssc-cgl-2026"
+      ],
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "org-cbdt",
+      "name": "Central Board of Direct Taxes",
+      "abbreviation": "CBDT",
+      "type": "TAX_ADMINISTRATION",
+      "departmentId": "dept-revenue",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-cbic",
+      "name": "Central Board of Indirect Taxes and Customs",
+      "abbreviation": "CBIC",
+      "type": "TAX_CUSTOMS_ADMINISTRATION",
+      "departmentId": "dept-revenue",
+      "sourceIds": [
+        "src-cbic",
+        "src-ssc-cgl-2025-final"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-ed",
+      "name": "Directorate of Enforcement",
+      "abbreviation": "ED",
+      "type": "ENFORCEMENT_AGENCY",
+      "departmentId": "dept-revenue",
+      "sourceIds": [
+        "src-ed"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-cag",
+      "name": "Comptroller and Auditor General of India",
+      "abbreviation": "CAG",
+      "type": "CONSTITUTIONAL_AUTHORITY",
+      "departmentId": "dept-cag",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-epfo",
+      "name": "Employees' Provident Fund Organisation",
+      "abbreviation": "EPFO",
+      "type": "STATUTORY_ORGANISATION",
+      "departmentId": "dept-labour",
+      "sourceIds": [
+        "src-ssc-cgl-2025-final"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-india-post",
+      "name": "Department of Posts",
+      "abbreviation": "India Post",
+      "type": "CENTRAL_GOVERNMENT_DEPARTMENT",
+      "departmentId": "dept-posts",
+      "sourceIds": [
+        "src-india-post-rr"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-defence-services",
+      "name": "Defence Services",
+      "abbreviation": null,
+      "type": "DEFENCE_ESTABLISHMENT",
+      "departmentId": "dept-defence",
+      "sourceIds": [
+        "src-upsc-cds-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-mea",
+      "name": "Ministry of External Affairs",
+      "abbreviation": "MEA",
+      "type": "MINISTRY",
+      "departmentId": "dept-external-affairs",
+      "sourceIds": [
+        "src-upsc-cse-2026"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-ndma",
+      "name": "National Disaster Management Authority",
+      "abbreviation": "NDMA",
+      "type": "STATUTORY_AUTHORITY",
+      "departmentId": "dept-ndma",
+      "sourceIds": [
+        "src-employment-news"
+      ],
+      "confidence": "MEDIUM"
+    }
+  ]
+}
