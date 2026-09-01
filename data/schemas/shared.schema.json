@@ -1,36 +1,51 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "shared.schema.json",
+  "$id": "https://govcareer-compass.example/schema/shared.schema.json",
   "title": "GovCareer Compass Shared Schema Definitions",
-  "description": "Reusable schema definitions shared by GovCareer Compass entities.",
+  "description": "Shared reusable definitions used throughout the GovCareer Compass canonical data schemas.",
+  "type": "object",
   "$defs": {
     "id": {
       "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9-]*$",
-      "minLength": 1
+      "minLength": 1,
+      "maxLength": 200,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+      "description": "Stable language-independent canonical identifier."
     },
 
     "version": {
       "type": "string",
-      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-    },
-
-    "date": {
-      "type": "string",
-      "format": "date"
-    },
-
-    "url": {
-      "type": "string",
-      "format": "uri"
+      "minLength": 1,
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantic-style schema or record version."
     },
 
     "localizedText": {
       "type": "object",
-      "additionalProperties": false,
+      "description": "Localized user-facing text keyed by BCP-47-style language code.",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string"
+      },
+      "properties": {
+        "en": {
+          "type": "string"
+        },
+        "bn": {
+          "type": "string"
+        }
+      }
+    },
+
+    "localizedTextRequiredEnglish": {
+      "type": "object",
+      "description": "Localized text requiring an English canonical value while allowing future languages.",
       "required": [
         "en"
       ],
+      "additionalProperties": {
+        "type": "string"
+      },
       "properties": {
         "en": {
           "type": "string",
@@ -59,14 +74,96 @@
         },
         "as": {
           "type": "string"
-        },
-        "kn": {
-          "type": "string"
-        },
-        "ml": {
-          "type": "string"
         }
       }
+    },
+
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "positiveInteger": {
+      "type": "integer",
+      "minimum": 1
+    },
+
+    "nonNegativeInteger": {
+      "type": "integer",
+      "minimum": 0
+    },
+
+    "score10": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+
+    "percentage": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+
+    "dateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+
+    "idArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/id"
+      },
+      "uniqueItems": true
+    },
+
+    "nonEmptyStringArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/nonEmptyString"
+      },
+      "uniqueItems": true
+    },
+
+    "sourceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceId"
+      ],
+      "properties": {
+        "sourceId": {
+          "$ref": "#/$defs/id"
+        },
+        "claim": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "note": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+
+    "sourceReferenceArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sourceReference"
+      },
+      "uniqueItems": true
+    },
+
+    "hardSoftClassification": {
+      "type": "string",
+      "enum": [
+        "HARD",
+        "SOFT"
+      ]
     },
 
     "confidence": {
@@ -81,59 +178,25 @@
       ]
     },
 
-    "informationType": {
+    "dataStatus": {
       "type": "string",
       "enum": [
-        "OFFICIAL_FACT",
-        "HISTORICAL_FACT",
-        "CURRENT_ESTIMATE",
-        "PRACTICAL_ASSESSMENT",
-        "SECONDARY_SOURCE",
-        "NOT_PUBLICLY_VERIFIED"
-      ]
-    },
-
-    "currentness": {
-      "type": "string",
-      "enum": [
-        "CURRENT",
+        "ACTIVE",
+        "CURRENT_NO_RECRUITMENT",
         "HISTORICAL",
-        "CURRENT_WITH_HISTORICAL_SUPPORT",
-        "CURRENTNESS_UNCLEAR",
+        "RENAMED",
+        "MERGED",
+        "REORGANISED",
         "REPLACED",
         "ABOLISHED",
-        "NOT_VERIFIED"
+        "TEMPORARY",
+        "UNKNOWN"
       ]
     },
 
-    "score": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 10
-    },
-
-    "nonEmptyString": {
+    "languageCode": {
       "type": "string",
-      "minLength": 1
-    },
-
-    "stringArray": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
-    },
-
-    "localizedArray": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/localizedText"
-      }
-    },
-
-    "emptyObject": {
-      "type": "object"
+      "pattern": "^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$"
     }
   }
 }
