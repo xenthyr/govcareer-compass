@@ -4,38 +4,29 @@
  * Career Comparison Table Component
  * ============================================================
  *
- * PURPOSE
- * -------
- * Compare 2–5 careers without incorrectly treating every
- * numerical value as "higher is better".
+ * PURPOSE:
+ * Compare 2–5 careers.
  *
- * Positive metrics:
- *   Higher = better
+ * IMPORTANT:
+ * Numeric direction is explicit:
  *
- * Negative metrics:
- *   Lower = better
+ *   Positive metric:
+ *       higher = better
+ *
+ *   Negative metric:
+ *       lower = better
  *
  * Examples:
  *
- *   Salary              → positive
- *   Authority           → positive
- *   Family              → positive
- *   Safety              → positive
- *   Work-life           → positive
- *   Career growth       → positive
+ *   Salary                → higher is better
+ *   Authority             → higher is better
+ *   Family compatibility → higher is better
+ *   Safety                → higher is better
+ *   Stress                → lower is better
+ *   Physical risk         → lower is better
+ *   Transfer burden       → lower is better
  *
- *   Stress              → negative
- *   Physical risk       → negative
- *   Transfer burden     → negative
- *   Night-duty burden   → negative
- *
- * This component does not perform legal or career calculations.
- * It presents already-derived values.
- */
-
-/* ============================================================
- * METRIC DEFINITIONS
- * ============================================================
+ * This component does not calculate the underlying career score.
  */
 
 const COMPARISON_METRICS =
@@ -45,13 +36,13 @@ const COMPARISON_METRICS =
         'eligibility',
 
       label:
-        'BA English eligibility',
+        'B.A. English eligibility',
 
       type:
         'text',
 
       positive:
-        false
+        null
     },
 
     {
@@ -65,7 +56,7 @@ const COMPARISON_METRICS =
         'text',
 
       positive:
-        false
+        null
     },
 
     {
@@ -93,7 +84,7 @@ const COMPARISON_METRICS =
         'text',
 
       positive:
-        false
+        null
     },
 
     {
@@ -317,7 +308,7 @@ const COMPARISON_METRICS =
         'text',
 
       positive:
-        false
+        null
     },
 
     {
@@ -331,7 +322,7 @@ const COMPARISON_METRICS =
         'text',
 
       positive:
-        false
+        null
     },
 
     {
@@ -345,7 +336,7 @@ const COMPARISON_METRICS =
         'text',
 
       positive:
-        false
+        null
     },
 
     {
@@ -359,7 +350,7 @@ const COMPARISON_METRICS =
         'text',
 
       positive:
-        false
+        null
     },
 
     {
@@ -373,14 +364,9 @@ const COMPARISON_METRICS =
         'text',
 
       positive:
-        false
+        null
     }
   ]);
-
-/* ============================================================
- * UTILITIES
- * ============================================================
- */
 
 function escapeHtml(
   value
@@ -413,15 +399,15 @@ function escapeHtml(
 function numericValue(
   value
 ) {
-  const number =
+  const numeric =
     Number(
       value
     );
 
   return Number.isFinite(
-    number
+    numeric
   )
-    ? number
+    ? numeric
     : null;
 }
 
@@ -429,24 +415,9 @@ function getNestedValue(
   object,
   path
 ) {
-  if (
-    !object ||
-    !path
-  ) {
-    return undefined;
-  }
-
-  /*
-   * Permit both:
-   *
-   *   object["score"]
-   *
-   * and:
-   *
-   *   object["scores"]["salary"]
-   */
   return String(
-    path
+    path ||
+      ''
   )
     .split('.')
     .reduce(
@@ -455,9 +426,9 @@ function getNestedValue(
         key
       ) =>
         current ===
-          undefined ||
+          null ||
         current ===
-          null
+          undefined
           ? undefined
           : current[
               key
@@ -468,189 +439,165 @@ function getNestedValue(
 
 const FIELD_ALIASES =
   Object.freeze({
-    eligibility:
-      [
-        'eligibilityStatus',
-        'baEligibility',
-        'eligibility.status',
-        'eligibility'
-      ],
+    eligibility: [
+      'eligibilityStatus',
+      'baEligibility',
+      'eligibility.status',
+      'eligibility'
+    ],
 
-    government:
-      [
-        'governmentName',
-        'government',
-        'governmentId'
-      ],
+    government: [
+      'governmentName',
+      'government',
+      'governmentId'
+    ],
 
-    startingBasic:
-      [
-        'startingBasic',
-        'pay.startingBasic'
-      ],
+    startingBasic: [
+      'startingBasic',
+      'pay.startingBasic'
+    ],
 
-    payLevel:
-      [
-        'payLevel',
-        'pay.level',
-        'level'
-      ],
+    payLevel: [
+      'payLevel',
+      'pay.level',
+      'level'
+    ],
 
-    overallScore:
-      [
-        'overallScore',
-        'matchScore',
-        'score',
-        'scoring.overall'
-      ],
+    overallScore: [
+      'overallScore',
+      'matchScore',
+      'score',
+      'scoring.overall'
+    ],
 
-    salaryScore:
-      [
-        'salaryScore',
-        'scores.salary',
-        'scoring.salary'
-      ],
+    salaryScore: [
+      'salaryScore',
+      'scores.salary',
+      'scoring.salary'
+    ],
 
-    authorityScore:
-      [
-        'authorityScore',
-        'scores.authority',
-        'scoring.authority',
-        'authority'
-      ],
+    authorityScore: [
+      'authorityScore',
+      'authority',
+      'scores.authority',
+      'scoring.authority'
+    ],
 
-    familyCompatibility:
-      [
-        'familyCompatibility',
-        'familyScore',
-        'scores.family',
-        'scoring.family'
-      ],
+    familyCompatibility: [
+      'familyCompatibility',
+      'familyScore',
+      'scores.family',
+      'scoring.family'
+    ],
 
-    parentCareCompatibility:
-      [
-        'parentCareCompatibility',
-        'parentCareScore',
-        'scores.parentCare',
-        'scoring.parentCare'
-      ],
+    parentCareCompatibility: [
+      'parentCareCompatibility',
+      'parentCareScore',
+      'scores.parentCare',
+      'scoring.parentCare'
+    ],
 
-    workLifeScore:
-      [
-        'workLifeScore',
-        'workLife',
-        'scores.workLife',
-        'scoring.workLife'
-      ],
+    workLifeScore: [
+      'workLifeScore',
+      'workLife',
+      'scores.workLife',
+      'scoring.workLife'
+    ],
 
-    safetyScore:
-      [
-        'safetyScore',
-        'physicalSafety',
-        'scores.safety',
-        'scoring.safety'
-      ],
+    safetyScore: [
+      'safetyScore',
+      'physicalSafety',
+      'scores.safety',
+      'scoring.safety'
+    ],
 
-    stress:
-      [
-        'stress',
-        'stressScore',
-        'scores.stress',
-        'scoring.stress'
-      ],
+    stress: [
+      'stress',
+      'stressScore',
+      'scores.stress',
+      'scoring.stress'
+    ],
 
-    physicalRisk:
-      [
-        'physicalRisk',
-        'risk',
-        'scores.physicalRisk',
-        'scoring.physicalRisk'
-      ],
+    physicalRisk: [
+      'physicalRisk',
+      'risk',
+      'scores.physicalRisk',
+      'scoring.physicalRisk'
+    ],
 
-    transferBurden:
-      [
-        'transferBurden',
-        'transferScore',
-        'scores.transferBurden',
-        'scoring.transferBurden'
-      ],
+    transferBurden: [
+      'transferBurden',
+      'transferScore',
+      'scores.transferBurden',
+      'scoring.transferBurden'
+    ],
 
-    kolkataStability:
-      [
-        'kolkataStability',
-        'scores.kolkataStability',
-        'scoring.kolkataStability'
-      ],
+    kolkataStability: [
+      'kolkataStability',
+      'scores.kolkataStability',
+      'scoring.kolkataStability'
+    ],
 
-    geographicStability:
-      [
-        'geographicStability',
-        'locationStability',
-        'scores.geographicStability',
-        'scoring.geographicStability'
-      ],
+    geographicStability: [
+      'geographicStability',
+      'locationStability',
+      'scores.geographicStability',
+      'scoring.geographicStability'
+    ],
 
-    housingScore:
-      [
-        'housingScore',
-        'scores.housing',
-        'scoring.housing'
-      ],
+    housingScore: [
+      'housingScore',
+      'scores.housing',
+      'scoring.housing'
+    ],
 
-    careerGrowthScore:
-      [
-        'careerGrowthScore',
-        'careerGrowth',
-        'scores.careerGrowth',
-        'scoring.careerGrowth'
-      ],
+    careerGrowthScore: [
+      'careerGrowthScore',
+      'careerGrowth',
+      'scores.careerGrowth',
+      'scoring.careerGrowth'
+    ],
 
-    examDifficulty:
-      [
-        'examDifficulty',
-        'difficulty',
-        'exam.difficulty'
-      ],
+    examDifficulty: [
+      'examDifficulty',
+      'difficulty',
+      'exam.difficulty'
+    ],
 
-    posting:
-      [
-        'posting',
-        'location',
-        'locationName'
-      ],
+    posting: [
+      'posting',
+      'location',
+      'locationName'
+    ],
 
-    physicalTest:
-      [
-        'physicalTest',
-        'physicalRequirement'
-      ],
+    physicalTest: [
+      'physicalTest',
+      'physicalRequirement'
+    ],
 
-    housing:
-      [
-        'housing',
-        'housingSummary',
-        'quarter'
-      ],
+    housing: [
+      'housing',
+      'housingSummary',
+      'quarter'
+    ],
 
-    promotion:
-      [
-        'promotion',
-        'promotionSummary'
-      ],
+    promotion: [
+      'promotion',
+      'promotionSummary'
+    ],
 
-    retirement:
-      [
-        'retirement',
-        'benefitsSummary',
-        'benefits'
-      ]
+    retirement: [
+      'retirement',
+      'benefitsSummary',
+      'benefits'
+    ]
   });
 
 function resolveField(
   career,
   metricId
 ) {
-  const aliases =
+  const paths =
     FIELD_ALIASES[
       metricId
     ] || [
@@ -659,7 +606,7 @@ function resolveField(
 
   for (
     const path of
-      aliases
+      paths
   ) {
     const value =
       getNestedValue(
@@ -685,58 +632,17 @@ function resolveField(
 function formatCurrency(
   value
 ) {
-  const number =
+  const numeric =
     numericValue(
       value
     );
 
-  if (
-    number ===
+  return numeric ===
     null
-  ) {
-    return '—';
-  }
-
-  return `₹${number.toLocaleString(
-    'en-IN'
-  )}`;
-}
-
-function formatScore(
-  value
-) {
-  const number =
-    numericValue(
-      value
-    );
-
-  if (
-    number ===
-    null
-  ) {
-    return '—';
-  }
-
-  return `${number}/10`;
-}
-
-function formatDifficulty(
-  value
-) {
-  if (
-    value ===
-      null ||
-    value ===
-      undefined ||
-    value ===
-      ''
-  ) {
-    return '—';
-  }
-
-  return String(
-    value
-  );
+    ? '—'
+    : `₹${numeric.toLocaleString(
+        'en-IN'
+      )}`;
 }
 
 function formatMetric(
@@ -762,13 +668,20 @@ function formatMetric(
         value
       );
 
-    case 'score':
-      return formatScore(
-        value
-      );
+    case 'score': {
+      const numeric =
+        numericValue(
+          value
+        );
+
+      return numeric ===
+        null
+        ? '—'
+        : `${numeric}/10`;
+    }
 
     case 'difficulty':
-      return formatDifficulty(
+      return String(
         value
       );
 
@@ -784,32 +697,26 @@ function formatMetric(
   }
 }
 
-/* ============================================================
- * WINNER LOGIC
- * ============================================================
- */
-
-function getComparableNumericValue(
+function getComparableValue(
   metric,
   career
 ) {
-  const value =
-    resolveField(
-      career,
-      metric.id
-    );
-
   if (
-    metric.type !==
-      'score' &&
-    metric.type !==
-      'currency'
+    ![
+      'currency',
+      'score'
+    ].includes(
+      metric.type
+    )
   ) {
     return null;
   }
 
   return numericValue(
-    value
+    resolveField(
+      career,
+      metric.id
+    )
   );
 }
 
@@ -817,10 +724,22 @@ function findBestCareerIndexes(
   metric,
   careers
 ) {
+  if (
+    metric.positive ===
+      null ||
+    !Array.isArray(
+      careers
+    )
+  ) {
+    return [];
+  }
+
   const values =
     careers.map(
-      (career) =>
-        getComparableNumericValue(
+      (
+        career
+      ) =>
+        getComparableValue(
           metric,
           career
         )
@@ -828,7 +747,9 @@ function findBestCareerIndexes(
 
   const valid =
     values.filter(
-      (value) =>
+      (
+        value
+      ) =>
         value !==
         null
     );
@@ -861,24 +782,24 @@ function findBestCareerIndexes(
           : -1
     )
     .filter(
-      (index) =>
+      (
+        index
+      ) =>
         index >=
         0
     );
 }
 
-/* ============================================================
- * MARKUP
- * ============================================================
- */
-
 function createComparisonTableMarkup(
   {
     careers = [],
+
     metrics =
       COMPARISON_METRICS,
+
     stickyFirstColumn =
       true,
+
     highlightBest =
       true
   } = {}
@@ -912,7 +833,7 @@ function createComparisonTableMarkup(
     `;
   }
 
-  const columns =
+  const metricList =
     Array.isArray(
       metrics
     ) &&
@@ -935,13 +856,20 @@ function createComparisonTableMarkup(
             career.postName ||
             career.title ||
             career.id ||
-            `Career ${index +
-              1}`;
+            `Career ${
+              index + 1
+            }`;
 
           const government =
             career.governmentName ||
             career.government ||
             '';
+
+          const id =
+            escapeHtml(
+              career.id ||
+                ''
+            );
 
           return `
             <th
@@ -952,20 +880,23 @@ function createComparisonTableMarkup(
               <div
                 class="comparison-table__career-header"
               >
-                <button
-                  type="button"
-                  class="comparison-table__remove"
-                  data-comparison-remove="${escapeHtml(
-                    career.id ||
-                      ''
-                  )}"
-                  aria-label="Remove ${escapeHtml(
-                    title
-                  )} from comparison"
-                  title="Remove"
-                >
-                  ×
-                </button>
+                ${
+                  career.id
+                    ? `
+                      <button
+                        type="button"
+                        class="comparison-table__remove"
+                        data-comparison-remove="${id}"
+                        aria-label="Remove ${escapeHtml(
+                          title
+                        )} from comparison"
+                        title="Remove"
+                      >
+                        ×
+                      </button>
+                    `
+                    : ''
+                }
 
                 <strong
                   class="comparison-table__career-name"
@@ -996,16 +927,27 @@ function createComparisonTableMarkup(
       .join('');
 
   const rows =
-    columns
+    metricList
       .map(
-        (metric) => {
-          const winnerIndexes =
+        (
+          metric
+        ) => {
+          const winners =
             highlightBest
               ? findBestCareerIndexes(
                   metric,
                   selected
                 )
               : [];
+
+          const direction =
+            metric.positive ===
+            true
+              ? 'Higher is better'
+              : metric.positive ===
+                false
+              ? 'Lower is better'
+              : '';
 
           const cells =
             selected
@@ -1026,15 +968,15 @@ function createComparisonTableMarkup(
                       value
                     );
 
-                  const winner =
-                    winnerIndexes.includes(
+                  const isBest =
+                    winners.includes(
                       index
                     );
 
                   return `
                     <td
                       class="${
-                        winner
+                        isBest
                           ? 'is-best'
                           : ''
                       }"
@@ -1053,7 +995,7 @@ function createComparisonTableMarkup(
                       </span>
 
                       ${
-                        winner
+                        isBest
                           ? `
                             <span
                               class="comparison-table__best-label"
@@ -1068,14 +1010,6 @@ function createComparisonTableMarkup(
                 }
               )
               .join('');
-
-          const direction =
-            metric.type ===
-            'score'
-              ? metric.positive
-                ? 'Higher is better'
-                : 'Lower is better'
-              : '';
 
           return `
             <tr
@@ -1105,9 +1039,7 @@ function createComparisonTableMarkup(
                       <span
                         class="comparison-table__direction"
                       >
-                        ${escapeHtml(
-                          direction
-                        )}
+                        ${direction}
                       </span>
                     `
                     : ''
@@ -1124,14 +1056,16 @@ function createComparisonTableMarkup(
   return `
     <div
       class="comparison-table-wrapper"
+      data-comparison-wrapper
     >
       <div
         class="comparison-table__legend"
         role="note"
       >
         <span>
-          Higher/lower preference is shown only where the
-          underlying metric has a defined direction.
+          For directional metrics, “Best” follows the
+          project's defined metric direction. Stress,
+          risk and transfer burden use lower-is-better logic.
         </span>
       </div>
 
@@ -1171,11 +1105,6 @@ function createComparisonTableMarkup(
   `;
 }
 
-/* ============================================================
- * COMPONENT
- * ============================================================
- */
-
 function createComparisonTable(
   options = {}
 ) {
@@ -1213,7 +1142,7 @@ function mountComparisonTable(
 ) {
   const mount =
     typeof container ===
-      'string'
+    'string'
       ? document.querySelector(
           container
         )
@@ -1247,36 +1176,74 @@ function updateComparisonTable(
   if (
     !root
   ) {
-    return false;
+    return null;
   }
 
-  root.outerHTML =
+  const wrapper =
+    root.matches(
+      '[data-comparison-wrapper]'
+    )
+      ? root
+      : root.closest(
+          '[data-comparison-wrapper]'
+        );
+
+  if (
+    !wrapper
+  ) {
+    return null;
+  }
+
+  const replacement =
+    document.createElement(
+      'div'
+    );
+
+  replacement.innerHTML =
     createComparisonTableMarkup(
       options
     );
 
-  const replacement =
-    document.querySelector(
-      '[data-comparison-table]'
-    );
+  const next =
+    replacement.firstElementChild;
 
   if (
-    replacement
+    !next
   ) {
-    bindComparisonEvents(
-      replacement
-    );
+    return null;
   }
 
-  return true;
+  wrapper.replaceWith(
+    next
+  );
+
+  bindComparisonEvents(
+    next
+  );
+
+  return next;
 }
 
 function bindComparisonEvents(
   root
 ) {
+  if (
+    root.dataset
+      .comparisonEventsBound ===
+    'true'
+  ) {
+    return;
+  }
+
+  root.dataset
+    .comparisonEventsBound =
+    'true';
+
   root.addEventListener(
     'click',
-    (event) => {
+    (
+      event
+    ) => {
       const button =
         event.target.closest(
           '[data-comparison-remove]'
@@ -1300,8 +1267,10 @@ function bindComparisonEvents(
 
       const detail = {
         id,
+
         entityType:
           'JOB',
+
         reason:
           'comparison-remove'
       };
@@ -1312,6 +1281,7 @@ function bindComparisonEvents(
           {
             bubbles:
               true,
+
             detail
           }
         )
@@ -1335,19 +1305,9 @@ function initializeComparisonTables() {
       '[data-comparison-table]'
     )
     .forEach(
-      (root) => {
-        if (
-          root.dataset
-            .comparisonBound ===
-          'true'
-        ) {
-          return;
-        }
-
-        root.dataset
-          .comparisonBound =
-          'true';
-
+      (
+        root
+      ) => {
         bindComparisonEvents(
           root
         );
