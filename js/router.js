@@ -1,293 +1,364 @@
 /**
  * GovCareer Compass
- * Static multi-page router/navigation helper
+ * ============================================================
+ * Static-Site Router
+ * ============================================================
  *
- * This is NOT a SPA router.
- * It provides:
- * - safe route resolution
- * - current-page detection
- * - query/hash navigation
- * - internal navigation helpers
+ * Designed for:
+ * - GitHub Pages
+ * - Vercel
+ * - direct .html navigation
+ *
+ * The project remains a multi-page static website.
+ * This module provides consistent navigation helpers rather
+ * than pretending the entire site is an SPA.
  */
 
-import config from './config.js';
+import {
+  getRoute,
+  withBasePath
+} from './config.js';
 
-function normalizePath(path) {
-  return String(path || '')
-    .replace(/\\/g, '/')
-    .replace(/^\/+/, '')
-    .replace(/\/{2,}/g, '/');
-}
-
-function resolveRoute(routeOrPath) {
-  if (!routeOrPath) {
-    return config.site.home;
-  }
-
-  const value =
-    String(routeOrPath);
-
-  if (
-    value.startsWith('http://') ||
-    value.startsWith('https://') ||
-    value.startsWith('#')
-  ) {
-    return value;
-  }
-
-  if (
-    value.startsWith(config.site.basePath)
-  ) {
-    return value;
-  }
-
-  return `${config.site.basePath}${normalizePath(
-    value
-  )}`;
-}
-
-function getCurrentPath() {
-  const pathname =
-    window.location.pathname;
-
-  let path = pathname;
-
-  if (
-    config.site.basePath !== '/' &&
-    path.startsWith(
-      config.site.basePath
+function normalizeRoute(
+  value
+) {
+  return String(
+    value || ''
+  )
+    .replace(
+      /\\/g,
+      '/'
     )
-  ) {
-    path =
-      path.substring(
-        config.site.basePath.length
-      );
-  }
-
-  return path
-    .replace(/^\/+/, '')
-    .replace(/\/+$/, '');
+    .replace(
+      /^\/+/,
+      ''
+    );
 }
 
-function getCurrentRouteName() {
-  const current =
-    getCurrentPath();
-
-  const entries =
-    Object.entries(
-      config.routes
+function resolveRoute(
+  routeOrPath
+) {
+  const value =
+    normalizeRoute(
+      routeOrPath
     );
 
-  const match =
-    entries.find(
-      ([, route]) =>
-        normalizePath(route) ===
-        normalizePath(current)
+  if (
+    !value
+  ) {
+    return getRoute(
+      'home'
     );
+  }
 
-  return match
-    ? match[0]
-    : null;
+  /*
+   * Known named routes.
+   */
+  try {
+    if (
+      Object.prototype.hasOwnProperty.call(
+        {
+          home: true,
+          careerFinder: true,
+          careerResults: true,
+          exams: true,
+          examDetails: true,
+          jobs: true,
+          jobDetails: true,
+          compare: true,
+          rankings: true,
+          salary: true,
+          eligibility: true,
+          family: true,
+          parents: true,
+          location: true,
+          housing: true,
+          preparation: true,
+          confusionCenter: true,
+          states: true,
+          ai: true,
+          sources: true,
+          glossary: true,
+          methodology: true,
+          about: true,
+          privacy: true,
+          notFound: true
+        },
+        value
+      )
+    ) {
+      return getRoute(
+        value
+      );
+    }
+  } catch {
+    // Treat as path below.
+  }
+
+  return withBasePath(
+    value
+  );
 }
 
 function navigate(
-  route,
+  routeOrPath,
   {
     replace = false,
     newTab = false
   } = {}
 ) {
-  const target =
-    resolveRoute(route);
+  const destination =
+    resolveRoute(
+      routeOrPath
+    );
 
-  if (newTab) {
+  if (
+    newTab
+  ) {
     window.open(
-      target,
+      destination,
       '_blank',
       'noopener,noreferrer'
     );
-    return;
+
+    return destination;
   }
 
-  if (replace) {
+  if (
+    replace
+  ) {
     window.location.replace(
-      target
+      destination
     );
   } else {
-    window.location.href =
-      target;
-  }
-}
-
-function navigateTo(route) {
-  return navigate(route);
-}
-
-function getPageUrl(
-  route,
-  query = {},
-  hash = ''
-) {
-  const url =
-    new URL(
-      resolveRoute(route),
-      window.location.origin
+    window.location.assign(
+      destination
     );
+  }
 
-  Object.entries(query || {}).forEach(
-    ([key, value]) => {
+  return destination;
+}
+
+function getCurrentLocation() {
+  return {
+    href:
+      window.location.href,
+
+    pathname:
+      window.location.pathname,
+
+    search:
+      window.location.search,
+
+    hash:
+      window.location.hash
+  };
+}
+
+function buildQuery(
+  parameters = {}
+) {
+  const query =
+    new URLSearchParams();
+
+  Object.entries(
+    parameters
+  ).forEach(
+    ([
+      key,
+      value
+    ]) => {
       if (
-        value !== undefined &&
-        value !== null &&
-        value !== ''
+        value === undefined ||
+        value === null ||
+        value === ''
       ) {
-        url.searchParams.set(
-          key,
-          String(value)
-        );
+        return;
       }
+
+      if (
+        Array.isArray(
+          value
+        )
+      ) {
+        value.forEach(
+          (item) => {
+            query.append(
+              key,
+              String(
+                item
+              )
+            );
+          }
+        );
+
+        return;
+      }
+
+      query.set(
+        key,
+        String(
+          value
+        )
+      );
     }
   );
 
-  if (hash) {
-    url.hash = String(
-      hash
-    ).replace(/^#/, '');
+  return query.toString();
+}
+
+function navigateWithQuery(
+  routeOrPath,
+  parameters = {},
+  options = {}
+) {
+  const base =
+    resolveRoute(
+      routeOrPath
+    );
+
+  const query =
+    buildQuery(
+      parameters
+    );
+
+  const destination =
+    query
+      ? `${base}?${query}`
+      : base;
+
+  if (
+    options.newTab
+  ) {
+    window.open(
+      destination,
+      '_blank',
+      'noopener,noreferrer'
+    );
+
+    return destination;
   }
 
-  return url.href;
+  if (
+    options.replace
+  ) {
+    window.location.replace(
+      destination
+    );
+  } else {
+    window.location.assign(
+      destination
+    );
+  }
+
+  return destination;
+}
+
+function getQueryParameters() {
+  const parameters =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  return Object.fromEntries(
+    parameters.entries()
+  );
+}
+
+function getQueryParameter(
+  name,
+  fallback = null
+) {
+  const value =
+    new URLSearchParams(
+      window.location.search
+    ).get(
+      name
+    );
+
+  return value ??
+    fallback;
 }
 
 function scrollToHash(
   hash = window.location.hash
 ) {
-  if (!hash) {
+  if (
+    !hash
+  ) {
     return false;
   }
 
   const id =
-    decodeURIComponent(
-      hash.replace(/^#/, '')
+    String(
+      hash
+    ).replace(
+      /^#/,
+      ''
     );
 
-  const element =
-    document.getElementById(id);
+  if (
+    !id
+  ) {
+    return false;
+  }
 
-  if (!element) {
+  const element =
+    document.getElementById(
+      id
+    );
+
+  if (
+    !element
+  ) {
     return false;
   }
 
   element.scrollIntoView({
-    behavior: 'smooth',
-    block: 'start'
+    behavior:
+      document.documentElement
+        .dataset
+        .reducedMotion ===
+      'true'
+        ? 'auto'
+        : 'smooth',
+    block:
+      'start'
   });
 
   return true;
 }
 
-function markActiveNavigation(
-  root = document
-) {
-  const current =
-    getCurrentPath();
-
-  root
-    .querySelectorAll(
-      '[data-route]'
-    )
-    .forEach((link) => {
-      const route =
-        normalizePath(
-          link.dataset.route
-        );
-
-      const isActive =
-        route === current;
-
-      link.classList.toggle(
-        'is-active',
-        isActive
-      );
-
-      link.setAttribute(
-        'aria-current',
-        isActive
-          ? 'page'
-          : 'false'
-      );
-    });
-}
-
-function initRouter() {
-  document.addEventListener(
-    'click',
-    (event) => {
-      const target =
-        event.target.closest(
-          '[data-route]'
-        );
-
-      if (!target) {
-        return;
-      }
-
-      const href =
-        target.getAttribute(
-          'href'
-        );
-
-      if (
-        href?.startsWith('#')
-      ) {
-        return;
-      }
-
-      event.preventDefault();
-
-      navigate(
-        target.dataset.route
+function initializeRouter() {
+  window.addEventListener(
+    'load',
+    () => {
+      window.setTimeout(
+        () => {
+          scrollToHash();
+        },
+        0
       );
     }
   );
-
-  markActiveNavigation();
-
-  if (
-    document.readyState ===
-    'complete'
-  ) {
-    scrollToHash();
-  } else {
-    window.addEventListener(
-      'load',
-      () => scrollToHash(),
-      {
-        once: true
-      }
-    );
-  }
 }
 
 export {
-  initRouter,
-  navigate,
-  navigateTo,
+  normalizeRoute,
   resolveRoute,
-  getCurrentPath,
-  getCurrentRouteName,
-  getPageUrl,
+  navigate,
+  getCurrentLocation,
+  buildQuery,
+  navigateWithQuery,
+  getQueryParameters,
+  getQueryParameter,
   scrollToHash,
-  markActiveNavigation
+  initializeRouter
 };
 
 export default {
-  initRouter,
   navigate,
-  navigateTo,
+  navigateWithQuery,
   resolveRoute,
-  getCurrentPath,
-  getCurrentRouteName,
-  getPageUrl,
-  scrollToHash,
-  markActiveNavigation
+  getCurrentLocation
 };
