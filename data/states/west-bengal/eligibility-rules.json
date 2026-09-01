@@ -1,0 +1,197 @@
+{
+  "$schema": "../../../schemas/eligibility-rule.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "west-bengal-government",
+  "stateId": "west-bengal",
+  "lastVerified": "2026-08-31",
+  "eligibilityRules": [
+    {
+      "id": "eligibility-wbcs-degree-bengali",
+      "name": {
+        "en": "WBCS recognised degree and Bengali-language requirement",
+        "bn": "WBCS স্বীকৃত ডিগ্রি ও বাংলা ভাষার যোগ্যতা"
+      },
+      "ruleType": "HARD_ELIGIBILITY",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "qualificationsAndLanguages",
+        "profileFieldId": "candidate.qualificationsAndLanguages"
+      },
+      "requiredQualifications": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "requiredLanguages": [
+        "language-bengali"
+      ],
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "explanation": {
+        "en": "The WBCS 2024 advertisement requires a recognised university degree and ability to read, write and speak Bengali, with the stated Nepali-mother-tongue exception.",
+        "bn": "WBCS 2024 বিজ্ঞপ্তিতে স্বীকৃত বিশ্ববিদ্যালয়ের ডিগ্রি এবং বাংলা পড়তে, লিখতে ও বলতে পারার শর্ত রয়েছে; উল্লেখিত নেপালি মাতৃভাষার ক্ষেত্রে ব্যতিক্রম প্রযোজ্য।"
+      },
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "sourceDate": "2025-11-14",
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-wbcs-police",
+      "name": {
+        "en": "West Bengal Police Service physical standard",
+        "bn": "পশ্চিমবঙ্গ পুলিশ সার্ভিস শারীরিক মান"
+      },
+      "ruleType": "PHYSICAL_REQUIREMENT",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "physicalProfile",
+        "profileFieldId": "candidate.physicalProfile"
+      },
+      "physical": {
+        "required": true,
+        "profileId": "physical-wbcs-police-service",
+        "heightCm": null
+      },
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "sourceDate": "2025-11-14",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "notes": {
+        "en": "The 2024 advertisement specifies minimum height of 1.65 m for male candidates and 1.50 m for female candidates, subject to stated relaxations.",
+        "bn": "2024 বিজ্ঞপ্তিতে পুরুষ প্রার্থীর জন্য ১.৬৫ মিটার এবং মহিলা প্রার্থীর জন্য ১.৫০ মিটার ন্যূনতম উচ্চতা নির্ধারিত হয়েছে, নির্দিষ্ট ছাড় সাপেক্ষে।"
+      }
+    },
+    {
+      "id": "eligibility-land-revenue-bengali",
+      "name": {
+        "en": "West Bengal Subordinate Land Revenue Service Bengali working knowledge",
+        "bn": "পশ্চিমবঙ্গ সাবঅর্ডিনেট ল্যান্ড রেভিনিউ সার্ভিস বাংলা ভাষার কর্মজ্ঞান"
+      },
+      "ruleType": "LANGUAGE_REQUIREMENT",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "languages",
+        "profileFieldId": "candidate.languages"
+      },
+      "requiredLanguages": [
+        "language-bengali"
+      ],
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "sourceDate": "2025-11-14",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "notes": {
+        "en": "Candidates whose mother tongue is Nepali have the specific exemption described in the advertisement but must pass the departmental Bengali examination within two years.",
+        "bn": "নেপালি মাতৃভাষী প্রার্থীদের জন্য বিজ্ঞপ্তিতে নির্দিষ্ট ছাড় রয়েছে; তবে দুই বছরের মধ্যে বিভাগীয় বাংলা পরীক্ষা পাস করতে হবে।"
+      }
+    },
+    {
+      "id": "eligibility-police-graduate-bengali",
+      "name": {
+        "en": "West Bengal police graduate and Bengali requirement",
+        "bn": "পশ্চিমবঙ্গ পুলিশ স্নাতক ও বাংলা ভাষার যোগ্যতা"
+      },
+      "ruleType": "HARD_ELIGIBILITY",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "qualificationsAndLanguages",
+        "profileFieldId": "candidate.qualificationsAndLanguages"
+      },
+      "requiredQualifications": [
+        "qualification-bachelor-any-discipline"
+      ],
+      "requiredLanguages": [
+        "language-bengali"
+      ],
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-wbprb-wbp-si-2024"
+      ],
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-wbp-si-physical",
+      "name": {
+        "en": "West Bengal Police Sub-Inspector physical and medical requirement",
+        "bn": "পশ্চিমবঙ্গ পুলিশ সাব-ইন্সপেক্টর শারীরিক ও চিকিৎসাগত যোগ্যতা"
+      },
+      "ruleType": "PHYSICAL_REQUIREMENT",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "physicalAndMedicalProfile",
+        "profileFieldId": "candidate.physicalAndMedicalProfile"
+      },
+      "physical": {
+        "required": true,
+        "profileId": "physical-wbp-si"
+      },
+      "medical": {
+        "required": true,
+        "standardId": "medical-wbp-si"
+      },
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-wbprb-wbp-si-2024"
+      ],
+      "status": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "id": "eligibility-kp-si-physical",
+      "name": {
+        "en": "Kolkata Police Sub-Inspector physical and medical requirement",
+        "bn": "কলকাতা পুলিশ সাব-ইন্সপেক্টর শারীরিক ও চিকিৎসাগত যোগ্যতা"
+      },
+      "ruleType": "PHYSICAL_REQUIREMENT",
+      "logic": "ALL",
+      "priority": "MANDATORY",
+      "operator": "HAS",
+      "subject": {
+        "field": "physicalAndMedicalProfile",
+        "profileFieldId": "candidate.physicalAndMedicalProfile"
+      },
+      "physical": {
+        "required": true,
+        "profileId": "physical-kp-si"
+      },
+      "medical": {
+        "required": true,
+        "standardId": "medical-kp-si"
+      },
+      "failureStatus": "NOT_ELIGIBLE",
+      "unknownStatus": "REQUIRES_MANUAL_VERIFICATION",
+      "sourceIds": [
+        "src-wbprb-kp-si-2023"
+      ],
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "notes": {
+        "en": "Exact current measurements and endurance conditions must be linked to the applicable recruitment notice rather than inferred from another police recruitment cycle.",
+        "bn": "সঠিক বর্তমান শারীরিক মাপ ও সহনশীলতার শর্ত প্রযোজ্য নিয়োগ বিজ্ঞপ্তির সঙ্গে লিঙ্ক করতে হবে; অন্য পুলিশ নিয়োগ চক্র থেকে অনুমান করা যাবে না।"
+      }
+    }
+  ]
+}
