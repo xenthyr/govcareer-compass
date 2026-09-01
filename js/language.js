@@ -1,101 +1,168 @@
 /**
  * GovCareer Compass
- * Localization manager
+ * ============================================================
+ * Internationalization Manager
+ * ============================================================
  *
- * UI translations are loaded from:
- * /data/i18n/en.json
- * /data/i18n/bn.json
+ * Supported now:
+ * - English
+ * - Bengali
  *
- * Canonical IDs remain language-independent.
+ * Future languages can be added to config/data without changing
+ * stable record IDs.
  */
 
-import config from './config.js';
-import storage from './storage.js';
+import config, {
+  STORAGE_KEYS
+} from './config.js';
 
-const LANGUAGE_KEY = config.storageKeys.language;
+import {
+  getItem,
+  setItem
+} from './storage.js';
 
-let currentLanguage =
+let translations = {};
+let activeLanguage =
   config.app.defaultLanguage;
 
-const dictionaryCache = new Map();
+const loadedLanguages =
+  new Map();
 
-function normalizeLanguage(language) {
-  return config.app.supportedLanguages.includes(
-    language
-  )
-    ? language
-    : config.app.defaultLanguage;
-}
+function getStoredLanguage() {
+  const stored =
+    getItem(
+      STORAGE_KEYS.language,
+      null
+    );
 
-function getLanguage() {
-  return currentLanguage;
-}
-
-async function loadDictionary(language) {
-  const normalized =
-    normalizeLanguage(language);
-
-  if (dictionaryCache.has(normalized)) {
-    return dictionaryCache.get(normalized);
+  if (
+    config.app.supportedLanguages.includes(
+      stored
+    )
+  ) {
+    return stored;
   }
 
-  const url =
-    config.data.i18n[normalized];
+  return config.app.defaultLanguage;
+}
 
-  if (!url) {
-    throw new Error(
-      `No translation file configured for "${normalized}".`
+async function loadLanguage(
+  language
+) {
+  if (
+    loadedLanguages.has(
+      language
+    )
+  ) {
+    return loadedLanguages.get(
+      language
     );
   }
 
-  const response = await fetch(url, {
-    cache: 'no-store'
-  });
+  const path =
+    config.data.i18n[
+      language
+    ];
 
-  if (!response.ok) {
+  if (
+    !path
+  ) {
     throw new Error(
-      `Failed to load language "${normalized}" (${response.status}).`
+      `No translation file configured for language "${language}".`
     );
   }
 
-  const dictionary = await response.json();
+  const response =
+    await fetch(
+      path,
+      {
+        cache:
+          'default'
+      }
+    );
 
-  dictionaryCache.set(
-    normalized,
-    dictionary
+  if (
+    !response.ok
+  ) {
+    throw new Error(
+      `Unable to load language "${language}". HTTP ${response.status}.`
+    );
+  }
+
+  const data =
+    await response.json();
+
+  loadedLanguages.set(
+    language,
+    data
   );
 
-  return dictionary;
+  return data;
 }
 
-function resolvePath(object, path) {
-  return path
+function deepGet(
+  object,
+  path
+) {
+  if (
+    !path
+  ) {
+    return undefined;
+  }
+
+  return String(
+    path
+  )
     .split('.')
     .reduce(
-      (current, key) =>
-        current !== undefined &&
-        current !== null
-          ? current[key]
-          : undefined,
+      (
+        current,
+        key
+      ) => {
+        if (
+          current === null ||
+          current === undefined
+        ) {
+          return undefined;
+        }
+
+        return current[
+          key
+        ];
+      },
       object
     );
 }
 
-function interpolate(text, variables = {}) {
-  if (typeof text !== 'string') {
+function interpolate(
+  text,
+  variables = {}
+) {
+  if (
+    typeof text !==
+    'string'
+  ) {
     return text;
   }
 
   return text.replace(
-    /\{\{\s*([\w.-]+)\s*\}\}/g,
-    (match, key) => {
+    /\{\{\s*([^}]+?)\s*\}\}/g,
+    (
+      _match,
+      key
+    ) => {
       const value =
-        resolvePath(variables, key);
+        deepGet(
+          variables,
+          key.trim()
+        );
 
       return value === undefined ||
         value === null
-        ? match
-        : String(value);
+        ? ''
+        : String(
+            value
+          );
     }
   );
 }
@@ -103,173 +170,184 @@ function interpolate(text, variables = {}) {
 function translate(
   key,
   variables = {},
-  fallback = key
+  fallback = ''
 ) {
-  const dictionary =
-    dictionaryCache.get(currentLanguage);
-
-  if (!dictionary) {
-    return fallback;
-  }
-
   const value =
-    resolvePath(dictionary, key);
+    deepGet(
+      translations,
+      key
+    );
 
   if (
-    typeof value !== 'string' &&
-    typeof value !== 'number'
+    value === undefined ||
+    value === null
   ) {
-    return fallback;
+    return fallback ||
+      key;
   }
 
   return interpolate(
-    String(value),
+    value,
     variables
   );
 }
 
-function translateElement(
-  element,
-  dictionary
-) {
-  const key =
-    element.dataset.i18n;
-
-  if (!key) {
-    return;
-  }
-
-  const value =
-    resolvePath(dictionary, key);
-
-  if (
-    value !== undefined &&
-    value !== null
-  ) {
-    element.textContent =
-      String(value);
-  }
-
-  if (element.dataset.i18nHtml === 'true') {
-    element.innerHTML =
-      String(value ?? '');
-  }
-
-  const attribute =
-    element.dataset.i18nAttr;
-
-  if (attribute) {
-    const keys =
-      attribute
-        .split(',')
-        .map((item) =>
-          item.trim()
-        )
-        .filter(Boolean);
-
-    keys.forEach((attributeName) => {
-      const attributeKey =
-        element.dataset[
-          `i18nAttr${capitalize(
-            attributeName
-          )}`
-        ];
-
-      if (!attributeKey) {
-        return;
-      }
-
-      const translated =
-        resolvePath(
-          dictionary,
-          attributeKey
-        );
-
-      if (
-        translated !== undefined
-      ) {
-        element.setAttribute(
-          attributeName,
-          String(translated)
-        );
-      }
-    });
-  }
-}
-
-function capitalize(value) {
-  return value
-    ? value.charAt(0).toUpperCase() +
-        value.slice(1)
-    : value;
-}
-
-function applyTranslations(
-  dictionary
-) {
+function updateTranslatedElements() {
   document
     .querySelectorAll(
       '[data-i18n]'
     )
-    .forEach((element) =>
-      translateElement(
-        element,
-        dictionary
-      )
+    .forEach(
+      (element) => {
+        const key =
+          element.dataset.i18n;
+
+        if (
+          !key
+        ) {
+          return;
+        }
+
+        const fallback =
+          element.dataset.i18nFallback ||
+          element.textContent ||
+          key;
+
+        element.textContent =
+          translate(
+            key,
+            {},
+            fallback
+          );
+      }
     );
 
   document
     .querySelectorAll(
       '[data-i18n-placeholder]'
     )
-    .forEach((element) => {
-      const key =
-        element.dataset.i18nPlaceholder;
+    .forEach(
+      (element) => {
+        const key =
+          element.dataset.i18nPlaceholder;
 
-      const value =
-        resolvePath(
-          dictionary,
-          key
-        );
+        if (
+          !key
+        ) {
+          return;
+        }
 
-      if (
-        value !== undefined
-      ) {
         element.setAttribute(
           'placeholder',
-          String(value)
+          translate(
+            key,
+            {},
+            element.getAttribute(
+              'placeholder'
+            ) || key
+          )
         );
       }
-    });
+    );
 
   document
     .querySelectorAll(
       '[data-i18n-aria-label]'
     )
-    .forEach((element) => {
-      const key =
-        element.dataset.i18nAriaLabel;
+    .forEach(
+      (element) => {
+        const key =
+          element.dataset.i18nAriaLabel;
 
-      const value =
-        resolvePath(
-          dictionary,
-          key
-        );
+        if (
+          !key
+        ) {
+          return;
+        }
 
-      if (
-        value !== undefined
-      ) {
         element.setAttribute(
           'aria-label',
-          String(value)
+          translate(
+            key,
+            {},
+            element.getAttribute(
+              'aria-label'
+            ) || key
+          )
         );
       }
-    });
+    );
 
-  document.documentElement.lang =
-    currentLanguage === 'bn'
-      ? 'bn'
-      : 'en';
+  document
+    .querySelectorAll(
+      '[data-i18n-title]'
+    )
+    .forEach(
+      (element) => {
+        const key =
+          element.dataset.i18nTitle;
+
+        if (
+          !key
+        ) {
+          return;
+        }
+
+        element.setAttribute(
+          'title',
+          translate(
+            key,
+            {},
+            element.getAttribute(
+              'title'
+            ) || key
+          )
+        );
+      }
+    );
+}
+
+function updateLanguageControls() {
+  document
+    .querySelectorAll(
+      '[data-language-value]'
+    )
+    .forEach(
+      (control) => {
+        const active =
+          control.dataset.languageValue ===
+          activeLanguage;
+
+        control.classList.toggle(
+          'is-active',
+          active
+        );
+
+        if (
+          control.matches(
+            'button, [role="button"]'
+          )
+        ) {
+          control.setAttribute(
+            'aria-pressed',
+            String(
+              active
+            )
+          );
+        }
+      }
+    );
+
+  document
+    .querySelectorAll(
+      '[data-language-select]'
+    )
+    .forEach(
+      (select) => {
+        select.value =
+          activeLanguage;
+      }
+    );
 }
 
 async function setLanguage(
@@ -280,193 +358,196 @@ async function setLanguage(
   } = {}
 ) {
   const normalized =
-    normalizeLanguage(language);
+    String(
+      language || ''
+    )
+      .trim()
+      .toLowerCase();
+
+  if (
+    !config.app.supportedLanguages.includes(
+      normalized
+    )
+  ) {
+    throw new Error(
+      `Unsupported language: ${language}`
+    );
+  }
 
   const dictionary =
-    await loadDictionary(
+    await loadLanguage(
       normalized
     );
 
-  currentLanguage =
+  translations =
+    dictionary;
+
+  activeLanguage =
     normalized;
 
-  applyTranslations(
-    dictionary
-  );
+  document.documentElement.lang =
+    normalized;
 
-  if (persist) {
-    storage.set(
-      LANGUAGE_KEY,
+  if (
+    persist
+  ) {
+    setItem(
+      STORAGE_KEYS.language,
       normalized
     );
   }
 
-  updateLanguageControls(
-    normalized
-  );
+  updateTranslatedElements();
 
-  window.dispatchEvent(
+  updateLanguageControls();
+
+  document.dispatchEvent(
     new CustomEvent(
-      'gcc:languagechange',
+      'govcareer:languagechange',
       {
         detail: {
-          language: normalized
+          language:
+            normalized
         }
       }
     )
   );
 
   if (
-    announce &&
-    window.gcc?.toast
+    announce
   ) {
-    const message =
-      normalized === 'bn'
-        ? 'ভাষা বাংলা করা হয়েছে।'
-        : 'Language changed to English.';
+    const event =
+      new CustomEvent(
+        'govcareer:i18n-ready',
+        {
+          detail: {
+            language:
+              normalized
+          }
+        }
+      );
 
-    window.gcc.toast(
-      message
+    document.dispatchEvent(
+      event
     );
   }
 
   return normalized;
 }
 
-function updateLanguageControls(
-  language
-) {
-  document
-    .querySelectorAll(
-      '[data-language-control]'
-    )
-    .forEach((control) => {
-      const value =
-        control.dataset.languageControl;
-
-      control.setAttribute(
-        'aria-pressed',
-        String(
-          value === language
-        )
-      );
+function bindLanguageControls() {
+  document.addEventListener(
+    'click',
+    (event) => {
+      const control =
+        event.target.closest(
+          '[data-language-value]'
+        );
 
       if (
-        control instanceof HTMLSelectElement
-      ) {
-        control.value =
-          language;
-      }
-    });
-
-  document
-    .querySelectorAll(
-      '[data-current-language]'
-    )
-    .forEach((element) => {
-      element.textContent =
-        language === 'bn'
-          ? 'বাংলা'
-          : 'English';
-    });
-}
-
-function bindLanguageControls(
-  root = document
-) {
-  root
-    .querySelectorAll(
-      '[data-language-control]'
-    )
-    .forEach((control) => {
-      if (
-        control.dataset.languageBound ===
-        'true'
+        !control
       ) {
         return;
       }
 
-      control.dataset.languageBound =
-        'true';
+      const language =
+        control.dataset.languageValue;
 
-      control.addEventListener(
-        'click',
-        async () => {
-          const language =
-            control.dataset
-              .languageControl;
-
-          try {
-            await setLanguage(
-              language
-            );
-          } catch (error) {
+      if (
+        language
+      ) {
+        void setLanguage(
+          language
+        ).catch(
+          (error) => {
             console.error(
               'Language change failed:',
               error
             );
           }
-        }
-      );
-
-      if (
-        control instanceof HTMLSelectElement
-      ) {
-        control.addEventListener(
-          'change',
-          async () => {
-            try {
-              await setLanguage(
-                control.value
-              );
-            } catch (error) {
-              console.error(
-                'Language change failed:',
-                error
-              );
-            }
-          }
         );
       }
-    });
-}
-
-async function initLanguage() {
-  const saved =
-    normalizeLanguage(
-      storage.get(
-        LANGUAGE_KEY,
-        config.app.defaultLanguage
-      )
-    );
-
-  await setLanguage(
-    saved,
-    {
-      persist: false,
-      announce: false
     }
   );
 
+  document.addEventListener(
+    'change',
+    (event) => {
+      const select =
+        event.target.closest(
+          '[data-language-select]'
+        );
+
+      if (
+        !select
+      ) {
+        return;
+      }
+
+      void setLanguage(
+        select.value
+      ).catch(
+        (error) => {
+          console.error(
+            'Language change failed:',
+            error
+          );
+        }
+      );
+    }
+  );
+}
+
+async function initializeLanguage() {
   bindLanguageControls();
+
+  const preferred =
+    getStoredLanguage();
+
+  try {
+    await setLanguage(
+      preferred,
+      {
+        persist: false,
+        announce: false
+      }
+    );
+  } catch {
+    if (
+      preferred !==
+      config.app.defaultLanguage
+    ) {
+      await setLanguage(
+        config.app.defaultLanguage,
+        {
+          persist: false,
+          announce: false
+        }
+      );
+    }
+  }
+}
+
+function getCurrentLanguage() {
+  return activeLanguage;
+}
+
+function getTranslations() {
+  return translations;
 }
 
 export {
-  initLanguage,
-  setLanguage,
-  getLanguage,
+  loadLanguage,
   translate,
-  loadDictionary,
-  applyTranslations,
-  bindLanguageControls
+  setLanguage,
+  getCurrentLanguage,
+  getTranslations,
+  initializeLanguage
 };
 
 export default {
-  initLanguage,
-  setLanguage,
-  getLanguage,
   translate,
-  loadDictionary,
-  applyTranslations,
-  bindLanguageControls
+  setLanguage,
+  getCurrentLanguage,
+  initializeLanguage
 };
