@@ -1,0 +1,63 @@
+{
+  "$schema": "../../schemas/location.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "central-government",
+  "lastVerified": "2026-08-31",
+  "locations": [
+    {
+      "id": "loc-central-all-india",
+      "name": "All India",
+      "type": "ALL_INDIA",
+      "stateId": null,
+      "governmentId": "central-government",
+      "description": "Career can involve postings across multiple regions of India.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "loc-delhi-government",
+      "name": "New Delhi / Delhi Government Offices",
+      "type": "MINISTRY_CENTRIC",
+      "stateId": "delhi",
+      "governmentId": "central-government",
+      "description": "Central ministries and major headquarters are concentrated in the National Capital Region.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "loc-kolkata-central",
+      "name": "Kolkata",
+      "type": "METROPOLITAN_CENTRAL_POSTING",
+      "stateId": "west-bengal",
+      "governmentId": "central-government",
+      "description": "Kolkata contains regional and zonal offices of several Central Government organisations, but selection does not guarantee Kolkata posting.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "loc-railway-zones",
+      "name": "Railway Zone / Division / Station Network",
+      "type": "RAILWAY_NETWORK",
+      "stateId": null,
+      "governmentId": "central-government",
+      "description": "Posting follows the applicable Railway zone, division, production unit or operational establishment.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "loc-postal-circle",
+      "name": "Postal Circle / Division",
+      "type": "POSTAL_ADMINISTRATION",
+      "stateId": null,
+      "governmentId": "central-government",
+      "description": "Department of Posts careers can be organised through postal circles and divisions.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "loc-ib-sib",
+      "name": "Subsidiary Intelligence Bureau / Regional Intelligence Office",
+      "type": "INTELLIGENCE_REGIONAL",
+      "stateId": null,
+      "governmentId": "central-government",
+      "description": "Intelligence Bureau recruitment can be tied to Subsidiary Intelligence Bureau locations.",
+      "confidence": "HIGH"
+    }
+  ]
+}
