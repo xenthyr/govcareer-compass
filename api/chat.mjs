@@ -1,41 +1,55 @@
 /**
  * GovCareer Compass
- * CompassAI server endpoint
+ * CompassAI Vercel serverless API
  *
- * Browser -> POST /api/chat -> Vercel -> OpenAI Responses API
+ * Browser
+ *   ↓
+ * /api/chat
+ *   ↓
+ * OpenRouter
+ *   ↓
+ * selected model
  */
 
 import {
-  AI_CONFIG,
+  COMPASS_CONFIG,
   validateServerConfiguration
 } from "./_lib/config.mjs";
 
 import {
-  COMPASS_SYSTEM_INSTRUCTIONS,
-  buildInputInstructions
+  COMPASS_SYSTEM_PROMPT,
+  buildRequestInstructions
 } from "./_lib/compass-prompt.mjs";
 
 import {
   errorResponse,
+  jsonResponse,
   isAllowedMethod,
   isAllowedOrigin,
   exceedsRequestSize,
   sanitizeContext,
-  sanitizeMessages,
-  jsonResponse
+  sanitizeMessages
 } from "./_lib/security.mjs";
 
-function getBearerToken() {
-  const value = process.env.OPENAI_API_KEY;
-
-  if (!value || typeof value !== "string") {
-    return "";
-  }
-
-  return value.trim();
+function getApiKey() {
+  return (
+    process.env.OPENROUTER_API_KEY?.trim() ||
+    ""
+  );
 }
 
-async function readJsonBody(request) {
+function getSiteUrl() {
+  return (
+    process.env.PUBLIC_SITE_URL?.trim() ||
+    ""
+  );
+}
+
+function getSiteName() {
+  return "GovCareer Compass";
+}
+
+async function parseJsonBody(request) {
   try {
     return await request.json();
   } catch {
@@ -43,25 +57,62 @@ async function readJsonBody(request) {
   }
 }
 
-function createOpenAIInput(messages, context, language) {
-  const input = [];
-
-  input.push({
-    role: "developer",
-    content: buildInputInstructions({
-      context,
-      language
-    })
-  });
-
-  for (const message of messages) {
-    input.push({
+function buildMessages({
+  messages,
+  language,
+  context
+}) {
+  return [
+    {
+      role: "system",
+      content:
+        COMPASS_SYSTEM_PROMPT
+    },
+    {
+      role: "system",
+      content:
+        buildRequestInstructions({
+          language,
+          context
+        })
+    },
+    ...messages.map((message) => ({
       role: message.role,
       content: message.content
-    });
+    }))
+  ];
+}
+
+function extractAssistantText(
+  data
+) {
+  const content =
+    data?.choices?.[0]?.message
+      ?.content;
+
+  if (
+    typeof content !== "string"
+  ) {
+    return "";
   }
 
-  return input;
+  return content.trim();
+}
+
+function createUpstreamBody({
+  messages
+}) {
+  return {
+    model:
+      COMPASS_CONFIG.openRouterModel,
+
+    messages,
+
+    max_tokens:
+      COMPASS_CONFIG.maxOutputTokens,
+
+    temperature: 0.2
+  };
 }
 
 async function fetchWithTimeout(
@@ -69,267 +120,305 @@ async function fetchWithTimeout(
   options,
   timeoutMs
 ) {
-  const controller = new AbortController();
+  const controller =
+    new AbortController();
 
-  const timeoutId = setTimeout(
-    () => controller.abort(),
-    timeoutMs
-  );
+  const timeoutId =
+    setTimeout(
+      () => controller.abort(),
+      timeoutMs
+    );
 
   try {
-    return await fetch(url, {
-      ...options,
-      signal: controller.signal
-    });
-  } finally {
-    clearTimeout(timeoutId);
-  }
-}
-
-function extractOutputText(data) {
-  if (
-    data &&
-    typeof data.output_text === "string"
-  ) {
-    return data.output_text.trim();
-  }
-
-  if (!data || !Array.isArray(data.output)) {
-    return "";
-  }
-
-  const chunks = [];
-
-  for (const item of data.output) {
-    if (
-      item &&
-      item.type === "message" &&
-      Array.isArray(item.content)
-    ) {
-      for (const content of item.content) {
-        if (
-          content &&
-          content.type === "output_text" &&
-          typeof content.text === "string"
-        ) {
-          chunks.push(content.text);
-        }
+    return await fetch(
+      url,
+      {
+        ...options,
+        signal:
+          controller.signal
       }
-    }
+    );
+  } finally {
+    clearTimeout(
+      timeoutId
+    );
   }
-
-  return chunks.join("\n").trim();
 }
 
-export default {
-  async fetch(request) {
-    try {
-      const method =
-        request.method?.toUpperCase() || "GET";
+export default async function handler(
+  request
+) {
+  try {
+    const method =
+      String(request.method || "")
+        .toUpperCase();
 
-      if (method === "OPTIONS") {
-        return new Response(null, {
+    if (
+      method === "OPTIONS"
+    ) {
+      return new Response(
+        null,
+        {
           status: 204,
           headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Origin":
+              "*",
+            "Access-Control-Allow-Methods":
+              "POST, OPTIONS",
             "Access-Control-Allow-Headers":
-              "Content-Type"
+              "Content-Type",
+            "Cache-Control":
+              "no-store"
           }
-        });
-      }
-
-      if (!isAllowedMethod(method)) {
-        return errorResponse(
-          "Method not allowed.",
-          405,
-          "METHOD_NOT_ALLOWED"
-        );
-      }
-
-      if (!isAllowedOrigin(request)) {
-        return errorResponse(
-          "Request origin is not allowed.",
-          403,
-          "ORIGIN_NOT_ALLOWED"
-        );
-      }
-
-      if (exceedsRequestSize(request)) {
-        return errorResponse(
-          "Request is too large.",
-          413,
-          "REQUEST_TOO_LARGE"
-        );
-      }
-
-      const configuration =
-        validateServerConfiguration();
-
-      if (!configuration.valid) {
-        console.error(
-          "CompassAI configuration error:",
-          configuration.errors
-        );
-
-        return errorResponse(
-          "CompassAI is not configured correctly.",
-          503,
-          "AI_NOT_CONFIGURED"
-        );
-      }
-
-      const body = await readJsonBody(request);
-
-      if (!body || typeof body !== "object") {
-        return errorResponse(
-          "Invalid JSON request.",
-          400,
-          "INVALID_JSON"
-        );
-      }
-
-      const messages = sanitizeMessages(
-        body.messages
+        }
       );
+    }
 
-      if (messages.length === 0) {
-        return errorResponse(
-          "At least one user message is required.",
-          400,
-          "EMPTY_MESSAGES"
-        );
-      }
-
-      const latestMessage =
-        messages[messages.length - 1];
-
-      if (
-        latestMessage.role !== "user" ||
-        latestMessage.content.length <
-          AI_CONFIG.minUserMessageChars
-      ) {
-        return errorResponse(
-          "The latest message must be a valid user message.",
-          400,
-          "INVALID_LATEST_MESSAGE"
-        );
-      }
-
-      const context = sanitizeContext(
-        body.context
+    if (
+      !isAllowedMethod(method)
+    ) {
+      return errorResponse(
+        "Method not allowed.",
+        405,
+        "METHOD_NOT_ALLOWED"
       );
+    }
 
-      const language =
-        typeof body.language === "string" &&
-        body.language.trim()
-          ? body.language.trim().slice(0, 32)
-          : "en";
-
-      const apiKey = getBearerToken();
-
-      if (!apiKey) {
-        return errorResponse(
-          "AI service credentials are unavailable.",
-          503,
-          "MISSING_API_KEY"
-        );
-      }
-
-      const openAIInput = createOpenAIInput(
-        messages,
-        context,
-        language
+    if (
+      !isAllowedOrigin(request)
+    ) {
+      return errorResponse(
+        "Request origin is not allowed.",
+        403,
+        "ORIGIN_NOT_ALLOWED"
       );
+    }
 
-      const upstreamResponse =
-        await fetchWithTimeout(
-          "https://api.openai.com/v1/responses",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${apiKey}`
-            },
-            body: JSON.stringify({
-              model: AI_CONFIG.model,
-              instructions:
-                COMPASS_SYSTEM_INSTRUCTIONS,
-              input: openAIInput,
-              max_output_tokens:
-                AI_CONFIG.maxOutputTokens,
-              store: false
-            })
-          },
-          AI_CONFIG.requestTimeoutMs
-        );
+    if (
+      exceedsRequestSize(request)
+    ) {
+      return errorResponse(
+        "Request is too large.",
+        413,
+        "REQUEST_TOO_LARGE"
+      );
+    }
 
-      const rawText =
-        await upstreamResponse.text();
+    const configuration =
+      validateServerConfiguration();
 
-      let upstreamData = null;
-
-      try {
-        upstreamData = rawText
-          ? JSON.parse(rawText)
-          : null;
-      } catch {
-        upstreamData = null;
-      }
-
-      if (!upstreamResponse.ok) {
-        console.error(
-          "OpenAI API error:",
-          upstreamResponse.status,
-          upstreamData
-        );
-
-        return errorResponse(
-          "CompassAI could not complete the request.",
-          502,
-          "UPSTREAM_AI_ERROR"
-        );
-      }
-
-      const answer =
-        extractOutputText(upstreamData);
-
-      if (!answer) {
-        return errorResponse(
-          "CompassAI returned an empty response.",
-          502,
-          "EMPTY_AI_RESPONSE"
-        );
-      }
-
-      return jsonResponse({
-        ok: true,
-        assistant: AI_CONFIG.assistantName,
-        answer,
-        model: AI_CONFIG.model,
-        language,
-        scope: AI_CONFIG.researchScope,
-        researchBaseline:
-          AI_CONFIG.baselineDate
-      });
-    } catch (error) {
-      const isAbort =
-        error?.name === "AbortError";
-
+    if (!configuration.valid) {
       console.error(
-        "CompassAI request failure:",
-        error
+        "CompassAI configuration error:",
+        configuration.missing
       );
 
       return errorResponse(
-        isAbort
-          ? "CompassAI request timed out. Please try again."
-          : "CompassAI is temporarily unavailable. Please try again.",
-        500,
-        isAbort
-          ? "AI_TIMEOUT"
-          : "AI_REQUEST_FAILED"
+        "CompassAI is not configured correctly.",
+        503,
+        "AI_NOT_CONFIGURED"
       );
     }
+
+    const body =
+      await parseJsonBody(
+        request
+      );
+
+    if (
+      !body ||
+      typeof body !== "object"
+    ) {
+      return errorResponse(
+        "Invalid JSON request.",
+        400,
+        "INVALID_JSON"
+      );
+    }
+
+    const messages =
+      sanitizeMessages(
+        body.messages
+      );
+
+    if (
+      messages.length === 0
+    ) {
+      return errorResponse(
+        "At least one valid message is required.",
+        400,
+        "EMPTY_MESSAGES"
+      );
+    }
+
+    const latestMessage =
+      messages[
+        messages.length - 1
+      ];
+
+    if (
+      latestMessage.role !==
+        "user"
+    ) {
+      return errorResponse(
+        "The latest message must be a user message.",
+        400,
+        "INVALID_LATEST_MESSAGE"
+      );
+    }
+
+    const context =
+      sanitizeContext(
+        body.context
+      );
+
+    const language =
+      typeof body.language ===
+        "string" &&
+      body.language.trim()
+        ? body.language
+            .trim()
+            .slice(0, 32)
+        : "en";
+
+    const apiKey =
+      getApiKey();
+
+    const siteUrl =
+      getSiteUrl();
+
+    const headers = {
+      "Authorization":
+        `Bearer ${apiKey}`,
+
+      "Content-Type":
+        "application/json",
+
+      "X-Title":
+        getSiteName()
+    };
+
+    if (siteUrl) {
+      headers[
+        "HTTP-Referer"
+      ] = siteUrl;
+    }
+
+    const openRouterResponse =
+      await fetchWithTimeout(
+        `${COMPASS_CONFIG.openRouterBaseUrl}/chat/completions`,
+        {
+          method: "POST",
+          headers,
+          body:
+            JSON.stringify(
+              createUpstreamBody({
+                messages:
+                  buildMessages({
+                    messages,
+                    language,
+                    context
+                  })
+              })
+            )
+        },
+        COMPASS_CONFIG
+          .requestTimeoutMs
+      );
+
+    const raw =
+      await openRouterResponse.text();
+
+    let data = null;
+
+    try {
+      data = raw
+        ? JSON.parse(raw)
+        : null;
+    } catch {
+      data = null;
+    }
+
+    if (
+      !openRouterResponse.ok
+    ) {
+      console.error(
+        "OpenRouter upstream error:",
+        openRouterResponse.status,
+        data
+      );
+
+      return errorResponse(
+        "CompassAI could not complete the request.",
+        502,
+        "OPENROUTER_UPSTREAM_ERROR"
+      );
+    }
+
+    const answer =
+      extractAssistantText(
+        data
+      );
+
+    if (!answer) {
+      console.error(
+        "OpenRouter returned no assistant content."
+      );
+
+      return errorResponse(
+        "CompassAI returned an empty response.",
+        502,
+        "EMPTY_AI_RESPONSE"
+      );
+    }
+
+    return jsonResponse({
+      ok: true,
+
+      assistant:
+        "CompassAI",
+
+      answer,
+
+      provider:
+        "OpenRouter",
+
+      model:
+        data?.model ||
+        COMPASS_CONFIG
+          .openRouterModel,
+
+      language,
+
+      scope:
+        COMPASS_CONFIG
+          .researchScope,
+
+      researchBaseline:
+        COMPASS_CONFIG
+          .researchBaseline,
+
+      usage:
+        data?.usage || null
+    });
+  } catch (error) {
+    console.error(
+      "CompassAI request failure:",
+      error
+    );
+
+    const timeout =
+      error?.name ===
+      "AbortError";
+
+    return errorResponse(
+      timeout
+        ? "CompassAI timed out. Please try again."
+        : "CompassAI is temporarily unavailable. Please try again.",
+      500,
+      timeout
+        ? "AI_TIMEOUT"
+        : "AI_REQUEST_FAILED"
+    );
   }
-};
+}
