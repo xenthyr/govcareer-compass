@@ -1,0 +1,140 @@
+{
+  "$schema": "../../schemas/pay.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "central-government",
+  "payFramework": "7TH_CENTRAL_PAY_COMMISSION",
+  "lastVerified": "2026-08-31",
+  "payStructures": [
+    {
+      "id": "pay-level-1",
+      "system": "CENTRAL_7TH_CPC",
+      "level": "LEVEL_1",
+      "startingBasic": 18000,
+      "maximumBasic": 56900,
+      "currency": "INR",
+      "status": "CURRENT_BASE_PAY_MATRIX",
+      "sourceIds": [
+        "src-central-pay-matrix"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "pay-level-2",
+      "system": "CENTRAL_7TH_CPC",
+      "level": "LEVEL_2",
+      "startingBasic": 19900,
+      "maximumBasic": 63200,
+      "currency": "INR",
+      "status": "CURRENT_BASE_PAY_MATRIX",
+      "sourceIds": [
+        "src-central-pay-matrix"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "pay-level-3",
+      "system": "CENTRAL_7TH_CPC",
+      "level": "LEVEL_3",
+      "startingBasic": 21700,
+      "maximumBasic": 69100,
+      "currency": "INR",
+      "status": "CURRENT_BASE_PAY_MATRIX",
+      "sourceIds": [
+        "src-central-pay-matrix"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "pay-level-4",
+      "system": "CENTRAL_7TH_CPC",
+      "level": "LEVEL_4",
+      "startingBasic": 25500,
+      "maximumBasic": 81100,
+      "currency": "INR",
+      "status": "CURRENT_BASE_PAY_MATRIX",
+      "sourceIds": [
+        "src-central-pay-matrix"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "pay-level-5",
+      "system": "CENTRAL_7TH_CPC",
+      "level": "LEVEL_5",
+      "startingBasic": 29200,
+      "maximumBasic": 92300,
+      "currency": "INR",
+      "status": "CURRENT_BASE_PAY_MATRIX",
+      "sourceIds": [
+        "src-central-pay-matrix"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "pay-level-6",
+      "system": "CENTRAL_7TH_CPC",
+      "level": "LEVEL_6",
+      "startingBasic": 35400,
+      "maximumBasic": 112400,
+      "currency": "INR",
+      "status": "CURRENT_BASE_PAY_MATRIX",
+      "sourceIds": [
+        "src-central-pay-matrix"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "pay-level-7",
+      "system": "CENTRAL_7TH_CPC",
+      "level": "LEVEL_7",
+      "startingBasic": 44900,
+      "maximumBasic": 142400,
+      "currency": "INR",
+      "status": "CURRENT_BASE_PAY_MATRIX",
+      "sourceIds": [
+        "src-central-pay-matrix"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "pay-level-8",
+      "system": "CENTRAL_7TH_CPC",
+      "level": "LEVEL_8",
+      "startingBasic": 47600,
+      "maximumBasic": 151100,
+      "currency": "INR",
+      "status": "CURRENT_BASE_PAY_MATRIX",
+      "sourceIds": [
+        "src-central-pay-matrix"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "pay-level-9",
+      "system": "CENTRAL_7TH_CPC",
+      "level": "LEVEL_9",
+      "startingBasic": 53100,
+      "maximumBasic": 167800,
+      "currency": "INR",
+      "status": "CURRENT_BASE_PAY_MATRIX",
+      "sourceIds": [
+        "src-central-pay-matrix"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "pay-level-10",
+      "system": "CENTRAL_7TH_CPC",
+      "level": "LEVEL_10",
+      "startingBasic": 56100,
+      "maximumBasic": 177500,
+      "currency": "INR",
+      "status": "CURRENT_BASE_PAY_MATRIX",
+      "sourceIds": [
+        "src-central-pay-matrix"
+      ],
+      "confidence": "HIGH"
+    }
+  ]
+}
