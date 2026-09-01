@@ -1,205 +1,565 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "eligibility-rule.schema.json",
+  "$id": "https://govcareer-compass.example/schema/eligibility-rule.schema.json",
   "title": "GovCareer Compass Eligibility Rule",
-  "description": "Structured eligibility requirement supporting alternative qualification pathways and additional conditions.",
+  "description": "Canonical schema for machine-readable hard eligibility requirements and explicitly qualified conditional requirements for government recruitment opportunities.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "id",
+    "name",
     "ruleType",
-    "requirements",
-    "dataVersion"
+    "logic",
+    "status",
+    "version"
   ],
   "properties": {
     "id": {
       "$ref": "shared.schema.json#/$defs/id"
     },
+    "name": {
+      "$ref": "shared.schema.json#/$defs/localizedText"
+    },
+    "description": {
+      "$ref": "shared.schema.json#/$defs/localizedText"
+    },
     "ruleType": {
+      "type": "string",
+      "enum": [
+        "HARD_ELIGIBILITY",
+        "ELIGIBILITY_CONDITION",
+        "PROCEDURAL_REQUIREMENT",
+        "SKILL_REQUIREMENT",
+        "PHYSICAL_REQUIREMENT",
+        "MEDICAL_REQUIREMENT",
+        "DOCUMENT_REQUIREMENT",
+        "LANGUAGE_REQUIREMENT",
+        "EXPERIENCE_REQUIREMENT",
+        "AGE_REQUIREMENT",
+        "DOMICILE_REQUIREMENT",
+        "RESERVATION_REQUIREMENT"
+      ]
+    },
+    "logic": {
       "type": "string",
       "enum": [
         "ALL",
         "ANY",
-        "AT_LEAST_ONE"
+        "AT_LEAST",
+        "EXACTLY",
+        "NOT"
       ]
     },
-    "requirements": {
+    "priority": {
+      "type": "string",
+      "enum": [
+        "MANDATORY",
+        "CONDITIONAL",
+        "INFORMATIONAL"
+      ],
+      "default": "MANDATORY"
+    },
+    "operator": {
+      "type": "string",
+      "enum": [
+        "EQUALS",
+        "NOT_EQUALS",
+        "IN",
+        "NOT_IN",
+        "CONTAINS",
+        "NOT_CONTAINS",
+        "HAS",
+        "LACKS",
+        "GREATER_THAN",
+        "GREATER_THAN_OR_EQUAL",
+        "LESS_THAN",
+        "LESS_THAN_OR_EQUAL",
+        "BETWEEN",
+        "DATE_BEFORE",
+        "DATE_AFTER",
+        "DATE_BETWEEN"
+      ]
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field"
+      ],
+      "properties": {
+        "field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profileFieldId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "qualificationId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "qualificationLevel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "subjectId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "skillId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "languageId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "allowedValues": {
       "type": "array",
-      "minItems": 1,
+      "items": {},
+      "uniqueItems": true,
+      "default": []
+    },
+    "requiredQualifications": {
+      "type": "array",
       "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "requirementType"
-        ],
-        "properties": {
-          "requirementType": {
-            "type": "string",
-            "enum": [
-              "QUALIFICATION",
-              "EDUCATION_LEVEL",
-              "SUBJECT",
-              "MARKS",
-              "LANGUAGE",
-              "TYPING",
-              "SHORTHAND",
-              "COMPUTER",
-              "DRIVING_LICENCE",
-              "REGISTRATION",
-              "EXPERIENCE",
-              "PHYSICAL_STANDARD",
-              "MEDICAL_STANDARD",
-              "AGE",
-              "DOMICILE",
-              "GENDER",
-              "CITIZENSHIP",
-              "OTHER"
-            ]
+        "$ref": "shared.schema.json#/$defs/id"
+      },
+      "uniqueItems": true,
+      "default": []
+    },
+    "acceptedQualificationAlternatives": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "$ref": "shared.schema.json#/$defs/id"
+        },
+        "minItems": 1
+      },
+      "default": []
+    },
+    "requiredSubjects": {
+      "type": "array",
+      "items": {
+        "$ref": "shared.schema.json#/$defs/id"
+      },
+      "uniqueItems": true,
+      "default": []
+    },
+    "requiredSkills": {
+      "type": "array",
+      "items": {
+        "$ref": "shared.schema.json#/$defs/id"
+      },
+      "uniqueItems": true,
+      "default": []
+    },
+    "requiredLanguages": {
+      "type": "array",
+      "items": {
+        "$ref": "shared.schema.json#/$defs/id"
+      },
+      "uniqueItems": true,
+      "default": []
+    },
+    "requiredLicences": {
+      "type": "array",
+      "items": {
+        "$ref": "shared.schema.json#/$defs/id"
+      },
+      "uniqueItems": true,
+      "default": []
+    },
+    "minimumMarks": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 100
+    },
+    "minimumExperienceMonths": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "age": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "minimum": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "maximum": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "cutoffDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "ageRelaxationRuleIds": {
+          "type": "array",
+          "items": {
+            "$ref": "shared.schema.json#/$defs/id"
           },
-          "qualificationIds": {
-            "$ref": "shared.schema.json#/$defs/stringArray"
+          "uniqueItems": true
+        }
+      }
+    },
+    "domicile": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "stateIds": {
+          "type": "array",
+          "items": {
+            "$ref": "shared.schema.json#/$defs/id"
           },
-          "educationLevel": {
+          "uniqueItems": true
+        },
+        "residencyYears": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "reservation": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "categoryRequired": {
+          "type": "boolean"
+        },
+        "eligibleCategories": {
+          "type": "array",
+          "items": {
             "type": "string"
           },
-          "subjectIds": {
-            "$ref": "shared.schema.json#/$defs/stringArray"
-          },
-          "minimumMarks": {
-            "type": "number",
-            "minimum": 0
-          },
-          "percentageType": {
-            "type": "string",
-            "enum": [
-              "AGGREGATE",
-              "SUBJECT",
-              "QUALIFYING_EXAM",
-              "DEGREE",
-              "OTHER"
-            ]
-          },
-          "languageIds": {
-            "$ref": "shared.schema.json#/$defs/stringArray"
-          },
-          "typingRequirement": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "language": {
-                "type": "string"
-              },
-              "minimumSpeed": {
-                "type": "number",
-                "minimum": 0
-              },
-              "unit": {
-                "type": "string"
-              }
+          "uniqueItems": true
+        }
+      }
+    },
+    "physical": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "profileId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "heightCm": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "chestCm": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "minimum": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "expandedMinimum": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
             }
-          },
-          "shorthandRequirement": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "minimumSpeed": {
-                "type": "number",
-                "minimum": 0
-              },
-              "unit": {
-                "type": "string"
-              }
+          }
+        },
+        "runningMeters": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "runningTimeSeconds": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "walkingMeters": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "cyclingMeters": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "medical": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "standardId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "visionRequirementId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "medicalCategory": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "skill": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "typing": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "language": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "speedWpm": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
             }
-          },
-          "computerRequirement": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "knowledgeRequired": {
-                "type": "boolean"
-              },
-              "qualificationIds": {
-                "$ref": "shared.schema.json#/$defs/stringArray"
-              }
+          }
+        },
+        "shorthand": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "speedWpm": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
             }
-          },
-          "registrationRequirement": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "authority": {
-                "type": "string"
+          }
+        },
+        "computer": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "skillIds": {
+              "type": "array",
+              "items": {
+                "$ref": "shared.schema.json#/$defs/id"
               },
-              "registrationType": {
-                "type": "string"
-              }
+              "uniqueItems": true
             }
-          },
-          "experienceRequirement": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "minimumYears": {
-                "type": "number",
-                "minimum": 0
-              },
-              "description": {
-                "type": "string"
-              }
-            }
-          },
-          "ageRequirement": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "minimum": {
-                "type": "number",
-                "minimum": 0
-              },
-              "maximum": {
-                "type": "number",
-                "minimum": 0
-              },
-              "cutOffDescription": {
-                "type": "string"
-              }
-            }
-          },
-          "domicileRequirement": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "required": {
-                "type": "boolean"
-              },
-              "stateIds": {
-                "$ref": "shared.schema.json#/$defs/stringArray"
-              }
-            }
-          },
-          "genderRequirement": {
-            "type": "string"
-          },
-          "physicalStandardRequirement": {
-            "type": "object"
-          },
-          "medicalRequirement": {
-            "type": "object"
-          },
-          "description": {
-            "type": "string"
           }
         }
       }
     },
+    "conditionGroups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "logic",
+          "ruleIds"
+        ],
+        "properties": {
+          "logic": {
+            "type": "string",
+            "enum": [
+              "ALL",
+              "ANY",
+              "NOT"
+            ]
+          },
+          "ruleIds": {
+            "type": "array",
+            "items": {
+              "$ref": "shared.schema.json#/$defs/id"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        }
+      },
+      "default": []
+    },
+    "failureStatus": {
+      "type": "string",
+      "enum": [
+        "NOT_ELIGIBLE",
+        "CONDITION_NOT_MET",
+        "REQUIRES_MANUAL_VERIFICATION"
+      ],
+      "default": "NOT_ELIGIBLE"
+    },
+    "unknownStatus": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "REQUIRES_MANUAL_VERIFICATION",
+        "CONDITIONALLY_ELIGIBLE"
+      ],
+      "default": "REQUIRES_MANUAL_VERIFICATION"
+    },
+    "explanation": {
+      "$ref": "shared.schema.json#/$defs/localizedText"
+    },
     "sourceIds": {
-      "$ref": "shared.schema.json#/$defs/stringArray"
+      "type": "array",
+      "items": {
+        "$ref": "shared.schema.json#/$defs/id"
+      },
+      "uniqueItems": true,
+      "default": []
     },
-    "confidence": {
-      "$ref": "shared.schema.json#/$defs/confidence"
+    "sourceDate": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
     },
-    "dataVersion": {
+    "effectiveFrom": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "effectiveTo": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "DRAFT",
+        "HISTORICAL",
+        "RETIRED",
+        "SUPERSEDED",
+        "UNKNOWN"
+      ]
+    },
+    "version": {
       "$ref": "shared.schema.json#/$defs/version"
+    },
+    "notes": {
+      "$ref": "shared.schema.json#/$defs/localizedText"
     }
   }
 }
