@@ -4,40 +4,18 @@
  * Search Bar Component
  * ============================================================
  *
- * FILE:
- *   /js/components/search-bar.js
+ * Presentation layer for the global career search.
  *
- * PURPOSE:
- *   Reusable global search interface for:
+ * Search logic remains in:
  *
- *   - Jobs
- *   - Exams
- *   - Departments
- *   - Organisations
- *   - Service / Cadres
- *   - Qualifications
- *
- * DEPENDENCIES:
  *   /js/search.js
  *
- * IMPORTANT:
- *   This component is responsible for presentation and interaction.
- *   Search ranking remains inside /js/search.js.
+ * The component does not decide relevance or ranking.
  */
 
 import {
-  search,
-  escapeHtml
+  search
 } from '../search.js';
-
-import {
-  getRoute
-} from '../config.js';
-
-/* ============================================================
- * CONSTANTS
- * ============================================================
- */
 
 const DEFAULT_LIMIT =
   8;
@@ -45,35 +23,47 @@ const DEFAULT_LIMIT =
 const DEFAULT_PLACEHOLDER =
   'Search government jobs, exams, departments and more…';
 
-const SEARCH_RESULT_ROUTES =
-  Object.freeze({
-    JOB:
-      'jobDetails',
+const RESULT_TYPES =
+  Object.freeze([
+    'ALL',
+    'JOB',
+    'EXAM',
+    'DEPARTMENT',
+    'ORGANISATION',
+    'SERVICE_CADRE',
+    'QUALIFICATION'
+  ]);
 
-    EXAM:
-      'examDetails',
-
-    DEPARTMENT:
-      'jobs',
-
-    ORGANISATION:
-      'jobs',
-
-    SERVICE_CADRE:
-      'jobs',
-
-    QUALIFICATION:
-      'eligibility'
-  });
-
-/* ============================================================
- * UTILITIES
- * ============================================================
- */
+function escapeHtml(
+  value
+) {
+  return String(
+    value ?? ''
+  )
+    .replace(
+      /&/g,
+      '&amp;'
+    )
+    .replace(
+      /</g,
+      '&lt;'
+    )
+    .replace(
+      />/g,
+      '&gt;'
+    )
+    .replace(
+      /"/g,
+      '&quot;'
+    )
+    .replace(
+      /'/g,
+      '&#039;'
+    );
+}
 
 function getLocalizedText(
-  value,
-  preferredLanguage = null
+  value
 ) {
   if (
     typeof value ===
@@ -90,24 +80,15 @@ function getLocalizedText(
     return '';
   }
 
-  if (
-    preferredLanguage &&
-    typeof value[
-      preferredLanguage
-    ] === 'string'
-  ) {
-    return value[
-      preferredLanguage
-    ];
-  }
-
   return (
     value.en ||
     value.bn ||
     Object.values(
       value
     ).find(
-      (item) =>
+      (
+        item
+      ) =>
         typeof item ===
         'string'
     ) ||
@@ -115,27 +96,51 @@ function getLocalizedText(
   );
 }
 
+function firstValue(
+  object,
+  fields
+) {
+  for (
+    const field of
+      fields
+  ) {
+    const value =
+      object?.[
+        field
+      ];
+
+    const text =
+      getLocalizedText(
+        value
+      );
+
+    if (
+      text
+    ) {
+      return text;
+    }
+  }
+
+  return '';
+}
+
 function getResultTitle(
   result
 ) {
-  if (
-    !result
-  ) {
-    return '';
-  }
-
-  const record =
-    result.record ||
-    {};
-
   return (
-    getLocalizedText(
-      record.post ||
-        record.name ||
-        record.title ||
-        result.title
+    firstValue(
+      result?.record,
+      [
+        'post',
+        'postName',
+        'name',
+        'title'
+      ]
     ) ||
-    result.id ||
+    getLocalizedText(
+      result?.title
+    ) ||
+    result?.id ||
     'Untitled result'
   );
 }
@@ -143,35 +148,19 @@ function getResultTitle(
 function getResultSubtitle(
   result
 ) {
-  if (
-    !result
-  ) {
-    return '';
-  }
-
-  const record =
-    result.record ||
-    {};
-
-  const candidates = [
-    record.departmentName,
-    record.department,
-    record.organisationName,
-    record.organisation,
-    record.fullForm,
-    record.shortName
-  ];
-
   return (
-    candidates
-      .map(
-        (value) =>
-          getLocalizedText(
-            value
-          )
-      )
-      .find(Boolean) ||
-    result.typeLabel ||
+    firstValue(
+      result?.record,
+      [
+        'departmentName',
+        'department',
+        'organisationName',
+        'organisation',
+        'fullForm',
+        'shortName'
+      ]
+    ) ||
+    result?.typeLabel ||
     ''
   );
 }
@@ -179,86 +168,96 @@ function getResultSubtitle(
 function getResultDestination(
   result
 ) {
+  /*
+   * Prefer a URL explicitly supplied by the search engine.
+   */
   if (
-    !result
+    typeof result?.url ===
+    'string' &&
+    result.url
+  ) {
+    return result.url;
+  }
+
+  /*
+   * Fall back to normal page paths.
+   *
+   * This avoids importing routing logic into the search
+   * component while still allowing the project to remain
+   * compatible with GitHub Pages and Vercel.
+   */
+  const recordType =
+    String(
+      result?.type ||
+        ''
+    )
+      .toUpperCase();
+
+  const id =
+    encodeURIComponent(
+      result?.id ||
+        ''
+    );
+
+  if (
+    !id
   ) {
     return null;
   }
 
-  const routeName =
-    SEARCH_RESULT_ROUTES[
-      result.type
-    ];
-
-  if (
-    !routeName
+  switch (
+    recordType
   ) {
-    return null;
-  }
+    case 'JOB':
+      return `./job-details.html?job=${id}`;
 
-  try {
-    const base =
-      getRoute(
-        routeName
-      );
+    case 'EXAM':
+      return `./exam-details.html?exam=${id}`;
 
-    const params =
-      new URLSearchParams();
+    case 'QUALIFICATION':
+      return `./eligibility.html?qualification=${id}`;
 
-    if (
-      result.id
-    ) {
-      /*
-       * The parameter names remain generic so page controllers
-       * can interpret them consistently.
-       */
-      if (
-        result.type ===
-        'JOB'
-      ) {
-        params.set(
-          'job',
-          result.id
-        );
-      } else if (
-        result.type ===
-        'EXAM'
-      ) {
-        params.set(
-          'exam',
-          result.id
-        );
-      } else if (
-        result.type ===
-        'QUALIFICATION'
-      ) {
-        params.set(
-          'qualification',
-          result.id
-        );
-      } else {
-        params.set(
-          'id',
-          result.id
-        );
-      }
-    }
+    case 'DEPARTMENT':
+    case 'ORGANISATION':
+    case 'SERVICE_CADRE':
+      return `./jobs.html?id=${id}`;
 
-    const query =
-      params.toString();
-
-    return query
-      ? `${base}?${query}`
-      : base;
-  } catch {
-    return null;
+    default:
+      return null;
   }
 }
 
-/* ============================================================
- * MARKUP
- * ============================================================
- */
+function getTypeIcon(
+  type
+) {
+  switch (
+    String(
+      type ||
+        ''
+    ).toUpperCase()
+  ) {
+    case 'JOB':
+      return '▣';
+
+    case 'EXAM':
+      return '◇';
+
+    case 'DEPARTMENT':
+      return '▤';
+
+    case 'ORGANISATION':
+      return '▥';
+
+    case 'SERVICE_CADRE':
+      return '◆';
+
+    case 'QUALIFICATION':
+      return '◎';
+
+    default:
+      return '•';
+  }
+}
 
 function createSearchMarkup({
   placeholder =
@@ -270,14 +269,27 @@ function createSearchMarkup({
   autofocus =
     false
 } = {}) {
+  const safeLimit =
+    Number.isInteger(
+      Number(
+        limit
+      )
+    ) &&
+    Number(
+      limit
+    ) > 0
+      ? Number(
+          limit
+        )
+      : DEFAULT_LIMIT;
+
   return `
     <div
       class="global-search"
       data-search-component
-      data-search-limit="${Number(
-        limit
-      )}"
+      data-search-limit="${safeLimit}"
     >
+
       <div
         class="global-search__control"
       >
@@ -298,6 +310,7 @@ function createSearchMarkup({
             cy="11"
             r="7"
           ></circle>
+
           <path
             d="m20 20-3.6-3.6"
           ></path>
@@ -330,19 +343,7 @@ function createSearchMarkup({
           title="Clear"
           hidden
         >
-          <svg
-            viewBox="0 0 24 24"
-            width="18"
-            height="18"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            aria-hidden="true"
-          >
-            <path d="M6 6l12 12"></path>
-            <path d="M18 6 6 18"></path>
-          </svg>
+          ×
         </button>
 
         <kbd
@@ -361,59 +362,55 @@ function createSearchMarkup({
               data-search-types
               aria-label="Search categories"
             >
-              <button
-                type="button"
-                class="search-type-chip is-active"
-                data-search-type="ALL"
-                aria-pressed="true"
-              >
-                All
-              </button>
+              ${RESULT_TYPES
+                .map(
+                  (
+                    type
+                  ) => {
+                    const labelMap = {
+                      ALL:
+                        'All',
 
-              <button
-                type="button"
-                class="search-type-chip"
-                data-search-type="JOB"
-                aria-pressed="false"
-              >
-                Jobs
-              </button>
+                      JOB:
+                        'Jobs',
 
-              <button
-                type="button"
-                class="search-type-chip"
-                data-search-type="EXAM"
-                aria-pressed="false"
-              >
-                Exams
-              </button>
+                      EXAM:
+                        'Exams',
 
-              <button
-                type="button"
-                class="search-type-chip"
-                data-search-type="DEPARTMENT"
-                aria-pressed="false"
-              >
-                Departments
-              </button>
+                      DEPARTMENT:
+                        'Departments',
 
-              <button
-                type="button"
-                class="search-type-chip"
-                data-search-type="SERVICE_CADRE"
-                aria-pressed="false"
-              >
-                Services
-              </button>
+                      ORGANISATION:
+                        'Organisations',
 
-              <button
-                type="button"
-                class="search-type-chip"
-                data-search-type="QUALIFICATION"
-                aria-pressed="false"
-              >
-                Qualifications
-              </button>
+                      SERVICE_CADRE:
+                        'Services',
+
+                      QUALIFICATION:
+                        'Qualifications'
+                    };
+
+                    return `
+                      <button
+                        type="button"
+                        class="search-type-chip ${
+                          type ===
+                          'ALL'
+                            ? 'is-active'
+                            : ''
+                        }"
+                        data-search-type="${type}"
+                        aria-pressed="${
+                          type ===
+                          'ALL'
+                        }"
+                      >
+                        ${labelMap[type]}
+                      </button>
+                    `;
+                  }
+                )
+                .join('')}
             </div>
           `
           : ''
@@ -427,6 +424,7 @@ function createSearchMarkup({
         aria-label="Search results"
         hidden
       ></div>
+
     </div>
   `;
 }
@@ -456,41 +454,24 @@ function createResultMarkup(
       result
     );
 
-  const safeTitle =
-    escapeHtml(
-      title
-    );
+  const type =
+    String(
+      result?.type ||
+        'RESULT'
+    ).toUpperCase();
 
-  const safeSubtitle =
-    escapeHtml(
-      subtitle
-    );
-
-  const safeType =
-    escapeHtml(
-      result.typeLabel ||
-        result.type ||
-        'Result'
-    );
-
-  const safeId =
-    escapeHtml(
-      result.id ||
-        ''
-    );
-
-  /*
-   * The underlying search module provides scoring; the UI
-   * does not expose a potentially confusing numerical relevance
-   * score to ordinary users.
-   */
   return `
     <a
       class="global-search__result"
       data-search-result
       data-result-index="${index}"
-      data-result-type="${safeType}"
-      data-result-id="${safeId}"
+      data-result-type="${escapeHtml(
+        type
+      )}"
+      data-result-id="${escapeHtml(
+        result?.id ||
+          ''
+      )}"
       ${
         destination
           ? `href="${escapeHtml(
@@ -500,20 +481,17 @@ function createResultMarkup(
       }
       role="option"
       aria-selected="false"
-      ${
+      data-search-query="${escapeHtml(
         query
-          ? `data-search-query="${escapeHtml(
-              query
-            )}"`
-          : ''
-      }
+      )}"
     >
+
       <span
         class="global-search__result-icon"
         aria-hidden="true"
       >
         ${getTypeIcon(
-          result.type
+          type
         )}
       </span>
 
@@ -523,7 +501,9 @@ function createResultMarkup(
         <strong
           class="global-search__result-title"
         >
-          ${safeTitle}
+          ${escapeHtml(
+            title
+          )}
         </strong>
 
         ${
@@ -532,7 +512,9 @@ function createResultMarkup(
               <span
                 class="global-search__result-subtitle"
               >
-                ${safeSubtitle}
+                ${escapeHtml(
+                  subtitle
+                )}
               </span>
             `
             : ''
@@ -542,7 +524,10 @@ function createResultMarkup(
       <span
         class="global-search__result-type"
       >
-        ${safeType}
+        ${escapeHtml(
+          result?.typeLabel ||
+            type
+        )}
       </span>
 
       <span
@@ -551,137 +536,9 @@ function createResultMarkup(
       >
         →
       </span>
+
     </a>
   `;
-}
-
-function getTypeIcon(
-  type
-) {
-  switch (
-    type
-  ) {
-    case 'JOB':
-      return '▣';
-
-    case 'EXAM':
-      return '◇';
-
-    case 'DEPARTMENT':
-      return '▤';
-
-    case 'ORGANISATION':
-      return '▥';
-
-    case 'SERVICE_CADRE':
-      return '◆';
-
-    case 'QUALIFICATION':
-      return '◎';
-
-    default:
-      return '•';
-  }
-}
-
-function renderResults(
-  root,
-  results,
-  query
-) {
-  const resultsContainer =
-    root.querySelector(
-      '[data-search-results]'
-    );
-
-  if (
-    !resultsContainer
-  ) {
-    return;
-  }
-
-  if (
-    !query.trim()
-  ) {
-    resultsContainer.innerHTML =
-      '';
-
-    resultsContainer.hidden =
-      true;
-
-    root
-      .querySelector(
-        '[data-search-input]'
-      )
-      ?.setAttribute(
-        'aria-expanded',
-        'false'
-      );
-
-    return;
-  }
-
-  if (
-    results.length ===
-    0
-  ) {
-    resultsContainer.innerHTML = `
-      <div
-        class="global-search__empty"
-        role="status"
-      >
-        <strong>
-          No matching careers found
-        </strong>
-
-        <span>
-          Try a job name, exam, department,
-          qualification or abbreviation.
-        </span>
-      </div>
-    `;
-
-    resultsContainer.hidden =
-      false;
-
-    root
-      .querySelector(
-        '[data-search-input]'
-      )
-      ?.setAttribute(
-        'aria-expanded',
-        'true'
-      );
-
-    return;
-  }
-
-  resultsContainer.innerHTML =
-    results
-      .map(
-        (
-          result,
-          index
-        ) =>
-          createResultMarkup(
-            result,
-            index,
-            query
-          )
-      )
-      .join('');
-
-  resultsContainer.hidden =
-    false;
-
-  root
-    .querySelector(
-      '[data-search-input]'
-    )
-    ?.setAttribute(
-      'aria-expanded',
-      'true'
-    );
 }
 
 /* ============================================================
@@ -703,13 +560,22 @@ function getState(
     componentState.set(
       root,
       {
-        query: '',
-        type: 'ALL',
-        results: [],
-        activeIndex: -1,
+        query:
+          '',
+
+        type:
+          'ALL',
+
+        results:
+          [],
+
+        activeIndex:
+          -1,
+
         limit:
           Number(
-            root.dataset.searchLimit
+            root.dataset
+              .searchLimit
           ) ||
           DEFAULT_LIMIT
       }
@@ -769,34 +635,66 @@ function performSearch(
     return [];
   }
 
-  const entities =
+  const options =
     state.type ===
-      'ALL'
-      ? undefined
-      : [
-          state.type
-        ];
+    'ALL'
+      ? {
+          limit:
+            state.limit
+        }
+      : {
+          limit:
+            state.limit,
 
-  let results =
-    search(
-      query,
-      {
-        entities,
-        limit:
-          state.limit
-      }
+          entities: [
+            state.type
+          ]
+        };
+
+  let results = [];
+
+  try {
+    const response =
+      search(
+        query,
+        options
+      );
+
+    results =
+      Array.isArray(
+        response
+      )
+        ? response
+        : Array.isArray(
+            response?.results
+          )
+        ? response.results
+        : [];
+  } catch (
+    error
+  ) {
+    results =
+      [];
+
+    document.dispatchEvent(
+      new CustomEvent(
+        'govcareer:search-error',
+        {
+          detail: {
+            query,
+            error
+          }
+        }
+      )
     );
+  }
 
   state.results =
-    Array.isArray(
-      results
-    )
-      ? results
-      : [];
+    results;
 
   renderResults(
     root,
-    state.results,
+    results,
     query
   );
 
@@ -811,14 +709,105 @@ function performSearch(
           query,
           type:
             state.type,
-          results:
-            state.results
+          results
         }
       }
     )
   );
 
-  return state.results;
+  return results;
+}
+
+function renderResults(
+  root,
+  results,
+  query
+) {
+  const container =
+    root.querySelector(
+      '[data-search-results]'
+    );
+
+  const input =
+    root.querySelector(
+      '[data-search-input]'
+    );
+
+  if (
+    !container
+  ) {
+    return;
+  }
+
+  if (
+    !query
+  ) {
+    container.innerHTML =
+      '';
+
+    container.hidden =
+      true;
+
+    input?.setAttribute(
+      'aria-expanded',
+      'false'
+    );
+
+    return;
+  }
+
+  if (
+    !results.length
+  ) {
+    container.innerHTML = `
+      <div
+        class="global-search__empty"
+        role="status"
+      >
+        <strong>
+          No matching careers found
+        </strong>
+
+        <span>
+          Try a job name, exam, department,
+          qualification or abbreviation.
+        </span>
+      </div>
+    `;
+
+    container.hidden =
+      false;
+
+    input?.setAttribute(
+      'aria-expanded',
+      'true'
+    );
+
+    return;
+  }
+
+  container.innerHTML =
+    results
+      .map(
+        (
+          result,
+          index
+        ) =>
+          createResultMarkup(
+            result,
+            index,
+            query
+          )
+      )
+      .join('');
+
+  container.hidden =
+    false;
+
+  input?.setAttribute(
+    'aria-expanded',
+    'true'
+  );
 }
 
 /* ============================================================
@@ -882,7 +871,7 @@ function updateActiveResult(
   );
 }
 
-function handleInputKeydown(
+function handleKeydown(
   event,
   root
 ) {
@@ -891,7 +880,7 @@ function handleInputKeydown(
       root
     );
 
-  const elements =
+  const results =
     getResultElements(
       root
     );
@@ -901,8 +890,7 @@ function handleInputKeydown(
   ) {
     case 'ArrowDown':
       if (
-        elements.length ===
-        0
+        !results.length
       ) {
         return;
       }
@@ -913,7 +901,7 @@ function handleInputKeydown(
         Math.min(
           state.activeIndex +
             1,
-          elements.length -
+          results.length -
             1
         );
 
@@ -924,8 +912,7 @@ function handleInputKeydown(
 
     case 'ArrowUp':
       if (
-        elements.length ===
-        0
+        !results.length
       ) {
         return;
       }
@@ -946,25 +933,22 @@ function handleInputKeydown(
 
     case 'Enter':
       if (
-        state.activeIndex <
-          0 ||
-        !elements[
+        state.activeIndex >=
+          0 &&
+        results[
           state.activeIndex
         ]
       ) {
-        return;
+        event.preventDefault();
+
+        results[
+          state.activeIndex
+        ].click();
       }
 
-      event.preventDefault();
-
-      elements[
-        state.activeIndex
-      ].click();
       break;
 
     case 'Escape':
-      event.preventDefault();
-
       closeSearchResults(
         root
       );
@@ -989,18 +973,8 @@ function setSearchType(
       root
     );
 
-  const allowedTypes = [
-    'ALL',
-    'JOB',
-    'EXAM',
-    'DEPARTMENT',
-    'ORGANISATION',
-    'SERVICE_CADRE',
-    'QUALIFICATION'
-  ];
-
   const normalized =
-    allowedTypes.includes(
+    RESULT_TYPES.includes(
       type
     )
       ? type
@@ -1047,14 +1021,19 @@ function setSearchType(
 function clearSearch(
   root
 ) {
+  const state =
+    getState(
+      root
+    );
+
   const input =
     root.querySelector(
       '[data-search-input]'
     );
 
-  const state =
-    getState(
-      root
+  const clearButton =
+    root.querySelector(
+      '[data-search-clear]'
     );
 
   if (
@@ -1062,6 +1041,13 @@ function clearSearch(
   ) {
     input.value =
       '';
+  }
+
+  if (
+    clearButton
+  ) {
+    clearButton.hidden =
+      true;
   }
 
   state.query =
@@ -1073,18 +1059,6 @@ function clearSearch(
   state.activeIndex =
     -1;
 
-  const clearButton =
-    root.querySelector(
-      '[data-search-clear]'
-    );
-
-  if (
-    clearButton
-  ) {
-    clearButton.hidden =
-      true;
-  }
-
   renderResults(
     root,
     [],
@@ -1095,26 +1069,27 @@ function clearSearch(
 function closeSearchResults(
   root
 ) {
-  const results =
+  const container =
     root.querySelector(
       '[data-search-results]'
     );
 
+  const input =
+    root.querySelector(
+      '[data-search-input]'
+    );
+
   if (
-    results
+    container
   ) {
-    results.hidden =
+    container.hidden =
       true;
   }
 
-  root
-    .querySelector(
-      '[data-search-input]'
-    )
-    ?.setAttribute(
-      'aria-expanded',
-      'false'
-    );
+  input?.setAttribute(
+    'aria-expanded',
+    'false'
+  );
 }
 
 /* ============================================================
@@ -1125,6 +1100,18 @@ function closeSearchResults(
 function bindSearchEvents(
   root
 ) {
+  if (
+    root.dataset
+      .searchBound ===
+    'true'
+  ) {
+    return;
+  }
+
+  root.dataset
+    .searchBound =
+    'true';
+
   const input =
     root.querySelector(
       '[data-search-input]'
@@ -1160,7 +1147,7 @@ function bindSearchEvents(
   input.addEventListener(
     'keydown',
     (event) => {
-      handleInputKeydown(
+      handleKeydown(
         event,
         root
       );
@@ -1201,70 +1188,6 @@ function bindSearchEvents(
       }
     );
 
-  /*
-   * Clicking outside closes results but does not erase the query.
-   */
-  document.addEventListener(
-    'click',
-    (event) => {
-      if (
-        !(event.target instanceof
-          Node)
-      ) {
-        return;
-      }
-
-      if (
-        !root.contains(
-          event.target
-        )
-      ) {
-        closeSearchResults(
-          root
-        );
-      }
-    }
-  );
-
-  /*
-   * "/" focuses search unless the user is already typing in
-   * another interactive control.
-   */
-  document.addEventListener(
-    'keydown',
-    (event) => {
-      if (
-        event.key !==
-        '/'
-      ) {
-        return;
-      }
-
-      const target =
-        event.target;
-
-      const tagName =
-        target?.tagName
-          ?.toLowerCase();
-
-      if (
-        tagName === 'input' ||
-        tagName === 'textarea' ||
-        tagName === 'select' ||
-        target?.isContentEditable
-      ) {
-        return;
-      }
-
-      event.preventDefault();
-
-      input.focus();
-    }
-  );
-
-  /*
-   * Search results are also exposed as an application-wide event.
-   */
   root.addEventListener(
     'click',
     (event) => {
@@ -1306,8 +1229,66 @@ function bindSearchEvents(
   );
 }
 
+function initializeGlobalSearchShortcut() {
+  if (
+    document.documentElement
+      .dataset
+      .searchShortcutBound ===
+    'true'
+  ) {
+    return;
+  }
+
+  document.documentElement
+    .dataset
+    .searchShortcutBound =
+    'true';
+
+  document.addEventListener(
+    'keydown',
+    (event) => {
+      if (
+        event.key !==
+        '/'
+      ) {
+        return;
+      }
+
+      const target =
+        event.target;
+
+      const tag =
+        target?.tagName?.toLowerCase();
+
+      if (
+        tag === 'input' ||
+        tag === 'textarea' ||
+        tag === 'select' ||
+        target?.isContentEditable
+      ) {
+        return;
+      }
+
+      const input =
+        document.querySelector(
+          '[data-search-input]'
+        );
+
+      if (
+        !input
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+
+      input.focus();
+    }
+  );
+}
+
 /* ============================================================
- * PUBLIC COMPONENT API
+ * PUBLIC API
  * ============================================================
  */
 
@@ -1331,7 +1312,7 @@ function createSearchBar(
     !root
   ) {
     throw new Error(
-      'Unable to create search component.'
+      'Unable to create search bar.'
     );
   }
 
@@ -1348,7 +1329,7 @@ function mountSearchBar(
 ) {
   const mount =
     typeof container ===
-      'string'
+    'string'
       ? document.querySelector(
           container
         )
@@ -1382,37 +1363,29 @@ function initializeSearchBar() {
     )
     .forEach(
       (root) => {
-        /*
-         * Avoid binding the same component twice.
-         */
-        if (
-          root.dataset
-            .searchInitialized ===
-          'true'
-        ) {
-          return;
-        }
-
-        root.dataset
-          .searchInitialized =
-          'true';
-
         bindSearchEvents(
           root
         );
       }
     );
+
+  initializeGlobalSearchShortcut();
 }
 
 export {
   DEFAULT_LIMIT,
+  RESULT_TYPES,
+
   createSearchMarkup,
   createSearchBar,
   mountSearchBar,
+
   performSearch,
+  renderResults,
   clearSearch,
   closeSearchResults,
   setSearchType,
+
   initializeSearchBar
 };
 
