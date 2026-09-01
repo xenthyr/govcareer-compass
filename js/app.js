@@ -1,358 +1,441 @@
 /**
  * GovCareer Compass
- * Global application bootstrap
+ * ============================================================
+ * Application Bootstrap
+ * ============================================================
  *
- * This file initializes the common application layer used
- * across all static pages.
+ * Responsible for:
+ * - bootstrapping shared application state;
+ * - initializing theme/language/navigation;
+ * - exposing application events;
+ * - identifying the active page;
+ * - initializing page controllers when present;
+ * - graceful error handling.
+ *
+ * This file is deliberately orchestration-only.
+ * Business logic belongs in dedicated modules.
  */
 
 import config from './config.js';
-
-import storage from './storage.js';
-
 import {
-  initTheme
+  initializeTheme
 } from './theme.js';
 
 import {
-  initLanguage
+  initializeLanguage
 } from './language.js';
 
 import {
-  initRouter
-} from './router.js';
-
-import {
-  initNavigation
+  initializeNavigation
 } from './navigation.js';
 
 import {
-  initSearch
-} from './search.js';
+  initializeStorage
+} from './storage.js';
 
-import {
-  initModal
-} from './modal.js';
+const APP_READY_EVENT =
+  'govcareer:ready';
 
-import {
-  initShare
-} from './share.js';
+const APP_ERROR_EVENT =
+  'govcareer:error';
 
-import {
-  initExport
-} from './export.js';
-
-const appState = {
+let appState = {
   initialized: false,
   ready: false,
-  currentPage: null,
-  language: config.app.defaultLanguage,
+  page: null,
+  route: null,
   errors: []
 };
 
-function getCurrentPageName() {
-  const page =
-    document.body.dataset.page;
+function getPageName() {
+  const bodyPage =
+    document.body?.dataset?.page;
 
-  if (page) {
-    return page;
+  if (
+    bodyPage &&
+    bodyPage.trim()
+  ) {
+    return bodyPage.trim();
   }
 
-  const path =
+  const pathname =
     window.location.pathname;
 
-  const file =
-    path
+  const filename =
+    pathname
       .split('/')
-      .filter(Boolean)
       .pop();
 
-  if (!file) {
+  if (
+    !filename ||
+    filename === 'index.html'
+  ) {
     return 'home';
   }
 
-  return file
+  return filename
     .replace(
-      /\.html?$/i,
+      /\.html$/i,
       ''
-    )
-    .replace(
-      /[-_]/g,
-      '-'
     );
 }
 
-function setCurrentPage() {
-  appState.currentPage =
-    getCurrentPageName();
-
-  document.body.dataset
-    .currentPage =
-    appState.currentPage;
+function getCurrentPath() {
+  return window.location.pathname;
 }
 
-function announceReady() {
-  window.dispatchEvent(
+function emit(
+  eventName,
+  detail = {}
+) {
+  document.dispatchEvent(
     new CustomEvent(
-      'gcc:appready',
+      eventName,
       {
-        detail: {
-          config,
-          state: appState
-        }
+        detail
       }
     )
   );
 }
 
-function createGlobalToastRoot() {
+function reportError(
+  error,
+  context = ''
+) {
+  const normalized =
+    error instanceof Error
+      ? error
+      : new Error(
+          String(error)
+        );
+
+  appState.errors.push({
+    context,
+    message:
+      normalized.message,
+    timestamp:
+      new Date().toISOString()
+  });
+
+  emit(
+    APP_ERROR_EVENT,
+    {
+      error:
+        normalized,
+      context
+    }
+  );
+
+  /*
+   * Do not expose technical errors directly to users.
+   * Detailed errors remain available in development console.
+   */
   if (
-    document.querySelector(
-      '[data-toast-root]'
-    )
+    config.app?.environment !==
+    'production'
   ) {
-    return;
+    console.error(
+      `[GovCareer Compass] ${context}`,
+      normalized
+    );
   }
-
-  const root =
-    document.createElement(
-      'div'
-    );
-
-  root.dataset.toastRoot =
-    'true';
-
-  root.className =
-    'toast-region';
-
-  root.setAttribute(
-    'aria-live',
-    'polite'
-  );
-
-  root.setAttribute(
-    'aria-atomic',
-    'true'
-  );
-
-  document.body.appendChild(
-    root
-  );
 }
 
-function showToast(
-  message,
-  {
-    type = 'info',
-    duration =
-      config.ui.toastDuration
-  } = {}
-) {
-  createGlobalToastRoot();
+function initializeBaseMetadata() {
+  document.documentElement.dataset.app =
+    'govcareer-compass';
 
-  const root =
-    document.querySelector(
-      '[data-toast-root]'
-    );
+  document.documentElement.dataset.appVersion =
+    config.app.version;
 
-  if (!root) {
-    return;
-  }
+  document.documentElement.dataset.researchBaseline =
+    config.app.researchBaseline;
 
-  const toast =
-    document.createElement(
-      'div'
-    );
-
-  toast.className =
-    `toast toast--${type}`;
-
-  toast.setAttribute(
-    'role',
-    'status'
-  );
-
-  toast.innerHTML = `
-    <span class="toast__message">
-      ${escapeHtml(message)}
-    </span>
-
-    <button
-      type="button"
-      class="toast__close"
-      aria-label="Dismiss notification"
-    >
-      ×
-    </button>
-  `;
-
-  const closeButton =
-    toast.querySelector(
-      '.toast__close'
-    );
-
-  closeButton.addEventListener(
-    'click',
-    () => removeToast(toast)
-  );
-
-  root.appendChild(
-    toast
-  );
-
-  requestAnimationFrame(() => {
-    toast.classList.add(
-      'is-visible'
-    );
-  });
-
-  window.setTimeout(
-    () => removeToast(toast),
-    duration
-  );
+  document.documentElement.lang =
+    config.app.defaultLanguage;
 }
 
-function removeToast(
-  toast
-) {
-  if (!toast) {
-    return;
-  }
-
-  toast.classList.remove(
-    'is-visible'
-  );
-
-  window.setTimeout(
-    () => toast.remove(),
-    220
-  );
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
-function installGlobalAPI() {
-  window.gcc = Object.freeze({
-    config,
-
-    state: appState,
-
-    storage,
-
-    toast: showToast
-  });
-}
-
-function bindGlobalBehaviors() {
+function initializeAccessibility() {
   document.addEventListener(
-    'click',
+    'keydown',
     (event) => {
-      const anchor =
-        event.target.closest(
-          'a[href]'
-        );
-
-      if (!anchor) {
-        return;
-      }
-
-      const href =
-        anchor.getAttribute(
-          'href'
-        );
-
       if (
-        !href ||
-        href.startsWith(
-          '#'
-        ) ||
-        href.startsWith(
-          'mailto:'
-        ) ||
-        href.startsWith(
-          'tel:'
-        ) ||
-        href.startsWith(
-          'javascript:'
-        ) ||
-        anchor.target ===
-          '_blank'
+        event.key ===
+        'Escape'
       ) {
-        return;
+        document.dispatchEvent(
+          new CustomEvent(
+            'govcareer:escape'
+          )
+        );
       }
-
-      const isExternal =
-        (() => {
-          try {
-            const url =
-              new URL(
-                href,
-                window.location.href
-              );
-
-            return (
-              url.origin !==
-              window.location.origin
-            );
-          } catch {
-            return false;
-          }
-        })();
-
-      if (isExternal) {
-        return;
-      }
-
-      anchor.classList.add(
-        'is-navigating'
-      );
     }
   );
 
-  window.addEventListener(
-    'error',
-    (event) => {
-      appState.errors.push({
-        type: 'runtime',
-        message:
-          event.message ||
-          'Unknown runtime error'
-      });
+  /*
+   * Allow the UI to react to reduced-motion preferences.
+   */
+  const mediaQuery =
+    window.matchMedia?.(
+      '(prefers-reduced-motion: reduce)'
+    );
 
-      console.error(
-        'GovCareer Compass runtime error:',
-        event.error ||
-          event.message
+  if (
+    mediaQuery
+  ) {
+    document.documentElement.dataset.reducedMotion =
+      String(
+        mediaQuery.matches
+      );
+
+    const listener =
+      (event) => {
+        document.documentElement.dataset.reducedMotion =
+          String(
+            event.matches
+          );
+      };
+
+    if (
+      typeof mediaQuery.addEventListener ===
+      'function'
+    ) {
+      mediaQuery.addEventListener(
+        'change',
+        listener
+      );
+    } else if (
+      typeof mediaQuery.addListener ===
+      'function'
+    ) {
+      mediaQuery.addListener(
+        listener
       );
     }
-  );
+  }
+}
 
-  window.addEventListener(
-    'unhandledrejection',
-    (event) => {
-      appState.errors.push({
-        type: 'promise',
-        message: String(
-          event.reason
-        )
-      });
+function resolvePageControllerName(
+  pageName
+) {
+  const normalized =
+    String(
+      pageName || ''
+    )
+      .trim()
+      .toLowerCase();
 
-      console.error(
-        'GovCareer Compass promise error:',
-        event.reason
-      );
-    }
+  const map = {
+    home:
+      'home',
+
+    'career-finder':
+      'careerFinder',
+
+    'career-results':
+      'results',
+
+    jobs:
+      'jobs',
+
+    'job-details':
+      'jobDetails',
+
+    exams:
+      'exams',
+
+    'exam-details':
+      'examDetails',
+
+    compare:
+      'comparison',
+
+    rankings:
+      'rankings',
+
+    salary:
+      'salary',
+
+    eligibility:
+      'eligibility',
+
+    family:
+      'family',
+
+    parents:
+      'parents',
+
+    location:
+      'location',
+
+    housing:
+      'housing',
+
+    preparation:
+      'preparation',
+
+    'confusion-center':
+      'confusionCenter',
+
+    states:
+      'states',
+
+    ai:
+      'ai',
+
+    sources:
+      'sources',
+
+    glossary:
+      'glossary',
+
+    methodology:
+      'methodology'
+  };
+
+  return (
+    map[
+      normalized
+    ] ||
+    normalized
   );
 }
 
-async function initializeCore() {
+/**
+ * Page controllers are intentionally dynamically loaded.
+ *
+ * This keeps the initial application shell lightweight and
+ * prevents unrelated page code from being evaluated on every page.
+ */
+async function initializePageController(
+  pageName
+) {
+  const controllerName =
+    resolvePageControllerName(
+      pageName
+    );
+
+  const modulePathMap = {
+    home:
+      './pages/home.js',
+
+    careerFinder:
+      './pages/career-finder.js',
+
+    results:
+      './pages/results.js',
+
+    jobs:
+      './pages/jobs.js',
+
+    jobDetails:
+      './pages/job-details.js',
+
+    exams:
+      './pages/exams.js',
+
+    examDetails:
+      './pages/exam-details.js',
+
+    comparison:
+      './pages/comparison.js',
+
+    rankings:
+      './pages/rankings.js',
+
+    salary:
+      './pages/salary.js',
+
+    eligibility:
+      './pages/eligibility.js',
+
+    family:
+      './pages/family.js',
+
+    parents:
+      './pages/parents.js',
+
+    location:
+      './pages/location.js',
+
+    housing:
+      './pages/housing.js',
+
+    preparation:
+      './pages/preparation.js',
+
+    confusionCenter:
+      './pages/confusion-center.js',
+
+    states:
+      './pages/states.js',
+
+    ai:
+      null,
+
+    sources:
+      './pages/sources.js',
+
+    glossary:
+      './pages/glossary.js',
+
+    methodology:
+      './pages/methodology.js'
+  };
+
+  const modulePath =
+    modulePathMap[
+      controllerName
+    ];
+
+  if (
+    !modulePath
+  ) {
+    return null;
+  }
+
+  try {
+    const module =
+      await import(
+        modulePath
+      );
+
+    const initialize =
+      module.initialize ||
+      module.init ||
+      module.default;
+
+    if (
+      typeof initialize ===
+      'function'
+    ) {
+      return await initialize({
+        config,
+        page:
+          pageName,
+        controller:
+          controllerName
+      });
+    }
+
+    return null;
+  } catch (
+    error
+  ) {
+    /*
+     * An unavailable page controller should not destroy the
+     * global application shell.
+     */
+    reportError(
+      error,
+      `Page controller initialization failed for "${controllerName}".`
+    );
+
+    return null;
+  }
+}
+
+async function initApp() {
   if (
     appState.initialized
   ) {
@@ -362,120 +445,50 @@ async function initializeCore() {
   appState.initialized =
     true;
 
-  setCurrentPage();
-
-  installGlobalAPI();
-
-  createGlobalToastRoot();
-
-  bindGlobalBehaviors();
-
-  /*
-   * Theme is initialized first because
-   * we want to prevent visual inconsistency.
-   */
-  initTheme();
-
-  /*
-   * Localization must be ready before
-   * page modules render localized UI.
-   */
   try {
-    await initLanguage();
-  } catch (error) {
-    appState.errors.push({
-      type: 'language',
-      message:
-        String(error)
-    });
+    initializeBaseMetadata();
 
-    console.error(
-      'Language initialization failed:',
-      error
-    );
-  }
+    initializeStorage();
 
-  initRouter();
+    initializeTheme();
 
-  initNavigation();
+    initializeLanguage();
 
-  initModal();
+    initializeNavigation();
 
-  initShare();
+    initializeAccessibility();
 
-  initExport();
+    appState.page =
+      getPageName();
 
-  /*
-   * Search is optional on individual pages.
-   * A failed search index must not prevent
-   * the rest of the website from loading.
-   */
-  try {
-    await initSearch();
-  } catch (error) {
-    appState.errors.push({
-      type: 'search',
-      message:
-        String(error)
-    });
+    appState.route =
+      getCurrentPath();
 
-    console.error(
-      'Search initialization failed:',
-      error
-    );
-  }
-
-  appState.language =
-    storage.get(
-      config.storageKeys.language,
-      config.app.defaultLanguage
+    await initializePageController(
+      appState.page
     );
 
-  appState.ready =
-    true;
+    appState.ready =
+      true;
 
-  announceReady();
-
-  return appState;
-}
-
-async function initApp() {
-  try {
-    await initializeCore();
-
-    /*
-     * Individual page controllers can listen
-     * for gcc:appready and initialize themselves.
-     *
-     * Example:
-     *
-     * window.addEventListener(
-     *   'gcc:appready',
-     *   () => initCareerFinder()
-     * );
-     */
-    return appState;
-  } catch (error) {
-    appState.errors.push({
-      type: 'fatal',
-      message:
-        String(error)
-    });
-
-    console.error(
-      'GovCareer Compass failed to initialize:',
-      error
-    );
-
-    showToast(
-      'Some application features could not be initialized.',
+    emit(
+      APP_READY_EVENT,
       {
-        type: 'error'
+        ...appState
       }
     );
-
-    return appState;
+  } catch (
+    error
+  ) {
+    reportError(
+      error,
+      'Application initialization failed.'
+    );
   }
+
+  return {
+    ...appState
+  };
 }
 
 function getAppState() {
@@ -487,6 +500,13 @@ function getAppState() {
   };
 }
 
+function isReady() {
+  return (
+    appState.ready ===
+    true
+  );
+}
+
 if (
   document.readyState ===
   'loading'
@@ -494,26 +514,26 @@ if (
   document.addEventListener(
     'DOMContentLoaded',
     () => {
-      initApp();
+      void initApp();
     },
     {
       once: true
     }
   );
 } else {
-  initApp();
+  void initApp();
 }
 
 export {
   initApp,
-  initializeCore,
   getAppState,
-  showToast
+  isReady,
+  APP_READY_EVENT,
+  APP_ERROR_EVENT
 };
 
 export default {
   initApp,
-  initializeCore,
   getAppState,
-  showToast
+  isReady
 };
