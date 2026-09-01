@@ -1,0 +1,263 @@
+{
+  "$schema": "../../../schemas/exam.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "west-bengal-government",
+  "stateId": "west-bengal",
+  "lastVerified": "2026-08-31",
+  "exams": [
+    {
+      "id": "exam-wbpsc-wbcs-2024",
+      "name": {
+        "en": "West Bengal Civil Service (Executive) etc. Examination",
+        "bn": "পশ্চিমবঙ্গ সিভিল সার্ভিস (এক্সিকিউটিভ) ইত্যাদি পরীক্ষা"
+      },
+      "abbreviation": "WBCS",
+      "authorityId": "org-wbpsc",
+      "governmentId": "west-bengal-government",
+      "entryLevel": "GRADUATE",
+      "qualificationSummary": {
+        "en": "Degree from a recognised university or equivalent, with ability to read, write and speak Bengali, except where the applicable exemption for Nepali-mother-tongue candidates applies.",
+        "bn": "স্বীকৃত বিশ্ববিদ্যালয়ের ডিগ্রি বা সমমানের যোগ্যতা এবং বাংলা পড়তে, লিখতে ও বলতে পারা; তবে প্রযোজ্য নিয়মে নেপালি মাতৃভাষী প্রার্থীদের জন্য ছাড় থাকতে পারে।"
+      },
+      "baEnglishEligibility": "DIRECT_WITH_BENGALI_REQUIREMENT",
+      "selectionStages": [
+        "PRELIMINARY",
+        "MAINS",
+        "PERSONALITY_TEST"
+      ],
+      "physicalRequirement": "GROUP_B_WB_POLICE_SERVICE",
+      "skillRequirement": false,
+      "frequency": "PERIODIC",
+      "currentStatus": "2024_CYCLE_UNDER_PROCESS",
+      "latestNotificationYear": 2024,
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "exam-wbpsc-misc-2024",
+      "name": {
+        "en": "Miscellaneous Services Recruitment Examination",
+        "bn": "মিসলেনিয়াস সার্ভিসেস রিক্রুটমেন্ট পরীক্ষা"
+      },
+      "abbreviation": "WBPSC Miscellaneous",
+      "authorityId": "org-wbpsc",
+      "governmentId": "west-bengal-government",
+      "entryLevel": "GRADUATE",
+      "qualificationSummary": {
+        "en": "Degree from a recognised university or equivalent, subject to post-specific conditions.",
+        "bn": "স্বীকৃত বিশ্ববিদ্যালয়ের ডিগ্রি বা সমমানের যোগ্যতা, পোস্ট-নির্দিষ্ট শর্ত সাপেক্ষে।"
+      },
+      "baEnglishEligibility": "DIRECT_OR_CONDITIONAL_POST_SPECIFIC",
+      "selectionStages": [
+        "PRELIMINARY",
+        "FINAL_WRITTEN",
+        "PERSONALITY_TEST"
+      ],
+      "physicalRequirement": "POST_SPECIFIC",
+      "skillRequirement": "POST_SPECIFIC",
+      "frequency": "IRREGULAR_PERIODIC",
+      "currentStatus": "2024_CYCLE_ACTIVE_ADMINISTRATION",
+      "latestNotificationYear": 2024,
+      "sourceIds": [
+        "src-wbpsc-misc-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "exam-wbpsc-clerkship-2024",
+      "name": {
+        "en": "Clerkship Examination",
+        "bn": "ক্লার্কশিপ পরীক্ষা"
+      },
+      "abbreviation": "WBPSC Clerkship",
+      "authorityId": "org-wbpsc",
+      "governmentId": "west-bengal-government",
+      "entryLevel": "CLASS_12",
+      "qualificationSummary": {
+        "en": "Higher Secondary / applicable notified qualification.",
+        "bn": "উচ্চমাধ্যমিক / প্রযোজ্য বিজ্ঞপ্তিতে নির্ধারিত যোগ্যতা।"
+      },
+      "baEnglishEligibility": "DIRECT_ACADEMIC_SUBJECT_TO_CURRENT_NOTICE",
+      "selectionStages": [
+        "WRITTEN_EXAMINATION",
+        "TYPING_OR_COMPUTER_TEST_WHERE_APPLICABLE"
+      ],
+      "physicalRequirement": false,
+      "skillRequirement": "POST_SPECIFIC",
+      "frequency": "PERIODIC",
+      "currentStatus": "2024_RECRUITMENT_FRAMEWORK",
+      "latestNotificationYear": 2024,
+      "sourceIds": [
+        "src-wbpsc-clerkship-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "exam-wbprb-wbp-si-2024",
+      "name": {
+        "en": "Recruitment to the posts of Sub-Inspector of Police (Unarmed and Armed Branch) in West Bengal Police",
+        "bn": "পশ্চিমবঙ্গ পুলিশে সাব-ইন্সপেক্টর (আনআর্মড ও আর্মড ব্রাঞ্চ) নিয়োগ"
+      },
+      "abbreviation": "WBP SI",
+      "authorityId": "org-wbprb",
+      "governmentId": "west-bengal-government",
+      "entryLevel": "GRADUATE",
+      "qualificationSummary": {
+        "en": "Bachelor's degree with Bengali-language and physical/medical conditions applicable to the recruitment.",
+        "bn": "স্নাতক ডিগ্রি এবং নিয়োগে প্রযোজ্য বাংলা ভাষা, শারীরিক ও চিকিৎসাগত শর্ত।"
+      },
+      "baEnglishEligibility": "DIRECT_WITH_LANGUAGE_PHYSICAL_MEDICAL",
+      "selectionStages": [
+        "PRELIMINARY",
+        "PMT",
+        "PET",
+        "FINAL_COMBINED_COMPETITIVE_EXAMINATION",
+        "MEDICAL",
+        "DOCUMENT_VERIFICATION"
+      ],
+      "physicalRequirement": true,
+      "skillRequirement": false,
+      "frequency": "PERIODIC",
+      "currentStatus": "2024_RECRUITMENT_UNDER_PROCESS",
+      "latestNotificationYear": 2024,
+      "sourceIds": [
+        "src-wbprb-wbp-si-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "exam-wbprb-kp-si-2023",
+      "name": {
+        "en": "Recruitment to the posts of Sub-Inspector/Sub-Inspectress (Unarmed Branch), Sub-Inspector (Armed Branch) and Sergeant in Kolkata Police",
+        "bn": "কলকাতা পুলিশে সাব-ইন্সপেক্টর/সাব-ইন্সপেক্ট্রেস, আর্মড ব্রাঞ্চ সাব-ইন্সপেক্টর এবং সার্জেন্ট নিয়োগ"
+      },
+      "abbreviation": "KP SI/Sergeant",
+      "authorityId": "org-wbprb",
+      "governmentId": "west-bengal-government",
+      "entryLevel": "GRADUATE",
+      "qualificationSummary": {
+        "en": "Bachelor's degree and all post-specific language, physical and medical requirements.",
+        "bn": "স্নাতক ডিগ্রি এবং পোস্ট-নির্দিষ্ট ভাষা, শারীরিক ও চিকিৎসাগত সব শর্ত।"
+      },
+      "baEnglishEligibility": "DIRECT_OR_CONDITIONAL_POST_SPECIFIC",
+      "selectionStages": [
+        "PRELIMINARY",
+        "PMT",
+        "PET",
+        "FINAL_COMBINED_COMPETITIVE_EXAMINATION",
+        "MEDICAL",
+        "DOCUMENT_VERIFICATION"
+      ],
+      "physicalRequirement": true,
+      "skillRequirement": false,
+      "frequency": "PERIODIC",
+      "currentStatus": "2023_RECRUITMENT_POST_FINAL_EXAMINATION_PROCESS",
+      "latestNotificationYear": 2023,
+      "sourceIds": [
+        "src-wbprb-kp-si-2023"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "exam-wbprb-wbp-constable-2024",
+      "name": {
+        "en": "Recruitment to the posts of Constables in West Bengal Police",
+        "bn": "পশ্চিমবঙ্গ পুলিশ কনস্টেবল নিয়োগ"
+      },
+      "abbreviation": "WBP Constable",
+      "authorityId": "org-wbprb",
+      "governmentId": "west-bengal-government",
+      "entryLevel": "CLASS_10",
+      "qualificationSummary": {
+        "en": "Madhyamik / Class 10 or applicable notified qualification, with Bengali-language and physical requirements.",
+        "bn": "মাধ্যমিক / দশম শ্রেণি বা প্রযোজ্য বিজ্ঞপ্তির যোগ্যতা এবং বাংলা ভাষা ও শারীরিক শর্ত।"
+      },
+      "baEnglishEligibility": "DIRECT_ACADEMIC_SUBJECT_TO_OVERQUALIFICATION_RULE",
+      "selectionStages": [
+        "WRITTEN",
+        "PMT",
+        "PET",
+        "FINAL_WRITTEN",
+        "MEDICAL",
+        "DOCUMENT_VERIFICATION"
+      ],
+      "physicalRequirement": true,
+      "skillRequirement": false,
+      "frequency": "PERIODIC",
+      "currentStatus": "2024_RECRUITMENT_UNDER_PROCESS",
+      "latestNotificationYear": 2024,
+      "sourceIds": [
+        "src-wbprb-wbp-constable-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "exam-wbprb-kp-constable-2024",
+      "name": {
+        "en": "Recruitment to the posts of Constables/Lady Constables in Kolkata Police",
+        "bn": "কলকাতা পুলিশ কনস্টেবল/লেডি কনস্টেবল নিয়োগ"
+      },
+      "abbreviation": "KP Constable",
+      "authorityId": "org-wbprb",
+      "governmentId": "west-bengal-government",
+      "entryLevel": "CLASS_10",
+      "qualificationSummary": {
+        "en": "Madhyamik / Class 10 or applicable notified qualification and physical requirements.",
+        "bn": "মাধ্যমিক / দশম শ্রেণি বা প্রযোজ্য বিজ্ঞপ্তির যোগ্যতা এবং শারীরিক শর্ত।"
+      },
+      "baEnglishEligibility": "DIRECT_ACADEMIC_SUBJECT_TO_CURRENT_NOTICE",
+      "selectionStages": [
+        "PRELIMINARY_WRITTEN",
+        "PMT",
+        "PET",
+        "FINAL_WRITTEN",
+        "INTERVIEW_OR_APPLICABLE_FINAL_STAGE",
+        "MEDICAL"
+      ],
+      "physicalRequirement": true,
+      "skillRequirement": false,
+      "frequency": "PERIODIC",
+      "currentStatus": "2024_RECRUITMENT_UNDER_PROCESS",
+      "latestNotificationYear": 2024,
+      "sourceIds": [
+        "src-wbprb-kp-constable-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "exam-wbprb-warders-2023",
+      "name": {
+        "en": "Recruitment to the posts of Warders/Female Warders in the Department of Correctional Administration",
+        "bn": "কারা প্রশাসন দপ্তরে ওয়ার্ডার/ফিমেল ওয়ার্ডার নিয়োগ"
+      },
+      "abbreviation": "Correctional Warder",
+      "authorityId": "org-wbprb",
+      "governmentId": "west-bengal-government",
+      "entryLevel": "CLASS_10",
+      "qualificationSummary": {
+        "en": "Qualification as prescribed in the recruitment notification, with physical and medical requirements.",
+        "bn": "নিয়োগ বিজ্ঞপ্তিতে নির্ধারিত যোগ্যতা এবং শারীরিক ও চিকিৎসাগত শর্ত।"
+      },
+      "baEnglishEligibility": "DIRECT_ACADEMIC_SUBJECT_TO_CURRENT_NOTICE",
+      "selectionStages": [
+        "WRITTEN",
+        "PMT",
+        "PET",
+        "MEDICAL",
+        "DOCUMENT_VERIFICATION"
+      ],
+      "physicalRequirement": true,
+      "skillRequirement": false,
+      "frequency": "IRREGULAR",
+      "currentStatus": "HISTORICAL_2023_CYCLE",
+      "latestNotificationYear": 2023,
+      "sourceIds": [
+        "src-wbprb-warder-2023"
+      ],
+      "confidence": "HIGH"
+    }
+  ]
+}
