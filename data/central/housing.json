@@ -1,0 +1,96 @@
+{
+  "$schema": "../../schemas/housing.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "central-government",
+  "lastVerified": "2026-08-31",
+  "housingProfiles": [
+    {
+      "id": "housing-central-service-general",
+      "type": "GOVERNMENT_ACCOMMODATION_POSSIBLE",
+      "eligibility": "SERVICE_AND_LEVEL_DEPENDENT",
+      "automatic": false,
+      "availability": "VACANCY_DEPENDENT",
+      "allotment": "RULE_AND_AVAILABILITY_DEPENDENT",
+      "hraImpact": "USUALLY_AFFECTED_WHEN_GOVERNMENT_ACCOMMODATION_IS_OCCUPIED",
+      "licenceFee": "AS_PER_APPLICABLE_GOVERNMENT_HOUSING_RULE",
+      "utilities": "USER_DEPENDENT",
+      "confidence": "MEDIUM_HIGH",
+      "notes": "Entitlement, availability and actual allotment are separate questions. Exact accommodation must be checked against the relevant department and station."
+    },
+    {
+      "id": "housing-central-office",
+      "type": "GENERAL_CENTRAL_GOVERNMENT_ACCOMMODATION",
+      "eligibility": "POST_LEVEL_AND_STATION_DEPENDENT",
+      "automatic": false,
+      "availability": "VACANCY_DEPENDENT",
+      "allotment": "ALLOTMENT_RULE_DEPENDENT",
+      "hraImpact": "DEPENDS_ON_ACTUAL_ALLOTMENT_AND_APPLICABLE_RULE",
+      "licenceFee": "AS_PER_RULE",
+      "utilities": "USER_DEPENDENT",
+      "confidence": "MEDIUM",
+      "notes": "Do not interpret central government employment as an automatic entitlement to a quarter."
+    },
+    {
+      "id": "housing-railways",
+      "type": "RAILWAY_QUARTERS",
+      "eligibility": "RAILWAY_SERVICE_AND_LOCATION_DEPENDENT",
+      "automatic": false,
+      "availability": "LOCATION_AND_STOCK_DEPENDENT",
+      "allotment": "RAILWAY_ALLOTMENT_RULES",
+      "hraImpact": "AS_PER_APPLICABLE_RAILWAY_RULE",
+      "licenceFee": "AS_PER_RAILWAY_ACCOMMODATION_RULE",
+      "utilities": "USER_DEPENDENT",
+      "confidence": "MEDIUM_HIGH",
+      "notes": "Railway accommodation is a meaningful advantage for some posts but availability depends on establishment and location."
+    },
+    {
+      "id": "housing-postal",
+      "type": "POSTAL_DEPARTMENTAL_ACCOMMODATION",
+      "eligibility": "LOCATION_AND_SERVICE_DEPENDENT",
+      "automatic": false,
+      "availability": "VACANCY_DEPENDENT",
+      "allotment": "DEPARTMENTAL_RULE_DEPENDENT",
+      "hraImpact": "RULE_DEPENDENT",
+      "licenceFee": "AS_PER_RULE",
+      "utilities": "USER_DEPENDENT",
+      "confidence": "MEDIUM"
+    },
+    {
+      "id": "housing-capf",
+      "type": "CAPF_ACCOMMODATION_OR_CAMP_BARRACK",
+      "eligibility": "FORCE_AND_LOCATION_DEPENDENT",
+      "automatic": false,
+      "availability": "ESTABLISHMENT_DEPENDENT",
+      "allotment": "FORCE_RULE_DEPENDENT",
+      "hraImpact": "RULE_DEPENDENT",
+      "licenceFee": "AS_PER_RULE",
+      "utilities": "SERVICE_DEPENDENT",
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "housing-intelligence",
+      "type": "INTELLIGENCE_ORGANISATION_ACCOMMODATION",
+      "eligibility": "LOCATION_AND_AVAILABILITY_DEPENDENT",
+      "automatic": false,
+      "availability": "NOT_PUBLICLY_VERIFIED_AS_UNIVERSAL",
+      "allotment": "DEPARTMENT_SPECIFIC",
+      "hraImpact": "RULE_DEPENDENT",
+      "licenceFee": "AS_PER_RULE",
+      "utilities": "USER_DEPENDENT",
+      "confidence": "LOW_MEDIUM"
+    },
+    {
+      "id": "housing-none-verified",
+      "type": "NO_PUBLIC_UNIVERSAL_HOUSING_EVIDENCE",
+      "eligibility": "UNKNOWN",
+      "automatic": false,
+      "availability": "NOT_PUBLICLY_VERIFIED",
+      "allotment": "NOT_PUBLICLY_VERIFIED",
+      "hraImpact": "NOT_PUBLICLY_VERIFIED",
+      "licenceFee": "NOT_PUBLICLY_VERIFIED",
+      "utilities": "NOT_PUBLICLY_VERIFIED",
+      "confidence": "NOT_VERIFIED"
+    }
+  ]
+}
