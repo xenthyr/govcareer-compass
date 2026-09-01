@@ -1,0 +1,200 @@
+{
+  "$schema": "../../schemas/promotion.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "central-government",
+  "lastVerified": "2026-08-31",
+  "promotionProfiles": [
+    {
+      "id": "promotion-cse-service",
+      "careerType": "ALL_INDIA_SERVICE_OR_CENTRAL_SERVICE",
+      "entryMechanism": "UPSC_CSE",
+      "promotionMethod": "SERVICE_RULES_AND_SELECTION_PROCESS",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "VERY_HIGH",
+      "confidence": "HIGH",
+      "notes": "The exact ladder depends on the service and cadre."
+    },
+    {
+      "id": "promotion-capf-ac",
+      "careerType": "CAPF_ASSISTANT_COMMANDANT",
+      "entryMechanism": "UPSC_CAPF",
+      "promotionMethod": "FORCE_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "HIGH",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "promotion-ssc-cgl-clerical",
+      "careerType": "GENERAL_CENTRAL_ADMINISTRATION",
+      "entryMechanism": "SSC_CGL",
+      "promotionMethod": "DEPARTMENTAL_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "MEDIUM_HIGH",
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "promotion-inspector-tax",
+      "careerType": "CBDT_INSPECTOR",
+      "entryMechanism": "SSC_CGL",
+      "promotionMethod": "DEPARTMENTAL_SERVICE_RULES_AND_SELECTION",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "HIGH",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "promotion-inspector-cbic",
+      "careerType": "CBIC_INSPECTOR",
+      "entryMechanism": "SSC_CGL",
+      "promotionMethod": "DEPARTMENTAL_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "HIGH",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "promotion-enforcement",
+      "careerType": "ENFORCEMENT_DIRECTORATE_AEO",
+      "entryMechanism": "SSC_CGL",
+      "promotionMethod": "DEPARTMENTAL_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "HIGH",
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "promotion-cbi-investigation",
+      "careerType": "CBI_SUB_INSPECTOR",
+      "entryMechanism": "SSC_CGL",
+      "promotionMethod": "DEPARTMENTAL_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "HIGH",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "promotion-audit",
+      "careerType": "AUDITOR",
+      "entryMechanism": "SSC_CGL",
+      "promotionMethod": "DEPARTMENTAL_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "MEDIUM_HIGH",
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "promotion-rpf",
+      "careerType": "RPF_SUB_INSPECTOR",
+      "entryMechanism": "RPF_RECRUITMENT",
+      "promotionMethod": "RPF_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "HIGH",
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "promotion-railway-operations",
+      "careerType": "RAILWAY_OPERATIONS",
+      "entryMechanism": "RRB_NTPC",
+      "promotionMethod": "RAILWAY_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "HIGH",
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "promotion-railway-commercial",
+      "careerType": "RAILWAY_COMMERCIAL",
+      "entryMechanism": "RRB_NTPC",
+      "promotionMethod": "RAILWAY_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "HIGH",
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "promotion-railway-accounts",
+      "careerType": "RAILWAY_ACCOUNTS",
+      "entryMechanism": "RRB_NTPC",
+      "promotionMethod": "RAILWAY_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "MEDIUM_HIGH",
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "promotion-railway-clerical",
+      "careerType": "RAILWAY_CLERICAL",
+      "entryMechanism": "RRB_NTPC",
+      "promotionMethod": "RAILWAY_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "MEDIUM_HIGH",
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "promotion-postal-assistant",
+      "careerType": "POSTAL_ASSISTANT_SORTING_ASSISTANT",
+      "entryMechanism": "DIRECT_RECRUITMENT_OR_APPLICABLE_RECRUITMENT_ROUTE",
+      "promotionMethod": "POSTAL_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "MEDIUM_HIGH",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "promotion-postal-inspector",
+      "careerType": "INSPECTOR_POSTS",
+      "entryMechanism": "SSC_CGL_AND_DEPARTMENTAL_PATHS_AS_APPLICABLE",
+      "promotionMethod": "POSTAL_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "HIGH",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "promotion-secretarial",
+      "careerType": "STENOGRAPHIC_SECRETARIAL",
+      "entryMechanism": "SSC_STENOGRAPHER",
+      "promotionMethod": "DEPARTMENTAL_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "MEDIUM_HIGH",
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "promotion-clerical",
+      "careerType": "LDC_JSA",
+      "entryMechanism": "SSC_CHSL",
+      "promotionMethod": "DEPARTMENTAL_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "MEDIUM",
+      "confidence": "MEDIUM_HIGH"
+    },
+    {
+      "id": "promotion-support-staff",
+      "careerType": "MTS",
+      "entryMechanism": "SSC_MTS",
+      "promotionMethod": "DEPARTMENTAL_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "MEDIUM",
+      "confidence": "MEDIUM"
+    },
+    {
+      "id": "promotion-ib-operational",
+      "careerType": "INTELLIGENCE_BUREAU_OPERATIONAL",
+      "entryMechanism": "IB_DIRECT_RECRUITMENT",
+      "promotionMethod": "IB_SERVICE_RULES",
+      "vacancyDependent": true,
+      "guaranteedTimeline": false,
+      "careerCeiling": "MEDIUM_HIGH",
+      "confidence": "MEDIUM"
+    }
+  ]
+}
