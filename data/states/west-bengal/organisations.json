@@ -1,0 +1,138 @@
+{
+  "$schema": "../../../schemas/organisation.schema.json",
+  "schemaVersion": "1.0.0",
+  "dataVersion": "1.0.0",
+  "governmentId": "west-bengal-government",
+  "stateId": "west-bengal",
+  "lastVerified": "2026-08-31",
+  "organisations": [
+    {
+      "id": "org-wbpsc",
+      "name": {
+        "en": "Public Service Commission, West Bengal",
+        "bn": "পাবলিক সার্ভিস কমিশন, পশ্চিমবঙ্গ"
+      },
+      "abbreviation": "WBPSC",
+      "type": "CONSTITUTIONAL_RECRUITMENT_COMMISSION",
+      "departmentId": null,
+      "governmentId": "west-bengal-government",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024",
+        "src-wbpsc-misc-2024",
+        "src-wbpsc-clerkship-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-wbprb",
+      "name": {
+        "en": "West Bengal Police Recruitment Board",
+        "bn": "ওয়েস্ট বেঙ্গল পুলিশ রিক্রুটমেন্ট বোর্ড"
+      },
+      "abbreviation": "WBPRB",
+      "type": "POLICE_RECRUITMENT_BOARD",
+      "departmentId": "dept-wb-home-hill-affairs",
+      "governmentId": "west-bengal-government",
+      "sourceIds": [
+        "src-wbprb-wbp-si-2024",
+        "src-wbprb-wbp-constable-2024",
+        "src-wbprb-kp-si-2023",
+        "src-wbprb-kp-constable-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-kolkata-police",
+      "name": {
+        "en": "Kolkata Police",
+        "bn": "কলকাতা পুলিশ"
+      },
+      "abbreviation": "KP",
+      "type": "POLICE_ORGANISATION",
+      "departmentId": "dept-wb-home-hill-affairs",
+      "governmentId": "west-bengal-government",
+      "sourceIds": [
+        "src-wbprb-kp-si-2023",
+        "src-wbprb-kp-constable-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-west-bengal-police",
+      "name": {
+        "en": "West Bengal Police",
+        "bn": "পশ্চিমবঙ্গ পুলিশ"
+      },
+      "abbreviation": "WBP",
+      "type": "POLICE_ORGANISATION",
+      "departmentId": "dept-wb-home-hill-affairs",
+      "governmentId": "west-bengal-government",
+      "sourceIds": [
+        "src-wbprb-wbp-si-2024",
+        "src-wbprb-wbp-constable-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-wb-panchayat",
+      "name": {
+        "en": "Panchayats and Rural Development Department / Panchayat institutions",
+        "bn": "পঞ্চায়েত ও গ্রামোন্নয়ন দপ্তর / পঞ্চায়েত প্রতিষ্ঠানসমূহ"
+      },
+      "abbreviation": "P&RD",
+      "type": "STATE_DEPARTMENT_AND_LOCAL_GOVERNMENT_SYSTEM",
+      "departmentId": "dept-wb-panchayat-rural",
+      "governmentId": "west-bengal-government",
+      "sourceIds": [
+        "src-wbpsc-wbcs-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-west-bengal-correctional",
+      "name": {
+        "en": "West Bengal Correctional Services",
+        "bn": "পশ্চিমবঙ্গ কারা পরিষেবা"
+      },
+      "abbreviation": null,
+      "type": "CORRECTIONAL_SERVICE",
+      "departmentId": "dept-wb-correctional",
+      "governmentId": "west-bengal-government",
+      "sourceIds": [
+        "src-wbprb-warder-2023",
+        "src-wbpsc-wbcs-2024"
+      ],
+      "confidence": "HIGH"
+    },
+    {
+      "id": "org-west-bengal-school-service-commission",
+      "name": {
+        "en": "West Bengal Central School Service Commission",
+        "bn": "পশ্চিমবঙ্গ কেন্দ্রীয় স্কুল সার্ভিস কমিশন"
+      },
+      "abbreviation": "WBSSC",
+      "type": "EDUCATION_RECRUITMENT_COMMISSION",
+      "departmentId": "dept-wb-school-education",
+      "governmentId": "west-bengal-government",
+      "sourceIds": [],
+      "confidence": "MEDIUM_HIGH",
+      "notes": {
+        "en": "Recruitment universe requires separate verification by the exact cycle and post, especially for teaching versus non-teaching posts.",
+        "bn": "সঠিক নিয়োগ চক্র ও পোস্ট অনুযায়ী পৃথক যাচাই প্রয়োজন, বিশেষত শিক্ষক ও অশিক্ষক পোস্টের ক্ষেত্রে।"
+      }
+    },
+    {
+      "id": "org-west-bengal-primary-education",
+      "name": {
+        "en": "West Bengal Board of Primary Education",
+        "bn": "পশ্চিমবঙ্গ প্রাথমিক শিক্ষা পর্ষদ"
+      },
+      "abbreviation": "WBBPE",
+      "type": "EDUCATION_STATUTORY_BODY",
+      "departmentId": "dept-wb-school-education",
+      "governmentId": "west-bengal-government",
+      "sourceIds": [],
+      "confidence": "MEDIUM_HIGH"
+    }
+  ]
+}
