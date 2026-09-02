@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 512 512"
+    width="512"
+    height="512"
+    role="img"
+    aria-labelledby="career-score-title career-score-desc"
+>
+    <title id="career-score-title">Career Score</title>
+
+    <desc id="career-score-desc">
+        A modern GovCareer Compass career assessment icon representing
+        professional readiness, measurable career progress, and career growth.
+    </desc>
+
+    <defs>
+
+        <!-- Primary institutional gradient -->
+        <linearGradient
+            id="careerScoreBaseGradient"
+            x1="0%"
+            y1="100%"
+            x2="100%"
+            y2="0%"
+        >
+            <stop offset="0%" stop-color="#0E1627"/>
+            <stop offset="55%" stop-color="#123E57"/>
+            <stop offset="100%" stop-color="#168BA8"/>
+        </linearGradient>
+
+        <!-- GovCareer Compass cyan progress gradient -->
+        <linearGradient
+            id="careerScoreProgressGradient"
+            x1="0%"
+            y1="100%"
+            x2="100%"
+            y2="0%"
+        >
+            <stop offset="0%" stop-color="#168BA8"/>
+            <stop offset="55%" stop-color="#1CB5D3"/>
+            <stop offset="100%" stop-color="#24CBE9"/>
+        </linearGradient>
+
+    </defs>
+
+
+    <!-- =====================================================
+         CAREER SCORE ASSESSMENT RING
+         ===================================================== -->
+
+    <!-- Background assessment ring -->
+    <circle
+        cx="256"
+        cy="256"
+        r="184"
+        fill="none"
+        stroke="url(#careerScoreBaseGradient)"
+        stroke-width="30"
+        stroke-linecap="round"
+        opacity="0.20"
+    />
+
+
+    <!-- Career score progress ring
+         Approximately 72% progress -->
+    <circle
+        cx="256"
+        cy="256"
+        r="184"
+        fill="none"
+        stroke="url(#careerScoreProgressGradient)"
+        stroke-width="30"
+        stroke-linecap="round"
+        stroke-dasharray="1156"
+        stroke-dashoffset="324"
+        transform="rotate(-90 256 256)"
+    />
+
+
+    <!-- =====================================================
+         CENTRAL PROFESSIONAL PROFILE
+         ===================================================== -->
+
+    <g>
+
+        <!-- Professional profile head -->
+        <circle
+            cx="256"
+            cy="202"
+            r="44"
+            fill="url(#careerScoreBaseGradient)"
+        />
+
+
+        <!-- Professional shoulders / profile body -->
+        <path
+            d="
+                M168 344
+                C168 290.98 207.98 248 256 248
+                C304.02 248 344 290.98 344 344
+                L344 360
+                L168 360
+                Z
+            "
+            fill="url(#careerScoreBaseGradient)"
+        />
+
+
+        <!-- Professional collar -->
+        <path
+            d="
+                M214 258
+                L256 302
+                L298 258
+                L280 248
+                L232 248
+                Z
+            "
+            fill="#24CBE9"
+        />
+
+
+        <!-- Professional tie -->
+        <path
+            d="
+                M256 302
+                L238 326
+                L256 352
+                L274 326
+                Z
+            "
+            fill="#24CBE9"
+        />
+
+    </g>
+
+
+    <!-- =====================================================
+         SCORE INDICATOR
+         ===================================================== -->
+
+    <!-- Small score completion marker -->
+    <circle
+        cx="388"
+        cy="128"
+        r="13"
+        fill="#24CBE9"
+    />
+
+
+    <!-- =====================================================
+         CAREER PROGRESS ARROW
+         ===================================================== -->
+
+    <path
+        d="
+            M370 372
+            L402 340
+            L434 372
+            L414 372
+            L414 414
+            L390 414
+            L390 372
+            Z
+        "
+        fill="url(#careerScoreProgressGradient)"
+    />
+
+</svg>

@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 512 512"
+    width="512"
+    height="512"
+    role="img"
+    aria-labelledby="compass-ai-title compass-ai-desc"
+    focusable="false">
+
+    <title id="compass-ai-title">Compass AI</title>
+
+    <desc id="compass-ai-desc">
+        A modern AI-powered compass representing intelligent career guidance,
+        direction, navigation, and personalized government career assistance.
+    </desc>
+
+    <defs>
+
+        <!--
+            Primary GovCareer Compass institutional gradient.
+            Deep navy provides authority and government credibility.
+        -->
+        <linearGradient
+            id="compassBaseGradient"
+            x1="0%"
+            y1="100%"
+            x2="100%"
+            y2="0%">
+
+            <stop offset="0%" stop-color="#0E1627"/>
+            <stop offset="55%" stop-color="#123E57"/>
+            <stop offset="100%" stop-color="#168BA8"/>
+
+        </linearGradient>
+
+
+        <!--
+            Primary AI / intelligence accent.
+            Cyan represents intelligent guidance and technology.
+        -->
+        <linearGradient
+            id="compassAccentGradient"
+            x1="0%"
+            y1="100%"
+            x2="100%"
+            y2="0%">
+
+            <stop offset="0%" stop-color="#168BA8"/>
+            <stop offset="55%" stop-color="#1CB5D3"/>
+            <stop offset="100%" stop-color="#24CBE9"/>
+
+        </linearGradient>
+
+
+        <!--
+            Compass needle gradient.
+            Gives the directional element depth while remaining clean.
+        -->
+        <linearGradient
+            id="compassNeedleGradient"
+            x1="0%"
+            y1="100%"
+            x2="100%"
+            y2="0%">
+
+            <stop offset="0%" stop-color="#DDFBFD"/>
+            <stop offset="45%" stop-color="#24CBE9"/>
+            <stop offset="100%" stop-color="#123E57"/>
+
+        </linearGradient>
+
+
+        <!--
+            Subtle AI glow.
+            Used correctly as an SVG filter rather than referencing a gradient.
+        -->
+        <filter
+            id="aiGlow"
+            x="-50%"
+            y="-50%"
+            width="200%"
+            height="200%">
+
+            <feGaussianBlur
+                stdDeviation="4"
+                result="blur"/>
+
+            <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+
+        </filter>
+
+    </defs>
+
+
+    <!-- ========================================================= -->
+    <!-- OUTER COMPASS RING                                       -->
+    <!-- ========================================================= -->
+
+    <circle
+        cx="256"
+        cy="256"
+        r="192"
+        fill="none"
+        stroke="url(#compassBaseGradient)"
+        stroke-width="32"
+        stroke-linecap="round"/>
+
+
+    <!-- ========================================================= -->
+    <!-- INNER COMPASS FIELD                                      -->
+    <!-- ========================================================= -->
+
+    <circle
+        cx="256"
+        cy="256"
+        r="136"
+        fill="none"
+        stroke="#123E57"
+        stroke-width="18"
+        opacity="0.18"/>
+
+
+    <!-- ========================================================= -->
+    <!-- CARDINAL DIRECTION MARKERS                               -->
+    <!-- ========================================================= -->
+
+    <!-- North -->
+    <path
+        d="M256 86 L270 118 L256 108 L242 118 Z"
+        fill="url(#compassAccentGradient)"/>
+
+    <!-- East -->
+    <path
+        d="M426 256 L394 270 L404 256 L394 242 Z"
+        fill="url(#compassBaseGradient)"
+        opacity="0.85"/>
+
+    <!-- South -->
+    <path
+        d="M256 426 L242 394 L256 404 L270 394 Z"
+        fill="url(#compassBaseGradient)"
+        opacity="0.75"/>
+
+    <!-- West -->
+    <path
+        d="M86 256 L118 242 L108 256 L118 270 Z"
+        fill="url(#compassBaseGradient)"
+        opacity="0.75"/>
+
+
+    <!-- ========================================================= -->
+    <!-- AI DATA / INTELLIGENCE CONNECTIONS                       -->
+    <!-- ========================================================= -->
+
+    <g
+        fill="none"
+        stroke="#168BA8"
+        stroke-width="5"
+        stroke-linecap="round"
+        opacity="0.55">
+
+        <path d="M150 174 L186 198"/>
+        <path d="M326 198 L362 174"/>
+        <path d="M150 338 L186 314"/>
+        <path d="M326 314 L362 338"/>
+
+    </g>
+
+
+    <!-- AI NETWORK NODES -->
+
+    <g
+        fill="url(#compassAccentGradient)"
+        opacity="0.9">
+
+        <circle cx="146" cy="172" r="8"/>
+        <circle cx="366" cy="172" r="8"/>
+
+        <circle cx="146" cy="340" r="8"/>
+        <circle cx="366" cy="340" r="8"/>
+
+    </g>
+
+
+    <!-- ========================================================= -->
+    <!-- COMPASS NEEDLE                                           -->
+    <!-- ========================================================= -->
+
+    <g
+        transform="rotate(-35 256 256)">
+
+        <!-- Main directional needle -->
+
+        <path
+            d="M256 118
+               L306 256
+               L256 394
+               L206 256 Z"
+            fill="url(#compassNeedleGradient)"
+            stroke="#FFFFFF"
+            stroke-width="2"
+            stroke-linejoin="round"/>
+
+
+        <!-- Direction emphasis -->
+
+        <path
+            d="M256 118
+               L306 256
+               L256 256
+               L206 256 Z"
+            fill="url(#compassAccentGradient)"
+            opacity="0.9"/>
+
+    </g>
+
+
+    <!-- ========================================================= -->
+    <!-- CENTRAL AI INTELLIGENCE CORE                             -->
+    <!-- ========================================================= -->
+
+    <!-- Subtle outer glow -->
+
+    <circle
+        cx="256"
+        cy="256"
+        r="48"
+        fill="url(#compassAccentGradient)"
+        opacity="0.16"
+        filter="url(#aiGlow)"/>
+
+
+    <!-- AI Core outer housing -->
+
+    <circle
+        cx="256"
+        cy="256"
+        r="38"
+        fill="url(#compassBaseGradient)"
+        stroke="url(#compassAccentGradient)"
+        stroke-width="4"/>
+
+
+    <!-- AI Core -->
+
+    <circle
+        cx="256"
+        cy="256"
+        r="18"
+        fill="url(#compassAccentGradient)"/>
+
+
+    <!-- Intelligence point -->
+
+    <circle
+        cx="256"
+        cy="256"
+        r="6"
+        fill="#FFFFFF"
+        opacity="0.9"/>
+
+
+    <!-- ========================================================= -->
+    <!-- FORWARD AI GUIDANCE ACCENT                               -->
+    <!-- ========================================================= -->
+
+    <g
+        transform="rotate(-35 256 256)">
+
+        <path
+            d="M256 92
+               L278 142
+               L256 164
+               L234 142 Z"
+            fill="url(#compassAccentGradient)"
+            stroke="#FFFFFF"
+            stroke-width="2"
+            stroke-linejoin="round"/>
+
+    </g>
+
+
+    <!-- ========================================================= -->
+    <!-- AMBIENT DATA POINTS                                      -->
+    <!-- ========================================================= -->
+
+    <g
+        fill="#DDFBFD"
+        opacity="0.75">
+
+        <circle cx="256" cy="64" r="5"/>
+        <circle cx="448" cy="256" r="5"/>
+        <circle cx="256" cy="448" r="5"/>
+        <circle cx="64" cy="256" r="5"/>
+
+    </g>
+
+</svg>

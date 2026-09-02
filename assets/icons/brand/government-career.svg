@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 512 512"
+    width="512"
+    height="512"
+    role="img"
+    aria-labelledby="government-career-title government-career-desc"
+>
+    <title id="government-career-title">Government Career</title>
+
+    <desc id="government-career-desc">
+        A modern government institution with an integrated upward career growth arrow.
+    </desc>
+
+    <defs>
+        <!-- Primary institutional gradient -->
+        <linearGradient
+            id="governmentBuildingGradient"
+            x1="0%"
+            y1="100%"
+            x2="100%"
+            y2="0%"
+        >
+            <stop offset="0%" stop-color="#0E1627"/>
+            <stop offset="55%" stop-color="#123E57"/>
+            <stop offset="100%" stop-color="#183F57"/>
+        </linearGradient>
+
+        <!-- Career and growth accent gradient -->
+        <linearGradient
+            id="careerGrowthGradient"
+            x1="0%"
+            y1="100%"
+            x2="100%"
+            y2="0%"
+        >
+            <stop offset="0%" stop-color="#168BA8"/>
+            <stop offset="55%" stop-color="#1CB5D3"/>
+            <stop offset="100%" stop-color="#24CBE9"/>
+        </linearGradient>
+    </defs>
+
+    <!--
+        Government Institution
+        Classical architectural structure represented
+        through simplified modern geometry.
+    -->
+    <g fill="url(#governmentBuildingGradient)">
+
+        <!-- Government pediment / roof -->
+        <path
+            d="
+                M256 48
+                L48 160
+                L48 192
+                L464 192
+                L464 160
+                Z
+            "
+        />
+
+        <!-- Left outer column -->
+        <rect
+            x="80"
+            y="216"
+            width="48"
+            height="184"
+            rx="4"
+        />
+
+        <!-- Left inner column -->
+        <rect
+            x="168"
+            y="216"
+            width="48"
+            height="184"
+            rx="4"
+        />
+
+        <!-- Right inner column -->
+        <rect
+            x="296"
+            y="216"
+            width="48"
+            height="184"
+            rx="4"
+        />
+
+        <!-- Right outer column -->
+        <rect
+            x="384"
+            y="216"
+            width="48"
+            height="184"
+            rx="4"
+        />
+
+        <!-- Government foundation -->
+        <path
+            d="
+                M32 424
+                H480
+                V464
+                H32
+                Z
+            "
+        />
+
+    </g>
+
+    <!--
+        Integrated Career Growth Arrow
+
+        Positioned in the central architectural opening
+        to represent professional advancement within
+        the government career system.
+    -->
+    <path
+        fill="url(#careerGrowthGradient)"
+        d="
+            M256 208
+            L320 304
+            H288
+            V416
+            H224
+            V304
+            H192
+            Z
+        "
+    />
+
+</svg>
