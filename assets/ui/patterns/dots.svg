@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 512 512"
+  width="512"
+  height="512"
+  preserveAspectRatio="xMidYMid slice"
+  role="presentation"
+  aria-hidden="true"
+>
+  <defs>
+    <pattern
+      id="govCareerDotsPattern"
+      width="48"
+      height="48"
+      patternUnits="userSpaceOnUse"
+    >
+      <!-- Primary data dots at 24-unit intervals -->
+      <circle
+        cx="24"
+        cy="0"
+        r="1.8"
+        fill="#168BA8"
+        fill-opacity="0.06"
+      />
+
+      <circle
+        cx="0"
+        cy="24"
+        r="1.8"
+        fill="#168BA8"
+        fill-opacity="0.06"
+      />
+
+      <circle
+        cx="24"
+        cy="24"
+        r="1.8"
+        fill="#168BA8"
+        fill-opacity="0.06"
+      />
+
+      <!-- Subtle major interval accent -->
+      <circle
+        cx="0"
+        cy="0"
+        r="2.4"
+        fill="#1CB5D3"
+        fill-opacity="0.11"
+      />
+    </pattern>
+  </defs>
+
+  <rect
+    width="512"
+    height="512"
+    fill="url(#govCareerDotsPattern)"
+  />
+</svg>

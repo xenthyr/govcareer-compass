@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 512 512"
+  width="512"
+  height="512"
+  preserveAspectRatio="xMidYMid slice"
+  role="presentation"
+  aria-hidden="true"
+>
+  <defs>
+    <!-- Fine structural grid -->
+    <pattern
+      id="minorGridPattern"
+      width="16"
+      height="16"
+      patternUnits="userSpaceOnUse"
+    >
+      <path
+        d="M16 0H0V16"
+        fill="none"
+        stroke="#168BA8"
+        stroke-width="1"
+        stroke-opacity="0.04"
+      />
+    </pattern>
+
+    <!-- Major grid containing the fine structural grid -->
+    <pattern
+      id="majorGridPattern"
+      width="64"
+      height="64"
+      patternUnits="userSpaceOnUse"
+    >
+      <!-- Fine 16-unit subdivisions -->
+      <rect
+        width="64"
+        height="64"
+        fill="url(#minorGridPattern)"
+      />
+
+      <!-- Major 64-unit divisions -->
+      <path
+        d="M64 0H0V64"
+        fill="none"
+        stroke="#1CB5D3"
+        stroke-width="1.25"
+        stroke-opacity="0.09"
+      />
+    </pattern>
+  </defs>
+
+  <!-- Transparent hierarchical technical grid -->
+  <rect
+    width="512"
+    height="512"
+    fill="url(#majorGridPattern)"
+  />
+</svg>
