@@ -1,0 +1,1275 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1200 900"
+     preserveAspectRatio="xMidYMid meet"
+     role="img"
+     aria-labelledby="comparisonTitle comparisonDesc">
+
+  <title id="comparisonTitle">
+    GovCareer Compass Career Comparison Illustration
+  </title>
+
+  <desc id="comparisonDesc">
+    A premium modern vector illustration showing selected government career
+    options flowing into an intelligent Compass AI comparison engine and
+    producing a structured side-by-side analytical comparison matrix that
+    reveals strengths, trade-offs, and meaningful differences.
+  </desc>
+
+  <defs>
+
+    <!-- ========================================================= -->
+    <!-- CORE COLOR GRADIENTS -->
+    <!-- ========================================================= -->
+
+    <linearGradient id="cyanGradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%">
+      <stop offset="0%" stop-color="#79E2F2"/>
+      <stop offset="100%" stop-color="#12B7D3"/>
+    </linearGradient>
+
+    <linearGradient id="indigoGradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%">
+      <stop offset="0%" stop-color="#9BA2FA"/>
+      <stop offset="100%" stop-color="#5E68E5"/>
+    </linearGradient>
+
+    <linearGradient id="violetGradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%">
+      <stop offset="0%" stop-color="#C0A3FB"/>
+      <stop offset="100%" stop-color="#9564DF"/>
+    </linearGradient>
+
+    <linearGradient id="emeraldGradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#10A875"/>
+    </linearGradient>
+
+    <linearGradient id="amberGradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%">
+      <stop offset="0%" stop-color="#E7B74A"/>
+      <stop offset="100%" stop-color="#D79718"/>
+    </linearGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- GLASS SURFACE -->
+    <!-- ========================================================= -->
+
+    <linearGradient id="glassSurface"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%">
+
+      <stop offset="0%"
+            stop-color="#F2F6FB"
+            stop-opacity="0.11"/>
+
+      <stop offset="100%"
+            stop-color="#F2F6FB"
+            stop-opacity="0.035"/>
+
+    </linearGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- AMBIENT CENTRAL GLOW -->
+    <!-- ========================================================= -->
+
+    <radialGradient id="centralAmbientGlow"
+                    cx="50%"
+                    cy="50%"
+                    r="50%">
+
+      <stop offset="0%"
+            stop-color="#12B7D3"
+            stop-opacity="0.16"/>
+
+      <stop offset="55%"
+            stop-color="#5E68E5"
+            stop-opacity="0.05"/>
+
+      <stop offset="100%"
+            stop-color="#08111F"
+            stop-opacity="0"/>
+
+    </radialGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- RESULT CARD GLOWS -->
+    <!-- ========================================================= -->
+
+    <radialGradient id="emeraldGlow"
+                    cx="50%"
+                    cy="50%"
+                    r="50%">
+
+      <stop offset="0%"
+            stop-color="#10A875"
+            stop-opacity="0.16"/>
+
+      <stop offset="100%"
+            stop-color="#10A875"
+            stop-opacity="0"/>
+
+    </radialGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- SOFT ENGINE GLOW -->
+    <!-- ========================================================= -->
+
+    <filter id="engineGlow"
+            x="-30%"
+            y="-30%"
+            width="160%"
+            height="160%">
+
+      <feGaussianBlur
+        stdDeviation="5"
+        result="blur"/>
+
+      <feFlood
+        flood-color="#35CEE6"
+        flood-opacity="0.28"
+        result="glowColor"/>
+
+      <feComposite
+        in="glowColor"
+        in2="blur"
+        operator="in"
+        result="glow"/>
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+
+    </filter>
+
+
+    <!-- ========================================================= -->
+    <!-- REUSABLE DATA LINES -->
+    <!-- ========================================================= -->
+
+    <g id="smallDataLines">
+
+      <rect x="0"
+            y="0"
+            width="115"
+            height="8"
+            rx="4"
+            fill="#F2F6FB"
+            opacity="0.55"/>
+
+      <rect x="0"
+            y="18"
+            width="80"
+            height="7"
+            rx="3.5"
+            fill="#F2F6FB"
+            opacity="0.25"/>
+
+    </g>
+
+
+    <!-- ========================================================= -->
+    <!-- CAREER ICONS -->
+    <!-- ========================================================= -->
+
+    <symbol id="governmentBuilding"
+            viewBox="0 0 60 60">
+
+      <path
+        d="M8 25 L30 10 L52 25"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+      <path
+        d="M13 27 H47"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+
+      <path
+        d="M17 27 V46
+           M30 27 V46
+           M43 27 V46"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+
+      <path
+        d="M10 48 H50"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+
+    </symbol>
+
+
+    <symbol id="serviceBadge"
+            viewBox="0 0 60 60">
+
+      <circle
+        cx="30"
+        cy="30"
+        r="20"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"/>
+
+      <path
+        d="M30 18 V30 L42 36"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+      <path
+        d="M22 45 H38"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+
+    </symbol>
+
+
+    <symbol id="institutionIcon"
+            viewBox="0 0 60 60">
+
+      <rect
+        x="10"
+        y="17"
+        width="40"
+        height="31"
+        rx="3"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"/>
+
+      <path
+        d="M18 17 V10 H42 V17"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linejoin="round"/>
+
+      <path
+        d="M10 31 H50"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"/>
+
+      <circle
+        cx="30"
+        cy="31"
+        r="6"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"/>
+
+    </symbol>
+
+  </defs>
+
+
+  <!-- ========================================================= -->
+  <!-- TRANSPARENT BACKGROUND -->
+  <!-- ========================================================= -->
+
+  <!-- No full-page background rectangle intentionally.
+       The SVG background remains transparent. -->
+
+
+  <!-- ========================================================= -->
+  <!-- CENTRAL AMBIENT VISUAL GLOW -->
+  <!-- ========================================================= -->
+
+  <circle
+    cx="600"
+    cy="450"
+    r="430"
+    fill="url(#centralAmbientGlow)"/>
+
+
+  <!-- ========================================================= -->
+  <!-- SUBTLE COMPASS / ANALYTICAL BACKGROUND RINGS -->
+  <!-- ========================================================= -->
+
+  <g opacity="0.08"
+     fill="none">
+
+    <circle
+      cx="600"
+      cy="450"
+      r="310"
+      stroke="#79E2F2"
+      stroke-width="1"/>
+
+    <circle
+      cx="600"
+      cy="450"
+      r="250"
+      stroke="#5E68E5"
+      stroke-width="1"/>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- LEFT SECTION : SELECTED CAREER OPTIONS -->
+  <!-- ========================================================= -->
+
+  <g id="selectedCareerOptions"
+     transform="translate(60,255)">
+
+
+    <!-- ======================================================= -->
+    <!-- CAREER A -->
+    <!-- ======================================================= -->
+
+    <g>
+
+      <rect
+        width="300"
+        height="112"
+        rx="16"
+        fill="url(#glassSurface)"
+        stroke="#10A875"
+        stroke-width="1.5"
+        stroke-opacity="0.55"/>
+
+      <!-- Selection indicator -->
+
+      <circle
+        cx="272"
+        cy="28"
+        r="12"
+        fill="#10A875"
+        fill-opacity="0.12"
+        stroke="#10A875"
+        stroke-width="1"
+        stroke-opacity="0.5"/>
+
+      <path
+        d="M266 28 L271 33 L279 23"
+        fill="none"
+        stroke="#34D399"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+
+      <!-- Icon -->
+
+      <g
+        transform="translate(22,26)"
+        style="color:#34D399">
+
+        <use
+          href="#governmentBuilding"
+          width="60"
+          height="60"/>
+
+      </g>
+
+
+      <!-- Abstract Career Information -->
+
+      <g transform="translate(105,34)">
+
+        <rect
+          width="145"
+          height="10"
+          rx="5"
+          fill="#34D399"
+          opacity="0.9"/>
+
+        <rect
+          y="24"
+          width="110"
+          height="7"
+          rx="3.5"
+          fill="#F2F6FB"
+          opacity="0.28"/>
+
+        <rect
+          y="42"
+          width="80"
+          height="6"
+          rx="3"
+          fill="#F2F6FB"
+          opacity="0.15"/>
+
+      </g>
+
+    </g>
+
+
+    <!-- ======================================================= -->
+    <!-- CAREER B -->
+    <!-- ======================================================= -->
+
+    <g transform="translate(0,135)">
+
+      <rect
+        width="300"
+        height="112"
+        rx="16"
+        fill="url(#glassSurface)"
+        stroke="#5E68E5"
+        stroke-width="1.5"
+        stroke-opacity="0.55"/>
+
+      <!-- Selection indicator -->
+
+      <circle
+        cx="272"
+        cy="28"
+        r="12"
+        fill="#5E68E5"
+        fill-opacity="0.12"
+        stroke="#5E68E5"
+        stroke-width="1"
+        stroke-opacity="0.5"/>
+
+      <circle
+        cx="272"
+        cy="28"
+        r="4"
+        fill="#9BA2FA"/>
+
+
+      <!-- Icon -->
+
+      <g
+        transform="translate(22,26)"
+        style="color:#9BA2FA">
+
+        <use
+          href="#serviceBadge"
+          width="60"
+          height="60"/>
+
+      </g>
+
+
+      <g transform="translate(105,34)">
+
+        <rect
+          width="150"
+          height="10"
+          rx="5"
+          fill="#9BA2FA"
+          opacity="0.9"/>
+
+        <rect
+          y="24"
+          width="115"
+          height="7"
+          rx="3.5"
+          fill="#F2F6FB"
+          opacity="0.28"/>
+
+        <rect
+          y="42"
+          width="90"
+          height="6"
+          rx="3"
+          fill="#F2F6FB"
+          opacity="0.15"/>
+
+      </g>
+
+    </g>
+
+
+    <!-- ======================================================= -->
+    <!-- CAREER C -->
+    <!-- ======================================================= -->
+
+    <g transform="translate(0,270)">
+
+      <rect
+        width="300"
+        height="112"
+        rx="16"
+        fill="url(#glassSurface)"
+        stroke="#9564DF"
+        stroke-width="1.5"
+        stroke-opacity="0.55"/>
+
+      <!-- Selection indicator -->
+
+      <circle
+        cx="272"
+        cy="28"
+        r="12"
+        fill="#9564DF"
+        fill-opacity="0.12"
+        stroke="#9564DF"
+        stroke-width="1"
+        stroke-opacity="0.5"/>
+
+      <path
+        d="M267 28 H277"
+        fill="none"
+        stroke="#C0A3FB"
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+
+
+      <!-- Icon -->
+
+      <g
+        transform="translate(22,26)"
+        style="color:#C0A3FB">
+
+        <use
+          href="#institutionIcon"
+          width="60"
+          height="60"/>
+
+      </g>
+
+
+      <g transform="translate(105,34)">
+
+        <rect
+          width="140"
+          height="10"
+          rx="5"
+          fill="#C0A3FB"
+          opacity="0.9"/>
+
+        <rect
+          y="24"
+          width="105"
+          height="7"
+          rx="3.5"
+          fill="#F2F6FB"
+          opacity="0.28"/>
+
+        <rect
+          y="42"
+          width="75"
+          height="6"
+          rx="3"
+          fill="#F2F6FB"
+          opacity="0.15"/>
+
+      </g>
+
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- INPUT DATA FLOW -->
+  <!-- ========================================================= -->
+
+  <g
+    id="careerInputFlow"
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round">
+
+    <path
+      d="M360 311
+         C420 311 445 405 505 430"
+      stroke="#34D399"
+      stroke-width="2.5"
+      opacity="0.7"/>
+
+    <path
+      d="M360 446
+         C420 446 455 446 505 450"
+      stroke="#79E2F2"
+      stroke-width="3"
+      opacity="0.8"/>
+
+    <path
+      d="M360 581
+         C420 581 445 495 505 470"
+      stroke="#C0A3FB"
+      stroke-width="2.5"
+      opacity="0.7"/>
+
+    <!-- Input convergence -->
+
+    <circle
+      cx="505"
+      cy="450"
+      r="5"
+      fill="#35CEE6"/>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- CENTER : COMPASS AI COMPARISON ENGINE -->
+  <!-- ========================================================= -->
+
+  <g
+    id="comparisonEngine"
+    transform="translate(600,450)"
+    filter="url(#engineGlow)">
+
+
+    <!-- Outer analytical ring -->
+
+    <circle
+      r="145"
+      fill="url(#glassSurface)"
+      stroke="#5E68E5"
+      stroke-width="1.5"
+      stroke-opacity="0.25"/>
+
+
+    <!-- Secondary ring -->
+
+    <circle
+      r="118"
+      fill="none"
+      stroke="#5E68E5"
+      stroke-width="1.5"
+      stroke-dasharray="9 8"
+      opacity="0.35"/>
+
+
+    <!-- Primary comparison ring -->
+
+    <circle
+      r="92"
+      fill="none"
+      stroke="url(#cyanGradient)"
+      stroke-width="2.5"
+      opacity="0.8"/>
+
+
+    <!-- Horizontal comparison axis -->
+
+    <path
+      d="M-105 0 H105"
+      fill="none"
+      stroke="#79E2F2"
+      stroke-width="1.5"
+      stroke-dasharray="6 7"
+      opacity="0.55"/>
+
+
+    <!-- Vertical evaluation axis -->
+
+    <path
+      d="M0 -105 V105"
+      fill="none"
+      stroke="#9BA2FA"
+      stroke-width="1.5"
+      stroke-dasharray="6 7"
+      opacity="0.45"/>
+
+
+    <!-- Cardinal analytical marks -->
+
+    <g
+      fill="none"
+      stroke-linecap="round">
+
+      <path
+        d="M0 -145 V-128"
+        stroke="#79E2F2"
+        stroke-width="3"/>
+
+      <path
+        d="M0 145 V128"
+        stroke="#79E2F2"
+        stroke-width="3"/>
+
+      <path
+        d="M-145 0 H-128"
+        stroke="#79E2F2"
+        stroke-width="3"/>
+
+      <path
+        d="M145 0 H128"
+        stroke="#79E2F2"
+        stroke-width="3"/>
+
+    </g>
+
+
+    <!-- Comparison nodes -->
+
+    <circle
+      cx="-52"
+      cy="-52"
+      r="7"
+      fill="#34D399"
+      opacity="0.9"/>
+
+    <circle
+      cx="52"
+      cy="-52"
+      r="7"
+      fill="#9BA2FA"
+      opacity="0.9"/>
+
+    <circle
+      cx="-52"
+      cy="52"
+      r="7"
+      fill="#79E2F2"
+      opacity="0.9"/>
+
+    <circle
+      cx="52"
+      cy="52"
+      r="7"
+      fill="#C0A3FB"
+      opacity="0.9"/>
+
+
+    <!-- Balanced comparison geometry -->
+
+    <path
+      d="M-65 -35
+         C-20 -55
+          20 -55
+          65 -35"
+      fill="none"
+      stroke="#79E2F2"
+      stroke-width="1.5"
+      opacity="0.45"/>
+
+    <path
+      d="M-65 35
+         C-20 55
+          20 55
+          65 35"
+      fill="none"
+      stroke="#9BA2FA"
+      stroke-width="1.5"
+      opacity="0.35"/>
+
+
+    <!-- Central Compass Alignment Core -->
+
+    <circle
+      r="32"
+      fill="#0D1C31"
+      fill-opacity="0.45"
+      stroke="#F2F6FB"
+      stroke-width="1.5"
+      stroke-opacity="0.35"/>
+
+
+    <!-- Compass comparison symbol -->
+
+    <path
+      d="M0 -20
+         L9 0
+         L0 8
+         L-9 0
+         Z"
+      fill="url(#cyanGradient)"/>
+
+    <path
+      d="M0 20
+         L9 0
+         L0 -8
+         L-9 0
+         Z"
+      fill="url(#indigoGradient)"
+      opacity="0.85"/>
+
+    <circle
+      r="7"
+      fill="#F2F6FB"
+      opacity="0.9"/>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- OUTPUT DATA FLOW -->
+  <!-- ========================================================= -->
+
+  <g
+    id="comparisonOutputFlow"
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round">
+
+    <path
+      d="M745 425
+         C775 405 790 340 820 340"
+      stroke="#34D399"
+      stroke-width="2.5"
+      opacity="0.65"/>
+
+    <path
+      d="M745 450
+         C775 450 790 450 820 450"
+      stroke="#79E2F2"
+      stroke-width="3"
+      opacity="0.75"/>
+
+    <path
+      d="M745 475
+         C775 495 790 560 820 560"
+      stroke="#C0A3FB"
+      stroke-width="2.5"
+      opacity="0.65"/>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- RIGHT SECTION : STRUCTURED COMPARISON MATRIX -->
+  <!-- ========================================================= -->
+
+  <g
+    id="comparisonResultMatrix"
+    transform="translate(800,250)">
+
+
+    <!-- Matrix Surface -->
+
+    <rect
+      width="340"
+      height="410"
+      rx="20"
+      fill="url(#glassSurface)"
+      stroke="#F2F6FB"
+      stroke-width="1.5"
+      stroke-opacity="0.16"/>
+
+
+    <!-- Column Dividers -->
+
+    <g
+      stroke="#F2F6FB"
+      stroke-width="1"
+      stroke-opacity="0.10">
+
+      <path d="M85 0 V410"/>
+      <path d="M170 0 V410"/>
+      <path d="M255 0 V410"/>
+
+    </g>
+
+
+    <!-- Row Dividers -->
+
+    <g
+      stroke="#F2F6FB"
+      stroke-width="1"
+      stroke-opacity="0.10">
+
+      <path d="M0 75 H340"/>
+      <path d="M0 142 H340"/>
+      <path d="M0 209 H340"/>
+      <path d="M0 276 H340"/>
+      <path d="M0 343 H340"/>
+
+    </g>
+
+
+    <!-- ======================================================= -->
+    <!-- COLUMN IDENTITIES -->
+    <!-- ======================================================= -->
+
+    <!-- Career A -->
+
+    <circle
+      cx="127"
+      cy="37"
+      r="18"
+      fill="#10A875"
+      fill-opacity="0.12"/>
+
+    <path
+      d="M118 37
+         L124 43
+         L137 30"
+      fill="none"
+      stroke="#34D399"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"/>
+
+
+    <!-- Career B -->
+
+    <circle
+      cx="212"
+      cy="37"
+      r="18"
+      fill="#5E68E5"
+      fill-opacity="0.12"/>
+
+    <circle
+      cx="212"
+      cy="37"
+      r="7"
+      fill="none"
+      stroke="#9BA2FA"
+      stroke-width="2"/>
+
+
+    <!-- Career C -->
+
+    <circle
+      cx="297"
+      cy="37"
+      r="18"
+      fill="#9564DF"
+      fill-opacity="0.12"/>
+
+    <path
+      d="M290 42
+         L304 30"
+      fill="none"
+      stroke="#C0A3FB"
+      stroke-width="2.5"
+      stroke-linecap="round"/>
+
+
+    <!-- ======================================================= -->
+    <!-- ROW 1 : QUALIFICATION -->
+    <!-- ======================================================= -->
+
+    <g transform="translate(0,75)">
+
+      <!-- Attribute icon -->
+
+      <path
+        d="M18 34
+           L30 22
+           L42 34
+           L30 46
+           Z"
+        fill="none"
+        stroke="#79E2F2"
+        stroke-width="2"/>
+
+
+      <!-- Career A -->
+
+      <rect
+        x="98"
+        y="28"
+        width="58"
+        height="10"
+        rx="5"
+        fill="#F2F6FB"
+        opacity="0.28"/>
+
+
+      <!-- Career B -->
+
+      <rect
+        x="183"
+        y="28"
+        width="58"
+        height="10"
+        rx="5"
+        fill="#9BA2FA"
+        opacity="0.75"/>
+
+
+      <!-- Career C -->
+
+      <rect
+        x="268"
+        y="28"
+        width="45"
+        height="10"
+        rx="5"
+        fill="#F2F6FB"
+        opacity="0.22"/>
+
+    </g>
+
+
+    <!-- ======================================================= -->
+    <!-- ROW 2 : PAY / BENEFITS -->
+    <!-- ======================================================= -->
+
+    <g transform="translate(0,142)">
+
+      <g
+        transform="translate(20,23)"
+        fill="none"
+        stroke="#34D399"
+        stroke-width="2"
+        stroke-linecap="round">
+
+        <path d="M0 10 H20"/>
+        <path d="M10 0 V20"/>
+        <rect
+          x="5"
+          y="5"
+          width="10"
+          height="10"
+          rx="2"/>
+
+      </g>
+
+
+      <rect
+        x="98"
+        y="28"
+        width="60"
+        height="10"
+        rx="5"
+        fill="url(#emeraldGradient)"/>
+
+      <rect
+        x="183"
+        y="28"
+        width="48"
+        height="10"
+        rx="5"
+        fill="#F2F6FB"
+        opacity="0.22"/>
+
+      <rect
+        x="268"
+        y="28"
+        width="42"
+        height="10"
+        rx="5"
+        fill="#F2F6FB"
+        opacity="0.18"/>
+
+    </g>
+
+
+    <!-- ======================================================= -->
+    <!-- ROW 3 : CAREER GROWTH -->
+    <!-- ======================================================= -->
+
+    <g transform="translate(0,209)">
+
+      <path
+        d="M18 42
+           L42 18
+           M42 18
+           V34
+           M42 18
+           H26"
+        fill="none"
+        stroke="#9BA2FA"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+
+      <rect
+        x="98"
+        y="28"
+        width="45"
+        height="10"
+        rx="5"
+        fill="#F2F6FB"
+        opacity="0.22"/>
+
+      <rect
+        x="183"
+        y="28"
+        width="60"
+        height="10"
+        rx="5"
+        fill="url(#indigoGradient)"/>
+
+      <rect
+        x="268"
+        y="28"
+        width="50"
+        height="10"
+        rx="5"
+        fill="#F2F6FB"
+        opacity="0.20"/>
+
+    </g>
+
+
+    <!-- ======================================================= -->
+    <!-- ROW 4 : LOCATION / POSTING -->
+    <!-- ======================================================= -->
+
+    <g transform="translate(0,276)">
+
+      <path
+        d="M30 18
+           A9 9 0 0 0 21 27
+           C21 34 30 42 30 42
+           C30 42 39 34 39 27
+           A9 9 0 0 0 30 18 Z"
+        fill="none"
+        stroke="#C0A3FB"
+        stroke-width="2"/>
+
+      <circle
+        cx="30"
+        cy="27"
+        r="3"
+        fill="#C0A3FB"/>
+
+
+      <rect
+        x="98"
+        y="28"
+        width="48"
+        height="10"
+        rx="5"
+        fill="#F2F6FB"
+        opacity="0.22"/>
+
+      <rect
+        x="183"
+        y="28"
+        width="44"
+        height="10"
+        rx="5"
+        fill="#F2F6FB"
+        opacity="0.18"/>
+
+      <rect
+        x="268"
+        y="28"
+        width="58"
+        height="10"
+        rx="5"
+        fill="url(#amberGradient)"/>
+
+    </g>
+
+
+    <!-- ======================================================= -->
+    <!-- ROW 5 : SELECTION PROCESS -->
+    <!-- ======================================================= -->
+
+    <g transform="translate(0,343)">
+
+      <path
+        d="M18 34 H38"
+        fill="none"
+        stroke="#79E2F2"
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+
+      <circle
+        cx="38"
+        cy="34"
+        r="4"
+        fill="#79E2F2"/>
+
+
+      <!-- Comparison indicators -->
+
+      <circle
+        cx="127"
+        cy="34"
+        r="6"
+        fill="#9BA2FA"/>
+
+      <circle
+        cx="212"
+        cy="34"
+        r="6"
+        fill="#34D399"/>
+
+      <circle
+        cx="297"
+        cy="34"
+        r="6"
+        fill="#C0A3FB"/>
+
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- FINAL DECISION CONVERGENCE -->
+  <!-- ========================================================= -->
+
+  <g
+    id="decisionInsight"
+    transform="translate(600,770)"
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    opacity="0.75">
+
+
+    <path
+      d="M-110 0
+         C-65 0
+          -45 32
+          0 38"
+      stroke="#79E2F2"
+      stroke-width="2"/>
+
+    <path
+      d="M110 0
+         C65 0
+          45 32
+          0 38"
+      stroke="#9BA2FA"
+      stroke-width="2"/>
+
+
+    <!-- Decision point -->
+
+    <circle
+      cx="0"
+      cy="38"
+      r="15"
+      fill="#0D1C31"
+      fill-opacity="0.45"
+      stroke="#F2F6FB"
+      stroke-width="1.5"
+      stroke-opacity="0.35"/>
+
+
+    <path
+      d="M-5 38
+         H5
+         M0 33
+         V43"
+      stroke="#F2F6FB"
+      stroke-width="2.5"/>
+
+  </g>
+
+</svg>

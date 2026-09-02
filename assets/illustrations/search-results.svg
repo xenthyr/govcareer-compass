@@ -1,0 +1,1224 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 1200 900"
+  preserveAspectRatio="xMidYMid meet"
+  role="img"
+  aria-labelledby="searchResultsTitle searchResultsDesc"
+>
+  <title id="searchResultsTitle">
+    GovCareer Compass Intelligent Search Results
+  </title>
+
+  <desc id="searchResultsDesc">
+    A premium conceptual vector illustration showing an intelligent government
+    career search process. A candidate search query enters from the left,
+    flows through a central Compass AI analysis engine with structured filtering
+    nodes, and emerges on the right as prioritized and ranked government career
+    search results.
+  </desc>
+
+  <defs>
+
+    <!-- ========================================================= -->
+    <!-- CORE SURFACE GRADIENTS                                    -->
+    <!-- ========================================================= -->
+
+    <linearGradient
+      id="glassSurface"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#F2F6FB"
+        stop-opacity="0.11"
+      />
+      <stop
+        offset="100%"
+        stop-color="#F2F6FB"
+        stop-opacity="0.035"
+      />
+    </linearGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- BRAND GRADIENTS                                           -->
+    <!-- ========================================================= -->
+
+    <linearGradient
+      id="cyanGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop offset="0%" stop-color="#79E2F2"/>
+      <stop offset="100%" stop-color="#12B7D3"/>
+    </linearGradient>
+
+
+    <linearGradient
+      id="indigoGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop offset="0%" stop-color="#9BA2FA"/>
+      <stop offset="100%" stop-color="#5E68E5"/>
+    </linearGradient>
+
+
+    <linearGradient
+      id="violetGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop offset="0%" stop-color="#C0A3FB"/>
+      <stop offset="100%" stop-color="#9564DF"/>
+    </linearGradient>
+
+
+    <linearGradient
+      id="emeraldGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#10A875"/>
+    </linearGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- AMBIENT GLOW                                              -->
+    <!-- ========================================================= -->
+
+    <radialGradient
+      id="centralAmbientGlow"
+      cx="50%"
+      cy="50%"
+      r="50%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#12B7D3"
+        stop-opacity="0.14"
+      />
+      <stop
+        offset="45%"
+        stop-color="#12B7D3"
+        stop-opacity="0.06"
+      />
+      <stop
+        offset="100%"
+        stop-color="#12B7D3"
+        stop-opacity="0"
+      />
+    </radialGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- GLOW FILTERS                                              -->
+    <!-- ========================================================= -->
+
+    <filter
+      id="cyanGlow"
+      x="-60%"
+      y="-60%"
+      width="220%"
+      height="220%"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="6"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#12B7D3"
+        flood-opacity="0.45"
+        result="color"
+      />
+
+      <feComposite
+        in="color"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+
+    <filter
+      id="emeraldGlow"
+      x="-70%"
+      y="-70%"
+      width="240%"
+      height="240%"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="7"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#10A875"
+        flood-opacity="0.38"
+        result="color"
+      />
+
+      <feComposite
+        in="color"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+
+    <filter
+      id="softShadow"
+      x="-30%"
+      y="-30%"
+      width="160%"
+      height="160%"
+    >
+      <feDropShadow
+        dx="0"
+        dy="8"
+        stdDeviation="10"
+        flood-color="#000000"
+        flood-opacity="0.25"
+      />
+    </filter>
+
+
+    <!-- ========================================================= -->
+    <!-- REUSABLE RESULT TEXT BARS                                 -->
+    <!-- ========================================================= -->
+
+    <g id="resultBars">
+      <rect
+        x="0"
+        y="0"
+        width="128"
+        height="9"
+        rx="4.5"
+      />
+
+      <rect
+        x="0"
+        y="21"
+        width="92"
+        height="7"
+        rx="3.5"
+        opacity="0.65"
+      />
+
+      <rect
+        x="0"
+        y="39"
+        width="110"
+        height="6"
+        rx="3"
+        opacity="0.42"
+      />
+    </g>
+
+  </defs>
+
+
+  <!-- =========================================================== -->
+  <!-- TRANSPARENT BACKGROUND                                     -->
+  <!-- =========================================================== -->
+
+  <!--
+    Intentionally no full-page background rectangle.
+
+    This illustration remains transparent and can be placed directly
+    on the GovCareer Compass dark interface or other compatible surfaces.
+  -->
+
+
+  <!-- =========================================================== -->
+  <!-- CENTRAL AMBIENT GLOW                                       -->
+  <!-- =========================================================== -->
+
+  <circle
+    cx="600"
+    cy="450"
+    r="400"
+    fill="url(#centralAmbientGlow)"
+  />
+
+
+  <!-- =========================================================== -->
+  <!-- SUBTLE ANALYTICAL BACKGROUND GEOMETRY                      -->
+  <!-- =========================================================== -->
+
+  <g
+    fill="none"
+    stroke="#F2F6FB"
+    stroke-width="1"
+    opacity="0.035"
+  >
+    <circle
+      cx="600"
+      cy="450"
+      r="250"
+    />
+
+    <circle
+      cx="600"
+      cy="450"
+      r="350"
+    />
+
+    <path
+      d="M600 40 V860"
+    />
+
+    <path
+      d="M40 450 H1160"
+    />
+
+    <path
+      d="M150 50 L1050 850"
+    />
+
+    <path
+      d="M1050 50 L150 850"
+    />
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- LEFT ZONE — SEARCH QUERY                                   -->
+  <!-- =========================================================== -->
+
+  <g
+    id="searchQuery"
+    transform="translate(70 370)"
+    filter="url(#softShadow)"
+  >
+
+    <!-- Search Panel -->
+
+    <rect
+      width="300"
+      height="160"
+      rx="22"
+      fill="url(#glassSurface)"
+      stroke="#79E2F2"
+      stroke-width="1.5"
+      stroke-opacity="0.42"
+    />
+
+
+    <!-- Search Icon -->
+
+    <g
+      transform="translate(30 52)"
+      fill="none"
+      stroke="#79E2F2"
+      stroke-width="3"
+      stroke-linecap="round"
+    >
+      <circle
+        cx="22"
+        cy="22"
+        r="19"
+      />
+
+      <line
+        x1="36"
+        y1="36"
+        x2="55"
+        y2="55"
+      />
+    </g>
+
+
+    <!-- Search Query Data -->
+
+    <g
+      transform="translate(110 47)"
+      fill="#79E2F2"
+    >
+      <rect
+        width="155"
+        height="11"
+        rx="5.5"
+      />
+
+      <rect
+        y="28"
+        width="115"
+        height="8"
+        rx="4"
+        opacity="0.72"
+      />
+
+      <rect
+        y="49"
+        width="135"
+        height="6"
+        rx="3"
+        opacity="0.48"
+      />
+    </g>
+
+
+    <!-- Query Signal Particles -->
+
+    <g
+      fill="#79E2F2"
+      filter="url(#cyanGlow)"
+    >
+      <circle
+        cx="265"
+        cy="25"
+        r="3"
+      />
+
+      <circle
+        cx="280"
+        cy="42"
+        r="2.5"
+        opacity="0.7"
+      />
+
+      <circle
+        cx="270"
+        cy="58"
+        r="2"
+        opacity="0.45"
+      />
+    </g>
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- DATA FLOW — SEARCH TO COMPASS AI                           -->
+  <!-- =========================================================== -->
+
+  <g
+    id="searchInputFlow"
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+
+    <!-- Main Query Stream -->
+
+    <path
+      d="
+        M370 450
+        C430 450 465 450 505 450
+        C525 450 540 450 555 450
+      "
+      stroke="url(#cyanGradient)"
+      stroke-width="3.5"
+      opacity="0.9"
+    />
+
+
+    <!-- Upper Analytical Stream -->
+
+    <path
+      d="
+        M370 450
+        C430 450 460 415 525 415
+      "
+      stroke="url(#cyanGradient)"
+      stroke-width="2"
+      opacity="0.52"
+      stroke-dasharray="7 9"
+    />
+
+
+    <!-- Lower Analytical Stream -->
+
+    <path
+      d="
+        M370 450
+        C430 450 460 485 525 485
+      "
+      stroke="url(#cyanGradient)"
+      stroke-width="2"
+      opacity="0.52"
+      stroke-dasharray="7 9"
+    />
+
+
+    <!-- Moving Data Nodes -->
+
+    <circle
+      cx="420"
+      cy="450"
+      r="4"
+      fill="#79E2F2"
+      filter="url(#cyanGlow)"
+    />
+
+    <circle
+      cx="485"
+      cy="430"
+      r="3"
+      fill="#79E2F2"
+      opacity="0.75"
+    />
+
+    <circle
+      cx="485"
+      cy="470"
+      r="3"
+      fill="#79E2F2"
+      opacity="0.75"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- CENTER — COMPASS AI SEARCH ANALYSIS ENGINE                 -->
+  <!-- =========================================================== -->
+
+  <g
+    id="compassAiSearchEngine"
+    transform="translate(600 450)"
+  >
+
+    <!-- Outer Analytical Orbit -->
+
+    <circle
+      r="150"
+      fill="none"
+      stroke="#5E68E5"
+      stroke-width="1.5"
+      stroke-dasharray="10 10"
+      stroke-opacity="0.18"
+    />
+
+
+    <!-- Main Glass Engine -->
+
+    <circle
+      r="125"
+      fill="url(#glassSurface)"
+      stroke="url(#cyanGradient)"
+      stroke-width="3"
+      filter="url(#cyanGlow)"
+    />
+
+
+    <!-- Inner Analytical Ring -->
+
+    <circle
+      r="92"
+      fill="none"
+      stroke="#79E2F2"
+      stroke-width="1"
+      stroke-dasharray="7 9"
+      stroke-opacity="0.28"
+    />
+
+
+    <!-- Cardinal Compass Markers -->
+
+    <g
+      stroke="#79E2F2"
+      stroke-width="3"
+      stroke-linecap="round"
+    >
+      <line
+        x1="0"
+        y1="-125"
+        x2="0"
+        y2="-108"
+      />
+
+      <line
+        x1="0"
+        y1="125"
+        x2="0"
+        y2="108"
+      />
+
+      <line
+        x1="-125"
+        y1="0"
+        x2="-108"
+        y2="0"
+      />
+
+      <line
+        x1="125"
+        y1="0"
+        x2="108"
+        y2="0"
+      />
+    </g>
+
+
+    <!-- Compass Needle -->
+
+    <g
+      transform="rotate(-40)"
+    >
+      <path
+        d="
+          M0 -95
+          L14 0
+          L0 18
+          L-14 0
+          Z
+        "
+        fill="url(#cyanGradient)"
+        stroke="#F2F6FB"
+        stroke-width="1"
+      />
+
+      <path
+        d="
+          M0 -95
+          L14 0
+          L0 4
+          L-14 0
+          Z
+        "
+        fill="#F2F6FB"
+        opacity="0.48"
+      />
+
+      <path
+        d="
+          M0 18
+          L14 0
+          L0 5
+          L-14 0
+          Z
+        "
+        fill="url(#indigoGradient)"
+        opacity="0.82"
+      />
+    </g>
+
+
+    <!-- Central AI Core -->
+
+    <circle
+      r="33"
+      fill="#0D2840"
+      stroke="url(#indigoGradient)"
+      stroke-width="2"
+    />
+
+    <circle
+      r="13"
+      fill="#9564DF"
+      filter="url(#cyanGlow)"
+    />
+
+    <circle
+      cx="-3"
+      cy="-4"
+      r="4"
+      fill="#C0A3FB"
+      opacity="0.45"
+    />
+
+
+    <!-- Internal Data Nodes -->
+
+    <g
+      fill="#35CEE6"
+      opacity="0.72"
+    >
+      <circle
+        cx="-55"
+        cy="-45"
+        r="4"
+      />
+
+      <circle
+        cx="55"
+        cy="-40"
+        r="4"
+      />
+
+      <circle
+        cx="-50"
+        cy="52"
+        r="3.5"
+      />
+
+      <circle
+        cx="58"
+        cy="48"
+        r="3.5"
+      />
+    </g>
+
+
+    <!-- Internal Analysis Connections -->
+
+    <g
+      fill="none"
+      stroke="#35CEE6"
+      stroke-width="1.2"
+      stroke-opacity="0.28"
+    >
+      <path d="M-55 -45 L0 0 L55 -40"/>
+      <path d="M-50 52 L0 0 L58 48"/>
+    </g>
+
+
+    <!-- ========================================================= -->
+    <!-- SEARCH FILTER NODES                                       -->
+    <!-- ========================================================= -->
+
+
+    <!-- Qualification -->
+
+    <g
+      transform="translate(-178 -72)"
+    >
+      <rect
+        width="42"
+        height="42"
+        rx="9"
+        fill="#0D1C31"
+        fill-opacity="0.78"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+      />
+
+      <path
+        d="
+          M12 18
+          L21 12
+          L30 18
+          L21 24
+          Z
+
+          M21 24
+          V32
+        "
+        fill="none"
+        stroke="#79E2F2"
+        stroke-width="2"
+        stroke-linejoin="round"
+      />
+    </g>
+
+
+    <!-- Location -->
+
+    <g
+      transform="translate(-178 30)"
+    >
+      <rect
+        width="42"
+        height="42"
+        rx="9"
+        fill="#0D1C31"
+        fill-opacity="0.78"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+      />
+
+      <path
+        d="
+          M21 11
+          A8 8 0 0 0 13 19
+          C13 25 21 32 21 32
+          C21 32 29 25 29 19
+          A8 8 0 0 0 21 11
+          Z
+        "
+        fill="none"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+      />
+
+      <circle
+        cx="21"
+        cy="19"
+        r="2.8"
+        fill="none"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+      />
+    </g>
+
+
+    <!-- Career Category -->
+
+    <g
+      transform="translate(136 -72)"
+    >
+      <rect
+        width="42"
+        height="42"
+        rx="9"
+        fill="#0D1C31"
+        fill-opacity="0.78"
+        stroke="#9BA2FA"
+        stroke-width="1.5"
+      />
+
+      <path
+        d="
+          M13 30
+          V22
+          H29
+          V30
+
+          M11 32
+          H31
+
+          M21 12
+          V20
+        "
+        fill="none"
+        stroke="#9BA2FA"
+        stroke-width="1.6"
+        stroke-linecap="round"
+      />
+    </g>
+
+
+    <!-- Department / Organization -->
+
+    <g
+      transform="translate(136 30)"
+    >
+      <rect
+        width="42"
+        height="42"
+        rx="9"
+        fill="#0D1C31"
+        fill-opacity="0.78"
+        stroke="#C0A3FB"
+        stroke-width="1.5"
+      />
+
+      <circle
+        cx="21"
+        cy="17"
+        r="6"
+        fill="none"
+        stroke="#C0A3FB"
+        stroke-width="1.5"
+      />
+
+      <path
+        d="
+          M12 31
+          Q21 24 30 31
+        "
+        fill="none"
+        stroke="#C0A3FB"
+        stroke-width="1.5"
+        stroke-linecap="round"
+      />
+    </g>
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- DATA FLOW — AI TO RANKED RESULTS                           -->
+  <!-- =========================================================== -->
+
+  <g
+    id="resultOutputFlow"
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+
+    <!-- Best Match -->
+
+    <path
+      d="
+        M725 420
+        C770 410 785 300 830 300
+      "
+      stroke="url(#emeraldGradient)"
+      stroke-width="4"
+      filter="url(#emeraldGlow)"
+    />
+
+
+    <!-- Strong Match -->
+
+    <path
+      d="
+        M730 450
+        C770 450 790 450 830 450
+      "
+      stroke="url(#indigoGradient)"
+      stroke-width="3"
+      opacity="0.88"
+    />
+
+
+    <!-- Related Match -->
+
+    <path
+      d="
+        M725 480
+        C770 490 785 600 830 600
+      "
+      stroke="url(#violetGradient)"
+      stroke-width="2.5"
+      stroke-dasharray="7 8"
+      opacity="0.78"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- RIGHT ZONE — RANKED SEARCH RESULTS                         -->
+  <!-- =========================================================== -->
+
+  <g
+    id="rankedSearchResults"
+    transform="translate(830 235)"
+  >
+
+    <!-- ========================================================= -->
+    <!-- RESULT 1 — BEST MATCH                                     -->
+    <!-- ========================================================= -->
+
+    <g
+      id="topSearchResult"
+    >
+
+      <rect
+        width="310"
+        height="125"
+        rx="18"
+        fill="url(#glassSurface)"
+        stroke="#10A875"
+        stroke-width="2"
+        stroke-opacity="0.65"
+        filter="url(#emeraldGlow)"
+      />
+
+
+      <g
+        transform="translate(20 30)"
+      >
+
+        <!-- Career Icon -->
+
+        <rect
+          width="58"
+          height="58"
+          rx="12"
+          fill="#0D1C31"
+          stroke="#34D399"
+          stroke-width="2"
+        />
+
+        <path
+          d="
+            M17 29
+            V20
+            L29 12
+            L41 20
+            V29
+            Z
+          "
+          fill="none"
+          stroke="#34D399"
+          stroke-width="2.2"
+          stroke-linejoin="round"
+        />
+
+        <circle
+          cx="29"
+          cy="42"
+          r="5"
+          fill="none"
+          stroke="#34D399"
+          stroke-width="2"
+        />
+
+
+        <!-- Result Data -->
+
+        <use
+          href="#resultBars"
+          x="82"
+          y="6"
+          fill="#34D399"
+        />
+
+
+        <!-- Best Match Indicator -->
+
+        <circle
+          cx="260"
+          cy="29"
+          r="21"
+          fill="#0D1C31"
+          stroke="#10A875"
+          stroke-width="2"
+        />
+
+        <path
+          d="
+            M250 29
+            L256 35
+            L271 21
+          "
+          fill="none"
+          stroke="#34D399"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+
+      </g>
+
+    </g>
+
+
+    <!-- ========================================================= -->
+    <!-- RESULT 2 — STRONG MATCH                                   -->
+    <!-- ========================================================= -->
+
+    <g
+      id="strongSearchResult"
+      transform="translate(0 155)"
+    >
+
+      <rect
+        width="310"
+        height="125"
+        rx="18"
+        fill="url(#glassSurface)"
+        stroke="#5E68E5"
+        stroke-width="1.6"
+        stroke-opacity="0.58"
+      />
+
+
+      <g
+        transform="translate(20 30)"
+      >
+
+        <!-- Career Icon -->
+
+        <rect
+          width="58"
+          height="58"
+          rx="12"
+          fill="#0D1C31"
+          stroke="#9BA2FA"
+          stroke-width="1.8"
+        />
+
+        <path
+          d="
+            M18 24
+            H40
+
+            M18 34
+            H40
+
+            M24 44
+            H34
+          "
+          fill="none"
+          stroke="#9BA2FA"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+
+
+        <!-- Result Data -->
+
+        <use
+          href="#resultBars"
+          x="82"
+          y="6"
+          fill="#9BA2FA"
+        />
+
+
+        <!-- Relevance Indicator -->
+
+        <g
+          transform="translate(248 24)"
+        >
+          <circle
+            cx="0"
+            cy="0"
+            r="5"
+            fill="#5E68E5"
+          />
+
+          <circle
+            cx="15"
+            cy="0"
+            r="5"
+            fill="#5E68E5"
+          />
+
+          <circle
+            cx="30"
+            cy="0"
+            r="5"
+            fill="#5E68E5"
+          />
+
+          <circle
+            cx="45"
+            cy="0"
+            r="5"
+            fill="#F2F6FB"
+            opacity="0.18"
+          />
+        </g>
+
+      </g>
+
+    </g>
+
+
+    <!-- ========================================================= -->
+    <!-- RESULT 3 — RELATED / EXPLORE                              -->
+    <!-- ========================================================= -->
+
+    <g
+      id="relatedSearchResult"
+      transform="translate(0 310)"
+    >
+
+      <rect
+        width="310"
+        height="125"
+        rx="18"
+        fill="url(#glassSurface)"
+        stroke="#9564DF"
+        stroke-width="1.5"
+        stroke-opacity="0.52"
+      />
+
+
+      <g
+        transform="translate(20 30)"
+      >
+
+        <!-- Explore Icon -->
+
+        <rect
+          width="58"
+          height="58"
+          rx="12"
+          fill="#0D1C31"
+          stroke="#C0A3FB"
+          stroke-width="1.6"
+        />
+
+        <circle
+          cx="29"
+          cy="29"
+          r="18"
+          fill="none"
+          stroke="#C0A3FB"
+          stroke-width="1.5"
+        />
+
+        <path
+          d="
+            M29 15
+            L34 28
+            L29 33
+            L24 28
+            Z
+          "
+          fill="#9564DF"
+        />
+
+
+        <!-- Result Data -->
+
+        <use
+          href="#resultBars"
+          x="82"
+          y="6"
+          fill="#C0A3FB"
+        />
+
+
+        <!-- Related Indicator -->
+
+        <rect
+          x="240"
+          y="24"
+          width="50"
+          height="7"
+          rx="3.5"
+          fill="#0D1C31"
+          stroke="#C0A3FB"
+          stroke-width="1"
+        />
+
+        <rect
+          x="240"
+          y="24"
+          width="32"
+          height="7"
+          rx="3.5"
+          fill="#C0A3FB"
+          opacity="0.8"
+        />
+
+      </g>
+
+    </g>
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- SMALL FLOATING DATA PARTICLES                              -->
+  <!-- =========================================================== -->
+
+  <g
+    fill="#79E2F2"
+    opacity="0.42"
+  >
+    <circle cx="455" cy="320" r="2.5"/>
+    <circle cx="500" cy="285" r="2"/>
+    <circle cx="730" cy="330" r="2.5"/>
+    <circle cx="765" cy="370" r="2"/>
+    <circle cx="755" cy="555" r="2"/>
+  </g>
+
+</svg>

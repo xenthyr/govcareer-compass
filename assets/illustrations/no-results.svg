@@ -1,0 +1,1250 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 1200 900"
+  preserveAspectRatio="xMidYMid meet"
+  role="img"
+  aria-labelledby="noResultsTitle noResultsDesc"
+>
+  <title id="noResultsTitle">
+    GovCareer Compass — No Results Found
+  </title>
+
+  <desc id="noResultsDesc">
+    A premium GovCareer Compass vector illustration showing a government career
+    search query entering the Compass AI intelligence engine. The system finds
+    no exact match and intelligently guides the user toward refining, broadening,
+    and exploring related career opportunities.
+  </desc>
+
+  <defs>
+
+    <!-- ========================================================= -->
+    <!-- BRAND GRADIENTS                                           -->
+    <!-- ========================================================= -->
+
+    <linearGradient
+      id="nrGlassGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#F2F6FB"
+        stop-opacity="0.14"
+      />
+      <stop
+        offset="55%"
+        stop-color="#DCEAF4"
+        stop-opacity="0.06"
+      />
+      <stop
+        offset="100%"
+        stop-color="#F2F6FB"
+        stop-opacity="0.025"
+      />
+    </linearGradient>
+
+    <linearGradient
+      id="nrCyanGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="0%"
+    >
+      <stop offset="0%" stop-color="#79E2F2"/>
+      <stop offset="52%" stop-color="#35CEE6"/>
+      <stop offset="100%" stop-color="#12B7D3"/>
+    </linearGradient>
+
+    <linearGradient
+      id="nrIndigoGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop offset="0%" stop-color="#B1B8FF"/>
+      <stop offset="48%" stop-color="#7C85EF"/>
+      <stop offset="100%" stop-color="#5E68E5"/>
+    </linearGradient>
+
+    <linearGradient
+      id="nrVioletGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop offset="0%" stop-color="#D0B7FF"/>
+      <stop offset="45%" stop-color="#A873F0"/>
+      <stop offset="100%" stop-color="#7A48C2"/>
+    </linearGradient>
+
+    <linearGradient
+      id="nrEmeraldGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop offset="0%" stop-color="#5DE7B2"/>
+      <stop offset="50%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#10A875"/>
+    </linearGradient>
+
+    <radialGradient
+      id="nrEngineAmbientGradient"
+      cx="50%"
+      cy="50%"
+      r="65%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#35CEE6"
+        stop-opacity="0.16"
+      />
+      <stop
+        offset="45%"
+        stop-color="#5E68E5"
+        stop-opacity="0.08"
+      />
+      <stop
+        offset="100%"
+        stop-color="#0D1C31"
+        stop-opacity="0"
+      />
+    </radialGradient>
+
+    <radialGradient
+      id="nrCoreGradient"
+      cx="38%"
+      cy="32%"
+      r="72%"
+    >
+      <stop offset="0%" stop-color="#D4BFFF"/>
+      <stop offset="35%" stop-color="#B37AF5"/>
+      <stop offset="70%" stop-color="#9564DF"/>
+      <stop offset="100%" stop-color="#6136A8"/>
+    </radialGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- FILTERS                                                   -->
+    <!-- ========================================================= -->
+
+    <filter
+      id="nrCyanGlow"
+      x="-80%"
+      y="-80%"
+      width="260%"
+      height="260%"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="6"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#12B7D3"
+        flood-opacity="0.48"
+        result="color"
+      />
+
+      <feComposite
+        in="color"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+
+    <filter
+      id="nrVioletGlow"
+      x="-100%"
+      y="-100%"
+      width="300%"
+      height="300%"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="8"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#9564DF"
+        flood-opacity="0.65"
+        result="color"
+      />
+
+      <feComposite
+        in="color"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+
+    <filter
+      id="nrEmeraldGlow"
+      x="-80%"
+      y="-80%"
+      width="260%"
+      height="260%"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="6"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#10A875"
+        flood-opacity="0.42"
+        result="color"
+      />
+
+      <feComposite
+        in="color"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+
+    <filter
+      id="nrSoftShadow"
+      x="-30%"
+      y="-30%"
+      width="160%"
+      height="180%"
+    >
+      <feDropShadow
+        dx="0"
+        dy="10"
+        stdDeviation="12"
+        flood-color="#000000"
+        flood-opacity="0.22"
+      />
+    </filter>
+
+  </defs>
+
+
+  <!-- =========================================================== -->
+  <!-- AMBIENT ANALYTICAL BACKGROUND                              -->
+  <!-- =========================================================== -->
+
+  <g
+    id="nrAmbientBackground"
+    fill="none"
+    pointer-events="none"
+  >
+
+    <circle
+      cx="600"
+      cy="450"
+      r="395"
+      stroke="#79E2F2"
+      stroke-width="1"
+      opacity="0.035"
+    />
+
+    <circle
+      cx="600"
+      cy="450"
+      r="515"
+      stroke="#5E68E5"
+      stroke-width="1"
+      opacity="0.025"
+    />
+
+    <path
+      d="M70 450 H1130"
+      stroke="#79E2F2"
+      stroke-width="1"
+      opacity="0.025"
+    />
+
+    <path
+      d="M600 70 V830"
+      stroke="#5E68E5"
+      stroke-width="1"
+      opacity="0.025"
+    />
+
+    <path
+      d="M130 120 L1070 780"
+      stroke="#79E2F2"
+      stroke-width="1"
+      opacity="0.018"
+    />
+
+    <path
+      d="M1070 120 L130 780"
+      stroke="#5E68E5"
+      stroke-width="1"
+      opacity="0.018"
+    />
+
+    <circle
+      cx="210"
+      cy="175"
+      r="4"
+      fill="#79E2F2"
+      opacity="0.12"
+    />
+
+    <circle
+      cx="1040"
+      cy="735"
+      r="4"
+      fill="#9564DF"
+      opacity="0.12"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- LEFT: SEARCH QUERY PANEL                                   -->
+  <!-- =========================================================== -->
+
+  <g
+    id="nrSearchQuery"
+    transform="translate(80 365)"
+    filter="url(#nrSoftShadow)"
+  >
+
+    <rect
+      x="0"
+      y="0"
+      width="300"
+      height="145"
+      rx="22"
+      fill="url(#nrGlassGradient)"
+      stroke="#79E2F2"
+      stroke-width="1.5"
+      stroke-opacity="0.38"
+    />
+
+
+    <!-- Search icon -->
+
+    <g
+      transform="translate(30 45)"
+      fill="none"
+      stroke="#79E2F2"
+      stroke-width="3"
+      stroke-linecap="round"
+    >
+
+      <circle
+        cx="22"
+        cy="22"
+        r="20"
+      />
+
+      <path
+        d="M37 37 L57 57"
+      />
+
+    </g>
+
+
+    <!-- Query abstraction -->
+
+    <g
+      transform="translate(110 45)"
+      fill="#79E2F2"
+    >
+
+      <rect
+        width="155"
+        height="11"
+        rx="5.5"
+      />
+
+      <rect
+        y="27"
+        width="120"
+        height="8"
+        rx="4"
+        opacity="0.62"
+      />
+
+      <rect
+        y="48"
+        width="88"
+        height="6"
+        rx="3"
+        opacity="0.40"
+      />
+
+    </g>
+
+
+    <!-- Query intelligence particles -->
+
+    <g
+      fill="#79E2F2"
+      filter="url(#nrCyanGlow)"
+    >
+
+      <circle
+        cx="270"
+        cy="28"
+        r="3.5"
+      />
+
+      <circle
+        cx="282"
+        cy="46"
+        r="2.5"
+        opacity="0.58"
+      />
+
+      <circle
+        cx="250"
+        cy="112"
+        r="2"
+        opacity="0.42"
+      />
+
+    </g>
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- QUERY FLOW INTO COMPASS AI                                 -->
+  <!-- =========================================================== -->
+
+  <g
+    id="nrQueryFlow"
+    fill="none"
+    stroke-linecap="round"
+  >
+
+    <path
+      d="M380 437
+         C435 437 465 425 510 425"
+      stroke="url(#nrCyanGradient)"
+      stroke-width="3.5"
+      filter="url(#nrCyanGlow)"
+    />
+
+    <path
+      d="M380 437
+         C440 437 468 458 515 468"
+      stroke="#5E68E5"
+      stroke-width="2"
+      opacity="0.46"
+    />
+
+    <path
+      d="M380 437
+         C435 437 465 405 510 400"
+      stroke="#79E2F2"
+      stroke-width="1.5"
+      opacity="0.28"
+    />
+
+    <circle
+      cx="430"
+      cy="434"
+      r="4"
+      fill="#79E2F2"
+    />
+
+    <circle
+      cx="474"
+      cy="426"
+      r="3"
+      fill="#35CEE6"
+      opacity="0.75"
+    />
+
+    <circle
+      cx="495"
+      cy="456"
+      r="2.5"
+      fill="#5E68E5"
+      opacity="0.55"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- CENTER: COMPASS AI ANALYSIS ENGINE                         -->
+  <!-- =========================================================== -->
+
+  <g
+    id="nrCompassAiEngine"
+    transform="translate(610 440)"
+  >
+
+    <!-- Ambient engine field -->
+
+    <circle
+      r="180"
+      fill="url(#nrEngineAmbientGradient)"
+      opacity="0.95"
+    />
+
+
+    <!-- Outer orbit -->
+
+    <circle
+      r="155"
+      fill="none"
+      stroke="#5E68E5"
+      stroke-width="1.5"
+      stroke-opacity="0.20"
+    />
+
+
+    <!-- Secondary analytical orbit -->
+
+    <circle
+      r="130"
+      fill="url(#nrGlassGradient)"
+      stroke="#79E2F2"
+      stroke-width="2"
+      stroke-opacity="0.42"
+      filter="url(#nrCyanGlow)"
+    />
+
+
+    <!-- Segmented compass ring -->
+
+    <g
+      fill="none"
+      stroke="#79E2F2"
+      stroke-width="8"
+      stroke-linecap="butt"
+      opacity="0.65"
+    >
+
+      <path
+        d="M-88 -92
+           A128 128 0 0 1 20 -128"
+      />
+
+      <path
+        d="M90 -90
+           A128 128 0 0 1 128 15"
+      />
+
+      <path
+        d="M88 92
+           A128 128 0 0 1 -20 128"
+      />
+
+      <path
+        d="M-90 90
+           A128 128 0 0 1 -128 -15"
+      />
+
+    </g>
+
+
+    <!-- Cardinal analytical ticks -->
+
+    <g
+      stroke="#79E2F2"
+      stroke-linecap="round"
+      opacity="0.75"
+    >
+
+      <path
+        d="M0 -148 V-128"
+        stroke-width="3"
+      />
+
+      <path
+        d="M148 0 H128"
+        stroke-width="3"
+      />
+
+      <path
+        d="M0 148 V128"
+        stroke-width="3"
+      />
+
+      <path
+        d="M-148 0 H-128"
+        stroke-width="3"
+      />
+
+    </g>
+
+
+    <!-- Inner intelligence network -->
+
+    <g
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+
+      <circle
+        r="82"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+        opacity="0.30"
+      />
+
+      <path
+        d="M-88 -45
+           C-45 -92 25 -92 72 -48
+           C110 -12 108 48 70 82"
+        stroke="#35CEE6"
+        stroke-width="2"
+        opacity="0.38"
+      />
+
+      <path
+        d="M-72 68
+           C-35 30 -48 -28 -18 -68
+           C5 -98 38 -88 64 -62"
+        stroke="#5E68E5"
+        stroke-width="2"
+        opacity="0.36"
+      />
+
+      <path
+        d="M-85 15
+           C-40 -20 38 -22 90 12"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+        opacity="0.30"
+      />
+
+      <path
+        d="M-60 -55 L-20 -20 L-55 20 L0 52 L55 18"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+        opacity="0.35"
+      />
+
+    </g>
+
+
+    <!-- Intelligence nodes -->
+
+    <g
+      fill="#79E2F2"
+      filter="url(#nrCyanGlow)"
+    >
+
+      <circle cx="-88" cy="-45" r="5"/>
+      <circle cx="-20" cy="-20" r="4"/>
+      <circle cx="-55" cy="20" r="4"/>
+      <circle cx="0" cy="52" r="4.5"/>
+      <circle cx="55" cy="18" r="4"/>
+      <circle cx="72" cy="-48" r="4"/>
+
+    </g>
+
+
+    <!-- Northeast directional intelligence needle -->
+
+    <g
+      transform="rotate(-45)"
+    >
+
+      <path
+        d="
+          M0 -105
+          L14 -5
+          L0 20
+          L-14 -5
+          Z
+        "
+        fill="url(#nrCyanGradient)"
+        stroke="#DDFBFD"
+        stroke-width="1"
+      />
+
+      <path
+        d="
+          M0 -105
+          L14 -5
+          L0 4
+          L-14 -5
+          Z
+        "
+        fill="#F2F6FB"
+        opacity="0.38"
+      />
+
+    </g>
+
+
+    <!-- Central Compass AI core -->
+
+    <circle
+      r="42"
+      fill="#0D2840"
+      stroke="#2F759D"
+      stroke-width="2.5"
+    />
+
+    <circle
+      r="29"
+      fill="none"
+      stroke="#73DCE5"
+      stroke-width="5"
+      stroke-dasharray="32 8 20 8"
+      stroke-linecap="butt"
+      opacity="0.78"
+    />
+
+    <circle
+      r="18"
+      fill="url(#nrCoreGradient)"
+      filter="url(#nrVioletGlow)"
+    />
+
+    <circle
+      cx="-5"
+      cy="-6"
+      r="6"
+      fill="#E5D5FF"
+      opacity="0.20"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- ANALYSIS OUTPUT: NO EXACT MATCH                            -->
+  <!-- =========================================================== -->
+
+  <g
+    id="nrNoMatchFlow"
+    fill="none"
+    stroke-linecap="round"
+  >
+
+    <!-- Upper fading path -->
+
+    <path
+      d="M748 410
+         C790 405 815 330 850 325"
+      stroke="url(#nrCyanGradient)"
+      stroke-width="3"
+      opacity="0.36"
+    />
+
+    <!-- Central interrupted path -->
+
+    <path
+      d="M748 440
+         C790 440 815 440 850 440"
+      stroke="#79E2F2"
+      stroke-width="2.5"
+      stroke-dasharray="8 8"
+      opacity="0.28"
+    />
+
+    <!-- Lower fading path -->
+
+    <path
+      d="M748 470
+         C790 475 815 550 850 555"
+      stroke="url(#nrIndigoGradient)"
+      stroke-width="2.5"
+      opacity="0.32"
+    />
+
+
+    <!-- Dissolving nodes -->
+
+    <circle
+      cx="790"
+      cy="440"
+      r="6"
+      stroke="#79E2F2"
+      stroke-width="2"
+      opacity="0.25"
+    />
+
+    <circle
+      cx="818"
+      cy="440"
+      r="5"
+      stroke="#79E2F2"
+      stroke-width="2"
+      opacity="0.17"
+    />
+
+    <circle
+      cx="842"
+      cy="440"
+      r="4"
+      stroke="#79E2F2"
+      stroke-width="2"
+      opacity="0.09"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- RIGHT: EMPTY RESULTS PANEL                                 -->
+  <!-- =========================================================== -->
+
+  <g
+    id="nrNoResultsPanel"
+    transform="translate(850 245)"
+    filter="url(#nrSoftShadow)"
+  >
+
+    <rect
+      width="285"
+      height="230"
+      rx="22"
+      fill="url(#nrGlassGradient)"
+      stroke="#79E2F2"
+      stroke-width="1.5"
+      stroke-opacity="0.32"
+    />
+
+
+    <!-- Empty result rows -->
+
+    <g
+      transform="translate(25 25)"
+    >
+
+      <g opacity="0.42">
+
+        <rect
+          x="0"
+          y="0"
+          width="150"
+          height="9"
+          rx="4.5"
+          fill="#F2F6FB"
+          opacity="0.18"
+        />
+
+        <rect
+          x="0"
+          y="20"
+          width="105"
+          height="6"
+          rx="3"
+          fill="#79E2F2"
+          opacity="0.12"
+        />
+
+      </g>
+
+
+      <g
+        transform="translate(0 55)"
+        opacity="0.30"
+      >
+
+        <rect
+          width="150"
+          height="9"
+          rx="4.5"
+          fill="#F2F6FB"
+          opacity="0.16"
+        />
+
+        <rect
+          y="20"
+          width="105"
+          height="6"
+          rx="3"
+          fill="#79E2F2"
+          opacity="0.10"
+        />
+
+      </g>
+
+
+      <g
+        transform="translate(0 110)"
+        opacity="0.18"
+      >
+
+        <rect
+          width="150"
+          height="9"
+          rx="4.5"
+          fill="#F2F6FB"
+          opacity="0.12"
+        />
+
+        <rect
+          y="20"
+          width="105"
+          height="6"
+          rx="3"
+          fill="#79E2F2"
+          opacity="0.08"
+        />
+
+      </g>
+
+    </g>
+
+
+    <!-- Empty analytical search symbol -->
+
+    <g
+      transform="translate(215 112)"
+      fill="none"
+      stroke-linecap="round"
+      opacity="0.62"
+    >
+
+      <circle
+        r="31"
+        stroke="#79E2F2"
+        stroke-width="2"
+      />
+
+      <circle
+        r="17"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+        stroke-dasharray="5 5"
+        opacity="0.65"
+      />
+
+      <path
+        d="M22 22 L39 39"
+        stroke="#79E2F2"
+        stroke-width="3"
+      />
+
+      <path
+        d="M-8 0 H8"
+        stroke="#5E68E5"
+        stroke-width="2.5"
+        opacity="0.75"
+      />
+
+    </g>
+
+
+    <!-- Neutral no-match indicator -->
+
+    <g
+      transform="translate(142 190)"
+      opacity="0.45"
+    >
+
+      <circle
+        r="7"
+        fill="none"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+      />
+
+      <path
+        d="M-3 0 H3"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+        stroke-linecap="round"
+      />
+
+    </g>
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- GUIDANCE FLOW                                               -->
+  <!-- =========================================================== -->
+
+  <g
+    id="nrGuidanceFlow"
+    fill="none"
+    stroke-linecap="round"
+  >
+
+    <path
+      d="M990 475
+         V520
+         C990 540 950 550 925 560"
+      stroke="#79E2F2"
+      stroke-width="1.8"
+      opacity="0.34"
+    />
+
+    <path
+      d="M990 475
+         V535
+         C990 550 990 555 990 565"
+      stroke="#5E68E5"
+      stroke-width="1.8"
+      opacity="0.30"
+    />
+
+    <path
+      d="M990 475
+         V520
+         C990 540 1030 550 1055 560"
+      stroke="#34D399"
+      stroke-width="1.8"
+      opacity="0.34"
+    />
+
+    <circle
+      cx="990"
+      cy="535"
+      r="3"
+      fill="#79E2F2"
+      opacity="0.70"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- INTELLIGENT SUGGESTIONS                                    -->
+  <!-- =========================================================== -->
+
+  <g
+    id="nrSuggestions"
+    transform="translate(780 565)"
+  >
+
+    <!-- --------------------------------------------------------- -->
+    <!-- Refine Search                                             -->
+    <!-- --------------------------------------------------------- -->
+
+    <g
+      id="nrRefineSuggestion"
+      filter="url(#nrSoftShadow)"
+    >
+
+      <rect
+        width="105"
+        height="105"
+        rx="18"
+        fill="url(#nrGlassGradient)"
+        stroke="#79E2F2"
+        stroke-width="1.2"
+        stroke-opacity="0.38"
+      />
+
+      <g
+        transform="translate(22 27)"
+        stroke="#79E2F2"
+        stroke-width="2"
+        stroke-linecap="round"
+      >
+
+        <path d="M0 10 H60"/>
+        <path d="M0 30 H60"/>
+        <path d="M0 50 H60"/>
+
+        <circle
+          cx="19"
+          cy="10"
+          r="4"
+          fill="#35CEE6"
+          stroke="none"
+        />
+
+        <circle
+          cx="44"
+          cy="30"
+          r="4"
+          fill="#35CEE6"
+          stroke="none"
+        />
+
+        <circle
+          cx="13"
+          cy="50"
+          r="4"
+          fill="#35CEE6"
+          stroke="none"
+        />
+
+      </g>
+
+    </g>
+
+
+    <!-- --------------------------------------------------------- -->
+    <!-- Broaden Search                                            -->
+    <!-- --------------------------------------------------------- -->
+
+    <g
+      id="nrBroadenSuggestion"
+      transform="translate(125 0)"
+      filter="url(#nrSoftShadow)"
+    >
+
+      <rect
+        width="105"
+        height="105"
+        rx="18"
+        fill="url(#nrGlassGradient)"
+        stroke="#5E68E5"
+        stroke-width="1.2"
+        stroke-opacity="0.38"
+      />
+
+      <g
+        transform="translate(52.5 52.5)"
+        fill="none"
+        stroke="#9BA2FA"
+      >
+
+        <circle
+          r="10"
+          stroke-width="1.8"
+        />
+
+        <circle
+          r="21"
+          stroke-width="1.5"
+          stroke-dasharray="5 4"
+        />
+
+        <circle
+          r="31"
+          stroke-width="1.2"
+          opacity="0.55"
+        />
+
+        <path
+          d="M0 -31 V-11
+             M0 11 V31
+             M-31 0 H-11
+             M11 0 H31"
+          stroke-width="1.8"
+          stroke-linecap="round"
+        />
+
+      </g>
+
+    </g>
+
+
+    <!-- --------------------------------------------------------- -->
+    <!-- Explore Related Careers                                   -->
+    <!-- --------------------------------------------------------- -->
+
+    <g
+      id="nrRelatedCareersSuggestion"
+      transform="translate(250 0)"
+      filter="url(#nrEmeraldGlow)"
+    >
+
+      <rect
+        width="105"
+        height="105"
+        rx="18"
+        fill="url(#nrGlassGradient)"
+        stroke="#34D399"
+        stroke-width="1.4"
+        stroke-opacity="0.48"
+      />
+
+      <g
+        transform="translate(52.5 52.5)"
+        fill="none"
+        stroke="#34D399"
+        stroke-width="2"
+        stroke-linecap="round"
+      >
+
+        <path
+          d="M0 0 L-25 -23
+             M0 0 L25 -23
+             M0 0 L-25 23
+             M0 0 L25 23"
+        />
+
+        <circle
+          r="8"
+          fill="#10A875"
+          stroke="none"
+        />
+
+        <circle
+          cx="-25"
+          cy="-23"
+          r="5"
+        />
+
+        <circle
+          cx="25"
+          cy="-23"
+          r="5"
+        />
+
+        <circle
+          cx="-25"
+          cy="23"
+          r="5"
+        />
+
+        <circle
+          cx="25"
+          cy="23"
+          r="5"
+        />
+
+      </g>
+
+    </g>
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- SMALL ANALYTICAL PARTICLES                                  -->
+  <!-- =========================================================== -->
+
+  <g
+    id="nrAmbientParticles"
+    fill="#79E2F2"
+    opacity="0.30"
+  >
+
+    <circle cx="520" cy="210" r="2"/>
+    <circle cx="565" cy="175" r="3"/>
+    <circle cx="705" cy="215" r="2"/>
+    <circle cx="735" cy="690" r="3"/>
+    <circle cx="440" cy="700" r="2"/>
+    <circle cx="350" cy="255" r="2"/>
+
+  </g>
+
+</svg>

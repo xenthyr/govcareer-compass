@@ -1,0 +1,1004 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 1200 1200"
+  preserveAspectRatio="xMidYMid meet"
+  role="img"
+  aria-labelledby="compassAiTitle compassAiDesc"
+>
+  <title id="compassAiTitle">Compass AI</title>
+
+  <desc id="compassAiDesc">
+    Futuristic Compass AI logo featuring a segmented blue compass,
+    orbital intelligence network, analytical nodes, cardinal axes,
+    a northeast-pointing compass needle, and a glowing purple AI core.
+  </desc>
+
+  <defs>
+
+    <!-- ========================================================= -->
+    <!-- BRAND GRADIENTS                                           -->
+    <!-- ========================================================= -->
+
+    <linearGradient
+      id="outerRingGradient"
+      x1="180"
+      y1="180"
+      x2="1020"
+      y2="1020"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="0%" stop-color="#173D5A"/>
+      <stop offset="24%" stop-color="#4C9BC4"/>
+      <stop offset="50%" stop-color="#A7D5E8"/>
+      <stop offset="74%" stop-color="#4C9BC4"/>
+      <stop offset="100%" stop-color="#173D5A"/>
+    </linearGradient>
+
+
+    <linearGradient
+      id="innerRingGradient"
+      x1="300"
+      y1="220"
+      x2="900"
+      y2="980"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="0%" stop-color="#174B70"/>
+      <stop offset="22%" stop-color="#4698C3"/>
+      <stop offset="48%" stop-color="#B9E5EF"/>
+      <stop offset="70%" stop-color="#4B9AC3"/>
+      <stop offset="100%" stop-color="#174B70"/>
+    </linearGradient>
+
+
+    <linearGradient
+      id="horizontalAxisGradient"
+      x1="220"
+      y1="600"
+      x2="980"
+      y2="600"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="0%" stop-color="#12344F"/>
+      <stop offset="24%" stop-color="#276F98"/>
+      <stop offset="50%" stop-color="#7AD9E4"/>
+      <stop offset="76%" stop-color="#276F98"/>
+      <stop offset="100%" stop-color="#12344F"/>
+    </linearGradient>
+
+
+    <linearGradient
+      id="verticalAxisGradient"
+      x1="600"
+      y1="220"
+      x2="600"
+      y2="980"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="0%" stop-color="#12344F"/>
+      <stop offset="24%" stop-color="#276F98"/>
+      <stop offset="50%" stop-color="#7AD9E4"/>
+      <stop offset="76%" stop-color="#276F98"/>
+      <stop offset="100%" stop-color="#12344F"/>
+    </linearGradient>
+
+
+    <linearGradient
+      id="needleGradient"
+      x1="340"
+      y1="870"
+      x2="910"
+      y2="285"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="0%" stop-color="#112C4B"/>
+      <stop offset="25%" stop-color="#1D557E"/>
+      <stop offset="52%" stop-color="#287FA6"/>
+      <stop offset="78%" stop-color="#58C5D8"/>
+      <stop offset="100%" stop-color="#A9EEF3"/>
+    </linearGradient>
+
+
+    <linearGradient
+      id="needleHighlightGradient"
+      x1="390"
+      y1="830"
+      x2="900"
+      y2="310"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="0%" stop-color="#B8EEF3" stop-opacity="0.08"/>
+      <stop offset="34%" stop-color="#C9F4F6" stop-opacity="0.42"/>
+      <stop offset="72%" stop-color="#E2FCFD" stop-opacity="0.96"/>
+      <stop offset="100%" stop-color="#A5EEF3" stop-opacity="0.85"/>
+    </linearGradient>
+
+
+    <linearGradient
+      id="needleShadowGradient"
+      x1="350"
+      y1="870"
+      x2="720"
+      y2="500"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="0%" stop-color="#08182D" stop-opacity="0.92"/>
+      <stop offset="55%" stop-color="#123C61" stop-opacity="0.78"/>
+      <stop offset="100%" stop-color="#276B90" stop-opacity="0.22"/>
+    </linearGradient>
+
+
+    <radialGradient
+      id="centralGlowGradient"
+      cx="50%"
+      cy="50%"
+      r="55%"
+    >
+      <stop offset="0%" stop-color="#B7F5F7" stop-opacity="0.45"/>
+      <stop offset="30%" stop-color="#5ED6E2" stop-opacity="0.28"/>
+      <stop offset="65%" stop-color="#1D6C94" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#0B1728" stop-opacity="0"/>
+    </radialGradient>
+
+
+    <radialGradient
+      id="purpleCoreGradient"
+      cx="38%"
+      cy="30%"
+      r="72%"
+    >
+      <stop offset="0%" stop-color="#D1B2FF"/>
+      <stop offset="28%" stop-color="#B27BF4"/>
+      <stop offset="58%" stop-color="#8B56D8"/>
+      <stop offset="100%" stop-color="#4C287E"/>
+    </radialGradient>
+
+
+    <radialGradient
+      id="purpleGlowGradient"
+      cx="50%"
+      cy="50%"
+      r="65%"
+    >
+      <stop offset="0%" stop-color="#C286FF" stop-opacity="0.72"/>
+      <stop offset="42%" stop-color="#9564DF" stop-opacity="0.38"/>
+      <stop offset="100%" stop-color="#9564DF" stop-opacity="0"/>
+    </radialGradient>
+
+
+    <radialGradient
+      id="ambientGlowGradient"
+      cx="50%"
+      cy="50%"
+      r="55%"
+    >
+      <stop offset="0%" stop-color="#42C7DC" stop-opacity="0.15"/>
+      <stop offset="48%" stop-color="#1A6F96" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#08111F" stop-opacity="0"/>
+    </radialGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- FILTERS                                                   -->
+    <!-- ========================================================= -->
+
+    <filter
+      id="softBlueGlow"
+      x="-80%"
+      y="-80%"
+      width="260%"
+      height="260%"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="6"
+        result="blur"
+      />
+
+      <feColorMatrix
+        in="blur"
+        type="matrix"
+        values="
+          0 0 0 0 0.15
+          0 0 0 0 0.72
+          0 0 0 0 0.88
+          0 0 0 0.48 0
+        "
+        result="coloredBlur"
+      />
+
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+
+    <filter
+      id="purpleCoreGlow"
+      x="-150%"
+      y="-150%"
+      width="400%"
+      height="400%"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="14"
+        result="blur"
+      />
+
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+
+    <filter
+      id="depthShadow"
+      x="-40%"
+      y="-40%"
+      width="180%"
+      height="180%"
+    >
+      <feDropShadow
+        dx="0"
+        dy="8"
+        stdDeviation="10"
+        flood-color="#000000"
+        flood-opacity="0.42"
+      />
+    </filter>
+
+  </defs>
+
+
+  <!-- =========================================================== -->
+  <!-- TRANSPARENT BACKGROUND                                     -->
+  <!-- =========================================================== -->
+
+  <!--
+    Intentionally transparent.
+
+    To preview on black, uncomment:
+
+    <rect width="1200" height="1200" fill="#02060B"/>
+  -->
+
+
+  <!-- =========================================================== -->
+  <!-- AMBIENT CENTER GLOW                                        -->
+  <!-- =========================================================== -->
+
+  <circle
+    cx="600"
+    cy="600"
+    r="450"
+    fill="url(#ambientGlowGradient)"
+  />
+
+
+  <!-- =========================================================== -->
+  <!-- OUTER DOUBLE BROKEN COMPASS RINGS                           -->
+  <!-- =========================================================== -->
+
+  <g
+    id="outerCompassRings"
+    fill="none"
+    stroke="url(#outerRingGradient)"
+    stroke-linecap="round"
+  >
+
+    <!-- Outer ring -->
+
+    <path
+      d="M618 176
+         A425 425 0 0 1 1024 582"
+      stroke-width="5"
+      opacity="0.94"
+    />
+
+    <path
+      d="M1024 618
+         A425 425 0 0 1 618 1024"
+      stroke-width="5"
+      opacity="0.94"
+    />
+
+    <path
+      d="M582 1024
+         A425 425 0 0 1 176 618"
+      stroke-width="5"
+      opacity="0.94"
+    />
+
+    <path
+      d="M176 582
+         A425 425 0 0 1 582 176"
+      stroke-width="5"
+      opacity="0.94"
+    />
+
+
+    <!-- Inner parallel ring -->
+
+    <path
+      d="M618 194
+         A407 407 0 0 1 1006 582"
+      stroke-width="4"
+      opacity="0.72"
+    />
+
+    <path
+      d="M1006 618
+         A407 407 0 0 1 618 1006"
+      stroke-width="4"
+      opacity="0.72"
+    />
+
+    <path
+      d="M582 1006
+         A407 407 0 0 1 194 618"
+      stroke-width="4"
+      opacity="0.72"
+    />
+
+    <path
+      d="M194 582
+         A407 407 0 0 1 582 194"
+      stroke-width="4"
+      opacity="0.72"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- CARDINAL TERMINAL MARKERS                                  -->
+  <!-- =========================================================== -->
+
+  <g
+    id="cardinalMarkers"
+    stroke="#2E7097"
+    stroke-linecap="round"
+    filter="url(#softBlueGlow)"
+  >
+
+    <!-- North -->
+
+    <path
+      d="M600 150 V205"
+      stroke-width="7"
+    />
+
+    <path
+      d="M600 216 V252"
+      stroke-width="4"
+      opacity="0.58"
+    />
+
+
+    <!-- East -->
+
+    <path
+      d="M1050 600 H1090"
+      stroke-width="7"
+    />
+
+    <path
+      d="M1005 600 H1038"
+      stroke-width="4"
+      opacity="0.58"
+    />
+
+
+    <!-- South -->
+
+    <path
+      d="M600 1050 V1090"
+      stroke-width="7"
+    />
+
+    <path
+      d="M600 1005 V1038"
+      stroke-width="4"
+      opacity="0.58"
+    />
+
+
+    <!-- West -->
+
+    <path
+      d="M150 600 H190"
+      stroke-width="7"
+    />
+
+    <path
+      d="M162 600 H195"
+      stroke-width="4"
+      opacity="0.58"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- LARGE SEGMENTED COMPASS BAND                               -->
+  <!-- =========================================================== -->
+
+  <g
+    id="segmentedCompassBand"
+    fill="none"
+    stroke="url(#innerRingGradient)"
+    stroke-width="42"
+    stroke-linecap="butt"
+    filter="url(#depthShadow)"
+  >
+
+    <!-- Upper arc -->
+
+    <path
+      d="M350 825
+         A350 350 0 0 1 825 310"
+    />
+
+
+    <!-- Upper-right / right arc -->
+
+    <path
+      d="M860 360
+         A350 350 0 0 1 875 815"
+    />
+
+
+    <!-- Lower arc -->
+
+    <path
+      d="M815 875
+         A350 350 0 0 1 390 875"
+    />
+
+
+    <!-- Left arc -->
+
+    <path
+      d="M330 820
+         A350 350 0 0 1 340 390"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- AI ORBITAL NETWORK                                         -->
+  <!-- =========================================================== -->
+
+  <g
+    id="aiNetwork"
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+
+    <!-- Primary orbit -->
+
+    <circle
+      cx="600"
+      cy="600"
+      r="245"
+      stroke="#397AA1"
+      stroke-width="4"
+      opacity="0.58"
+    />
+
+
+    <!-- Inner analytical orbit -->
+
+    <circle
+      cx="600"
+      cy="600"
+      r="175"
+      stroke="#91D0DF"
+      stroke-width="4"
+      opacity="0.68"
+    />
+
+
+    <!-- Large orbital curves -->
+
+    <path
+      d="
+        M390 420
+        C470 350 610 350 705 405
+        C795 460 855 555 820 690
+        C785 815 660 875 545 835
+      "
+      stroke="#3B779B"
+      stroke-width="4"
+      opacity="0.70"
+    />
+
+
+    <path
+      d="
+        M420 375
+        C500 465 640 575 805 785
+      "
+      stroke="#4B91B4"
+      stroke-width="4"
+      opacity="0.68"
+    />
+
+
+    <path
+      d="
+        M470 835
+        C510 720 470 620 420 505
+        C395 445 415 395 470 370
+      "
+      stroke="#315F82"
+      stroke-width="4"
+      opacity="0.70"
+    />
+
+
+    <path
+      d="
+        M410 585
+        C515 520 710 525 865 585
+      "
+      stroke="#417FA2"
+      stroke-width="4"
+      opacity="0.64"
+    />
+
+
+    <path
+      d="
+        M535 405
+        C475 505 480 685 560 830
+      "
+      stroke="#3B7699"
+      stroke-width="4"
+      opacity="0.60"
+    />
+
+
+    <path
+      d="
+        M715 430
+        C635 505 625 675 730 770
+      "
+      stroke="#39769B"
+      stroke-width="4"
+      opacity="0.60"
+    />
+
+
+    <!-- Network connections -->
+
+    <path
+      d="M415 405 L490 480 L445 600 L520 720"
+      stroke="#2E668A"
+      stroke-width="3"
+      opacity="0.68"
+    />
+
+    <path
+      d="M415 405 L600 430 L710 390"
+      stroke="#3A7699"
+      stroke-width="3"
+      opacity="0.66"
+    />
+
+    <path
+      d="M445 600 L600 600 L805 690"
+      stroke="#3C789A"
+      stroke-width="3"
+      opacity="0.68"
+    />
+
+    <path
+      d="M520 720 L675 750 L780 840"
+      stroke="#315F82"
+      stroke-width="3"
+      opacity="0.60"
+    />
+
+    <path
+      d="M710 390 L810 500 L880 600"
+      stroke="#3D789E"
+      stroke-width="3"
+      opacity="0.60"
+    />
+
+    <path
+      d="M780 840 L820 690 L875 600"
+      stroke="#315F82"
+      stroke-width="3"
+      opacity="0.60"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- AI NETWORK NODES                                           -->
+  <!-- =========================================================== -->
+
+  <g
+    id="aiNetworkNodes"
+    fill="#2F759D"
+    filter="url(#softBlueGlow)"
+  >
+
+    <circle cx="415" cy="405" r="13"/>
+    <circle cx="490" cy="480" r="12"/>
+    <circle cx="445" cy="600" r="12"/>
+    <circle cx="520" cy="720" r="11"/>
+
+    <circle cx="600" cy="430" r="13"/>
+    <circle cx="710" cy="390" r="12"/>
+
+    <circle cx="805" cy="690" r="11"/>
+    <circle cx="675" cy="750" r="13"/>
+    <circle cx="780" cy="840" r="11"/>
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- HORIZONTAL COMPASS AXIS                                    -->
+  <!-- =========================================================== -->
+
+  <g
+    id="horizontalCompassAxis"
+    filter="url(#depthShadow)"
+  >
+
+    <!-- Left blade -->
+
+    <path
+      d="
+        M230 600
+        L555 555
+        L600 600
+        L555 645
+        Z
+      "
+      fill="url(#horizontalAxisGradient)"
+    />
+
+
+    <!-- Right blade -->
+
+    <path
+      d="
+        M600 600
+        L645 555
+        L970 600
+        L645 645
+        Z
+      "
+      fill="url(#horizontalAxisGradient)"
+    />
+
+
+    <!-- Central horizontal highlight -->
+
+    <path
+      d="M235 600 H965"
+      stroke="#91E0E8"
+      stroke-width="4"
+      opacity="0.58"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- VERTICAL COMPASS AXIS                                      -->
+  <!-- =========================================================== -->
+
+  <g
+    id="verticalCompassAxis"
+    filter="url(#depthShadow)"
+  >
+
+    <!-- North blade -->
+
+    <path
+      d="
+        M600 235
+        L555 555
+        L600 600
+        L645 555
+        Z
+      "
+      fill="url(#verticalAxisGradient)"
+    />
+
+
+    <!-- South blade -->
+
+    <path
+      d="
+        M600 600
+        L555 645
+        L600 965
+        L645 645
+        Z
+      "
+      fill="url(#verticalAxisGradient)"
+    />
+
+
+    <!-- Central vertical highlight -->
+
+    <path
+      d="M600 245 V955"
+      stroke="#7BD8E3"
+      stroke-width="3"
+      opacity="0.42"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- CENTRAL COMPASS GLOW                                       -->
+  <!-- =========================================================== -->
+
+  <circle
+    cx="600"
+    cy="600"
+    r="185"
+    fill="url(#centralGlowGradient)"
+    opacity="0.76"
+  />
+
+
+  <!-- =========================================================== -->
+  <!-- MAIN NORTHEAST COMPASS NEEDLE                              -->
+  <!-- =========================================================== -->
+
+  <g
+    id="mainCompassNeedle"
+    filter="url(#depthShadow)"
+  >
+
+    <!-- Main southwest body -->
+
+    <path
+      d="
+        M325 875
+        L550 610
+        L600 600
+        L870 330
+        L655 705
+        L520 790
+        Z
+      "
+      fill="url(#needleGradient)"
+    />
+
+
+    <!-- Bright northeast blade -->
+
+    <path
+      d="
+        M520 610
+        L905 295
+        L665 700
+        L600 600
+        Z
+      "
+      fill="url(#needleGradient)"
+    />
+
+
+    <!-- Bright reflective face -->
+
+    <path
+      d="
+        M405 810
+        L555 610
+        L600 600
+        L840 360
+        L625 565
+        Z
+      "
+      fill="url(#needleHighlightGradient)"
+      opacity="0.94"
+    />
+
+
+    <!-- Dark southwest underside -->
+
+    <path
+      d="
+        M325 875
+        L520 790
+        L655 705
+        L520 760
+        L400 850
+        Z
+      "
+      fill="url(#needleShadowGradient)"
+      opacity="0.88"
+    />
+
+
+    <!-- Subtle northeast reflective plane -->
+
+    <path
+      d="
+        M600 600
+        L905 295
+        L665 700
+        Z
+      "
+      fill="#D9F9FB"
+      opacity="0.10"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- CENTRAL AI CORE                                            -->
+  <!-- =========================================================== -->
+
+  <g
+    id="centralAiCore"
+    transform="translate(600 600)"
+  >
+
+    <!-- Purple ambient core glow -->
+
+    <circle
+      r="108"
+      fill="url(#purpleGlowGradient)"
+      opacity="0.66"
+    />
+
+
+    <!-- Dark outer core -->
+
+    <circle
+      r="73"
+      fill="#0D2840"
+      fill-opacity="0.94"
+      stroke="#2D698E"
+      stroke-width="3"
+    />
+
+
+    <!-- Segmented turquoise intelligence ring -->
+
+    <g
+      fill="none"
+      stroke="#73DCE5"
+      stroke-width="12"
+      stroke-linecap="butt"
+    >
+
+      <path d="M-32 -50 A60 60 0 0 1 -3 -60"/>
+      <path d="M10 -59 A60 60 0 0 1 42 -42"/>
+      <path d="M52 -24 A60 60 0 0 1 60 5"/>
+      <path d="M54 20 A60 60 0 0 1 38 46"/>
+      <path d="M22 56 A60 60 0 0 1 -8 59"/>
+      <path d="M-24 55 A60 60 0 0 1 -47 36"/>
+      <path d="M-58 15 A60 60 0 0 1 -56 -16"/>
+      <path d="M-46 -34 A60 60 0 0 1 -32 -50"/>
+
+    </g>
+
+
+    <!-- Inner dark surround -->
+
+    <circle
+      r="39"
+      fill="#142D4B"
+      stroke="#1D587D"
+      stroke-width="3"
+    />
+
+
+    <!-- Purple glow layer -->
+
+    <circle
+      r="34"
+      fill="url(#purpleGlowGradient)"
+      filter="url(#purpleCoreGlow)"
+      opacity="0.95"
+    />
+
+
+    <!-- Purple AI core -->
+
+    <circle
+      r="28"
+      fill="url(#purpleCoreGradient)"
+    />
+
+
+    <!-- Core reflection -->
+
+    <ellipse
+      cx="-7"
+      cy="-10"
+      rx="12"
+      ry="8"
+      fill="#E0CCFF"
+      opacity="0.20"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- CARDINAL COMPASS TERMINALS                                  -->
+  <!-- =========================================================== -->
+
+  <g
+    id="compassTerminals"
+    fill="#2B6C93"
+    opacity="0.84"
+    filter="url(#softBlueGlow)"
+  >
+
+    <!-- North -->
+
+    <path
+      d="
+        M600 220
+        L611 275
+        L600 325
+        L589 275
+        Z
+      "
+    />
+
+
+    <!-- East -->
+
+    <path
+      d="
+        M980 600
+        L925 611
+        L875 600
+        L925 589
+        Z
+      "
+    />
+
+
+    <!-- South -->
+
+    <path
+      d="
+        M600 980
+        L611 925
+        L600 875
+        L589 925
+        Z
+      "
+    />
+
+
+    <!-- West -->
+
+    <path
+      d="
+        M220 600
+        L275 611
+        L325 600
+        L275 589
+        Z
+      "
+    />
+
+  </g>
+
+</svg>

@@ -1,0 +1,1045 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 1200 900"
+  preserveAspectRatio="xMidYMid meet"
+  role="img"
+  aria-labelledby="maintenanceTitle maintenanceDesc"
+>
+  <title id="maintenanceTitle">
+    GovCareer Compass — Planned System Maintenance
+  </title>
+
+  <desc id="maintenanceDesc">
+    A premium modern vector illustration representing planned system
+    maintenance and intelligent service optimization. The GovCareer Compass
+    AI guidance engine is undergoing controlled calibration while connected
+    systems are monitored, optimized, updated, and prepared for continued
+    operation.
+  </desc>
+
+  <defs>
+
+    <!-- ========================================================= -->
+    <!-- GRADIENTS -->
+    <!-- ========================================================= -->
+
+    <!-- Premium Glass Surface -->
+    <linearGradient
+      id="mntGlassGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#F2F6FB"
+        stop-opacity="0.14"
+      />
+      <stop
+        offset="55%"
+        stop-color="#DCEAF4"
+        stop-opacity="0.06"
+      />
+      <stop
+        offset="100%"
+        stop-color="#F2F6FB"
+        stop-opacity="0.025"
+      />
+    </linearGradient>
+
+    <!-- Cyan Intelligence Flow -->
+    <linearGradient
+      id="mntCyanFlowGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="0%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#79E2F2"
+        stop-opacity="0"
+      />
+      <stop
+        offset="50%"
+        stop-color="#35CEE6"
+        stop-opacity="0.85"
+      />
+      <stop
+        offset="100%"
+        stop-color="#12B7D3"
+        stop-opacity="0"
+      />
+    </linearGradient>
+
+    <!-- Amber Calibration -->
+    <linearGradient
+      id="mntAmberGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="0%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#F6C66B"
+        stop-opacity="0.35"
+      />
+      <stop
+        offset="100%"
+        stop-color="#F0A63A"
+        stop-opacity="0.9"
+      />
+    </linearGradient>
+
+    <!-- Emerald Completion -->
+    <linearGradient
+      id="mntEmeraldGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="0%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#5DE7B2"
+      />
+      <stop
+        offset="100%"
+        stop-color="#10A875"
+      />
+    </linearGradient>
+
+    <!-- Compass Needle -->
+    <linearGradient
+      id="mntNeedleGradient"
+      x1="0%"
+      y1="0%"
+      x2="0%"
+      y2="100%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#CCF7FF"
+      />
+      <stop
+        offset="52%"
+        stop-color="#12B7D3"
+      />
+      <stop
+        offset="100%"
+        stop-color="#0D2840"
+      />
+    </linearGradient>
+
+    <!-- Violet Compass AI Core -->
+    <radialGradient
+      id="mntVioletCoreGradient"
+      cx="50%"
+      cy="50%"
+      r="50%"
+      fx="50%"
+      fy="50%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#E0D2FF"
+      />
+      <stop
+        offset="45%"
+        stop-color="#C0A3FB"
+      />
+      <stop
+        offset="75%"
+        stop-color="#9564DF"
+      />
+      <stop
+        offset="100%"
+        stop-color="#6136A8"
+      />
+    </radialGradient>
+
+    <!-- Ambient Intelligence Glow -->
+    <radialGradient
+      id="mntAmbientGlowGradient"
+      cx="50%"
+      cy="50%"
+      r="50%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#12B7D3"
+        stop-opacity="0.075"
+      />
+      <stop
+        offset="65%"
+        stop-color="#0D2840"
+        stop-opacity="0.025"
+      />
+      <stop
+        offset="100%"
+        stop-color="#0D1C31"
+        stop-opacity="0"
+      />
+    </radialGradient>
+
+    <!-- ========================================================= -->
+    <!-- FILTERS -->
+    <!-- ========================================================= -->
+
+    <filter
+      id="mntCyanGlow"
+      x="-60%"
+      y="-60%"
+      width="220%"
+      height="220%"
+    >
+      <feGaussianBlur
+        stdDeviation="6"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#12B7D3"
+        flood-opacity="0.48"
+        result="color"
+      />
+
+      <feComposite
+        in="color"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter
+      id="mntVioletGlow"
+      x="-70%"
+      y="-70%"
+      width="240%"
+      height="240%"
+    >
+      <feGaussianBlur
+        stdDeviation="9"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#9564DF"
+        flood-opacity="0.6"
+        result="color"
+      />
+
+      <feComposite
+        in="color"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter
+      id="mntAmberGlow"
+      x="-70%"
+      y="-70%"
+      width="240%"
+      height="240%"
+    >
+      <feGaussianBlur
+        stdDeviation="6"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#F0A63A"
+        flood-opacity="0.52"
+        result="color"
+      />
+
+      <feComposite
+        in="color"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter
+      id="mntEmeraldGlow"
+      x="-60%"
+      y="-60%"
+      width="220%"
+      height="220%"
+    >
+      <feGaussianBlur
+        stdDeviation="5"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#10A875"
+        flood-opacity="0.5"
+        result="color"
+      />
+
+      <feComposite
+        in="color"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter
+      id="mntGlassShadow"
+      x="-30%"
+      y="-30%"
+      width="160%"
+      height="170%"
+    >
+      <feGaussianBlur
+        in="SourceAlpha"
+        stdDeviation="9"
+        result="blur"
+      />
+
+      <feOffset
+        dx="0"
+        dy="8"
+        result="offset"
+      />
+
+      <feFlood
+        flood-color="#081C2C"
+        flood-opacity="0.16"
+        result="color"
+      />
+
+      <feComposite
+        in="color"
+        in2="offset"
+        operator="in"
+        result="shadow"
+      />
+
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+  </defs>
+
+
+  <!-- ========================================================= -->
+  <!-- AMBIENT BACKGROUND -->
+  <!-- ========================================================= -->
+
+  <g id="mntAmbientBackground">
+
+    <circle
+      cx="600"
+      cy="450"
+      r="410"
+      fill="url(#mntAmbientGlowGradient)"
+    />
+
+    <g
+      fill="none"
+      stroke="#0D2840"
+      stroke-width="1"
+      opacity="0.045"
+    >
+      <line
+        x1="0"
+        y1="450"
+        x2="1200"
+        y2="450"
+      />
+
+      <line
+        x1="600"
+        y1="0"
+        x2="600"
+        y2="900"
+      />
+
+      <circle
+        cx="600"
+        cy="450"
+        r="300"
+        stroke-dasharray="10 20"
+      />
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- LEFT: SYSTEM MONITORING -->
+  <!-- ========================================================= -->
+
+  <g
+    id="mntMonitoringModule"
+    transform="translate(180 450)"
+    filter="url(#mntGlassShadow)"
+  >
+
+    <rect
+      x="-105"
+      y="-130"
+      width="210"
+      height="260"
+      rx="24"
+      fill="url(#mntGlassGradient)"
+      stroke="#F2F6FB"
+      stroke-width="1.5"
+      stroke-opacity="0.2"
+    />
+
+    <!-- Stable System Rows -->
+
+    <g
+      transform="translate(-65 -80)"
+      fill="none"
+      stroke-linecap="round"
+    >
+      <circle
+        r="10"
+        fill="#0D2840"
+        fill-opacity="0.12"
+        stroke="#35CEE6"
+        stroke-width="1.5"
+      />
+
+      <path
+        d="M20 0 H145"
+        stroke="#F2F6FB"
+        stroke-width="2"
+        stroke-opacity="0.16"
+      />
+    </g>
+
+
+    <g
+      transform="translate(-65 -40)"
+      fill="none"
+      stroke-linecap="round"
+    >
+      <circle
+        r="10"
+        fill="#0D2840"
+        fill-opacity="0.12"
+        stroke="#35CEE6"
+        stroke-width="1.5"
+      />
+
+      <path
+        d="M20 0 H125"
+        stroke="#F2F6FB"
+        stroke-width="2"
+        stroke-opacity="0.16"
+      />
+    </g>
+
+
+    <!-- Active Calibration Row -->
+
+    <g
+      transform="translate(-65 0)"
+      fill="none"
+      stroke-linecap="round"
+    >
+      <circle
+        r="11"
+        fill="#F0A63A"
+        fill-opacity="0.12"
+        stroke="#F0A63A"
+        stroke-width="2"
+        filter="url(#mntAmberGlow)"
+      />
+
+      <path
+        d="M20 0 H150"
+        stroke="url(#mntAmberGradient)"
+        stroke-width="2.5"
+      />
+    </g>
+
+
+    <g
+      transform="translate(-65 45)"
+      fill="none"
+      stroke-linecap="round"
+    >
+      <circle
+        r="10"
+        fill="#0D2840"
+        fill-opacity="0.12"
+        stroke="#35CEE6"
+        stroke-width="1.5"
+      />
+
+      <path
+        d="M20 0 H135"
+        stroke="#F2F6FB"
+        stroke-width="2"
+        stroke-opacity="0.16"
+      />
+    </g>
+
+
+    <g
+      transform="translate(-65 85)"
+      fill="none"
+      stroke-linecap="round"
+    >
+      <circle
+        r="10"
+        fill="#0D2840"
+        fill-opacity="0.12"
+        stroke="#35CEE6"
+        stroke-width="1.5"
+      />
+
+      <path
+        d="M20 0 H150"
+        stroke="#F2F6FB"
+        stroke-width="2"
+        stroke-opacity="0.16"
+      />
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- LEFT TO AI SYSTEM FLOW -->
+  <!-- ========================================================= -->
+
+  <g
+    id="mntSystemFlow"
+    transform="translate(285 450)"
+    fill="none"
+    stroke-linecap="round"
+  >
+
+    <path
+      d="M0 0 C100 0 150 0 235 0"
+      stroke="url(#mntCyanFlowGradient)"
+      stroke-width="4"
+      filter="url(#mntCyanGlow)"
+    />
+
+    <path
+      d="M0 -38 C105 -34 170 -20 235 -8"
+      stroke="#1C567A"
+      stroke-width="2"
+      opacity="0.28"
+    />
+
+    <path
+      d="M0 38 C105 34 170 20 235 8"
+      stroke="#1C567A"
+      stroke-width="2"
+      opacity="0.28"
+    />
+
+    <circle
+      cx="95"
+      cy="0"
+      r="5"
+      fill="#35CEE6"
+      opacity="0.7"
+    />
+
+    <circle
+      cx="165"
+      cy="-18"
+      r="4"
+      fill="#35CEE6"
+      opacity="0.4"
+    />
+
+    <circle
+      cx="165"
+      cy="18"
+      r="4"
+      fill="#35CEE6"
+      opacity="0.4"
+    />
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- CENTRAL COMPASS AI ENGINE -->
+  <!-- ========================================================= -->
+
+  <g
+    id="mntCompassAiMaintenanceEngine"
+    transform="translate(600 450)"
+  >
+
+    <!-- Outer Analytical Orbits -->
+
+    <circle
+      r="185"
+      fill="none"
+      stroke="#5E68E5"
+      stroke-width="1.5"
+      stroke-opacity="0.14"
+    />
+
+    <circle
+      r="155"
+      fill="none"
+      stroke="#35CEE6"
+      stroke-width="1"
+      stroke-dasharray="8 13"
+      opacity="0.28"
+    />
+
+    <!-- Glass Intelligence Surface -->
+
+    <circle
+      r="120"
+      fill="url(#mntGlassGradient)"
+      stroke="#79E2F2"
+      stroke-width="2"
+      stroke-opacity="0.5"
+      filter="url(#mntCyanGlow)"
+    />
+
+
+    <!-- Calibration Ring -->
+
+    <circle
+      r="138"
+      fill="none"
+      stroke="#1C567A"
+      stroke-width="2"
+      stroke-dasharray="10 20"
+      opacity="0.25"
+    />
+
+    <!-- Active Calibration Segment -->
+
+    <path
+      d="M0 -138 A138 138 0 0 1 55 -126"
+      fill="none"
+      stroke="url(#mntAmberGradient)"
+      stroke-width="4"
+      stroke-linecap="round"
+      filter="url(#mntAmberGlow)"
+    />
+
+    <circle
+      cx="55"
+      cy="-126"
+      r="6"
+      fill="#F0A63A"
+    />
+
+    <!-- Completed Calibration Points -->
+
+    <circle
+      cx="-138"
+      cy="0"
+      r="5"
+      fill="#34D399"
+      filter="url(#mntEmeraldGlow)"
+    />
+
+    <circle
+      cx="0"
+      cy="138"
+      r="5"
+      fill="#34D399"
+      filter="url(#mntEmeraldGlow)"
+    />
+
+
+    <!-- Compass Segments -->
+
+    <g
+      fill="none"
+      stroke="#79E2F2"
+      stroke-width="3"
+      stroke-linecap="round"
+    >
+      <path
+        d="M0 -110 A110 110 0 0 1 110 0"
+      />
+
+      <path
+        d="M0 110 A110 110 0 0 0 -110 0"
+        opacity="0.5"
+      />
+    </g>
+
+
+    <!-- Cardinal Indicators -->
+
+    <g
+      fill="none"
+      stroke="#79E2F2"
+      stroke-width="2.5"
+      opacity="0.7"
+    >
+      <line x1="0" y1="-110" x2="0" y2="-90"/>
+      <line x1="0" y1="110" x2="0" y2="90"/>
+      <line x1="-110" y1="0" x2="-90" y2="0"/>
+      <line x1="110" y1="0" x2="90" y2="0"/>
+    </g>
+
+
+    <!-- Compass Needle -->
+
+    <g transform="rotate(-35)">
+
+      <path
+        d="M0 -100 L15 0 L0 20 L-15 0 Z"
+        fill="url(#mntNeedleGradient)"
+        stroke="#FFFFFF"
+        stroke-width="1"
+      />
+
+      <path
+        d="M0 -100 L15 0 L0 5 L-15 0 Z"
+        fill="#FFFFFF"
+        opacity="0.55"
+      />
+
+    </g>
+
+
+    <!-- AI Outer Core -->
+
+    <circle
+      r="60"
+      fill="#0D2840"
+      fill-opacity="0.75"
+      stroke="#35CEE6"
+      stroke-width="2"
+      stroke-opacity="0.5"
+    />
+
+
+    <!-- Violet Intelligence Core -->
+
+    <g filter="url(#mntVioletGlow)">
+
+      <circle
+        r="30"
+        fill="url(#mntVioletCoreGradient)"
+      />
+
+      <circle
+        r="12"
+        fill="#DDFBFD"
+        fill-opacity="0.62"
+      />
+
+    </g>
+
+
+    <!-- Connected Intelligence Nodes -->
+
+    <g
+      fill="#35CEE6"
+      opacity="0.8"
+    >
+      <circle cx="85" cy="-85" r="5"/>
+      <circle cx="-130" cy="20" r="4"/>
+      <circle cx="30" cy="135" r="4"/>
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- AI TO OPTIMIZATION FLOW -->
+  <!-- ========================================================= -->
+
+  <g
+    id="mntOptimizationFlow"
+    transform="translate(750 450)"
+    fill="none"
+    stroke-linecap="round"
+  >
+
+    <!-- Primary System Path -->
+
+    <path
+      d="M0 0 C70 0 125 0 200 0"
+      stroke="url(#mntCyanFlowGradient)"
+      stroke-width="3.5"
+      filter="url(#mntCyanGlow)"
+    />
+
+
+    <!-- Calibration Branch -->
+
+    <path
+      d="M0 0 C75 0 125 -95 200 -95"
+      stroke="url(#mntAmberGradient)"
+      stroke-width="3"
+      stroke-dasharray="6 9"
+      filter="url(#mntAmberGlow)"
+    />
+
+
+    <!-- Completed Optimization Branch -->
+
+    <path
+      d="M0 0 C75 0 125 95 200 95"
+      stroke="url(#mntEmeraldGradient)"
+      stroke-width="3"
+      filter="url(#mntEmeraldGlow)"
+    />
+
+
+    <circle
+      cx="95"
+      cy="0"
+      r="4"
+      fill="#35CEE6"
+      opacity="0.65"
+    />
+
+    <circle
+      cx="160"
+      cy="-75"
+      r="3.5"
+      fill="#F6C66B"
+      opacity="0.7"
+    />
+
+    <circle
+      cx="160"
+      cy="75"
+      r="3.5"
+      fill="#34D399"
+      opacity="0.7"
+    />
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- RIGHT: SYSTEM OPTIMIZATION PANEL -->
+  <!-- ========================================================= -->
+
+  <g
+    id="mntOptimizationPanel"
+    transform="translate(1000 450)"
+    filter="url(#mntGlassShadow)"
+  >
+
+    <rect
+      x="-105"
+      y="-130"
+      width="210"
+      height="260"
+      rx="24"
+      fill="url(#mntGlassGradient)"
+      stroke="#F2F6FB"
+      stroke-width="1.5"
+      stroke-opacity="0.2"
+    />
+
+
+    <!-- Stable Module -->
+
+    <g
+      transform="translate(-70 -80)"
+      fill="none"
+      stroke-linecap="round"
+    >
+      <circle
+        r="10"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+        opacity="0.5"
+      />
+
+      <rect
+        x="25"
+        y="-3"
+        width="95"
+        height="6"
+        rx="3"
+        fill="#1C567A"
+        opacity="0.45"
+      />
+    </g>
+
+
+    <!-- Active Maintenance Module -->
+
+    <g transform="translate(-70 -20)">
+
+      <circle
+        r="11"
+        fill="#F0A63A"
+        fill-opacity="0.12"
+        stroke="#F0A63A"
+        stroke-width="2.5"
+        filter="url(#mntAmberGlow)"
+      />
+
+      <rect
+        x="25"
+        y="-6"
+        width="75"
+        height="8"
+        rx="4"
+        fill="#F6C66B"
+        opacity="0.7"
+      />
+
+      <rect
+        x="25"
+        y="8"
+        width="45"
+        height="5"
+        rx="2.5"
+        fill="#F6C66B"
+        opacity="0.4"
+      />
+
+    </g>
+
+
+    <!-- Successfully Optimized Module -->
+
+    <g
+      transform="translate(-70 55)"
+      filter="url(#mntEmeraldGlow)"
+    >
+
+      <circle
+        r="12"
+        fill="#10A875"
+        fill-opacity="0.15"
+        stroke="#10A875"
+        stroke-width="2.5"
+      />
+
+      <path
+        d="M-5 0 L0 5 L8 -3"
+        fill="none"
+        stroke="#34D399"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+
+      <rect
+        x="25"
+        y="-5"
+        width="85"
+        height="10"
+        rx="5"
+        fill="url(#mntEmeraldGradient)"
+      />
+
+      <rect
+        x="25"
+        y="9"
+        width="55"
+        height="6"
+        rx="3"
+        fill="#34D399"
+        opacity="0.55"
+      />
+
+    </g>
+
+
+    <!-- Completion Indicator -->
+
+    <g
+      transform="translate(90 -115)"
+      filter="url(#mntEmeraldGlow)"
+    >
+
+      <circle
+        r="15"
+        fill="#10A875"
+        fill-opacity="0.1"
+        stroke="#10A875"
+        stroke-width="2"
+      />
+
+      <path
+        d="M-7 0 L0 7 L10 -8"
+        fill="none"
+        stroke="#34D399"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- AMBIENT PARTICLES -->
+  <!-- ========================================================= -->
+
+  <g
+    id="mntAmbientParticles"
+    fill="#F2F6FB"
+    opacity="0.3"
+  >
+    <circle cx="200" cy="200" r="3"/>
+    <circle cx="1000" cy="100" r="2.5"/>
+    <circle cx="1100" cy="800" r="3"/>
+    <circle cx="150" cy="750" r="2"/>
+    <circle cx="600" cy="150" r="2.5"/>
+    <circle cx="450" cy="820" r="3"/>
+
+    <circle
+      cx="850"
+      cy="150"
+      r="2"
+      fill="#35CEE6"
+    />
+
+    <circle
+      cx="760"
+      cy="760"
+      r="2.5"
+      fill="#34D399"
+      opacity="0.7"
+    />
+
+  </g>
+
+</svg>

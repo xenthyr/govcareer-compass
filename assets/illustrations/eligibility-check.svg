@@ -1,0 +1,1618 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 1200 900"
+  width="100%"
+  height="100%"
+  preserveAspectRatio="xMidYMid meet"
+  fill="none"
+  role="img"
+  aria-labelledby="eligibilityTitle eligibilityDesc"
+>
+  <title id="eligibilityTitle">
+    GovCareer Compass — Eligibility Check
+  </title>
+
+  <desc id="eligibilityDesc">
+    A premium modern vector illustration showing candidate information
+    flowing through structured government eligibility rules into an
+    intelligent GovCareer Compass AI verification engine, which evaluates
+    the criteria and produces eligible, conditional, or currently
+    ineligible outcomes.
+  </desc>
+
+  <defs>
+
+    <!-- ========================================================= -->
+    <!-- GRADIENTS -->
+    <!-- ========================================================= -->
+
+    <!-- Ambient Intelligence Glow -->
+    <radialGradient
+      id="ecAmbientGlow"
+      cx="50%"
+      cy="50%"
+      r="50%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#12B7D3"
+        stop-opacity="0.09"
+      />
+      <stop
+        offset="55%"
+        stop-color="#5E68E5"
+        stop-opacity="0.035"
+      />
+      <stop
+        offset="100%"
+        stop-color="#08111F"
+        stop-opacity="0"
+      />
+    </radialGradient>
+
+    <!-- Glass Surface -->
+    <linearGradient
+      id="ecGlassGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#F2F6FB"
+        stop-opacity="0.12"
+      />
+      <stop
+        offset="55%"
+        stop-color="#DCEAF4"
+        stop-opacity="0.055"
+      />
+      <stop
+        offset="100%"
+        stop-color="#F2F6FB"
+        stop-opacity="0.02"
+      />
+    </linearGradient>
+
+    <!-- Rule Surface -->
+    <linearGradient
+      id="ecRuleGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#79E2F2"
+        stop-opacity="0.10"
+      />
+      <stop
+        offset="100%"
+        stop-color="#0D1C31"
+        stop-opacity="0.35"
+      />
+    </linearGradient>
+
+    <!-- Cyan Intelligence Flow -->
+    <linearGradient
+      id="ecCyanGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="0%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#79E2F2"
+        stop-opacity="0"
+      />
+      <stop
+        offset="25%"
+        stop-color="#35CEE6"
+        stop-opacity="0.75"
+      />
+      <stop
+        offset="75%"
+        stop-color="#12B7D3"
+        stop-opacity="0.85"
+      />
+      <stop
+        offset="100%"
+        stop-color="#79E2F2"
+        stop-opacity="0"
+      />
+    </linearGradient>
+
+    <!-- AI Violet Gradient -->
+    <linearGradient
+      id="ecVioletGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#D4BFFF"
+      />
+      <stop
+        offset="50%"
+        stop-color="#9564DF"
+      />
+      <stop
+        offset="100%"
+        stop-color="#6136A8"
+      />
+    </linearGradient>
+
+    <!-- AI Core Gradient -->
+    <radialGradient
+      id="ecVioletCoreGradient"
+      cx="50%"
+      cy="45%"
+      r="55%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#DDFBFD"
+      />
+      <stop
+        offset="30%"
+        stop-color="#C0A3FB"
+      />
+      <stop
+        offset="70%"
+        stop-color="#9564DF"
+      />
+      <stop
+        offset="100%"
+        stop-color="#6136A8"
+      />
+    </radialGradient>
+
+    <!-- Compass Needle -->
+    <linearGradient
+      id="ecNeedleGradient"
+      x1="0%"
+      y1="0%"
+      x2="0%"
+      y2="100%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#CCF7FF"
+      />
+      <stop
+        offset="50%"
+        stop-color="#12B7D3"
+      />
+      <stop
+        offset="100%"
+        stop-color="#0D2840"
+      />
+    </linearGradient>
+
+    <!-- Eligible -->
+    <linearGradient
+      id="ecEligibleGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="0%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#35CEE6"
+      />
+      <stop
+        offset="55%"
+        stop-color="#5DE7B2"
+      />
+      <stop
+        offset="100%"
+        stop-color="#10A875"
+      />
+    </linearGradient>
+
+    <!-- Conditional -->
+    <linearGradient
+      id="ecConditionalGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="0%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#5E68E5"
+      />
+      <stop
+        offset="55%"
+        stop-color="#F6C66B"
+      />
+      <stop
+        offset="100%"
+        stop-color="#D79718"
+      />
+    </linearGradient>
+
+    <!-- Ineligible -->
+    <linearGradient
+      id="ecIneligibleGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="0%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#9564DF"
+      />
+      <stop
+        offset="55%"
+        stop-color="#C95A78"
+      />
+      <stop
+        offset="100%"
+        stop-color="#DA4A5C"
+      />
+    </linearGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- FILTERS -->
+    <!-- ========================================================= -->
+
+    <!-- Cyan Glow -->
+    <filter
+      id="ecCyanGlow"
+      x="-50%"
+      y="-50%"
+      width="200%"
+      height="200%"
+    >
+      <feGaussianBlur
+        stdDeviation="6"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#12B7D3"
+        flood-opacity="0.5"
+        result="flood"
+      />
+
+      <feComposite
+        in="flood"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+
+    <!-- Violet Glow -->
+    <filter
+      id="ecVioletGlow"
+      x="-60%"
+      y="-60%"
+      width="220%"
+      height="220%"
+    >
+      <feGaussianBlur
+        stdDeviation="9"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#9564DF"
+        flood-opacity="0.55"
+        result="flood"
+      />
+
+      <feComposite
+        in="flood"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+
+    <!-- Emerald Glow -->
+    <filter
+      id="ecEmeraldGlow"
+      x="-50%"
+      y="-50%"
+      width="200%"
+      height="200%"
+    >
+      <feGaussianBlur
+        stdDeviation="5"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#10A875"
+        flood-opacity="0.5"
+        result="flood"
+      />
+
+      <feComposite
+        in="flood"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+
+    <!-- Amber Glow -->
+    <filter
+      id="ecAmberGlow"
+      x="-50%"
+      y="-50%"
+      width="200%"
+      height="200%"
+    >
+      <feGaussianBlur
+        stdDeviation="6"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#F0A63A"
+        flood-opacity="0.5"
+        result="flood"
+      />
+
+      <feComposite
+        in="flood"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+
+    <!-- Controlled Red Glow -->
+    <filter
+      id="ecRedGlow"
+      x="-50%"
+      y="-50%"
+      width="200%"
+      height="200%"
+    >
+      <feGaussianBlur
+        stdDeviation="5"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#DA4A5C"
+        flood-opacity="0.4"
+        result="flood"
+      />
+
+      <feComposite
+        in="flood"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+
+    <!-- Glass Shadow -->
+    <filter
+      id="ecGlassShadow"
+      x="-20%"
+      y="-20%"
+      width="140%"
+      height="140%"
+    >
+      <feGaussianBlur
+        in="SourceAlpha"
+        stdDeviation="10"
+        result="blur"
+      />
+
+      <feOffset
+        dx="0"
+        dy="8"
+        result="offsetBlur"
+      />
+
+      <feFlood
+        flood-color="#08111F"
+        flood-opacity="0.18"
+        result="shadowColor"
+      />
+
+      <feComposite
+        in="shadowColor"
+        in2="offsetBlur"
+        operator="in"
+        result="shadow"
+      />
+
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+  </defs>
+
+
+  <!-- ========================================================= -->
+  <!-- AMBIENT BACKGROUND -->
+  <!-- ========================================================= -->
+
+  <g id="ecAmbientBackground">
+
+    <circle
+      cx="600"
+      cy="450"
+      r="420"
+      fill="url(#ecAmbientGlow)"
+    />
+
+    <g
+      stroke="#F2F6FB"
+      stroke-width="1"
+      stroke-opacity="0.045"
+      fill="none"
+    >
+      <line
+        x1="0"
+        y1="450"
+        x2="1200"
+        y2="450"
+      />
+
+      <line
+        x1="600"
+        y1="0"
+        x2="600"
+        y2="900"
+      />
+
+      <circle
+        cx="600"
+        cy="450"
+        r="300"
+        stroke-dasharray="10 20"
+      />
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- LEFT ZONE — CANDIDATE PROFILE -->
+  <!-- ========================================================= -->
+
+  <g
+    id="ecCandidateProfile"
+    transform="translate(60 240)"
+    filter="url(#ecGlassShadow)"
+  >
+
+    <rect
+      width="210"
+      height="420"
+      rx="22"
+      fill="url(#ecGlassGradient)"
+      stroke="#F2F6FB"
+      stroke-width="1.5"
+      stroke-opacity="0.20"
+    />
+
+
+    <!-- Profile Identity -->
+
+    <circle
+      cx="105"
+      cy="58"
+      r="26"
+      fill="#12B7D3"
+      fill-opacity="0.10"
+      stroke="#35CEE6"
+      stroke-width="1.8"
+    />
+
+    <circle
+      cx="105"
+      cy="51"
+      r="10"
+      fill="#79E2F2"
+      fill-opacity="0.85"
+    />
+
+    <path
+      d="M89 74 C92 65 118 65 121 74"
+      stroke="#79E2F2"
+      stroke-width="2"
+      stroke-linecap="round"
+      fill="none"
+    />
+
+    <rect
+      x="55"
+      y="100"
+      width="100"
+      height="7"
+      rx="3.5"
+      fill="#F2F6FB"
+      fill-opacity="0.55"
+    />
+
+
+    <!-- Candidate Attribute 1 -->
+
+    <g transform="translate(24 130)">
+
+      <rect
+        width="162"
+        height="60"
+        rx="10"
+        fill="#08111F"
+        fill-opacity="0.30"
+        stroke="#5E68E5"
+        stroke-width="1.2"
+        stroke-opacity="0.5"
+      />
+
+      <circle
+        cx="28"
+        cy="30"
+        r="10"
+        fill="#5E68E5"
+        fill-opacity="0.25"
+      />
+
+      <path
+        d="M28 23 V30 H34"
+        stroke="#79E2F2"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        fill="none"
+      />
+
+      <rect
+        x="50"
+        y="21"
+        width="75"
+        height="6"
+        rx="3"
+        fill="#F2F6FB"
+        fill-opacity="0.5"
+      />
+
+      <rect
+        x="50"
+        y="34"
+        width="95"
+        height="5"
+        rx="2.5"
+        fill="#12B7D3"
+        fill-opacity="0.4"
+      />
+
+    </g>
+
+
+    <!-- Candidate Attribute 2 -->
+
+    <g transform="translate(24 204)">
+
+      <rect
+        width="162"
+        height="60"
+        rx="10"
+        fill="#08111F"
+        fill-opacity="0.30"
+        stroke="#12B7D3"
+        stroke-width="1.2"
+        stroke-opacity="0.5"
+      />
+
+      <path
+        d="M28 19 L39 26 L28 33 L17 26 Z"
+        fill="#12B7D3"
+        fill-opacity="0.35"
+        stroke="#35CEE6"
+        stroke-width="1.4"
+      />
+
+      <path
+        d="M21 29 V36 C21 38 35 38 35 36 V29"
+        stroke="#35CEE6"
+        stroke-width="1.4"
+        fill="none"
+      />
+
+      <rect
+        x="50"
+        y="21"
+        width="90"
+        height="6"
+        rx="3"
+        fill="#F2F6FB"
+        fill-opacity="0.5"
+      />
+
+      <rect
+        x="50"
+        y="34"
+        width="60"
+        height="5"
+        rx="2.5"
+        fill="#79E2F2"
+        fill-opacity="0.4"
+      />
+
+    </g>
+
+
+    <!-- Candidate Attribute 3 -->
+
+    <g transform="translate(24 278)">
+
+      <rect
+        width="162"
+        height="60"
+        rx="10"
+        fill="#08111F"
+        fill-opacity="0.30"
+        stroke="#5E68E5"
+        stroke-width="1.2"
+        stroke-opacity="0.5"
+      />
+
+      <circle
+        cx="28"
+        cy="30"
+        r="10"
+        fill="#9564DF"
+        fill-opacity="0.22"
+      />
+
+      <path
+        d="M23 30 L27 34 L34 26"
+        stroke="#79E2F2"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"
+      />
+
+      <rect
+        x="50"
+        y="21"
+        width="65"
+        height="6"
+        rx="3"
+        fill="#F2F6FB"
+        fill-opacity="0.5"
+      />
+
+      <rect
+        x="50"
+        y="34"
+        width="85"
+        height="5"
+        rx="2.5"
+        fill="#5E68E5"
+        fill-opacity="0.45"
+      />
+
+    </g>
+
+
+    <!-- Verification Anchor -->
+
+    <circle
+      cx="105"
+      cy="375"
+      r="14"
+      fill="#08111F"
+      fill-opacity="0.75"
+      stroke="#12B7D3"
+      stroke-width="2"
+      filter="url(#ecCyanGlow)"
+    />
+
+    <circle
+      cx="105"
+      cy="375"
+      r="5"
+      fill="#79E2F2"
+    />
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- LEFT DATA CONVERGENCE -->
+  <!-- ========================================================= -->
+
+  <g
+    id="ecCandidateDataFlow"
+    fill="none"
+    stroke-linecap="round"
+  >
+
+    <path
+      d="M270 370 C310 370 310 280 340 280"
+      stroke="#12B7D3"
+      stroke-width="2.2"
+      stroke-dasharray="6 5"
+      opacity="0.65"
+    />
+
+    <path
+      d="M270 450 L340 450"
+      stroke="url(#ecCyanGradient)"
+      stroke-width="3"
+      filter="url(#ecCyanGlow)"
+    />
+
+    <path
+      d="M270 530 C310 530 310 620 340 620"
+      stroke="#5E68E5"
+      stroke-width="2.2"
+      stroke-dasharray="6 5"
+      opacity="0.6"
+    />
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- RULE CARDS -->
+  <!-- ========================================================= -->
+
+  <g
+    id="ecRuleCards"
+    filter="url(#ecGlassShadow)"
+  >
+
+    <!-- Rule 1 -->
+
+    <g transform="translate(340 230)">
+
+      <rect
+        width="150"
+        height="100"
+        rx="14"
+        fill="url(#ecRuleGradient)"
+        stroke="#12B7D3"
+        stroke-width="1.5"
+      />
+
+      <rect
+        x="18"
+        y="20"
+        width="60"
+        height="7"
+        rx="3.5"
+        fill="#79E2F2"
+      />
+
+      <line
+        x1="18"
+        y1="42"
+        x2="132"
+        y2="42"
+        stroke="#12B7D3"
+        stroke-width="2"
+        stroke-opacity="0.45"
+      />
+
+      <line
+        x1="18"
+        y1="56"
+        x2="98"
+        y2="56"
+        stroke="#12B7D3"
+        stroke-width="2"
+        stroke-opacity="0.25"
+      />
+
+      <circle
+        cx="120"
+        cy="72"
+        r="9"
+        fill="#12B7D3"
+        fill-opacity="0.18"
+      />
+
+      <path
+        d="M117 72 L123 68 V76 Z"
+        fill="#79E2F2"
+      />
+
+    </g>
+
+
+    <!-- Rule 2 -->
+
+    <g transform="translate(340 400)">
+
+      <rect
+        width="150"
+        height="100"
+        rx="14"
+        fill="url(#ecRuleGradient)"
+        stroke="#5E68E5"
+        stroke-width="1.5"
+      />
+
+      <rect
+        x="18"
+        y="20"
+        width="70"
+        height="7"
+        rx="3.5"
+        fill="#9BA2FA"
+      />
+
+      <rect
+        x="18"
+        y="42"
+        width="22"
+        height="22"
+        rx="5"
+        fill="#5E68E5"
+        fill-opacity="0.28"
+      />
+
+      <path
+        d="M23 53 H35 M29 47 V59"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+      />
+
+      <line
+        x1="52"
+        y1="46"
+        x2="132"
+        y2="46"
+        stroke="#5E68E5"
+        stroke-width="2"
+        stroke-opacity="0.5"
+      />
+
+      <line
+        x1="52"
+        y1="58"
+        x2="112"
+        y2="58"
+        stroke="#5E68E5"
+        stroke-width="2"
+        stroke-opacity="0.3"
+      />
+
+      <line
+        x1="18"
+        y1="78"
+        x2="120"
+        y2="78"
+        stroke="#5E68E5"
+        stroke-width="2"
+        stroke-opacity="0.35"
+      />
+
+    </g>
+
+
+    <!-- Rule 3 -->
+
+    <g transform="translate(340 570)">
+
+      <rect
+        width="150"
+        height="100"
+        rx="14"
+        fill="url(#ecRuleGradient)"
+        stroke="#12B7D3"
+        stroke-width="1.5"
+      />
+
+      <rect
+        x="18"
+        y="20"
+        width="50"
+        height="7"
+        rx="3.5"
+        fill="#35CEE6"
+      />
+
+      <circle
+        cx="28"
+        cy="54"
+        r="10"
+        fill="#12B7D3"
+        fill-opacity="0.22"
+      />
+
+      <circle
+        cx="28"
+        cy="54"
+        r="4"
+        fill="#79E2F2"
+      />
+
+      <line
+        x1="48"
+        y1="48"
+        x2="132"
+        y2="48"
+        stroke="#12B7D3"
+        stroke-width="2"
+        stroke-opacity="0.45"
+      />
+
+      <line
+        x1="48"
+        y1="60"
+        x2="102"
+        y2="60"
+        stroke="#12B7D3"
+        stroke-width="2"
+        stroke-opacity="0.3"
+      />
+
+      <circle
+        cx="125"
+        cy="78"
+        r="4"
+        fill="#9564DF"
+      />
+
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- RULE TO AI ENGINE FLOWS -->
+  <!-- ========================================================= -->
+
+  <g
+    id="ecRuleEngineFlows"
+    fill="none"
+    stroke-linecap="round"
+  >
+
+    <path
+      d="M490 280 C525 280 530 420 555 435"
+      stroke="#12B7D3"
+      stroke-width="2.5"
+      opacity="0.7"
+    />
+
+    <path
+      d="M490 450 L550 450"
+      stroke="url(#ecCyanGradient)"
+      stroke-width="3.5"
+      filter="url(#ecCyanGlow)"
+    />
+
+    <path
+      d="M490 620 C525 620 530 480 555 465"
+      stroke="#5E68E5"
+      stroke-width="2.5"
+      opacity="0.7"
+    />
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- CENTRAL GOVCAREER COMPASS AI ENGINE -->
+  <!-- ========================================================= -->
+
+  <g
+    id="ecCompassAiEngine"
+    transform="translate(600 450)"
+  >
+
+    <!-- Outer Analytical Orbit -->
+
+    <circle
+      r="180"
+      fill="none"
+      stroke="#5E68E5"
+      stroke-width="1.5"
+      stroke-opacity="0.14"
+    />
+
+    <circle
+      r="150"
+      fill="none"
+      stroke="#35CEE6"
+      stroke-width="1"
+      stroke-dasharray="8 12"
+      opacity="0.28"
+    />
+
+
+    <!-- Main Compass Housing -->
+
+    <circle
+      r="120"
+      fill="url(#ecGlassGradient)"
+      stroke="#79E2F2"
+      stroke-width="2"
+      stroke-opacity="0.5"
+      filter="url(#ecCyanGlow)"
+    />
+
+
+    <!-- Segmented Compass Arcs -->
+
+    <g
+      stroke="#79E2F2"
+      stroke-width="3"
+      stroke-linecap="round"
+      fill="none"
+    >
+
+      <path
+        d="M0 -110 A110 110 0 0 1 110 0"
+      />
+
+      <path
+        d="M0 110 A110 110 0 0 0 -110 0"
+        opacity="0.5"
+      />
+
+    </g>
+
+
+    <!-- Cardinal Precision Markers -->
+
+    <g
+      stroke="#79E2F2"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      opacity="0.7"
+    >
+
+      <line
+        x1="0"
+        y1="-110"
+        x2="0"
+        y2="-90"
+      />
+
+      <line
+        x1="0"
+        y1="110"
+        x2="0"
+        y2="90"
+      />
+
+      <line
+        x1="-110"
+        y1="0"
+        x2="-90"
+        y2="0"
+      />
+
+      <line
+        x1="110"
+        y1="0"
+        x2="90"
+        y2="0"
+      />
+
+    </g>
+
+
+    <!-- Compass Needle -->
+
+    <g transform="rotate(-35)">
+
+      <path
+        d="M0 -100 L15 0 L0 20 L-15 0 Z"
+        fill="url(#ecNeedleGradient)"
+        stroke="#FFFFFF"
+        stroke-width="1"
+      />
+
+      <path
+        d="M0 -100 L15 0 L0 5 L-15 0 Z"
+        fill="#FFFFFF"
+        opacity="0.55"
+      />
+
+    </g>
+
+
+    <!-- AI Core Housing -->
+
+    <circle
+      r="60"
+      fill="#0D2840"
+      fill-opacity="0.85"
+      stroke="#35CEE6"
+      stroke-width="2"
+      stroke-opacity="0.45"
+    />
+
+
+    <!-- AI Intelligence Core -->
+
+    <g filter="url(#ecVioletGlow)">
+
+      <circle
+        r="30"
+        fill="url(#ecVioletCoreGradient)"
+      />
+
+      <circle
+        r="11"
+        fill="#DDFBFD"
+        fill-opacity="0.65"
+      />
+
+    </g>
+
+
+    <!-- Analytical Satellites -->
+
+    <g
+      fill="#35CEE6"
+      opacity="0.8"
+    >
+
+      <circle
+        cx="85"
+        cy="-85"
+        r="5"
+      />
+
+      <circle
+        cx="-130"
+        cy="20"
+        r="4"
+      />
+
+      <circle
+        cx="30"
+        cy="135"
+        r="4"
+      />
+
+    </g>
+
+
+    <!-- Decision Calibration Motif -->
+
+    <g
+      fill="none"
+      stroke-linecap="round"
+    >
+
+      <path
+        d="M-90 -70 Q0 -145 90 -70"
+        stroke="#12B7D3"
+        stroke-width="1.5"
+        stroke-opacity="0.22"
+      />
+
+      <path
+        d="M-90 70 Q0 145 90 70"
+        stroke="#5E68E5"
+        stroke-width="1.5"
+        stroke-opacity="0.22"
+      />
+
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- AI ENGINE TO OUTCOME FLOWS -->
+  <!-- ========================================================= -->
+
+  <g
+    id="ecOutcomeFlows"
+    fill="none"
+    stroke-linecap="round"
+  >
+
+    <!-- Eligible -->
+
+    <path
+      d="M720 430 C770 400 790 260 850 260"
+      stroke="url(#ecEligibleGradient)"
+      stroke-width="4"
+      filter="url(#ecEmeraldGlow)"
+    />
+
+    <circle
+      cx="775"
+      cy="315"
+      r="4.5"
+      fill="#10A875"
+    />
+
+
+    <!-- Conditional -->
+
+    <path
+      d="M720 450 C770 450 800 450 850 450"
+      stroke="url(#ecConditionalGradient)"
+      stroke-width="4"
+      filter="url(#ecAmberGlow)"
+    />
+
+    <circle
+      cx="780"
+      cy="450"
+      r="4.5"
+      fill="#D79718"
+    />
+
+
+    <!-- Ineligible -->
+
+    <path
+      d="M720 470 C770 500 790 640 850 640"
+      stroke="url(#ecIneligibleGradient)"
+      stroke-width="4"
+      filter="url(#ecRedGlow)"
+    />
+
+    <circle
+      cx="775"
+      cy="585"
+      r="4.5"
+      fill="#DA4A5C"
+    />
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- OUTCOME RESULT PANELS -->
+  <!-- ========================================================= -->
+
+  <g
+    id="ecOutcomePanels"
+    filter="url(#ecGlassShadow)"
+  >
+
+
+    <!-- ======================================================= -->
+    <!-- ELIGIBLE -->
+    <!-- ======================================================= -->
+
+    <g transform="translate(850 200)">
+
+      <rect
+        width="290"
+        height="120"
+        rx="18"
+        fill="url(#ecGlassGradient)"
+        stroke="#10A875"
+        stroke-width="2"
+      />
+
+      <circle
+        cx="48"
+        cy="60"
+        r="24"
+        fill="#10A875"
+        fill-opacity="0.16"
+        stroke="#10A875"
+        stroke-width="1.8"
+        filter="url(#ecEmeraldGlow)"
+      />
+
+      <path
+        d="M38 60 L45 67 L59 52"
+        stroke="#5DE7B2"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"
+      />
+
+      <rect
+        x="90"
+        y="38"
+        width="130"
+        height="8"
+        rx="4"
+        fill="#10A875"
+        fill-opacity="0.85"
+      />
+
+      <rect
+        x="90"
+        y="54"
+        width="165"
+        height="6"
+        rx="3"
+        fill="#F2F6FB"
+        fill-opacity="0.4"
+      />
+
+      <rect
+        x="90"
+        y="68"
+        width="90"
+        height="6"
+        rx="3"
+        fill="#10A875"
+        fill-opacity="0.3"
+      />
+
+      <path
+        d="M252 60 L262 53 L262 67 Z"
+        fill="#10A875"
+      />
+
+    </g>
+
+
+    <!-- ======================================================= -->
+    <!-- CONDITIONAL -->
+    <!-- ======================================================= -->
+
+    <g transform="translate(850 390)">
+
+      <rect
+        width="290"
+        height="120"
+        rx="18"
+        fill="url(#ecGlassGradient)"
+        stroke="#D79718"
+        stroke-width="1.8"
+      />
+
+      <circle
+        cx="48"
+        cy="60"
+        r="24"
+        fill="#D79718"
+        fill-opacity="0.16"
+        stroke="#D79718"
+        stroke-width="1.8"
+        filter="url(#ecAmberGlow)"
+      />
+
+      <circle
+        cx="48"
+        cy="49"
+        r="3"
+        fill="#F6C66B"
+      />
+
+      <path
+        d="M48 57 V68"
+        stroke="#F6C66B"
+        stroke-width="2.8"
+        stroke-linecap="round"
+      />
+
+      <circle
+        cx="48"
+        cy="74"
+        r="1.8"
+        fill="#F6C66B"
+      />
+
+      <rect
+        x="90"
+        y="38"
+        width="145"
+        height="8"
+        rx="4"
+        fill="#D79718"
+        fill-opacity="0.85"
+      />
+
+      <rect
+        x="90"
+        y="54"
+        width="150"
+        height="6"
+        rx="3"
+        fill="#F2F6FB"
+        fill-opacity="0.4"
+      />
+
+      <rect
+        x="90"
+        y="68"
+        width="110"
+        height="6"
+        rx="3"
+        fill="#D79718"
+        fill-opacity="0.3"
+      />
+
+      <path
+        d="M252 60 L262 53 L262 67 Z"
+        fill="#D79718"
+      />
+
+    </g>
+
+
+    <!-- ======================================================= -->
+    <!-- CURRENTLY INELIGIBLE -->
+    <!-- ======================================================= -->
+
+    <g transform="translate(850 580)">
+
+      <rect
+        width="290"
+        height="120"
+        rx="18"
+        fill="url(#ecGlassGradient)"
+        stroke="#DA4A5C"
+        stroke-width="1.8"
+      />
+
+      <circle
+        cx="48"
+        cy="60"
+        r="24"
+        fill="#DA4A5C"
+        fill-opacity="0.15"
+        stroke="#DA4A5C"
+        stroke-width="1.8"
+        filter="url(#ecRedGlow)"
+      />
+
+      <path
+        d="M40 52 L56 68 M56 52 L40 68"
+        stroke="#DA4A5C"
+        stroke-width="2.8"
+        stroke-linecap="round"
+      />
+
+      <rect
+        x="90"
+        y="38"
+        width="120"
+        height="8"
+        rx="4"
+        fill="#DA4A5C"
+        fill-opacity="0.8"
+      />
+
+      <rect
+        x="90"
+        y="54"
+        width="160"
+        height="6"
+        rx="3"
+        fill="#F2F6FB"
+        fill-opacity="0.4"
+      />
+
+      <rect
+        x="90"
+        y="68"
+        width="75"
+        height="6"
+        rx="3"
+        fill="#DA4A5C"
+        fill-opacity="0.3"
+      />
+
+      <line
+        x1="252"
+        y1="52"
+        x2="252"
+        y2="68"
+        stroke="#DA4A5C"
+        stroke-width="3"
+        stroke-linecap="round"
+      />
+
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- AMBIENT PARTICLES -->
+  <!-- ========================================================= -->
+
+  <g
+    id="ecAmbientParticles"
+    fill="#F2F6FB"
+    opacity="0.28"
+  >
+
+    <circle
+      cx="180"
+      cy="170"
+      r="3"
+    />
+
+    <circle
+      cx="1030"
+      cy="120"
+      r="2.5"
+    />
+
+    <circle
+      cx="1110"
+      cy="780"
+      r="3"
+    />
+
+    <circle
+      cx="130"
+      cy="740"
+      r="2"
+    />
+
+    <circle
+      cx="600"
+      cy="130"
+      r="2.5"
+    />
+
+    <circle
+      cx="450"
+      cy="820"
+      r="3"
+    />
+
+    <circle
+      cx="850"
+      cy="150"
+      r="2"
+      fill="#35CEE6"
+    />
+
+    <circle
+      cx="760"
+      cy="760"
+      r="2"
+      fill="#9564DF"
+    />
+
+  </g>
+
+</svg>

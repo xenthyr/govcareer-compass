@@ -1,0 +1,1432 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 1200 900"
+  preserveAspectRatio="xMidYMid meet"
+  role="img"
+  aria-labelledby="preparationTitle preparationDesc"
+>
+  <title id="preparationTitle">GovCareer Compass — Career Preparation</title>
+
+  <desc id="preparationDesc">
+    A premium modern vector illustration representing structured government career
+    preparation. Preparation resources flow into a Compass AI intelligence engine,
+    which analyzes study, skills, examination readiness and planning before guiding
+    the user toward an organized career preparation roadmap and final readiness.
+  </desc>
+
+  <defs>
+
+    <!-- ========================================================= -->
+    <!-- GLASS SURFACE -->
+    <!-- ========================================================= -->
+
+    <linearGradient
+      id="prepGlassGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#F2F6FB"
+        stop-opacity="0.13"
+      />
+
+      <stop
+        offset="52%"
+        stop-color="#DCEAF4"
+        stop-opacity="0.055"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#F2F6FB"
+        stop-opacity="0.025"
+      />
+    </linearGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- CYAN INTELLIGENCE GRADIENTS -->
+    <!-- ========================================================= -->
+
+    <linearGradient
+      id="prepCyanFlowGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="0%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#79E2F2"
+        stop-opacity="0"
+      />
+
+      <stop
+        offset="50%"
+        stop-color="#35CEE6"
+        stop-opacity="0.9"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#12B7D3"
+        stop-opacity="0"
+      />
+    </linearGradient>
+
+
+    <linearGradient
+      id="prepCyanVerticalGradient"
+      x1="0%"
+      y1="0%"
+      x2="0%"
+      y2="100%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#79E2F2"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#12B7D3"
+      />
+    </linearGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- VIOLET AI GRADIENT -->
+    <!-- ========================================================= -->
+
+    <linearGradient
+      id="prepVioletGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#C0A3FB"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#9564DF"
+      />
+    </linearGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- EMERALD READINESS GRADIENT -->
+    <!-- ========================================================= -->
+
+    <linearGradient
+      id="prepEmeraldGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="0%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#5DE7B2"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#10A875"
+      />
+    </linearGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- COMPASS NEEDLE GRADIENT -->
+    <!-- ========================================================= -->
+
+    <linearGradient
+      id="prepNeedleGradient"
+      x1="0%"
+      y1="0%"
+      x2="0%"
+      y2="100%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#CCF7FF"
+      />
+
+      <stop
+        offset="52%"
+        stop-color="#12B7D3"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#0D2840"
+      />
+    </linearGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- VIOLET AI CORE -->
+    <!-- ========================================================= -->
+
+    <radialGradient
+      id="prepVioletCoreGradient"
+      cx="50%"
+      cy="50%"
+      r="50%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#E0D0FF"
+      />
+
+      <stop
+        offset="68%"
+        stop-color="#9564DF"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#6136A8"
+      />
+    </radialGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- AMBIENT GLOW -->
+    <!-- ========================================================= -->
+
+    <radialGradient
+      id="prepAmbientGlow"
+      cx="50%"
+      cy="50%"
+      r="50%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#12B7D3"
+        stop-opacity="0.08"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#0D1C31"
+        stop-opacity="0"
+      />
+    </radialGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- FILTERS -->
+    <!-- ========================================================= -->
+
+    <filter
+      id="prepCyanGlow"
+      x="-50%"
+      y="-50%"
+      width="200%"
+      height="200%"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="6"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#12B7D3"
+        flood-opacity="0.48"
+        result="color"
+      />
+
+      <feComposite
+        in="color"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+
+    <filter
+      id="prepVioletGlow"
+      x="-60%"
+      y="-60%"
+      width="220%"
+      height="220%"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="9"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#9564DF"
+        flood-opacity="0.58"
+        result="color"
+      />
+
+      <feComposite
+        in="color"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+
+    <filter
+      id="prepEmeraldGlow"
+      x="-60%"
+      y="-60%"
+      width="220%"
+      height="220%"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="5"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#10A875"
+        flood-opacity="0.5"
+        result="color"
+      />
+
+      <feComposite
+        in="color"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+
+    <filter
+      id="prepGlassShadow"
+      x="-25%"
+      y="-25%"
+      width="150%"
+      height="150%"
+    >
+      <feGaussianBlur
+        in="SourceAlpha"
+        stdDeviation="9"
+        result="blur"
+      />
+
+      <feOffset
+        dx="0"
+        dy="7"
+        result="offsetBlur"
+      />
+
+      <feFlood
+        flood-color="#081C2C"
+        flood-opacity="0.14"
+        result="shadowColor"
+      />
+
+      <feComposite
+        in="shadowColor"
+        in2="offsetBlur"
+        operator="in"
+        result="shadow"
+      />
+
+      <feMerge>
+        <feMergeNode in="shadow" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+  </defs>
+
+
+  <!-- ========================================================= -->
+  <!-- AMBIENT BACKGROUND -->
+  <!-- ========================================================= -->
+
+  <g
+    id="prepAmbientBackground"
+    opacity="0.045"
+  >
+
+    <circle
+      cx="600"
+      cy="450"
+      r="410"
+      fill="url(#prepAmbientGlow)"
+    />
+
+    <g
+      stroke="#0D2840"
+      stroke-width="1"
+      fill="none"
+    >
+
+      <line
+        x1="0"
+        y1="450"
+        x2="1200"
+        y2="450"
+      />
+
+      <line
+        x1="600"
+        y1="0"
+        x2="600"
+        y2="900"
+      />
+
+      <circle
+        cx="600"
+        cy="450"
+        r="310"
+        stroke-dasharray="10 20"
+      />
+
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- LEFT ZONE — PREPARATION RESOURCES -->
+  <!-- ========================================================= -->
+
+  <g
+    id="prepResources"
+    transform="translate(180 450)"
+  >
+
+    <!-- Back card -->
+
+    <rect
+      x="-120"
+      y="-150"
+      width="230"
+      height="300"
+      rx="22"
+      fill="url(#prepGlassGradient)"
+      stroke="#F2F6FB"
+      stroke-width="1.5"
+      stroke-opacity="0.12"
+      opacity="0.62"
+    />
+
+
+    <!-- Front card -->
+
+    <g filter="url(#prepGlassShadow)">
+
+      <rect
+        x="-80"
+        y="-190"
+        width="250"
+        height="330"
+        rx="22"
+        fill="url(#prepGlassGradient)"
+        stroke="#F2F6FB"
+        stroke-width="1.5"
+        stroke-opacity="0.2"
+      />
+
+    </g>
+
+
+    <!-- Study checklist -->
+
+    <g
+      transform="translate(-40 -115)"
+      fill="none"
+      stroke-linecap="round"
+    >
+
+      <!-- Item 1 -->
+
+      <circle
+        cx="0"
+        cy="0"
+        r="10"
+        stroke="#F2F6FB"
+        stroke-width="1.7"
+        stroke-opacity="0.4"
+      />
+
+      <line
+        x1="22"
+        y1="0"
+        x2="145"
+        y2="0"
+        stroke="#F2F6FB"
+        stroke-width="2"
+        stroke-opacity="0.28"
+      />
+
+
+      <!-- Item 2 -->
+
+      <g transform="translate(0 48)">
+
+        <circle
+          cx="0"
+          cy="0"
+          r="10"
+          stroke="#F2F6FB"
+          stroke-width="1.7"
+          stroke-opacity="0.4"
+        />
+
+        <line
+          x1="22"
+          y1="0"
+          x2="120"
+          y2="0"
+          stroke="#F2F6FB"
+          stroke-width="2"
+          stroke-opacity="0.28"
+        />
+
+      </g>
+
+
+      <!-- Completed item -->
+
+      <g transform="translate(0 96)">
+
+        <circle
+          cx="0"
+          cy="0"
+          r="10"
+          fill="#79E2F2"
+          fill-opacity="0.12"
+          stroke="#79E2F2"
+          stroke-width="1.7"
+        />
+
+        <path
+          d="M-5 0 L-1 5 L8 -5"
+          stroke="#79E2F2"
+          stroke-width="2.5"
+        />
+
+        <line
+          x1="22"
+          y1="0"
+          x2="150"
+          y2="0"
+          stroke="#79E2F2"
+          stroke-width="2"
+          stroke-opacity="0.75"
+        />
+
+      </g>
+
+
+      <!-- Item 4 -->
+
+      <g transform="translate(0 144)">
+
+        <circle
+          cx="0"
+          cy="0"
+          r="10"
+          stroke="#F2F6FB"
+          stroke-width="1.7"
+          stroke-opacity="0.4"
+        />
+
+        <line
+          x1="22"
+          y1="0"
+          x2="130"
+          y2="0"
+          stroke="#F2F6FB"
+          stroke-width="2"
+          stroke-opacity="0.28"
+        />
+
+      </g>
+
+
+      <!-- Completed item -->
+
+      <g transform="translate(0 192)">
+
+        <circle
+          cx="0"
+          cy="0"
+          r="10"
+          fill="#79E2F2"
+          fill-opacity="0.12"
+          stroke="#79E2F2"
+          stroke-width="1.7"
+        />
+
+        <path
+          d="M-5 0 L-1 5 L8 -5"
+          stroke="#79E2F2"
+          stroke-width="2.5"
+        />
+
+        <line
+          x1="22"
+          y1="0"
+          x2="140"
+          y2="0"
+          stroke="#79E2F2"
+          stroke-width="2"
+          stroke-opacity="0.7"
+        />
+
+      </g>
+
+    </g>
+
+
+    <!-- Progress bars -->
+
+    <g
+      transform="translate(-20 90)"
+      fill="#79E2F2"
+      opacity="0.28"
+    >
+
+      <rect
+        width="110"
+        height="7"
+        rx="3.5"
+      />
+
+      <rect
+        y="18"
+        width="85"
+        height="7"
+        rx="3.5"
+      />
+
+      <rect
+        y="36"
+        width="125"
+        height="7"
+        rx="3.5"
+      />
+
+    </g>
+
+
+    <!-- Certificate / achievement motif -->
+
+    <g
+      transform="translate(65 -165)"
+      fill="none"
+      stroke="#9BA2FA"
+      stroke-width="1.5"
+      opacity="0.65"
+    >
+
+      <rect
+        width="60"
+        height="42"
+        rx="6"
+      />
+
+      <circle
+        cx="30"
+        cy="15"
+        r="7"
+      />
+
+      <line
+        x1="12"
+        y1="31"
+        x2="48"
+        y2="31"
+      />
+
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- LEFT DATA FLOW -->
+  <!-- ========================================================= -->
+
+  <g
+    id="prepInputFlow"
+    fill="none"
+    stroke-linecap="round"
+  >
+
+    <path
+      d="M330 450 C410 450 470 450 480 450"
+      stroke="url(#prepCyanFlowGradient)"
+      stroke-width="4"
+      filter="url(#prepCyanGlow)"
+    />
+
+    <path
+      d="M330 410 C410 415 450 430 485 440"
+      stroke="#1C567A"
+      stroke-width="2"
+      opacity="0.3"
+    />
+
+    <path
+      d="M330 490 C410 485 450 470 485 460"
+      stroke="#1C567A"
+      stroke-width="2"
+      opacity="0.3"
+    />
+
+    <circle
+      cx="385"
+      cy="450"
+      r="5"
+      fill="#35CEE6"
+      opacity="0.75"
+    />
+
+    <circle
+      cx="440"
+      cy="432"
+      r="3.5"
+      fill="#35CEE6"
+      opacity="0.45"
+    />
+
+    <circle
+      cx="440"
+      cy="468"
+      r="3.5"
+      fill="#35CEE6"
+      opacity="0.45"
+    />
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- CENTRAL COMPASS AI ENGINE -->
+  <!-- ========================================================= -->
+
+  <g
+    id="prepCompassAI"
+    transform="translate(600 450)"
+  >
+
+    <!-- Outer analytical orbit -->
+
+    <circle
+      r="185"
+      fill="none"
+      stroke="#5E68E5"
+      stroke-width="1.5"
+      stroke-opacity="0.14"
+    />
+
+
+    <!-- Secondary analytical ring -->
+
+    <circle
+      r="150"
+      fill="none"
+      stroke="#35CEE6"
+      stroke-width="1"
+      stroke-dasharray="8 13"
+      opacity="0.25"
+    />
+
+
+    <!-- Glass intelligence surface -->
+
+    <circle
+      r="122"
+      fill="url(#prepGlassGradient)"
+      stroke="#79E2F2"
+      stroke-width="2"
+      stroke-opacity="0.48"
+      filter="url(#prepCyanGlow)"
+    />
+
+
+    <!-- Compass segmented arcs -->
+
+    <g
+      fill="none"
+      stroke="#79E2F2"
+      stroke-width="3"
+      stroke-linecap="round"
+    >
+
+      <path
+        d="M0 -110 A110 110 0 0 1 110 0"
+      />
+
+      <path
+        d="M0 110 A110 110 0 0 1 -110 0"
+        opacity="0.5"
+      />
+
+    </g>
+
+
+    <!-- Cardinal indicators -->
+
+    <g
+      stroke="#79E2F2"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      opacity="0.68"
+    >
+
+      <line
+        x1="0"
+        y1="-115"
+        x2="0"
+        y2="-92"
+      />
+
+      <line
+        x1="0"
+        y1="115"
+        x2="0"
+        y2="92"
+      />
+
+      <line
+        x1="-115"
+        y1="0"
+        x2="-92"
+        y2="0"
+      />
+
+      <line
+        x1="115"
+        y1="0"
+        x2="92"
+        y2="0"
+      />
+
+    </g>
+
+
+    <!-- Compass directional needle -->
+
+    <g transform="rotate(-35)">
+
+      <path
+        d="M0 -102 L16 0 L0 22 L-16 0 Z"
+        fill="url(#prepNeedleGradient)"
+        stroke="#F2F6FB"
+        stroke-width="1"
+      />
+
+      <path
+        d="M0 -102 L16 0 L0 5 L-16 0 Z"
+        fill="#F2F6FB"
+        opacity="0.55"
+      />
+
+    </g>
+
+
+    <!-- AI containment core -->
+
+    <circle
+      r="60"
+      fill="#0D2840"
+      fill-opacity="0.55"
+      stroke="#35CEE6"
+      stroke-width="2"
+      stroke-opacity="0.42"
+    />
+
+
+    <!-- Violet intelligence core -->
+
+    <g filter="url(#prepVioletGlow)">
+
+      <circle
+        r="30"
+        fill="url(#prepVioletCoreGradient)"
+      />
+
+      <circle
+        r="12"
+        fill="#DDFBFD"
+        fill-opacity="0.6"
+      />
+
+    </g>
+
+
+    <!-- Analytical nodes -->
+
+    <g
+      fill="#35CEE6"
+      opacity="0.75"
+    >
+
+      <circle
+        cx="82"
+        cy="-82"
+        r="5"
+      />
+
+      <circle
+        cx="-110"
+        cy="48"
+        r="4"
+      />
+
+      <circle
+        cx="32"
+        cy="108"
+        r="4"
+      />
+
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- PREPARATION ANALYSIS NODES -->
+  <!-- ========================================================= -->
+
+  <g
+    id="prepAnalysisNodes"
+    transform="translate(600 450)"
+    fill="none"
+  >
+
+    <!-- Study / knowledge -->
+
+    <g transform="translate(-150 -150)">
+
+      <circle
+        r="35"
+        fill="#0D2840"
+        fill-opacity="0.12"
+        stroke="#35CEE6"
+        stroke-width="1.5"
+        stroke-opacity="0.65"
+      />
+
+      <g
+        transform="translate(-15 -14)"
+        stroke="#35CEE6"
+        stroke-width="1.5"
+        opacity="0.8"
+      >
+
+        <line x1="0" y1="0" x2="30" y2="0" />
+        <line x1="0" y1="10" x2="25" y2="10" />
+        <line x1="0" y1="20" x2="30" y2="20" />
+        <line x1="0" y1="30" x2="20" y2="30" />
+
+      </g>
+
+    </g>
+
+
+    <!-- Examination readiness -->
+
+    <g transform="translate(150 -150)">
+
+      <circle
+        r="35"
+        fill="#0D2840"
+        fill-opacity="0.12"
+        stroke="#35CEE6"
+        stroke-width="1.5"
+        stroke-opacity="0.65"
+      />
+
+      <circle
+        r="9"
+        stroke="#35CEE6"
+        stroke-width="2"
+      />
+
+      <line
+        x1="-17"
+        y1="0"
+        x2="17"
+        y2="0"
+        stroke="#35CEE6"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+
+      <line
+        x1="0"
+        y1="-17"
+        x2="0"
+        y2="17"
+        stroke="#35CEE6"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+
+    </g>
+
+
+    <!-- Skills / qualification -->
+
+    <g transform="translate(-150 150)">
+
+      <circle
+        r="35"
+        fill="#0D2840"
+        fill-opacity="0.12"
+        stroke="#35CEE6"
+        stroke-width="1.5"
+        stroke-opacity="0.65"
+      />
+
+      <circle
+        cy="-8"
+        r="9"
+        stroke="#35CEE6"
+        stroke-width="1.5"
+      />
+
+      <line
+        x1="-20"
+        y1="14"
+        x2="20"
+        y2="14"
+        stroke="#35CEE6"
+        stroke-width="1.5"
+        opacity="0.75"
+      />
+
+      <circle
+        cx="-12"
+        cy="14"
+        r="3.5"
+        fill="#35CEE6"
+      />
+
+      <circle
+        cx="12"
+        cy="14"
+        r="3.5"
+        fill="#35CEE6"
+      />
+
+    </g>
+
+
+    <!-- Planning / schedule -->
+
+    <g transform="translate(150 150)">
+
+      <circle
+        r="35"
+        fill="#0D2840"
+        fill-opacity="0.12"
+        stroke="#35CEE6"
+        stroke-width="1.5"
+        stroke-opacity="0.65"
+      />
+
+      <rect
+        x="-14"
+        y="-14"
+        width="28"
+        height="28"
+        rx="4"
+        stroke="#35CEE6"
+        stroke-width="1.5"
+      />
+
+      <line
+        x1="-5"
+        y1="-10"
+        x2="-5"
+        y2="10"
+        stroke="#35CEE6"
+        stroke-width="1.2"
+      />
+
+      <line
+        x1="5"
+        y1="-10"
+        x2="5"
+        y2="10"
+        stroke="#35CEE6"
+        stroke-width="1.2"
+      />
+
+      <line
+        x1="-10"
+        y1="0"
+        x2="10"
+        y2="0"
+        stroke="#35CEE6"
+        stroke-width="1.2"
+      />
+
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- AI OUTPUT FLOW -->
+  <!-- ========================================================= -->
+
+  <g
+    id="prepOutputFlow"
+    fill="none"
+    stroke-linecap="round"
+  >
+
+    <path
+      d="M720 450 C770 450 805 350 850 350"
+      stroke="url(#prepCyanFlowGradient)"
+      stroke-width="3.5"
+      filter="url(#prepCyanGlow)"
+    />
+
+    <path
+      d="M720 450 L850 450"
+      stroke="#9BA2FA"
+      stroke-width="2"
+      stroke-dasharray="6 9"
+      opacity="0.45"
+    />
+
+    <path
+      d="M720 450 C770 450 805 550 850 550"
+      stroke="#9BA2FA"
+      stroke-width="2.5"
+      opacity="0.58"
+    />
+
+    <circle
+      cx="770"
+      cy="450"
+      r="4.5"
+      fill="#5E68E5"
+      opacity="0.65"
+    />
+
+    <circle
+      cx="815"
+      cy="375"
+      r="3.5"
+      fill="#35CEE6"
+      opacity="0.55"
+    />
+
+    <circle
+      cx="815"
+      cy="525"
+      r="3.5"
+      fill="#9BA2FA"
+      opacity="0.55"
+    />
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- RIGHT ZONE — PREPARATION ROADMAP -->
+  <!-- ========================================================= -->
+
+  <g
+    id="prepRoadmap"
+    transform="translate(960 450)"
+  >
+
+    <!-- Vertical roadmap -->
+
+    <line
+      x1="-100"
+      y1="-165"
+      x2="-100"
+      y2="165"
+      stroke="#79E2F2"
+      stroke-width="1.5"
+      stroke-dasharray="5 8"
+      opacity="0.25"
+    />
+
+
+    <!-- Milestone 1 -->
+
+    <g transform="translate(0 -180)">
+
+      <rect
+        x="-60"
+        y="-40"
+        width="180"
+        height="80"
+        rx="16"
+        fill="url(#prepGlassGradient)"
+        stroke="#F2F6FB"
+        stroke-width="1.5"
+        stroke-opacity="0.16"
+      />
+
+      <circle
+        cx="-30"
+        cy="0"
+        r="15"
+        fill="none"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+        opacity="0.5"
+      />
+
+      <line
+        x1="5"
+        y1="-8"
+        x2="85"
+        y2="-8"
+        stroke="#F2F6FB"
+        stroke-width="7"
+        stroke-linecap="round"
+        stroke-opacity="0.2"
+      />
+
+      <line
+        x1="5"
+        y1="12"
+        x2="60"
+        y2="12"
+        stroke="#F2F6FB"
+        stroke-width="6"
+        stroke-linecap="round"
+        stroke-opacity="0.12"
+      />
+
+    </g>
+
+
+    <!-- Milestone 2 -->
+
+    <g transform="translate(0 -60)">
+
+      <rect
+        x="-60"
+        y="-40"
+        width="180"
+        height="80"
+        rx="16"
+        fill="url(#prepGlassGradient)"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+        stroke-opacity="0.38"
+      />
+
+      <circle
+        cx="-30"
+        cy="0"
+        r="15"
+        fill="#79E2F2"
+        fill-opacity="0.12"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+      />
+
+      <line
+        x1="5"
+        y1="-8"
+        x2="85"
+        y2="-8"
+        stroke="#79E2F2"
+        stroke-width="8"
+        stroke-linecap="round"
+      />
+
+      <line
+        x1="5"
+        y1="13"
+        x2="55"
+        y2="13"
+        stroke="#79E2F2"
+        stroke-width="6"
+        stroke-linecap="round"
+        opacity="0.5"
+      />
+
+    </g>
+
+
+    <!-- Milestone 3 -->
+
+    <g transform="translate(0 60)">
+
+      <rect
+        x="-60"
+        y="-40"
+        width="180"
+        height="80"
+        rx="16"
+        fill="url(#prepGlassGradient)"
+        stroke="#F2F6FB"
+        stroke-width="1.5"
+        stroke-opacity="0.16"
+      />
+
+      <circle
+        cx="-30"
+        cy="0"
+        r="15"
+        fill="none"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+        opacity="0.45"
+      />
+
+      <line
+        x1="5"
+        y1="-8"
+        x2="85"
+        y2="-8"
+        stroke="#F2F6FB"
+        stroke-width="7"
+        stroke-linecap="round"
+        stroke-opacity="0.2"
+      />
+
+      <line
+        x1="5"
+        y1="12"
+        x2="60"
+        y2="12"
+        stroke="#F2F6FB"
+        stroke-width="6"
+        stroke-linecap="round"
+        stroke-opacity="0.12"
+      />
+
+    </g>
+
+
+    <!-- Final readiness -->
+
+    <g
+      transform="translate(0 180)"
+      filter="url(#prepEmeraldGlow)"
+    >
+
+      <rect
+        x="-60"
+        y="-40"
+        width="180"
+        height="80"
+        rx="16"
+        fill="#0D2840"
+        fill-opacity="0.3"
+        stroke="url(#prepEmeraldGradient)"
+        stroke-width="2.5"
+      />
+
+      <circle
+        cx="-30"
+        cy="0"
+        r="18"
+        fill="#10A875"
+        fill-opacity="0.16"
+        stroke="#10A875"
+        stroke-width="2"
+      />
+
+      <path
+        d="M-38 0 L-31 8 L-18 -6"
+        fill="none"
+        stroke="#34D399"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+
+      <line
+        x1="5"
+        y1="-8"
+        x2="85"
+        y2="-8"
+        stroke="#34D399"
+        stroke-width="8"
+        stroke-linecap="round"
+      />
+
+      <line
+        x1="5"
+        y1="13"
+        x2="65"
+        y2="13"
+        stroke="#34D399"
+        stroke-width="6"
+        stroke-linecap="round"
+        opacity="0.6"
+      />
+
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- AMBIENT PARTICLES -->
+  <!-- ========================================================= -->
+
+  <g
+    id="prepAmbientParticles"
+    fill="#F2F6FB"
+    opacity="0.28"
+  >
+
+    <circle cx="120" cy="170" r="2.5" />
+
+    <circle cx="260" cy="740" r="3" />
+
+    <circle cx="450" cy="120" r="2.5" />
+
+    <circle cx="770" cy="130" r="2" />
+
+    <circle cx="1080" cy="160" r="2.5" />
+
+    <circle cx="1110" cy="730" r="3" />
+
+    <circle
+      cx="860"
+      cy="760"
+      r="2.5"
+      fill="#35CEE6"
+    />
+
+  </g>
+
+</svg>

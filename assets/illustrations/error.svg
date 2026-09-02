@@ -1,0 +1,986 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 1200 900"
+  preserveAspectRatio="xMidYMid meet"
+  role="img"
+  aria-labelledby="errorTitle errorDesc"
+>
+  <title id="errorTitle">GovCareer Compass — Temporary System Error</title>
+
+  <desc id="errorDesc">
+    A premium modern vector illustration representing a temporary system interruption.
+    Normal career data enters the Compass AI guidance engine, an isolated interruption
+    is detected and contained, and the analytical flow is rerouted toward recovery
+    and continued service.
+  </desc>
+
+  <defs>
+
+    <!-- ========================================================= -->
+    <!-- GRADIENTS                                                 -->
+    <!-- ========================================================= -->
+
+    <!-- Premium translucent glass surface -->
+    <linearGradient
+      id="errGlassGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop offset="0%" stop-color="#F2F6FB" stop-opacity="0.12"/>
+      <stop offset="55%" stop-color="#DCEAF4" stop-opacity="0.055"/>
+      <stop offset="100%" stop-color="#F2F6FB" stop-opacity="0.025"/>
+    </linearGradient>
+
+    <!-- Cyan intelligence/data-flow gradient -->
+    <linearGradient
+      id="errCyanGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="0%"
+    >
+      <stop offset="0%" stop-color="#79E2F2" stop-opacity="0"/>
+      <stop offset="45%" stop-color="#35CEE6" stop-opacity="0.82"/>
+      <stop offset="100%" stop-color="#12B7D3" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Cyan vertical analytical gradient -->
+    <linearGradient
+      id="errCyanVerticalGradient"
+      x1="0%"
+      y1="0%"
+      x2="0%"
+      y2="100%"
+    >
+      <stop offset="0%" stop-color="#79E2F2" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#35CEE6" stop-opacity="0.65"/>
+      <stop offset="100%" stop-color="#12B7D3" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Violet Compass AI identity -->
+    <linearGradient
+      id="errVioletGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%"
+    >
+      <stop offset="0%" stop-color="#D4BFFF"/>
+      <stop offset="100%" stop-color="#9564DF"/>
+    </linearGradient>
+
+    <!-- Amber temporary interruption -->
+    <linearGradient
+      id="errAmberGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="0%"
+    >
+      <stop offset="0%" stop-color="#F6C66B" stop-opacity="0.28"/>
+      <stop offset="55%" stop-color="#F0A63A" stop-opacity="0.82"/>
+      <stop offset="100%" stop-color="#F6C66B" stop-opacity="0.18"/>
+    </linearGradient>
+
+    <!-- Emerald recovery -->
+    <linearGradient
+      id="errEmeraldGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="0%"
+    >
+      <stop offset="0%" stop-color="#5DE7B2"/>
+      <stop offset="100%" stop-color="#10A875"/>
+    </linearGradient>
+
+    <!-- Compass needle -->
+    <linearGradient
+      id="errNeedleGradient"
+      x1="0%"
+      y1="0%"
+      x2="0%"
+      y2="100%"
+    >
+      <stop offset="0%" stop-color="#CCF7FF"/>
+      <stop offset="50%" stop-color="#12B7D3"/>
+      <stop offset="100%" stop-color="#0D2840"/>
+    </linearGradient>
+
+    <!-- Violet AI core -->
+    <radialGradient
+      id="errVioletCoreGradient"
+      cx="50%"
+      cy="50%"
+      r="50%"
+    >
+      <stop offset="0%" stop-color="#E3D6FF"/>
+      <stop offset="45%" stop-color="#C0A3FB"/>
+      <stop offset="75%" stop-color="#9564DF"/>
+      <stop offset="100%" stop-color="#6136A8"/>
+    </radialGradient>
+
+    <!-- Ambient intelligence glow -->
+    <radialGradient
+      id="errAmbientGlow"
+      cx="50%"
+      cy="50%"
+      r="50%"
+    >
+      <stop offset="0%" stop-color="#12B7D3" stop-opacity="0.07"/>
+      <stop offset="55%" stop-color="#12B7D3" stop-opacity="0.025"/>
+      <stop offset="100%" stop-color="#0D1C31" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- ========================================================= -->
+    <!-- FILTERS                                                   -->
+    <!-- ========================================================= -->
+
+    <filter
+      id="errCyanGlow"
+      x="-60%"
+      y="-60%"
+      width="220%"
+      height="220%"
+      color-interpolation-filters="sRGB"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="7"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#12B7D3"
+        flood-opacity="0.45"
+        result="flood"
+      />
+
+      <feComposite
+        in="flood"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter
+      id="errVioletGlow"
+      x="-70%"
+      y="-70%"
+      width="240%"
+      height="240%"
+      color-interpolation-filters="sRGB"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="9"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#9564DF"
+        flood-opacity="0.58"
+        result="flood"
+      />
+
+      <feComposite
+        in="flood"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter
+      id="errAmberGlow"
+      x="-70%"
+      y="-70%"
+      width="240%"
+      height="240%"
+      color-interpolation-filters="sRGB"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="6"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#F0A63A"
+        flood-opacity="0.55"
+        result="flood"
+      />
+
+      <feComposite
+        in="flood"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter
+      id="errEmeraldGlow"
+      x="-70%"
+      y="-70%"
+      width="240%"
+      height="240%"
+      color-interpolation-filters="sRGB"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="5"
+        result="blur"
+      />
+
+      <feFlood
+        flood-color="#10A875"
+        flood-opacity="0.5"
+        result="flood"
+      />
+
+      <feComposite
+        in="flood"
+        in2="blur"
+        operator="in"
+        result="glow"
+      />
+
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter
+      id="errGlassShadow"
+      x="-25%"
+      y="-25%"
+      width="150%"
+      height="160%"
+      color-interpolation-filters="sRGB"
+    >
+      <feGaussianBlur
+        in="SourceAlpha"
+        stdDeviation="10"
+        result="blur"
+      />
+
+      <feOffset
+        in="blur"
+        dx="0"
+        dy="8"
+        result="offsetBlur"
+      />
+
+      <feFlood
+        flood-color="#081C2C"
+        flood-opacity="0.16"
+        result="shadowColor"
+      />
+
+      <feComposite
+        in="shadowColor"
+        in2="offsetBlur"
+        operator="in"
+        result="shadow"
+      />
+
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+  </defs>
+
+
+  <!-- ========================================================= -->
+  <!-- AMBIENT ANALYTICAL BACKGROUND                             -->
+  <!-- ========================================================= -->
+
+  <g
+    id="errAmbientBackground"
+    opacity="0.05"
+  >
+
+    <circle
+      cx="600"
+      cy="450"
+      r="410"
+      fill="url(#errAmbientGlow)"
+    />
+
+    <g
+      stroke="#0D2840"
+      stroke-width="1"
+      fill="none"
+    >
+      <line
+        x1="0"
+        y1="450"
+        x2="1200"
+        y2="450"
+      />
+
+      <line
+        x1="600"
+        y1="0"
+        x2="600"
+        y2="900"
+      />
+
+      <circle
+        cx="600"
+        cy="450"
+        r="300"
+        stroke-dasharray="10 20"
+      />
+
+      <circle
+        cx="600"
+        cy="450"
+        r="220"
+        stroke-dasharray="4 18"
+        opacity="0.6"
+      />
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- LEFT ZONE — NORMAL INPUT                                  -->
+  <!-- ========================================================= -->
+
+  <g
+    id="errInputModule"
+    transform="translate(160 450)"
+    filter="url(#errGlassShadow)"
+  >
+
+    <rect
+      x="-105"
+      y="-90"
+      width="210"
+      height="180"
+      rx="22"
+      fill="url(#errGlassGradient)"
+      stroke="#F2F6FB"
+      stroke-width="1.5"
+      stroke-opacity="0.2"
+    />
+
+    <!-- Search / query motif -->
+    <g
+      transform="translate(-65 -45)"
+      stroke="#79E2F2"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      fill="none"
+    >
+      <circle
+        cx="22"
+        cy="22"
+        r="20"
+      />
+
+      <path d="M37 37 L58 58"/>
+    </g>
+
+
+    <!-- Abstract input bars -->
+    <g
+      transform="translate(-10 -42)"
+      fill="#79E2F2"
+    >
+      <rect
+        width="82"
+        height="8"
+        rx="4"
+        opacity="0.78"
+      />
+
+      <rect
+        y="19"
+        width="64"
+        height="6"
+        rx="3"
+        opacity="0.55"
+      />
+
+      <rect
+        y="37"
+        width="72"
+        height="5"
+        rx="2.5"
+        opacity="0.38"
+      />
+    </g>
+
+
+    <!-- Input metadata -->
+    <g
+      transform="translate(-62 40)"
+      fill="#35CEE6"
+      opacity="0.62"
+    >
+      <circle cx="0" cy="0" r="5"/>
+      <circle cx="22" cy="0" r="4"/>
+      <circle cx="43" cy="0" r="5"/>
+      <path
+        d="M55 0 H100"
+        stroke="#35CEE6"
+        stroke-width="2"
+        opacity="0.35"
+      />
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- INPUT → COMPASS AI FLOW                                   -->
+  <!-- ========================================================= -->
+
+  <g
+    id="errInputDataFlow"
+    transform="translate(265 450)"
+    fill="none"
+    stroke-linecap="round"
+  >
+
+    <path
+      d="M0 0 C85 0 160 0 245 0"
+      stroke="url(#errCyanGradient)"
+      stroke-width="4"
+      filter="url(#errCyanGlow)"
+    />
+
+    <path
+      d="M0 -32 C95 -30 165 -22 245 -10"
+      stroke="#1C567A"
+      stroke-width="1.8"
+      opacity="0.3"
+    />
+
+    <path
+      d="M0 32 C95 30 165 22 245 10"
+      stroke="#1C567A"
+      stroke-width="1.8"
+      opacity="0.3"
+    />
+
+    <circle
+      cx="92"
+      cy="0"
+      r="5"
+      fill="#35CEE6"
+      opacity="0.72"
+    />
+
+    <circle
+      cx="170"
+      cy="-18"
+      r="4"
+      fill="#35CEE6"
+      opacity="0.42"
+    />
+
+    <circle
+      cx="170"
+      cy="18"
+      r="4"
+      fill="#35CEE6"
+      opacity="0.42"
+    />
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- CENTRAL COMPASS AI DIAGNOSTIC ENGINE                      -->
+  <!-- ========================================================= -->
+
+  <g
+    id="errCompassEngine"
+    transform="translate(600 450)"
+  >
+
+    <!-- Outer analytical rings -->
+    <circle
+      r="182"
+      fill="none"
+      stroke="#5E68E5"
+      stroke-width="1.5"
+      stroke-opacity="0.14"
+    />
+
+    <circle
+      r="152"
+      fill="none"
+      stroke="#35CEE6"
+      stroke-width="1"
+      stroke-dasharray="8 12"
+      opacity="0.28"
+    />
+
+    <!-- Glass intelligence field -->
+    <circle
+      r="120"
+      fill="url(#errGlassGradient)"
+      stroke="#79E2F2"
+      stroke-width="2"
+      stroke-opacity="0.48"
+      filter="url(#errCyanGlow)"
+    />
+
+
+    <!-- Compass arcs -->
+    <g
+      stroke="#79E2F2"
+      stroke-width="3"
+      stroke-linecap="round"
+      fill="none"
+    >
+      <path d="M0 -110 A110 110 0 0 1 110 0"/>
+
+      <path
+        d="M0 110 A110 110 0 0 0 -110 0"
+        opacity="0.5"
+      />
+    </g>
+
+
+    <!-- Cardinal markers -->
+    <g
+      stroke="#79E2F2"
+      stroke-width="2.5"
+      opacity="0.68"
+      fill="none"
+    >
+      <line x1="0" y1="-110" x2="0" y2="-88"/>
+      <line x1="0" y1="110" x2="0" y2="88"/>
+      <line x1="-110" y1="0" x2="-88" y2="0"/>
+      <line x1="110" y1="0" x2="88" y2="0"/>
+    </g>
+
+
+    <!-- Compass direction -->
+    <g transform="rotate(-35)">
+      <path
+        d="M0 -100 L15 0 L0 20 L-15 0 Z"
+        fill="url(#errNeedleGradient)"
+        stroke="#F2F6FB"
+        stroke-width="1"
+      />
+
+      <path
+        d="M0 -100 L15 0 L0 5 L-15 0 Z"
+        fill="#F2F6FB"
+        opacity="0.55"
+      />
+    </g>
+
+
+    <!-- AI intelligence housing -->
+    <circle
+      r="61"
+      fill="#0D2840"
+      fill-opacity="0.3"
+      stroke="#35CEE6"
+      stroke-width="2"
+      stroke-opacity="0.42"
+    />
+
+
+    <!-- Violet AI core -->
+    <g filter="url(#errVioletGlow)">
+      <circle
+        r="31"
+        fill="url(#errVioletCoreGradient)"
+      />
+
+      <circle
+        r="12"
+        fill="#DDFBFD"
+        fill-opacity="0.62"
+      />
+    </g>
+
+
+    <!-- Analytical diagnostic nodes -->
+    <g
+      fill="#35CEE6"
+      opacity="0.78"
+    >
+      <circle cx="86" cy="-86" r="5"/>
+      <circle cx="-132" cy="20" r="4"/>
+      <circle cx="30" cy="136" r="4"/>
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- COMPASS → INTERRUPTION → RECOVERY FLOW                    -->
+  <!-- ========================================================= -->
+
+  <g
+    id="errRecoveryFlow"
+    transform="translate(750 450)"
+    fill="none"
+    stroke-linecap="round"
+  >
+
+    <!-- Normal flow entering interruption -->
+    <path
+      d="M0 0 C30 0 55 0 82 0"
+      stroke="url(#errCyanGradient)"
+      stroke-width="3.5"
+      filter="url(#errCyanGlow)"
+    />
+
+
+    <!-- Upper bypass route -->
+    <path
+      d="M0 -38 C75 -34 125 -105 230 -105"
+      stroke="url(#errCyanGradient)"
+      stroke-width="2.4"
+      opacity="0.58"
+    />
+
+    <!-- Lower diagnostic/retry route -->
+    <path
+      d="M112 15 C145 38 175 88 230 105"
+      stroke="url(#errAmberGradient)"
+      stroke-width="2"
+      stroke-dasharray="6 7"
+      opacity="0.72"
+      filter="url(#errAmberGlow)"
+    />
+
+
+    <!-- Main recovery path -->
+    <path
+      d="M128 0 C165 0 190 0 230 0"
+      stroke="url(#errCyanGradient)"
+      stroke-width="3.2"
+      opacity="0.72"
+      filter="url(#errCyanGlow)"
+    />
+
+
+    <!-- ======================================================= -->
+    <!-- TEMPORARY INTERRUPTION                                  -->
+    <!-- ======================================================= -->
+
+    <g
+      id="errInterruptionZone"
+      transform="translate(105 0)"
+    >
+
+      <!-- Containment halo -->
+      <circle
+        r="34"
+        fill="#F0A63A"
+        fill-opacity="0.05"
+        stroke="#F0A63A"
+        stroke-width="1.5"
+        stroke-dasharray="6 5"
+        filter="url(#errAmberGlow)"
+      />
+
+      <!-- Interruption core -->
+      <circle
+        r="13"
+        fill="#F0A63A"
+        fill-opacity="0.9"
+        filter="url(#errAmberGlow)"
+      />
+
+      <!-- Clear temporary interruption symbol -->
+      <path
+        d="M-6 -6 L6 6 M6 -6 L-6 6"
+        stroke="#FFFFFF"
+        stroke-width="2.5"
+        stroke-linecap="round"
+      />
+
+      <!-- Fragmented local connection -->
+      <path
+        d="M-27 0 H-14"
+        stroke="#F6C66B"
+        stroke-width="2.5"
+        opacity="0.82"
+      />
+
+      <path
+        d="M14 0 H27"
+        stroke="#F6C66B"
+        stroke-width="2.5"
+        opacity="0.82"
+      />
+
+      <!-- Diagnostic particles -->
+      <g
+        fill="#F6C66B"
+        opacity="0.72"
+      >
+        <circle cx="-21" cy="-19" r="3"/>
+        <circle cx="22" cy="17" r="3"/>
+        <circle cx="23" cy="-16" r="2.5"/>
+      </g>
+
+    </g>
+
+
+    <!-- Flow nodes -->
+    <circle
+      cx="58"
+      cy="0"
+      r="4"
+      fill="#35CEE6"
+      opacity="0.52"
+    />
+
+    <circle
+      cx="175"
+      cy="-82"
+      r="3.5"
+      fill="#35CEE6"
+      opacity="0.45"
+    />
+
+    <circle
+      cx="180"
+      cy="82"
+      r="3.5"
+      fill="#F6C66B"
+      opacity="0.55"
+    />
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- RIGHT ZONE — RECOVERY AND CONTINUATION                    -->
+  <!-- ========================================================= -->
+
+  <g
+    id="errRecoveryPanel"
+    transform="translate(1000 450)"
+    filter="url(#errGlassShadow)"
+  >
+
+    <rect
+      x="-105"
+      y="-125"
+      width="210"
+      height="250"
+      rx="24"
+      fill="url(#errGlassGradient)"
+      stroke="#F2F6FB"
+      stroke-width="1.5"
+      stroke-opacity="0.2"
+    />
+
+
+    <!-- Panel heading geometry -->
+    <g
+      transform="translate(-78 -92)"
+      fill="#79E2F2"
+    >
+      <rect
+        width="135"
+        height="8"
+        rx="4"
+        opacity="0.62"
+      />
+
+      <rect
+        y="19"
+        width="95"
+        height="6"
+        rx="3"
+        opacity="0.38"
+      />
+    </g>
+
+
+    <!-- Temporary interruption row -->
+    <g transform="translate(-78 -35)">
+
+      <circle
+        cx="10"
+        cy="10"
+        r="11"
+        fill="#F0A63A"
+        fill-opacity="0.12"
+        stroke="#F6C66B"
+        stroke-width="1.5"
+      />
+
+      <path
+        d="M5 5 L15 15 M15 5 L5 15"
+        stroke="#F6C66B"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+
+      <path
+        d="M35 10 H132"
+        stroke="#F6C66B"
+        stroke-width="2"
+        stroke-dasharray="6 5"
+        stroke-opacity="0.48"
+      />
+
+    </g>
+
+
+    <!-- Diagnostic continuation row -->
+    <g transform="translate(-78 28)">
+
+      <circle
+        cx="10"
+        cy="10"
+        r="11"
+        fill="none"
+        stroke="#79E2F2"
+        stroke-width="1.5"
+        opacity="0.55"
+      />
+
+      <path
+        d="M35 10 H132"
+        stroke="#79E2F2"
+        stroke-width="2"
+        opacity="0.42"
+      />
+
+      <circle
+        cx="82"
+        cy="10"
+        r="3"
+        fill="#35CEE6"
+        opacity="0.75"
+      />
+
+    </g>
+
+
+    <!-- Successful recovery row -->
+    <g transform="translate(-78 86)">
+
+      <circle
+        cx="10"
+        cy="10"
+        r="12"
+        fill="#10A875"
+        fill-opacity="0.12"
+        stroke="#10A875"
+        stroke-width="2"
+      />
+
+      <path
+        d="M4 10 L9 15 L18 5"
+        stroke="#34D399"
+        stroke-width="2.8"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+
+      <path
+        d="M35 10 H132"
+        stroke="url(#errEmeraldGradient)"
+        stroke-width="3"
+        filter="url(#errEmeraldGlow)"
+      />
+
+    </g>
+
+
+    <!-- Floating recovery indicator -->
+    <g
+      transform="translate(95 -145)"
+      filter="url(#errEmeraldGlow)"
+    >
+
+      <circle
+        r="17"
+        fill="#10A875"
+        fill-opacity="0.12"
+        stroke="#10A875"
+        stroke-width="2"
+      />
+
+      <path
+        d="M-8 0 L-1 7 L11 -8"
+        stroke="#34D399"
+        stroke-width="3"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+
+    </g>
+
+  </g>
+
+
+  <!-- ========================================================= -->
+  <!-- AMBIENT PARTICLES                                         -->
+  <!-- ========================================================= -->
+
+  <g
+    id="errAmbientParticles"
+    fill="#F2F6FB"
+    opacity="0.28"
+  >
+
+    <circle cx="200" cy="200" r="3"/>
+    <circle cx="1000" cy="100" r="2.5"/>
+    <circle cx="1100" cy="800" r="3"/>
+    <circle cx="150" cy="750" r="2"/>
+    <circle cx="600" cy="150" r="2.5"/>
+    <circle cx="450" cy="820" r="3"/>
+
+    <circle
+      cx="850"
+      cy="150"
+      r="2"
+      fill="#35CEE6"
+      opacity="0.8"
+    />
+
+    <circle
+      cx="1040"
+      cy="710"
+      r="2.5"
+      fill="#34D399"
+      opacity="0.6"
+    />
+
+  </g>
+
+</svg>

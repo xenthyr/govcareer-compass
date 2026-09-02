@@ -1,0 +1,1082 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 1200 900"
+  preserveAspectRatio="xMidYMid meet"
+  role="img"
+  aria-labelledby="emptyStateTitle emptyStateDesc"
+>
+  <title id="emptyStateTitle">GovCareer Compass — Empty State</title>
+
+  <desc id="emptyStateDesc">
+    A premium GovCareer Compass vector illustration showing the Compass AI
+    guidance system directing attention toward an intentionally empty
+    opportunity space. Subtle emerging nodes, analytical paths, and discovery
+    signals communicate that the space is ready for future government career
+    opportunities and exploration.
+  </desc>
+
+  <defs>
+
+    <!-- ========================================================= -->
+    <!-- GLASS SURFACE                                             -->
+    <!-- ========================================================= -->
+
+    <linearGradient
+      id="esGlassSurface"
+      x1="0"
+      y1="0"
+      x2="1"
+      y2="1"
+    >
+      <stop
+        offset="0%"
+        stop-color="#F2F6FB"
+        stop-opacity="0.16"
+      />
+
+      <stop
+        offset="48%"
+        stop-color="#DCEAF4"
+        stop-opacity="0.07"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#F2F6FB"
+        stop-opacity="0.025"
+      />
+    </linearGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- BRAND GRADIENTS                                           -->
+    <!-- ========================================================= -->
+
+    <linearGradient
+      id="esCyanFlow"
+      x1="0"
+      y1="0"
+      x2="1"
+      y2="0"
+    >
+      <stop
+        offset="0%"
+        stop-color="#79E2F2"
+        stop-opacity="0.05"
+      />
+
+      <stop
+        offset="38%"
+        stop-color="#35CEE6"
+        stop-opacity="0.85"
+      />
+
+      <stop
+        offset="72%"
+        stop-color="#12B7D3"
+        stop-opacity="0.70"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#79E2F2"
+        stop-opacity="0"
+      />
+    </linearGradient>
+
+
+    <linearGradient
+      id="esCompassBlue"
+      x1="0"
+      y1="0"
+      x2="1"
+      y2="1"
+    >
+      <stop
+        offset="0%"
+        stop-color="#173D5A"
+      />
+
+      <stop
+        offset="45%"
+        stop-color="#3F91B8"
+      />
+
+      <stop
+        offset="72%"
+        stop-color="#79DCE7"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#1D567C"
+      />
+    </linearGradient>
+
+
+    <linearGradient
+      id="esNeedleGradient"
+      x1="0"
+      y1="1"
+      x2="1"
+      y2="0"
+    >
+      <stop
+        offset="0%"
+        stop-color="#153953"
+      />
+
+      <stop
+        offset="45%"
+        stop-color="#28759D"
+      />
+
+      <stop
+        offset="78%"
+        stop-color="#45BFD2"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#9CEBF1"
+      />
+    </linearGradient>
+
+
+    <linearGradient
+      id="esVioletGradient"
+      x1="0"
+      y1="0"
+      x2="1"
+      y2="1"
+    >
+      <stop
+        offset="0%"
+        stop-color="#D4BFFF"
+      />
+
+      <stop
+        offset="38%"
+        stop-color="#B381F4"
+      />
+
+      <stop
+        offset="72%"
+        stop-color="#9564DF"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#6136A8"
+      />
+    </linearGradient>
+
+
+    <linearGradient
+      id="esEmeraldGradient"
+      x1="0"
+      y1="0"
+      x2="1"
+      y2="0"
+    >
+      <stop
+        offset="0%"
+        stop-color="#5DE7B2"
+        stop-opacity="0.25"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#10A875"
+        stop-opacity="1"
+      />
+    </linearGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- RADIAL GLOWS                                              -->
+    <!-- ========================================================= -->
+
+    <radialGradient
+      id="esAmbientGlow"
+      cx="50%"
+      cy="50%"
+      r="50%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#12B7D3"
+        stop-opacity="0.12"
+      />
+
+      <stop
+        offset="52%"
+        stop-color="#1D789D"
+        stop-opacity="0.045"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#0D1C31"
+        stop-opacity="0"
+      />
+    </radialGradient>
+
+
+    <radialGradient
+      id="esCoreGlow"
+      cx="45%"
+      cy="40%"
+      r="70%"
+    >
+      <stop
+        offset="0%"
+        stop-color="#D9C5FF"
+      />
+
+      <stop
+        offset="35%"
+        stop-color="#B67DF4"
+      />
+
+      <stop
+        offset="70%"
+        stop-color="#8D59D7"
+      />
+
+      <stop
+        offset="100%"
+        stop-color="#542B94"
+      />
+    </radialGradient>
+
+
+    <!-- ========================================================= -->
+    <!-- FILTERS                                                   -->
+    <!-- ========================================================= -->
+
+    <filter
+      id="esSoftCyanGlow"
+      x="-60%"
+      y="-60%"
+      width="220%"
+      height="220%"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="7"
+        result="blur"
+      />
+
+      <feColorMatrix
+        in="blur"
+        type="matrix"
+        values="
+          0 0 0 0 0.08
+          0 0 0 0 0.75
+          0 0 0 0 0.90
+          0 0 0 0.55 0
+        "
+        result="cyanGlow"
+      />
+
+      <feMerge>
+        <feMergeNode in="cyanGlow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+
+    <filter
+      id="esVioletGlow"
+      x="-100%"
+      y="-100%"
+      width="300%"
+      height="300%"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="11"
+        result="blur"
+      />
+
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+
+    <filter
+      id="esEmeraldGlow"
+      x="-80%"
+      y="-80%"
+      width="260%"
+      height="260%"
+    >
+      <feGaussianBlur
+        in="SourceGraphic"
+        stdDeviation="6"
+        result="blur"
+      />
+
+      <feColorMatrix
+        in="blur"
+        type="matrix"
+        values="
+          0 0 0 0 0.06
+          0 0 0 0 0.70
+          0 0 0 0 0.45
+          0 0 0 0.60 0
+        "
+        result="emeraldGlow"
+      />
+
+      <feMerge>
+        <feMergeNode in="emeraldGlow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+
+    <filter
+      id="esPanelShadow"
+      x="-35%"
+      y="-35%"
+      width="170%"
+      height="190%"
+    >
+      <feDropShadow
+        dx="0"
+        dy="10"
+        stdDeviation="12"
+        flood-color="#06131F"
+        flood-opacity="0.20"
+      />
+    </filter>
+
+  </defs>
+
+
+  <!-- =========================================================== -->
+  <!-- TRANSPARENT BACKGROUND                                     -->
+  <!-- =========================================================== -->
+
+  <!--
+    No permanent background rectangle is intentionally included.
+
+    This illustration remains transparent and can be placed on the
+    GovCareer Compass light or dark interface surfaces.
+  -->
+
+
+  <!-- =========================================================== -->
+  <!-- AMBIENT ANALYTICAL FIELD                                   -->
+  <!-- =========================================================== -->
+
+  <g id="ambientField">
+
+    <circle
+      cx="600"
+      cy="450"
+      r="430"
+      fill="url(#esAmbientGlow)"
+    />
+
+    <circle
+      cx="600"
+      cy="450"
+      r="360"
+      fill="none"
+      stroke="#35CEE6"
+      stroke-width="1"
+      stroke-opacity="0.055"
+    />
+
+    <circle
+      cx="600"
+      cy="450"
+      r="275"
+      fill="none"
+      stroke="#79E2F2"
+      stroke-width="1"
+      stroke-dasharray="8 20"
+      stroke-opacity="0.055"
+    />
+
+    <path
+      d="M80 450 H1120"
+      fill="none"
+      stroke="#79E2F2"
+      stroke-width="1"
+      stroke-opacity="0.035"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- COMPASS AI GUIDANCE ENGINE                                 -->
+  <!-- =========================================================== -->
+
+  <g
+    id="compassAiGuidance"
+    transform="translate(310 450)"
+  >
+
+    <!-- Outer analytical orbit -->
+
+    <circle
+      r="185"
+      fill="none"
+      stroke="#2A668B"
+      stroke-width="2"
+      stroke-opacity="0.20"
+    />
+
+
+    <circle
+      r="150"
+      fill="none"
+      stroke="#397AA1"
+      stroke-width="2"
+      stroke-dasharray="9 18"
+      stroke-opacity="0.30"
+    />
+
+
+    <!-- Segmented compass ring -->
+
+    <g
+      fill="none"
+      stroke="url(#esCompassBlue)"
+      stroke-width="14"
+      stroke-linecap="round"
+    >
+
+      <path
+        d="M-85 -120
+           A150 150 0 0 1
+           75 -130"
+      />
+
+      <path
+        d="M125 -75
+           A150 150 0 0 1
+           130 75"
+      />
+
+      <path
+        d="M75 130
+           A150 150 0 0 1
+           -85 120"
+      />
+
+      <path
+        d="M-125 75
+           A150 150 0 0 1
+           -130 -75"
+      />
+
+    </g>
+
+
+    <!-- Inner analytical ring -->
+
+    <circle
+      r="105"
+      fill="none"
+      stroke="#69C9DA"
+      stroke-width="2"
+      stroke-opacity="0.45"
+    />
+
+
+    <!-- Cardinal analytical axes -->
+
+    <g
+      fill="none"
+      stroke="#4DA8C0"
+      stroke-linecap="round"
+      stroke-opacity="0.42"
+    >
+
+      <path
+        d="M-120 0 H120"
+        stroke-width="2"
+      />
+
+      <path
+        d="M0 -120 V120"
+        stroke-width="2"
+      />
+
+    </g>
+
+
+    <!-- AI network paths -->
+
+    <g
+      fill="none"
+      stroke="#4D9AB7"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-opacity="0.50"
+    >
+
+      <path
+        d="M-105 -55
+           C-60 -105 35 -95 95 -45"
+      />
+
+      <path
+        d="M-85 75
+           C-25 40 55 45 105 85"
+      />
+
+      <path
+        d="M-55 -100
+           C-25 -35 -35 40 5 105"
+      />
+
+      <path
+        d="M75 -95
+           C25 -45 35 45 85 95"
+      />
+
+    </g>
+
+
+    <!-- Analytical network nodes -->
+
+    <g
+      fill="#48B6CA"
+      filter="url(#esSoftCyanGlow)"
+    >
+
+      <circle
+        cx="-105"
+        cy="-55"
+        r="6"
+      />
+
+      <circle
+        cx="95"
+        cy="-45"
+        r="5"
+      />
+
+      <circle
+        cx="-85"
+        cy="75"
+        r="5"
+      />
+
+      <circle
+        cx="105"
+        cy="85"
+        r="5"
+      />
+
+      <circle
+        cx="-55"
+        cy="-100"
+        r="4"
+      />
+
+      <circle
+        cx="75"
+        cy="-95"
+        r="4"
+      />
+
+    </g>
+
+
+    <!-- Northeast Compass Needle -->
+
+    <g
+      transform="rotate(45)"
+      filter="url(#esPanelShadow)"
+    >
+
+      <!-- Forward blade -->
+
+      <path
+        d="
+          M0 -130
+          L18 -8
+          L0 12
+          L-18 -8
+          Z
+        "
+        fill="url(#esNeedleGradient)"
+      />
+
+      <!-- Rear blade -->
+
+      <path
+        d="
+          M0 105
+          L14 8
+          L0 -10
+          L-14 8
+          Z
+        "
+        fill="#1A5579"
+        fill-opacity="0.85"
+      />
+
+      <!-- Needle highlight -->
+
+      <path
+        d="
+          M0 -122
+          L7 -8
+          L0 2
+          Z
+        "
+        fill="#DDFBFD"
+        fill-opacity="0.45"
+      />
+
+    </g>
+
+
+    <!-- Compass AI Core -->
+
+    <g id="compassAiCore">
+
+      <circle
+        r="58"
+        fill="#0D2840"
+        fill-opacity="0.95"
+        stroke="#2E6D92"
+        stroke-width="3"
+      />
+
+      <circle
+        r="43"
+        fill="none"
+        stroke="#72DDE5"
+        stroke-width="6"
+        stroke-dasharray="28 9"
+        stroke-linecap="butt"
+        opacity="0.85"
+      />
+
+      <circle
+        r="27"
+        fill="url(#esCoreGlow)"
+        filter="url(#esVioletGlow)"
+      />
+
+      <circle
+        cx="-7"
+        cy="-9"
+        r="8"
+        fill="#E3D5FF"
+        fill-opacity="0.20"
+      />
+
+    </g>
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- GUIDANCE / DISCOVERY FLOW                                  -->
+  <!-- =========================================================== -->
+
+  <g id="guidanceFlow">
+
+    <path
+      d="
+        M490 450
+        C575 450
+          620 450
+          690 450
+      "
+      fill="none"
+      stroke="url(#esCyanFlow)"
+      stroke-width="5"
+      stroke-linecap="round"
+      filter="url(#esSoftCyanGlow)"
+    />
+
+    <path
+      d="
+        M500 430
+        C570 415
+          625 420
+          700 440
+      "
+      fill="none"
+      stroke="#4D9AB7"
+      stroke-width="2"
+      stroke-dasharray="6 12"
+      stroke-linecap="round"
+      stroke-opacity="0.30"
+    />
+
+    <path
+      d="
+        M500 470
+        C570 485
+          625 480
+          700 460
+      "
+      fill="none"
+      stroke="#4D9AB7"
+      stroke-width="2"
+      stroke-dasharray="6 12"
+      stroke-linecap="round"
+      stroke-opacity="0.25"
+    />
+
+    <!-- Moving intelligence nodes represented statically -->
+
+    <circle
+      cx="560"
+      cy="450"
+      r="5"
+      fill="#35CEE6"
+      opacity="0.80"
+      filter="url(#esSoftCyanGlow)"
+    />
+
+    <circle
+      cx="625"
+      cy="450"
+      r="4"
+      fill="#79E2F2"
+      opacity="0.70"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- EMPTY OPPORTUNITY SPACE                                    -->
+  <!-- =========================================================== -->
+
+  <g
+    id="emptyOpportunitySpace"
+    transform="translate(900 450)"
+    filter="url(#esPanelShadow)"
+  >
+
+    <!-- Main glass panel -->
+
+    <rect
+      x="-230"
+      y="-185"
+      width="460"
+      height="370"
+      rx="28"
+      fill="url(#esGlassSurface)"
+      stroke="#F2F6FB"
+      stroke-width="1.5"
+      stroke-opacity="0.20"
+    />
+
+
+    <!-- Panel analytical halo -->
+
+    <ellipse
+      cx="0"
+      cy="0"
+      rx="165"
+      ry="120"
+      fill="url(#esAmbientGlow)"
+      opacity="0.75"
+    />
+
+
+    <!-- Empty placeholder regions -->
+
+    <g
+      fill="none"
+      stroke="#A9C8D8"
+      stroke-width="1.5"
+    >
+
+      <rect
+        x="-180"
+        y="-125"
+        width="360"
+        height="74"
+        rx="14"
+        stroke-opacity="0.16"
+      />
+
+      <rect
+        x="-180"
+        y="-25"
+        width="360"
+        height="74"
+        rx="14"
+        stroke-dasharray="8 10"
+        stroke-opacity="0.14"
+      />
+
+      <rect
+        x="-180"
+        y="75"
+        width="360"
+        height="74"
+        rx="14"
+        stroke-opacity="0.10"
+      />
+
+    </g>
+
+
+    <!-- Empty-space focal symbol -->
+
+    <g
+      transform="translate(0 -2)"
+      fill="none"
+      stroke="#67C6D7"
+      stroke-linecap="round"
+    >
+
+      <circle
+        r="42"
+        stroke-width="2"
+        stroke-opacity="0.35"
+      />
+
+      <circle
+        r="23"
+        stroke-width="1.5"
+        stroke-dasharray="5 6"
+        stroke-opacity="0.35"
+      />
+
+      <path
+        d="
+          M24 24
+          L43 43
+        "
+        stroke-width="3"
+        stroke-opacity="0.45"
+      />
+
+      <!-- Small open possibility marker -->
+
+      <path
+        d="
+          M-8 -5
+          H8
+          M0 -13
+          V3
+        "
+        stroke-width="2"
+        stroke-opacity="0.55"
+      />
+
+    </g>
+
+
+    <!-- Subtle placeholder indicators -->
+
+    <g
+      fill="#8EB9CA"
+      opacity="0.14"
+    >
+
+      <rect
+        x="-150"
+        y="-105"
+        width="170"
+        height="8"
+        rx="4"
+      />
+
+      <rect
+        x="-150"
+        y="-88"
+        width="110"
+        height="6"
+        rx="3"
+      />
+
+      <rect
+        x="-150"
+        y="95"
+        width="145"
+        height="8"
+        rx="4"
+      />
+
+      <rect
+        x="-150"
+        y="112"
+        width="95"
+        height="6"
+        rx="3"
+      />
+
+    </g>
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- EMERGING DISCOVERY / FUTURE OPPORTUNITIES                  -->
+  <!-- =========================================================== -->
+
+  <g id="emergingPossibilities">
+
+    <!-- Left emerging possibility -->
+
+    <path
+      d="
+        M650 650
+        C690 650
+          710 630
+          735 605
+      "
+      fill="none"
+      stroke="url(#esEmeraldGradient)"
+      stroke-width="2.5"
+      stroke-dasharray="5 10"
+      stroke-linecap="round"
+      opacity="0.70"
+    />
+
+    <circle
+      cx="650"
+      cy="650"
+      r="7"
+      fill="#10A875"
+      filter="url(#esEmeraldGlow)"
+    />
+
+    <circle
+      cx="625"
+      cy="680"
+      r="4"
+      fill="#34D399"
+      opacity="0.75"
+    />
+
+
+    <!-- Upper-right emerging network -->
+
+    <path
+      d="
+        M1010 245
+        C1045 220
+          1070 225
+          1100 255
+      "
+      fill="none"
+      stroke="#4BA8BE"
+      stroke-width="2"
+      stroke-dasharray="5 12"
+      stroke-linecap="round"
+      stroke-opacity="0.35"
+    />
+
+    <circle
+      cx="1010"
+      cy="245"
+      r="5"
+      fill="#35CEE6"
+      opacity="0.60"
+    />
+
+    <circle
+      cx="1100"
+      cy="255"
+      r="4"
+      fill="#79E2F2"
+      opacity="0.45"
+    />
+
+
+    <!-- Lower-right possibility -->
+
+    <path
+      d="
+        M1070 680
+        C1100 700
+          1120 730
+          1140 760
+      "
+      fill="none"
+      stroke="url(#esEmeraldGradient)"
+      stroke-width="2"
+      stroke-dasharray="4 11"
+      stroke-linecap="round"
+      opacity="0.55"
+    />
+
+    <circle
+      cx="1140"
+      cy="760"
+      r="5"
+      fill="#10A875"
+      opacity="0.80"
+      filter="url(#esEmeraldGlow)"
+    />
+
+  </g>
+
+
+  <!-- =========================================================== -->
+  <!-- AMBIENT PARTICLES                                           -->
+  <!-- =========================================================== -->
+
+  <g
+    id="ambientParticles"
+    fill="#79E2F2"
+  >
+
+    <circle
+      cx="150"
+      cy="190"
+      r="3"
+      opacity="0.28"
+    />
+
+    <circle
+      cx="210"
+      cy="720"
+      r="2.5"
+      opacity="0.22"
+    />
+
+    <circle
+      cx="470"
+      cy="155"
+      r="3"
+      opacity="0.22"
+    />
+
+    <circle
+      cx="620"
+      cy="760"
+      r="2"
+      opacity="0.22"
+    />
+
+    <circle
+      cx="1020"
+      cy="115"
+      r="3"
+      opacity="0.25"
+    />
+
+    <circle
+      cx="1140"
+      cy="540"
+      r="2.5"
+      opacity="0.22"
+    />
+
+  </g>
+
+</svg>
