@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 512 512"
+    width="512"
+    height="512"
+    role="img"
+    aria-labelledby="direct-eligibility-title direct-eligibility-desc"
+    focusable="false">
+
+    <title id="direct-eligibility-title">Direct Eligibility</title>
+
+    <desc id="direct-eligibility-desc">
+        A modern icon representing direct eligibility and a confirmed match
+        between a candidate's profile and government career requirements.
+    </desc>
+
+    <defs>
+
+        <!--
+            Primary GovCareer Compass institutional gradient.
+        -->
+        <linearGradient
+            id="directEligibilityBaseGradient"
+            x1="0%"
+            y1="100%"
+            x2="100%"
+            y2="0%">
+
+            <stop offset="0%" stop-color="#0E1627"/>
+            <stop offset="55%" stop-color="#123E57"/>
+            <stop offset="100%" stop-color="#168BA8"/>
+
+        </linearGradient>
+
+
+        <!--
+            Direct eligibility confirmation gradient.
+        -->
+        <linearGradient
+            id="directEligibilityAccentGradient"
+            x1="0%"
+            y1="100%"
+            x2="100%"
+            y2="0%">
+
+            <stop offset="0%" stop-color="#168BA8"/>
+            <stop offset="55%" stop-color="#1CB5D3"/>
+            <stop offset="100%" stop-color="#24CBE9"/>
+
+        </linearGradient>
+
+    </defs>
+
+
+    <!-- ====================================================== -->
+    <!-- MAIN ELIGIBILITY / PROFILE CARD                        -->
+    <!-- ====================================================== -->
+
+    <g id="directEligibilityIcon">
+
+        <rect
+            x="56"
+            y="72"
+            width="344"
+            height="320"
+            rx="28"
+            fill="url(#directEligibilityBaseGradient)"/>
+
+
+        <!-- ================================================== -->
+        <!-- PROFILE / CREDENTIAL SYMBOL                        -->
+        <!-- ================================================== -->
+
+        <g id="directEligibilityProfile">
+
+            <!-- Profile avatar area -->
+
+            <circle
+                cx="136"
+                cy="164"
+                r="48"
+                fill="#FFFFFF"
+                opacity="0.14"/>
+
+
+            <!-- Profile head -->
+
+            <circle
+                cx="136"
+                cy="150"
+                r="18"
+                fill="#DDFBFD"
+                opacity="0.88"/>
+
+
+            <!-- Profile shoulders -->
+
+            <path
+                d="M100 206
+                   C100 184 116 172 136 172
+                   C156 172 172 184 172 206
+                   L172 216
+                   L100 216 Z"
+                fill="#DDFBFD"
+                opacity="0.88"/>
+
+
+            <!-- ================================================== -->
+            <!-- CREDENTIAL INFORMATION LINES                       -->
+            <!-- ================================================== -->
+
+            <g
+                fill="#FFFFFF"
+                opacity="0.16">
+
+                <!-- Primary qualification line -->
+
+                <rect
+                    x="208"
+                    y="124"
+                    width="128"
+                    height="22"
+                    rx="11"/>
+
+
+                <!-- Secondary qualification line -->
+
+                <rect
+                    x="208"
+                    y="160"
+                    width="96"
+                    height="16"
+                    rx="8"/>
+
+            </g>
+
+
+            <!-- ================================================== -->
+            <!-- REQUIREMENT / PROFILE DATA LINES                   -->
+            <!-- ================================================== -->
+
+            <g
+                fill="#FFFFFF"
+                opacity="0.14">
+
+                <rect
+                    x="96"
+                    y="264"
+                    width="224"
+                    height="14"
+                    rx="7"/>
+
+                <rect
+                    x="96"
+                    y="298"
+                    width="192"
+                    height="14"
+                    rx="7"/>
+
+                <rect
+                    x="96"
+                    y="332"
+                    width="128"
+                    height="14"
+                    rx="7"/>
+
+            </g>
+
+
+            <!-- ================================================== -->
+            <!-- DIRECT MATCH ACCENT                                -->
+            <!-- ================================================== -->
+
+            <path
+                d="M96 238 H296"
+                fill="none"
+                stroke="#24CBE9"
+                stroke-width="5"
+                stroke-linecap="round"
+                opacity="0.65"/>
+
+        </g>
+
+
+        <!-- ====================================================== -->
+        <!-- DIRECT ELIGIBILITY CONFIRMATION BADGE                 -->
+        <!-- ====================================================== -->
+
+        <g id="directEligibilityConfirmation">
+
+            <!--
+                Badge positioned inside the SVG safe area.
+                It intentionally overlaps the lower-right corner
+                of the eligibility card.
+            -->
+
+            <circle
+                cx="376"
+                cy="376"
+                r="88"
+                fill="url(#directEligibilityAccentGradient)"/>
+
+
+            <!-- Subtle internal highlight -->
+
+            <circle
+                cx="376"
+                cy="376"
+                r="66"
+                fill="none"
+                stroke="#FFFFFF"
+                stroke-width="2"
+                opacity="0.18"/>
+
+
+            <!-- Direct eligibility checkmark -->
+
+            <path
+                id="directEligibilityCheckmark"
+                d="M330 376
+                   L362 408
+                   L424 340"
+                fill="none"
+                stroke="#FFFFFF"
+                stroke-width="24"
+                stroke-linecap="round"
+                stroke-linejoin="round"/>
+
+        </g>
+
+    </g>
+
+</svg>

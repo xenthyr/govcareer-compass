@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 512 512"
+    width="512"
+    height="512"
+    role="img"
+    focusable="false"
+    aria-labelledby="not-eligible-title not-eligible-desc"
+>
+    <title id="not-eligible-title">Not Eligible</title>
+
+    <desc id="not-eligible-desc">
+        A modern eligibility status icon representing a candidate whose
+        current profile does not meet the required criteria for a government
+        career opportunity.
+    </desc>
+
+    <defs>
+
+        <!--
+            Core GovCareer Compass institutional gradient.
+            Used consistently for the professional profile card.
+        -->
+        <linearGradient
+            id="notEligibleBaseGradient"
+            x1="0%"
+            y1="100%"
+            x2="100%"
+            y2="0%"
+        >
+            <stop offset="0%" stop-color="#0E1627"/>
+            <stop offset="55%" stop-color="#123E57"/>
+            <stop offset="100%" stop-color="#168BA8"/>
+        </linearGradient>
+
+
+        <!--
+            Professional crimson status gradient.
+            Represents unmet eligibility requirements without appearing
+            overly aggressive or visually disconnected from the brand.
+        -->
+        <linearGradient
+            id="notEligibleAccentGradient"
+            x1="0%"
+            y1="100%"
+            x2="100%"
+            y2="0%"
+        >
+            <stop offset="0%" stop-color="#8F1D3D"/>
+            <stop offset="55%" stop-color="#B8324B"/>
+            <stop offset="100%" stop-color="#E05A6F"/>
+        </linearGradient>
+
+    </defs>
+
+
+    <!-- =========================================================
+         NOT ELIGIBLE ICON
+         ========================================================= -->
+
+    <g id="notEligibleIcon">
+
+
+        <!-- =====================================================
+             MAIN PROFESSIONAL PROFILE / ELIGIBILITY CARD
+             ===================================================== -->
+
+        <rect
+            id="notEligibleProfileCard"
+            x="48"
+            y="72"
+            width="384"
+            height="304"
+            rx="24"
+            fill="url(#notEligibleBaseGradient)"
+        />
+
+
+        <!-- =====================================================
+             SUBTLE INTERNAL PROFILE DETAILS
+             ===================================================== -->
+
+        <g
+            id="notEligibleCardDetails"
+            transform="translate(88 112)"
+            fill="#FFFFFF"
+            fill-opacity="0.10"
+        >
+
+            <!-- Candidate Avatar -->
+            <circle
+                cx="48"
+                cy="48"
+                r="48"
+            />
+
+
+            <!-- Profile Information -->
+
+            <rect
+                x="120"
+                y="16"
+                width="168"
+                height="24"
+                rx="12"
+            />
+
+            <rect
+                x="120"
+                y="56"
+                width="128"
+                height="16"
+                rx="8"
+            />
+
+
+            <!-- Eligibility Requirement Lines -->
+
+            <rect
+                x="0"
+                y="128"
+                width="288"
+                height="12"
+                rx="6"
+            />
+
+            <rect
+                x="0"
+                y="160"
+                width="256"
+                height="12"
+                rx="6"
+            />
+
+            <rect
+                x="0"
+                y="192"
+                width="208"
+                height="12"
+                rx="6"
+            />
+
+        </g>
+
+
+        <!-- =====================================================
+             UNMET REQUIREMENTS / INCOMPLETE CRITERIA INDICATOR
+             ===================================================== -->
+
+        <g
+            id="notEligibleRequirementIndicator"
+            transform="translate(88 344)"
+        >
+
+            <!-- Muted Requirement Track -->
+
+            <rect
+                x="0"
+                y="0"
+                width="200"
+                height="8"
+                rx="4"
+                fill="#FFFFFF"
+                opacity="0.08"
+            />
+
+
+            <!-- Missing / Failed Requirement Segment -->
+
+            <rect
+                x="0"
+                y="0"
+                width="48"
+                height="8"
+                rx="4"
+                fill="#E05A6F"
+                opacity="0.35"
+            />
+
+        </g>
+
+
+        <!-- =====================================================
+             NOT-ELIGIBLE STATUS BADGE
+             ===================================================== -->
+
+        <g
+            id="notEligibleStatusBadge"
+            transform="translate(288 288)"
+        >
+
+            <!-- Status Badge Background -->
+
+            <circle
+                cx="112"
+                cy="112"
+                r="112"
+                fill="url(#notEligibleAccentGradient)"
+            />
+
+
+            <!-- Rounded Negative / Not Eligible Symbol -->
+
+            <g
+                id="notEligibleIndicator"
+                transform="translate(112 112)"
+                fill="none"
+                stroke="#FFFFFF"
+                stroke-width="26"
+                stroke-linecap="round"
+            >
+
+                <path d="M-44 -44 L44 44"/>
+
+                <path d="M44 -44 L-44 44"/>
+
+            </g>
+
+        </g>
+
+
+    </g>
+
+</svg>

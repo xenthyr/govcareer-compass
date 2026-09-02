@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 512 512"
+    width="512"
+    height="512"
+    role="img"
+    focusable="false"
+    aria-labelledby="conditional-eligibility-title conditional-eligibility-desc"
+>
+    <title id="conditional-eligibility-title">Conditional Eligibility</title>
+
+    <desc id="conditional-eligibility-desc">
+        A modern icon representing conditional eligibility, indicating that a
+        candidate may qualify for a government career opportunity after meeting
+        additional requirements or conditions.
+    </desc>
+
+    <defs>
+        <!-- Primary GovCareer Compass institutional gradient -->
+        <linearGradient
+            id="conditionalEligibilityBaseGradient"
+            x1="0%"
+            y1="100%"
+            x2="100%"
+            y2="0%"
+        >
+            <stop offset="0%" stop-color="#0E1627"/>
+            <stop offset="55%" stop-color="#123E57"/>
+            <stop offset="100%" stop-color="#168BA8"/>
+        </linearGradient>
+
+        <!-- Conditional eligibility status gradient -->
+        <linearGradient
+            id="conditionalEligibilityAccentGradient"
+            x1="0%"
+            y1="100%"
+            x2="100%"
+            y2="0%"
+        >
+            <stop offset="0%" stop-color="#B7791F"/>
+            <stop offset="55%" stop-color="#D69E2E"/>
+            <stop offset="100%" stop-color="#F6C453"/>
+        </linearGradient>
+    </defs>
+
+    <g id="esConditionalEligibilityIcon">
+
+        <!-- Main professional eligibility/profile card -->
+        <rect
+            x="48"
+            y="72"
+            width="384"
+            height="304"
+            rx="24"
+            fill="url(#conditionalEligibilityBaseGradient)"
+        />
+
+        <!-- Subtle internal profile and eligibility information -->
+        <g
+            id="esConditionalCardDetails"
+            transform="translate(88 112)"
+            fill="#FFFFFF"
+            fill-opacity="0.10"
+        >
+            <!-- Candidate profile -->
+            <circle
+                cx="48"
+                cy="48"
+                r="48"
+            />
+
+            <!-- Candidate information -->
+            <rect
+                x="120"
+                y="16"
+                width="168"
+                height="24"
+                rx="12"
+            />
+
+            <rect
+                x="120"
+                y="56"
+                width="128"
+                height="16"
+                rx="8"
+            />
+
+            <!-- Eligibility requirement lines -->
+            <rect
+                x="0"
+                y="128"
+                width="288"
+                height="12"
+                rx="6"
+            />
+
+            <rect
+                x="0"
+                y="160"
+                width="248"
+                height="12"
+                rx="6"
+            />
+
+            <rect
+                x="0"
+                y="192"
+                width="176"
+                height="12"
+                rx="6"
+            />
+        </g>
+
+        <!-- Subtle conditional requirement progress indicator -->
+        <g id="esConditionalProgressCue">
+            <!-- Progress track -->
+            <rect
+                x="88"
+                y="332"
+                width="176"
+                height="10"
+                rx="5"
+                fill="#FFFFFF"
+                fill-opacity="0.10"
+            />
+
+            <!-- Partial completion -->
+            <rect
+                x="88"
+                y="332"
+                width="96"
+                height="10"
+                rx="5"
+                fill="url(#conditionalEligibilityAccentGradient)"
+                opacity="0.80"
+            />
+
+            <!-- Requirement marker -->
+            <circle
+                cx="198"
+                cy="337"
+                r="7"
+                fill="url(#conditionalEligibilityAccentGradient)"
+                opacity="0.90"
+            />
+        </g>
+
+        <!-- Conditional status badge -->
+        <g
+            id="esConditionalStatusBadge"
+            transform="translate(296 296)"
+        >
+            <!-- Badge -->
+            <circle
+                cx="96"
+                cy="96"
+                r="96"
+                fill="url(#conditionalEligibilityAccentGradient)"
+            />
+
+            <!-- Conditional requirement indicator -->
+            <g
+                id="esConditionalIndicator"
+                transform="translate(96 96)"
+            >
+                <!-- Vertical requirement indicator -->
+                <path
+                    d="M0 -48V16"
+                    fill="none"
+                    stroke="#FFFFFF"
+                    stroke-width="24"
+                    stroke-linecap="round"
+                />
+
+                <!-- Indicator dot -->
+                <circle
+                    cx="0"
+                    cy="52"
+                    r="14"
+                    fill="#FFFFFF"
+                />
+            </g>
+        </g>
+
+    </g>
+</svg>
