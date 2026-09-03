@@ -6,106 +6,557 @@
  *
  * Purpose
  * -------
- * Converts a candidate's stated preferences into comparable
- * preference signals for eligible careers.
+ * Converts a candidate's stated preferences into a clean,
+ * deterministic and normalized preference model.
  *
- * Examples:
- * - salary importance
- * - authority importance
- * - family importance
- * - elderly-parent care
- * - Kolkata preference
- * - work-life balance
- * - low stress
- * - low physical risk
- * - career growth
- * - prestige
- * - housing
+ * This module is intentionally CAREER-AGNOSTIC.
  *
- * IMPORTANT
- * ---------
- * This module never determines legal eligibility.
+ * It must NOT:
+ * - determine legal eligibility;
+ * - inspect eligibility rules;
+ * - inspect or invent job facts;
+ * - calculate a career's preference score;
+ * - rank careers;
+ * - apply final recommendation logic.
  *
- * Failed hard eligibility is handled by eligibility-engine.js.
+ * Responsibility boundary
+ * -----------------------
+ *
+ * Candidate Profile / Assessment Answers
+ *                 ↓
+ *        Preference Engine
+ *                 ↓
+ *        Normalized Preference Model
+ *                 ↓
+ *          Scoring Engine
+ *
+ * Eligibility is handled independently by:
+ *   js/recommendation/eligibility-engine.js
+ *
+ * Final career scoring is handled independently by:
+ *   js/recommendation/scoring-engine.js
+ *
+ * Preference direction
+ * --------------------
+ * Every preference signal explicitly carries one of:
+ *
+ *   HIGHER
+ *   LOWER
+ *   NEUTRAL
+ *
+ * This is critical because the raw importance of a preference and
+ * the direction in which the candidate wants a metric to move are
+ * two different concepts.
+ *
+ * Example:
+ *
+ *   low stress importance = 9
+ *
+ * becomes:
+ *
+ *   {
+ *     metric: "stress",
+ *     importance: 9,
+ *     weight: 0.9,
+ *     direction: "LOWER"
+ *   }
+ *
+ * Tolerance preferences
+ * ---------------------
+ * Some candidate inputs describe tolerance rather than a desired
+ * outcome, for example:
+ *
+ *   transferTolerance
+ *   ruralPostingTolerance
+ *   nightDutyTolerance
+ *   shiftDutyTolerance
+ *   physicalRiskTolerance
+ *   stressTolerance
+ *   examDifficultyTolerance
+ *   preparationBurdenTolerance
+ *
+ * These are kept as explicit tolerance values. The corresponding
+ * burden metric normally keeps direction LOWER, while the tolerance
+ * value tells the scoring engine how strongly the burden should
+ * affect the candidate's preference fit.
+ *
+ * No job facts
+ * ------------
+ * This module must remain completely independent of career data.
+ * It therefore never reads registry records and never assumes that
+ * a particular career has any particular salary, authority, posting,
+ * housing, risk, prestige, etc.
  */
 
-import config from '../config.js';
+const DIRECTION = Object.freeze({
+  HIGHER: 'HIGHER',
+  LOWER: 'LOWER',
+  NEUTRAL: 'NEUTRAL'
+});
+
+const DEFAULT_IMPORTANCE = 5;
+
+const MIN_IMPORTANCE = 0;
+const MAX_IMPORTANCE = 10;
+
+const MIN_TOLERANCE = 0;
+const MAX_TOLERANCE = 10;
+
+/* ============================================================
+ * PREFERENCE DEFINITIONS
+ * ============================================================
+ *
+ * Each definition describes the semantic contract exposed to the
+ * scoring layer.
+ *
+ * `metric` is the canonical career-data metric expected by the
+ * scoring engine.
+ *
+ * `mode`:
+ *   importance = normal preference strength
+ *   tolerance  = tolerance signal controlling burden sensitivity
+ *
+ * `defaultDirection` is the safe semantic direction when the
+ * candidate has not explicitly supplied a direction.
+ *
+ * Neutral defaults are intentionally used where the candidate's
+ * desired direction cannot be safely inferred.
+ */
+
+const PREFERENCE_DEFINITIONS = Object.freeze({
+  salary: {
+    key: 'salaryImportance',
+    metric: 'salary',
+    mode: 'importance',
+    defaultDirection:
+      DIRECTION.HIGHER
+  },
+
+  authority: {
+    key: 'authorityImportance',
+    metric: 'authority',
+    mode: 'importance',
+    defaultDirection:
+      DIRECTION.HIGHER
+  },
+
+  careerGrowth: {
+    key: 'careerGrowthImportance',
+    metric: 'careerGrowth',
+    mode: 'importance',
+    defaultDirection:
+      DIRECTION.HIGHER
+  },
+
+  workLifeBalance: {
+    key: 'workLifeBalanceImportance',
+    metric: 'workLife',
+    mode: 'importance',
+    defaultDirection:
+      DIRECTION.HIGHER
+  },
+
+  familyCompatibility: {
+    key: 'familyImportance',
+    metric: 'familyCompatibility',
+    mode: 'importance',
+    defaultDirection:
+      DIRECTION.HIGHER
+  },
+
+  parentCareCompatibility: {
+    key: 'parentCareImportance',
+    metric: 'parentCareCompatibility',
+    mode: 'importance',
+    defaultDirection:
+      DIRECTION.HIGHER
+  },
+
+  kolkataStability: {
+    key: 'kolkataImportance',
+    metric: 'kolkataStability',
+    mode: 'importance',
+    defaultDirection:
+      DIRECTION.HIGHER
+  },
+
+  locationStability: {
+    key: 'locationStabilityImportance',
+    metric: 'locationStability',
+    mode: 'importance',
+    defaultDirection:
+      DIRECTION.HIGHER
+  },
+
+  transfer: {
+    key: 'transferTolerance',
+    metric: 'transferBurden',
+    mode: 'tolerance',
+    defaultDirection:
+      DIRECTION.LOWER
+  },
+
+  ruralPosting: {
+    key: 'ruralPostingTolerance',
+    metric: 'ruralPostingBurden',
+    mode: 'tolerance',
+    defaultDirection:
+      DIRECTION.LOWER
+  },
+
+  nightDuty: {
+    key: 'nightDutyTolerance',
+    metric: 'nightDutyBurden',
+    mode: 'tolerance',
+    defaultDirection:
+      DIRECTION.LOWER
+  },
+
+  shiftDuty: {
+    key: 'shiftDutyTolerance',
+    metric: 'shiftDutyBurden',
+    mode: 'tolerance',
+    defaultDirection:
+      DIRECTION.LOWER
+  },
+
+  physicalRisk: {
+    key: 'physicalRiskTolerance',
+    metric: 'physicalRisk',
+    mode: 'tolerance',
+    defaultDirection:
+      DIRECTION.LOWER
+  },
+
+  stress: {
+    key: 'stressTolerance',
+    metric: 'stress',
+    mode: 'tolerance',
+    defaultDirection:
+      DIRECTION.LOWER
+  },
+
+  publicInteraction: {
+    key: 'publicInteractionImportance',
+    metric: 'publicInteraction',
+    mode: 'importance',
+    defaultDirection:
+      DIRECTION.NEUTRAL
+  },
+
+  fieldWork: {
+    key: 'fieldWorkImportance',
+    metric: 'fieldWork',
+    mode: 'importance',
+    defaultDirection:
+      DIRECTION.NEUTRAL
+  },
+
+  uniform: {
+    key: 'uniformImportance',
+    metric: 'uniform',
+    mode: 'importance',
+    defaultDirection:
+      DIRECTION.NEUTRAL
+  },
+
+  prestige: {
+    key: 'prestigeImportance',
+    metric: 'socialStatus',
+    mode: 'importance',
+    defaultDirection:
+      DIRECTION.HIGHER
+  },
+
+  housing: {
+    key: 'housingImportance',
+    metric: 'housingAdvantage',
+    mode: 'importance',
+    defaultDirection:
+      DIRECTION.HIGHER
+  },
+
+  englishAdvantage: {
+    key: 'englishAdvantageImportance',
+    metric: 'englishAdvantage',
+    mode: 'importance',
+    defaultDirection:
+      DIRECTION.HIGHER
+  },
+
+  jobStability: {
+    key: 'jobSecurityImportance',
+    metric: 'jobSecurity',
+    mode: 'importance',
+    defaultDirection:
+      DIRECTION.HIGHER
+  },
+
+  examDifficulty: {
+    key: 'examDifficultyTolerance',
+    metric: 'examDifficulty',
+    mode: 'tolerance',
+    defaultDirection:
+      DIRECTION.LOWER
+  },
+
+  preparationBurden: {
+    key: 'preparationBurdenTolerance',
+    metric: 'preparationBurden',
+    mode: 'tolerance',
+    defaultDirection:
+      DIRECTION.LOWER
+  }
+});
 
 const DEFAULT_PREFERENCES = Object.freeze({
-  salaryImportance: 5,
-  authorityImportance: 5,
-  familyImportance: 5,
-  parentCareImportance: 5,
-  kolkataImportance: 5,
-  jobSecurityImportance: 5,
-  lowStressImportance: 5,
-  lowPhysicalRiskImportance: 5,
-  careerGrowthImportance: 5,
-  prestigeImportance: 5,
-  workLifeBalanceImportance: 5,
-  housingImportance: 5,
+  salaryImportance: DEFAULT_IMPORTANCE,
+  authorityImportance: DEFAULT_IMPORTANCE,
+  careerGrowthImportance:
+    DEFAULT_IMPORTANCE,
+  workLifeBalanceImportance:
+    DEFAULT_IMPORTANCE,
+  familyImportance:
+    DEFAULT_IMPORTANCE,
+  parentCareImportance:
+    DEFAULT_IMPORTANCE,
+  kolkataImportance:
+    DEFAULT_IMPORTANCE,
+  locationStabilityImportance:
+    DEFAULT_IMPORTANCE,
 
-  lowTransferImportance: 5,
-  lowNightDutyImportance: 5,
-  lowWeekendDutyImportance: 5,
-  governmentPreference: 'ANY',
-  statePreference: 'ANY',
-  locationPreference: 'ANY',
-  officeWorkPreference: 5,
-  policeInterest: 5,
-  intelligenceInterest: 5,
-  administrativeInterest: 5,
-  railwayInterest: 5,
-  fieldWorkTolerance: 5,
-  physicalRiskTolerance: 5,
-  shiftDutyTolerance: 5,
-  examDifficultyTolerance: 5
+  transferTolerance:
+    DEFAULT_IMPORTANCE,
+  ruralPostingTolerance:
+    DEFAULT_IMPORTANCE,
+  nightDutyTolerance:
+    DEFAULT_IMPORTANCE,
+  shiftDutyTolerance:
+    DEFAULT_IMPORTANCE,
+  physicalRiskTolerance:
+    DEFAULT_IMPORTANCE,
+  stressTolerance:
+    DEFAULT_IMPORTANCE,
+
+  publicInteractionImportance:
+    DEFAULT_IMPORTANCE,
+  fieldWorkImportance:
+    DEFAULT_IMPORTANCE,
+  uniformImportance:
+    DEFAULT_IMPORTANCE,
+  prestigeImportance:
+    DEFAULT_IMPORTANCE,
+  housingImportance:
+    DEFAULT_IMPORTANCE,
+  englishAdvantageImportance:
+    DEFAULT_IMPORTANCE,
+  jobSecurityImportance:
+    DEFAULT_IMPORTANCE,
+
+  examDifficultyTolerance:
+    DEFAULT_IMPORTANCE,
+  preparationBurdenTolerance:
+    DEFAULT_IMPORTANCE,
+
+  governmentPreference:
+    'ANY',
+
+  statePreference:
+    'ANY',
+
+  locationPreference:
+    'ANY'
 });
 
-const METRICS = Object.freeze({
-  salary:
+/* ============================================================
+ * LEGACY / INPUT ALIASES
+ * ============================================================
+ *
+ * Assessment systems and older pages may use different names.
+ * Aliases are accepted only at the preference-input boundary.
+ *
+ * The normalized model always exposes canonical names.
+ */
+
+const INPUT_ALIASES = Object.freeze({
+  salaryImportance: [
+    'salaryImportance',
     'salary',
+    'salaryPriority',
+    'salaryPreference'
+  ],
 
-  authority:
+  authorityImportance: [
+    'authorityImportance',
     'authority',
+    'authorityPriority'
+  ],
 
-  family:
-    'familyCompatibility',
-
-  parentCare:
-    'parentCareCompatibility',
-
-  kolkata:
-    'kolkataStability',
-
-  jobSecurity:
-    'jobSecurity',
-
-  workLife:
-    'workLife',
-
-  careerGrowth:
+  careerGrowthImportance: [
+    'careerGrowthImportance',
     'careerGrowth',
+    'growthImportance',
+    'promotionImportance'
+  ],
 
-  prestige:
-    'socialStatus',
+  workLifeBalanceImportance: [
+    'workLifeBalanceImportance',
+    'workLifeBalance',
+    'workLife',
+    'lifestyleImportance'
+  ],
 
-  housing:
-    'housingAdvantage',
+  familyImportance: [
+    'familyImportance',
+    'family',
+    'familyCompatibility',
+    'familyPriority'
+  ],
 
-  physicalSafety:
-    'physicalSafety'
+  parentCareImportance: [
+    'parentCareImportance',
+    'parentCare',
+    'parentCareCompatibility',
+    'elderlyParentCareImportance'
+  ],
+
+  kolkataImportance: [
+    'kolkataImportance',
+    'kolkataStabilityImportance',
+    'kolkataPreference',
+    'kolkata'
+  ],
+
+  locationStabilityImportance: [
+    'locationStabilityImportance',
+    'locationImportance',
+    'locationStability'
+  ],
+
+  transferTolerance: [
+    'transferTolerance',
+    'transferImportance',
+    'lowTransferImportance',
+    'transferPreference'
+  ],
+
+  ruralPostingTolerance: [
+    'ruralPostingTolerance',
+    'ruralPostingImportance',
+    'ruralTolerance',
+    'ruralPosting'
+  ],
+
+  nightDutyTolerance: [
+    'nightDutyTolerance',
+    'nightDutyImportance',
+    'lowNightDutyImportance',
+    'nightDuty'
+  ],
+
+  shiftDutyTolerance: [
+    'shiftDutyTolerance',
+    'shiftDutyImportance',
+    'shiftTolerance',
+    'shiftDuty'
+  ],
+
+  physicalRiskTolerance: [
+    'physicalRiskTolerance',
+    'lowPhysicalRiskImportance',
+    'physicalRiskImportance',
+    'physicalRiskTolerance'
+  ],
+
+  stressTolerance: [
+    'stressTolerance',
+    'lowStressImportance',
+    'stressImportance',
+    'stressTolerance'
+  ],
+
+  publicInteractionImportance: [
+    'publicInteractionImportance',
+    'publicInteraction',
+    'publicDealingImportance'
+  ],
+
+  fieldWorkImportance: [
+    'fieldWorkImportance',
+    'fieldWork',
+    'fieldJobImportance'
+  ],
+
+  uniformImportance: [
+    'uniformImportance',
+    'uniformPreference',
+    'uniform'
+  ],
+
+  prestigeImportance: [
+    'prestigeImportance',
+    'prestige',
+    'socialStatusImportance',
+    'socialStatus'
+  ],
+
+  housingImportance: [
+    'housingImportance',
+    'housing',
+    'housingAdvantageImportance'
+  ],
+
+  englishAdvantageImportance: [
+    'englishAdvantageImportance',
+    'englishImportance',
+    'englishAdvantage'
+  ],
+
+  jobSecurityImportance: [
+    'jobSecurityImportance',
+    'jobSecurity',
+    'stabilityImportance',
+    'jobStabilityImportance'
+  ],
+
+  examDifficultyTolerance: [
+    'examDifficultyTolerance',
+    'examDifficultyImportance',
+    'difficultyTolerance',
+    'examDifficulty'
+  ],
+
+  preparationBurdenTolerance: [
+    'preparationBurdenTolerance',
+    'preparationBurdenImportance',
+    'preparationTolerance',
+    'studyBurdenTolerance',
+    'examPreparationBurden'
+  ],
+
+  governmentPreference: [
+    'governmentPreference',
+    'government',
+    'governmentId'
+  ],
+
+  statePreference: [
+    'statePreference',
+    'state',
+    'stateId'
+  ],
+
+  locationPreference: [
+    'locationPreference',
+    'location',
+    'locationId',
+    'preferredLocation'
+  ]
 });
 
-const NEGATIVE_METRICS = Object.freeze(
-  new Set([
-    'stress',
-    'physicalRisk',
-    'transferBurden',
-    'nightDutyBurden',
-    'weekendDutyBurden'
-  ])
-);
+/* ============================================================
+ * NORMALIZATION HELPERS
+ * ========================================================== */
 
 function clamp(
   value,
@@ -113,7 +564,9 @@ function clamp(
   max = 10
 ) {
   const numeric =
-    Number(value);
+    Number(
+      value
+    );
 
   if (
     !Number.isFinite(
@@ -136,674 +589,1286 @@ function normalizeImportance(
   value
 ) {
   return clamp(
-    Number(value),
+    value,
+    MIN_IMPORTANCE,
+    MAX_IMPORTANCE
+  );
+}
+
+function normalizeTolerance(
+  value
+) {
+  return clamp(
+    value,
+    MIN_TOLERANCE,
+    MAX_TOLERANCE
+  );
+}
+
+function normalizeWeight(
+  value
+) {
+  return clamp(
+    Number(value) /
+      MAX_IMPORTANCE,
     0,
-    10
+    1
   );
 }
 
-function normalizePreferences(
-  input = {}
+function cleanText(
+  value,
+  fallback = ''
 ) {
-  const preferences = {
-    ...DEFAULT_PREFERENCES,
-    ...(input || {})
-  };
-
-  Object.keys(
-    preferences
-  ).forEach(
-    (key) => {
-      if (
-        key.endsWith(
-          'Importance'
-        )
-      ) {
-        preferences[key] =
-          normalizeImportance(
-            preferences[key]
-          );
-      }
-    }
-  );
-
-  return preferences;
-}
-
-function getCareerScore(
-  career,
-  metric
-) {
-  const direct =
-    career?.[metric];
-
   if (
-    Number.isFinite(
-      Number(direct)
-    )
+    value === undefined ||
+    value === null
   ) {
-    return clamp(
-      Number(direct),
-      0,
-      10
-    );
+    return fallback;
   }
 
-  const aliases = {
-    salary:
-      career?.salaryScore ??
-      career?.payScore,
+  const text =
+    String(
+      value
+    ).trim();
 
-    authority:
-      career?.authorityScore,
-
-    familyCompatibility:
-      career?.family ??
-      career?.familyScore,
-
-    parentCareCompatibility:
-      career?.parentCare ??
-      career?.parentScore,
-
-    kolkataStability:
-      career?.kolkataStability ??
-      career?.kolkataScore,
-
-    jobSecurity:
-      career?.jobSecurityScore,
-
-    workLife:
-      career?.workLifeBalance ??
-      career?.workLifeScore,
-
-    careerGrowth:
-      career?.careerGrowthScore,
-
-    socialStatus:
-      career?.socialStatusScore ??
-      career?.prestigeScore,
-
-    housingAdvantage:
-      career?.housingScore,
-
-    physicalSafety:
-      career?.safetyScore
-  };
-
-  const value =
-    aliases[
-      metric
-    ];
-
-  return Number.isFinite(
-    Number(value)
-  )
-    ? clamp(
-        Number(value),
-        0,
-        10
-      )
-    : null;
+  return (
+    text ||
+    fallback
+  );
 }
 
-function normalizeNegativeMetric(
-  career,
-  metric
+function normalizeDirection(
+  value,
+  fallback =
+    DIRECTION.NEUTRAL
 ) {
-  const value =
-    career?.[metric];
-
-  if (
-    !Number.isFinite(
-      Number(value)
+  const normalized =
+    cleanText(
+      value,
+      ''
     )
+      .toUpperCase()
+      .replace(
+        /[\s-]+/g,
+        '_'
+      );
+
+  switch (
+    normalized
+  ) {
+    case 'HIGHER':
+    case 'MORE':
+    case 'INCREASE':
+    case 'MAXIMIZE':
+    case 'PREFER_HIGHER':
+    case 'PREFER_MORE':
+      return DIRECTION.HIGHER;
+
+    case 'LOWER':
+    case 'LESS':
+    case 'DECREASE':
+    case 'MINIMIZE':
+    case 'PREFER_LOWER':
+    case 'PREFER_LESS':
+      return DIRECTION.LOWER;
+
+    case 'NEUTRAL':
+    case 'NONE':
+    case 'NO_PREFERENCE':
+    case 'ANY':
+    case '':
+      return DIRECTION.NEUTRAL;
+
+    default:
+      return fallback;
+  }
+}
+
+function normalizePreferenceObject(
+  value
+) {
+  if (
+    value === undefined ||
+    value === null
   ) {
     return null;
   }
 
-  return clamp(
-    10 - Number(value),
-    0,
-    10
+  if (
+    typeof value ===
+    'number'
+  ) {
+    return {
+      importance:
+        normalizeImportance(
+          value
+        )
+    };
+  }
+
+  if (
+    typeof value ===
+    'string'
+  ) {
+    /*
+     * Numeric strings are accepted.
+     * Otherwise the string is interpreted as a direction only.
+     */
+    const numeric =
+      Number(
+        value
+      );
+
+    if (
+      Number.isFinite(
+        numeric
+      )
+    ) {
+      return {
+        importance:
+          normalizeImportance(
+            numeric
+          )
+      };
+    }
+
+    return {
+      direction:
+        normalizeDirection(
+          value
+        )
+    };
+  }
+
+  if (
+    typeof value ===
+      'object' &&
+    !Array.isArray(
+      value
+    )
+  ) {
+    return {
+      ...value
+    };
+  }
+
+  return null;
+}
+
+function getFirstDefined(
+  objects,
+  keys
+) {
+  for (
+    const object of
+      objects
+  ) {
+    if (
+      !object ||
+      typeof object !==
+        'object'
+    ) {
+      continue;
+    }
+
+    for (
+      const key of
+        keys
+    ) {
+      if (
+        Object.prototype.hasOwnProperty.call(
+          object,
+          key
+        ) &&
+        object[key] !==
+          undefined
+      ) {
+        return object[key];
+      }
+    }
+  }
+
+  return undefined;
+}
+
+function getPreferenceInput(
+  rootObjects,
+  canonicalKey
+) {
+  const aliases =
+    INPUT_ALIASES[
+      canonicalKey
+    ] ||
+    [
+      canonicalKey
+    ];
+
+  return getFirstDefined(
+    rootObjects,
+    aliases
   );
 }
 
-function getFitValue(
-  career,
-  preferenceKey
+/* ============================================================
+ * DIRECTION OVERRIDE ACCESS
+ * ============================================================
+ *
+ * Directions may be supplied in any of these forms:
+ *
+ * {
+ *   salaryImportance: {
+ *     importance: 9,
+ *     direction: "HIGHER"
+ *   }
+ * }
+ *
+ * or:
+ *
+ * {
+ *   salaryImportance: 9,
+ *   salaryDirection: "HIGHER"
+ * }
+ *
+ * or:
+ *
+ * {
+ *   directions: {
+ *     salary: "HIGHER"
+ *   }
+ * }
+ */
+
+function getDirectionOverride(
+  rootObjects,
+  canonicalKey,
+  semanticName
 ) {
-  switch (
-    preferenceKey
-  ) {
-    case 'salaryImportance':
-      return getCareerScore(
-        career,
-        'salary'
-      );
-
-    case 'authorityImportance':
-      return getCareerScore(
-        career,
-        'authority'
-      );
-
-    case 'familyImportance':
-      return getCareerScore(
-        career,
-        'familyCompatibility'
-      );
-
-    case 'parentCareImportance':
-      return getCareerScore(
-        career,
-        'parentCareCompatibility'
-      );
-
-    case 'kolkataImportance':
-      return getCareerScore(
-        career,
-        'kolkataStability'
-      );
-
-    case 'jobSecurityImportance':
-      return getCareerScore(
-        career,
-        'jobSecurity'
-      );
-
-    case 'lowStressImportance':
-      return normalizeNegativeMetric(
-        career,
-        'stress'
-      );
-
-    case 'lowPhysicalRiskImportance':
-      return normalizeNegativeMetric(
-        career,
-        'physicalRisk'
-      );
-
-    case 'careerGrowthImportance':
-      return getCareerScore(
-        career,
-        'careerGrowth'
-      );
-
-    case 'prestigeImportance':
-      return getCareerScore(
-        career,
-        'socialStatus'
-      );
-
-    case 'workLifeBalanceImportance':
-      return getCareerScore(
-        career,
-        'workLife'
-      );
-
-    case 'housingImportance':
-      return getCareerScore(
-        career,
-        'housingAdvantage'
-      );
-
-    case 'lowTransferImportance':
-      return normalizeNegativeMetric(
-        career,
-        'transferBurden'
-      );
-
-    case 'lowNightDutyImportance':
-      return normalizeNegativeMetric(
-        career,
-        'nightDutyBurden'
-      );
-
-    case 'lowWeekendDutyImportance':
-      return normalizeNegativeMetric(
-        career,
-        'weekendDutyBurden'
-      );
-
-    default:
-      return null;
-  }
-}
-
-function getPreferenceImportanceKeys() {
-  return [
-    'salaryImportance',
-    'authorityImportance',
-    'familyImportance',
-    'parentCareImportance',
-    'kolkataImportance',
-    'jobSecurityImportance',
-    'lowStressImportance',
-    'lowPhysicalRiskImportance',
-    'careerGrowthImportance',
-    'prestigeImportance',
-    'workLifeBalanceImportance',
-    'housingImportance',
-    'lowTransferImportance',
-    'lowNightDutyImportance',
-    'lowWeekendDutyImportance'
-  ];
-}
-
-function scoreCareerPreferences(
-  career,
-  inputPreferences = {}
-) {
-  const preferences =
-    normalizePreferences(
-      inputPreferences
+  const explicitDirection =
+    getFirstDefined(
+      rootObjects,
+      [
+        `${canonicalKey}Direction`,
+        `${semanticName}Direction`
+      ]
     );
 
-  let weightedTotal =
-    0;
+  if (
+    explicitDirection !==
+      undefined
+  ) {
+    return explicitDirection;
+  }
 
-  let totalWeight =
-    0;
+  for (
+    const object of
+      rootObjects
+  ) {
+    if (
+      !object ||
+      typeof object !==
+        'object'
+    ) {
+      continue;
+    }
 
-  const metricResults =
-    [];
-
-  getPreferenceImportanceKeys().forEach(
-    (preferenceKey) => {
-      const importance =
-        normalizeImportance(
-          preferences[
-            preferenceKey
+    if (
+      object.directions &&
+      typeof object.directions ===
+        'object'
+    ) {
+      const value =
+        getFirstDefined(
+          [
+            object.directions
+          ],
+          [
+            canonicalKey,
+            semanticName
           ]
         );
 
       if (
-        importance <= 0
+        value !==
+        undefined
       ) {
-        return;
+        return value;
       }
+    }
 
-      const fit =
-        getFitValue(
-          career,
-          preferenceKey
+    if (
+      object.preferenceDirections &&
+      typeof object.preferenceDirections ===
+        'object'
+    ) {
+      const value =
+        getFirstDefined(
+          [
+            object.preferenceDirections
+          ],
+          [
+            canonicalKey,
+            semanticName
+          ]
         );
 
       if (
-        fit === null
+        value !==
+        undefined
       ) {
-        metricResults.push({
-          preferenceKey,
-          importance,
-          fit: null,
-          contribution: 0,
-          available: false
-        });
+        return value;
+      }
+    }
+  }
+
+  return undefined;
+}
+
+/* ============================================================
+ * INDIVIDUAL SIGNAL NORMALIZATION
+ * ========================================================== */
+
+function normalizeImportanceSignal(
+  definition,
+  rawValue,
+  directionOverride
+) {
+  const objectValue =
+    normalizePreferenceObject(
+      rawValue
+    ) || {};
+
+  const importance =
+    normalizeImportance(
+      objectValue.importance ??
+      objectValue.weight ??
+      rawValue ??
+      DEFAULT_IMPORTANCE
+    );
+
+  const direction =
+    normalizeDirection(
+      objectValue.direction ??
+      directionOverride,
+      definition.defaultDirection
+    );
+
+  return {
+    key:
+      definition.key,
+
+    metric:
+      definition.metric,
+
+    mode:
+      definition.mode,
+
+    importance,
+
+    weight:
+      normalizeWeight(
+        importance
+      ),
+
+    direction,
+
+    tolerance:
+      null,
+
+    explicit:
+      rawValue !==
+        undefined &&
+      rawValue !==
+        null,
+
+    source:
+      'candidate_profile'
+  };
+}
+
+function normalizeToleranceSignal(
+  definition,
+  rawValue,
+  directionOverride
+) {
+  const objectValue =
+    normalizePreferenceObject(
+      rawValue
+    ) || {};
+
+  const tolerance =
+    normalizeTolerance(
+      objectValue.tolerance ??
+      objectValue.importance ??
+      objectValue.weight ??
+      rawValue ??
+      DEFAULT_IMPORTANCE
+    );
+
+  const direction =
+    normalizeDirection(
+      objectValue.direction ??
+      directionOverride,
+      definition.defaultDirection
+    );
+
+  /*
+   * Tolerance is intentionally retained separately from weight.
+   *
+   * The scoring engine may decide how strongly a burden is penalized.
+   * This module only exposes the normalized candidate signal.
+   */
+  return {
+    key:
+      definition.key,
+
+    metric:
+      definition.metric,
+
+    mode:
+      definition.mode,
+
+    importance:
+      tolerance,
+
+    weight:
+      normalizeWeight(
+        tolerance
+      ),
+
+    direction,
+
+    tolerance,
+
+    explicit:
+      rawValue !==
+        undefined &&
+      rawValue !==
+        null,
+
+    source:
+      'candidate_profile'
+  };
+}
+
+/* ============================================================
+ * SEMANTIC PREFERENCE MODEL
+ * ========================================================== */
+
+function buildPreferenceSignal(
+  rootObjects,
+  definition,
+  semanticName
+) {
+  const rawValue =
+    getPreferenceInput(
+      rootObjects,
+      definition.key
+    );
+
+  const directionOverride =
+    getDirectionOverride(
+      rootObjects,
+      definition.key,
+      semanticName
+    );
+
+  if (
+    definition.mode ===
+    'tolerance'
+  ) {
+    return normalizeToleranceSignal(
+      definition,
+      rawValue,
+      directionOverride
+    );
+  }
+
+  return normalizeImportanceSignal(
+    definition,
+    rawValue,
+    directionOverride
+  );
+}
+
+function getPreferenceImportanceKeys() {
+  return Object.values(
+    PREFERENCE_DEFINITIONS
+  )
+    .filter(
+      (definition) =>
+        definition.mode ===
+        'importance'
+    )
+    .map(
+      (definition) =>
+        definition.key
+    );
+}
+
+function getPreferenceToleranceKeys() {
+  return Object.values(
+    PREFERENCE_DEFINITIONS
+  )
+    .filter(
+      (definition) =>
+        definition.mode ===
+        'tolerance'
+    )
+    .map(
+      (definition) =>
+        definition.key
+    );
+}
+
+function getPreferenceDefinitions() {
+  return Object.values(
+    PREFERENCE_DEFINITIONS
+  ).map(
+    (definition) => ({
+      ...definition
+    })
+  );
+}
+
+/* ============================================================
+ * PREFERENCE MODEL NORMALIZATION
+ * ========================================================== */
+
+function normalizePreferences(
+  input = {}
+) {
+  const candidate =
+    input || {};
+
+  /*
+   * Preferences may be provided:
+   *   1. directly;
+   *   2. under `preferences`;
+   *   3. under `assessment.preferences`;
+   *   4. under `profile.preferences`.
+   *
+   * All are read-only input sources. Nothing is mutated.
+   */
+  const rootObjects = [
+    candidate,
+    candidate.preferences,
+    candidate.assessment?.preferences,
+    candidate.profile?.preferences
+  ].filter(
+    Boolean
+  );
+
+  const semanticNames = {
+    salaryImportance:
+      'salary',
+
+    authorityImportance:
+      'authority',
+
+    careerGrowthImportance:
+      'careerGrowth',
+
+    workLifeBalanceImportance:
+      'workLifeBalance',
+
+    familyImportance:
+      'familyCompatibility',
+
+    parentCareImportance:
+      'parentCareCompatibility',
+
+    kolkataImportance:
+      'kolkataStability',
+
+    locationStabilityImportance:
+      'locationStability',
+
+    transferTolerance:
+      'transfer',
+
+    ruralPostingTolerance:
+      'ruralPosting',
+
+    nightDutyTolerance:
+      'nightDuty',
+
+    shiftDutyTolerance:
+      'shiftDuty',
+
+    physicalRiskTolerance:
+      'physicalRisk',
+
+    stressTolerance:
+      'stress',
+
+    publicInteractionImportance:
+      'publicInteraction',
+
+    fieldWorkImportance:
+      'fieldWork',
+
+    uniformImportance:
+      'uniform',
+
+    prestigeImportance:
+      'prestige',
+
+    housingImportance:
+      'housing',
+
+    englishAdvantageImportance:
+      'englishAdvantage',
+
+    jobSecurityImportance:
+      'jobStability',
+
+    examDifficultyTolerance:
+      'examDifficulty',
+
+    preparationBurdenTolerance:
+      'preparationBurden'
+  };
+
+  const signals = {};
+
+  for (
+    const definition of
+      Object.values(
+        PREFERENCE_DEFINITIONS
+      )
+  ) {
+    const semanticName =
+      semanticNames[
+        definition.key
+      ] ??
+      definition.metric;
+
+    signals[
+      definition.key
+    ] =
+      buildPreferenceSignal(
+        rootObjects,
+        definition,
+        semanticName
+      );
+  }
+
+  const governmentPreference =
+    cleanText(
+      getPreferenceInput(
+        rootObjects,
+        'governmentPreference'
+      ),
+      'ANY'
+    );
+
+  const statePreference =
+    cleanText(
+      getPreferenceInput(
+        rootObjects,
+        'statePreference'
+      ),
+      'ANY'
+    );
+
+  const locationPreference =
+    cleanText(
+      getPreferenceInput(
+        rootObjects,
+        'locationPreference'
+      ),
+      'ANY'
+    );
+
+  return {
+    version:
+      '1.0.0',
+
+    preferences: {
+      ...signals
+    },
+
+    /*
+     * Convenient canonical lookup tables for the scoring engine.
+     *
+     * They contain no career results and no career facts.
+     */
+    byMetric:
+      buildMetricIndex(
+        signals
+      ),
+
+    importance:
+      buildImportanceIndex(
+        signals
+      ),
+
+    tolerances:
+      buildToleranceIndex(
+        signals
+      ),
+
+    directions:
+      buildDirectionIndex(
+        signals
+      ),
+
+    /*
+     * These are candidate selection constraints, not eligibility
+     * decisions and not preference scores.
+     */
+    filters: {
+      government:
+        governmentPreference,
+
+      state:
+        statePreference,
+
+      location:
+        locationPreference
+    },
+
+    /*
+     * Useful for debugging, analytics and assessment integration.
+     */
+    activePreferenceKeys:
+      Object.values(
+        signals
+      )
+        .filter(
+          (signal) =>
+            signal.importance >
+              0 ||
+            signal.explicit
+        )
+        .map(
+          (signal) =>
+            signal.key
+        )
+  };
+}
+
+/* ============================================================
+ * INDEX BUILDERS
+ * ========================================================== */
+
+function buildMetricIndex(
+  signals
+) {
+  const output = {};
+
+  Object.values(
+    signals
+  ).forEach(
+    (signal) => {
+      output[
+        signal.metric
+      ] = {
+        key:
+          signal.key,
+
+        mode:
+          signal.mode,
+
+        importance:
+          signal.importance,
+
+        weight:
+          signal.weight,
+
+        direction:
+          signal.direction,
+
+        tolerance:
+          signal.tolerance
+      };
+    }
+  );
+
+  return output;
+}
+
+function buildImportanceIndex(
+  signals
+) {
+  const output = {};
+
+  Object.values(
+    signals
+  )
+    .filter(
+      (signal) =>
+        signal.mode ===
+        'importance'
+    )
+    .forEach(
+      (signal) => {
+        output[
+          signal.key
+        ] =
+          signal.importance;
+      }
+    );
+
+  return output;
+}
+
+function buildToleranceIndex(
+  signals
+) {
+  const output = {};
+
+  Object.values(
+    signals
+  )
+    .filter(
+      (signal) =>
+        signal.mode ===
+        'tolerance'
+    )
+    .forEach(
+      (signal) => {
+        output[
+          signal.key
+        ] =
+          signal.tolerance;
+      }
+    );
+
+  return output;
+}
+
+function buildDirectionIndex(
+  signals
+) {
+  const output = {};
+
+  Object.values(
+    signals
+  ).forEach(
+    (signal) => {
+      output[
+        signal.key
+      ] =
+        signal.direction;
+    }
+  );
+
+  return output;
+}
+
+/* ============================================================
+ * PROFILE EXTRACTION
+ * ============================================================
+ *
+ * Some assessment/profile implementations may store preference
+ * information under a dedicated profile object.
+ *
+ * This helper creates a normalized model without modifying the
+ * supplied candidate object.
+ */
+
+function createPreferenceProfile(
+  candidateProfile = {}
+) {
+  return normalizePreferences(
+    candidateProfile
+  );
+}
+
+/* ============================================================
+ * DIRECTIONAL HELPERS FOR SCORING ENGINE
+ * ============================================================ */
+
+function prefersHigher(
+  preferenceModel,
+  metric
+) {
+  const signal =
+    preferenceModel?.byMetric?.[
+      metric
+    ];
+
+  return (
+    signal?.direction ===
+    DIRECTION.HIGHER
+  );
+}
+
+function prefersLower(
+  preferenceModel,
+  metric
+) {
+  const signal =
+    preferenceModel?.byMetric?.[
+      metric
+    ];
+
+  return (
+    signal?.direction ===
+    DIRECTION.LOWER
+  );
+}
+
+function isNeutralPreference(
+  preferenceModel,
+  metric
+) {
+  const signal =
+    preferenceModel?.byMetric?.[
+      metric
+    ];
+
+  return (
+    !signal ||
+    signal.direction ===
+      DIRECTION.NEUTRAL
+  );
+}
+
+function getPreferenceWeight(
+  preferenceModel,
+  metric
+) {
+  return (
+    Number(
+      preferenceModel?.byMetric?.[
+        metric
+      ]?.weight
+    ) || 0
+  );
+}
+
+function getPreferenceImportance(
+  preferenceModel,
+  metric
+) {
+  return (
+    Number(
+      preferenceModel?.byMetric?.[
+        metric
+      ]?.importance
+    ) || 0
+  );
+}
+
+function getPreferenceTolerance(
+  preferenceModel,
+  metric
+) {
+  const value =
+    preferenceModel?.byMetric?.[
+      metric
+    ]?.tolerance;
+
+  return value === null ||
+    value === undefined
+    ? null
+    : Number(
+        value
+      );
+}
+
+/* ============================================================
+ * PREFERENCE SIGNAL EXPLANATION
+ * ============================================================
+ *
+ * This does not score a career. It only explains what the
+ * candidate preference model means.
+ */
+
+function explainPreferenceSignal(
+  signal
+) {
+  if (
+    !signal
+  ) {
+    return {
+      direction:
+        DIRECTION.NEUTRAL,
+
+      importance:
+        0,
+
+      weight:
+        0,
+
+      tolerance:
+        null,
+
+      text:
+        'No preference signal is available.'
+    };
+  }
+
+  const directionText = {
+    HIGHER:
+      'prefers higher values',
+    LOWER:
+      'prefers lower values',
+    NEUTRAL:
+      'has no fixed direction'
+  };
+
+  const modeText =
+    signal.mode ===
+    'tolerance'
+      ? 'This is a tolerance setting.'
+      : 'This is an importance setting.';
+
+  return {
+    direction:
+      signal.direction,
+
+    importance:
+      signal.importance,
+
+    weight:
+      signal.weight,
+
+    tolerance:
+      signal.tolerance,
+
+    text:
+      `${modeText} The candidate ${directionText[
+        signal.direction
+      ]}.`
+  };
+}
+
+/* ============================================================
+ * VALIDATION
+ * ============================================================
+ *
+ * The preference engine validates candidate preference input at
+ * runtime so malformed assessment values do not silently leak
+ * into the scoring layer.
+ */
+
+function validatePreferenceModel(
+  model
+) {
+  const errors = [];
+
+  if (
+    !model ||
+    typeof model !==
+      'object'
+  ) {
+    return {
+      valid:
+        false,
+      errors: [
+        'Preference model is not an object.'
+      ]
+    };
+  }
+
+  if (
+    !model.preferences ||
+    typeof model.preferences !==
+      'object'
+  ) {
+    errors.push(
+      'Preference model has no normalized preferences object.'
+    );
+  }
+
+  const validDirections =
+    new Set(
+      Object.values(
+        DIRECTION
+      )
+    );
+
+  Object.entries(
+    model.preferences || {}
+  ).forEach(
+    ([
+      key,
+      signal
+    ]) => {
+      if (
+        !signal ||
+        typeof signal !==
+          'object'
+      ) {
+        errors.push(
+          `Preference signal "${key}" is malformed.`
+        );
 
         return;
       }
 
-      const weight =
-        importance;
-
-      weightedTotal +=
-        fit * weight;
-
-      totalWeight +=
-        weight;
-
-      metricResults.push({
-        preferenceKey,
-        importance,
-        fit,
-        contribution:
-          fit * weight,
-        available: true
-      });
-    }
-  );
-
-  const normalizedScore =
-    totalWeight > 0
-      ? (
-          weightedTotal /
-          totalWeight
-        ) * 10
-      : 0;
-
-  return {
-    score: clamp(
-      normalizedScore
-    ),
-    weightedTotal,
-    totalWeight,
-    metrics:
-      metricResults
-  };
-}
-
-function matchesGovernmentPreference(
-  career,
-  preference
-) {
-  if (
-    !preference ||
-    preference ===
-      'ANY'
-  ) {
-    return true;
-  }
-
-  const governmentId =
-    career?.governmentId;
-
-  if (
-    !governmentId
-  ) {
-    return false;
-  }
-
-  return (
-    String(
-      governmentId
-    ).toUpperCase() ===
-    String(
-      preference
-    ).toUpperCase()
-  );
-}
-
-function matchesStatePreference(
-  career,
-  preference
-) {
-  if (
-    !preference ||
-    preference ===
-      'ANY'
-  ) {
-    return true;
-  }
-
-  const stateId =
-    career?.stateId;
-
-  if (
-    !stateId
-  ) {
-    return false;
-  }
-
-  return (
-    String(
-      stateId
-    ).toUpperCase() ===
-    String(
-      preference
-    ).toUpperCase()
-  );
-}
-
-function getCategoryFit(
-  career,
-  preferences
-) {
-  const categories =
-    new Set(
-      [
-        ...(career?.categoryIds ||
-          []),
-        ...(career?.categorySlugs ||
-          []),
-        career?.category,
-        career?.jobCategory
-      ]
-        .filter(Boolean)
-        .map(
-          (item) =>
-            String(
-              item
-            ).toLowerCase()
+      if (
+        !validDirections.has(
+          signal.direction
         )
-    );
-
-  const scores = {
-    police:
-      preferences.policeInterest,
-    intelligence:
-      preferences.intelligenceInterest,
-    administrative:
-      preferences.administrativeInterest,
-    railway:
-      preferences.railwayInterest
-  };
-
-  const categoryMapping = {
-    police: [
-      'police',
-      'security',
-      'law-enforcement'
-    ],
-
-    intelligence: [
-      'intelligence'
-    ],
-
-    administrative: [
-      'administrative',
-      'administration',
-      'secretariat'
-    ],
-
-    railway: [
-      'railway',
-      'railway-operations'
-    ]
-  };
-
-  const applicable =
-    [];
-
-  Object.entries(
-    categoryMapping
-  ).forEach(
-    ([
-      category,
-      names
-    ]) => {
-      const found =
-        names.some(
-          (name) =>
-            categories.has(
-              name
-            )
+      ) {
+        errors.push(
+          `Preference signal "${key}" has an invalid direction.`
         );
+      }
 
-      if (found) {
-        applicable.push({
-          category,
-          importance:
-            normalizeImportance(
-              scores[
-                category
-              ]
+      if (
+        !Number.isFinite(
+          Number(
+            signal.importance
+          )
+        ) ||
+        Number(
+          signal.importance
+        ) <
+          MIN_IMPORTANCE ||
+        Number(
+          signal.importance
+        ) >
+          MAX_IMPORTANCE
+      ) {
+        errors.push(
+          `Preference signal "${key}" has an invalid importance value.`
+        );
+      }
+
+      if (
+        !Number.isFinite(
+          Number(
+            signal.weight
+          )
+        ) ||
+        Number(
+          signal.weight
+        ) <
+          0 ||
+        Number(
+          signal.weight
+        ) >
+          1
+      ) {
+        errors.push(
+          `Preference signal "${key}" has an invalid normalized weight.`
+        );
+      }
+
+      if (
+        signal.mode ===
+          'tolerance' &&
+        (
+          signal.tolerance ===
+            null ||
+          !Number.isFinite(
+            Number(
+              signal.tolerance
             )
-        });
+          ) ||
+          Number(
+            signal.tolerance
+          ) <
+            MIN_TOLERANCE ||
+          Number(
+            signal.tolerance
+          ) >
+            MAX_TOLERANCE
+        )
+      ) {
+        errors.push(
+          `Tolerance preference "${key}" has an invalid tolerance value.`
+        );
       }
     }
   );
 
-  if (
-    applicable.length ===
-    0
-  ) {
-    return {
-      score: 5,
-      details: []
-    };
-  }
-
-  const average =
-    applicable.reduce(
-      (sum, item) =>
-        sum +
-        item.importance,
-      0
-    ) /
-    applicable.length;
-
   return {
-    score: clamp(
-      average
-    ),
-    details:
-      applicable
+    valid:
+      errors.length ===
+      0,
+    errors
   };
 }
 
-function evaluatePreferenceFit(
-  career,
+/* ============================================================
+ * LEGACY COMPATIBILITY
+ * ============================================================
+ *
+ * Older callers may have imported the previous
+ * `scoreCareerPreferences()` function.
+ *
+ * That operation was conceptually misplaced in this module.
+ *
+ * To avoid silently allowing career scoring here, the compatibility
+ * function now only normalizes the candidate preference input.
+ *
+ * It deliberately DOES NOT accept or inspect a career record.
+ */
+
+function scoreCareerPreferences(
   inputPreferences = {}
 ) {
-  const preferences =
-    normalizePreferences(
-      inputPreferences
-    );
-
-  const hardPreferenceChecks = {
-    government:
-      matchesGovernmentPreference(
-        career,
-        preferences.governmentPreference
-      ),
-
-    state:
-      matchesStatePreference(
-        career,
-        preferences.statePreference
-      )
-  };
-
-  /*
-   * These filters are user-selected constraints rather
-   * than legal eligibility.
-   *
-   * They may exclude a career from a user's personalized
-   * result set, but they never alter legal eligibility.
-   */
-  const categoryFit =
-    getCategoryFit(
-      career,
-      preferences
-    );
-
-  const preferenceScore =
-    scoreCareerPreferences(
-      career,
-      preferences
-    );
-
-  const combinedScore =
-    clamp(
-      (
-        preferenceScore.score *
-        0.85
-      ) +
-      (
-        categoryFit.score *
-        0.15
-      )
-    );
-
-  return {
-    score:
-      combinedScore,
-
-    preferenceScore:
-      preferenceScore.score,
-
-    categoryScore:
-      categoryFit.score,
-
-    governmentMatch:
-      hardPreferenceChecks.government,
-
-    stateMatch:
-      hardPreferenceChecks.state,
-
-    passesPreferenceFilters:
-      hardPreferenceChecks.government &&
-      hardPreferenceChecks.state,
-
-    details: {
-      metrics:
-        preferenceScore.metrics,
-
-      category:
-        categoryFit
-    }
-  };
-}
-
-function createPreferenceProfile(
-  partial = {}
-) {
   return normalizePreferences(
-    partial
+    inputPreferences
   );
 }
 
-function explainPreferenceSignal(
-  metricResult
-) {
-  if (
-    !metricResult?.available
-  ) {
-    return 'No comparable data is currently available.';
-  }
-
-  const score =
-    Number(
-      metricResult.fit
-    );
-
-  if (
-    score >= 8
-  ) {
-    return 'Strong match with this preference.';
-  }
-
-  if (
-    score >= 6
-  ) {
-    return 'Good match with this preference.';
-  }
-
-  if (
-    score >= 4
-  ) {
-    return 'Mixed match with this preference.';
-  }
-
-  return 'Weak match with this preference.';
-}
+/* ============================================================
+ * EXPORTS
+ * ========================================================== */
 
 export {
+  DIRECTION,
+
   DEFAULT_PREFERENCES,
-  METRICS,
-  NEGATIVE_METRICS,
+  PREFERENCE_DEFINITIONS,
+
   normalizePreferences,
   createPreferenceProfile,
-  scoreCareerPreferences,
-  evaluatePreferenceFit,
+
+  getPreferenceDefinitions,
+  getPreferenceImportanceKeys,
+  getPreferenceToleranceKeys,
+
+  prefersHigher,
+  prefersLower,
+  isNeutralPreference,
+
+  getPreferenceWeight,
+  getPreferenceImportance,
+  getPreferenceTolerance,
+
   explainPreferenceSignal,
-  getCareerScore
+  validatePreferenceModel,
+
+  /*
+   * Backward-compatible export.
+   *
+   * It no longer scores a career.
+   */
+  scoreCareerPreferences
 };
 
 export default {
+  DIRECTION,
+
   DEFAULT_PREFERENCES,
+  PREFERENCE_DEFINITIONS,
+
   normalizePreferences,
   createPreferenceProfile,
-  scoreCareerPreferences,
-  evaluatePreferenceFit
+
+  getPreferenceDefinitions,
+  getPreferenceImportanceKeys,
+  getPreferenceToleranceKeys,
+
+  prefersHigher,
+  prefersLower,
+  isNeutralPreference,
+
+  getPreferenceWeight,
+  getPreferenceImportance,
+  getPreferenceTolerance,
+
+  explainPreferenceSignal,
+  validatePreferenceModel,
+
+  scoreCareerPreferences
 };
