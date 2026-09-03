@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://govcareer-compass.example/schema/eligibility-rule.schema.json",
   "title": "GovCareer Compass Eligibility Rule",
-  "description": "Canonical schema for hard eligibility and conditional eligibility rules applied to government jobs, examinations, service cadres, or recruitment records. Eligibility is evaluated separately from soft career preferences.",
+  "description": "Canonical schema for reusable government-career eligibility rules. Rules may apply to jobs, examinations, service cadres, or recruitment records. Rules express authoritative eligibility conditions and their effects; candidate-specific eligibility decisions are produced only by the Eligibility Engine.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -36,11 +36,13 @@
         "EXAM",
         "SERVICE_CADRE",
         "RECRUITMENT"
-      ]
+      ],
+      "description": "Canonical entity type to which this rule applies."
     },
 
     "targetId": {
-      "$ref": "shared.schema.json#/$defs/id"
+      "$ref": "shared.schema.json#/$defs/id",
+      "description": "Stable ID of the job, exam, service cadre, or recruitment entity to which this rule applies."
     },
 
     "ruleClass": {
@@ -49,16 +51,18 @@
         "HARD",
         "SOFT"
       ],
-      "description": "HARD rules determine eligibility. SOFT rules represent preference-related rules and should normally be handled by the recommendation/scoring system."
+      "description": "HARD rules are eligibility constraints. SOFT rules represent non-hard conditions and must not independently establish hard eligibility."
     },
 
     "conditionType": {
       "type": "string",
       "enum": [
         "EDUCATION_LEVEL",
+        "MINIMUM_QUALIFICATION",
         "QUALIFICATION",
         "DEGREE",
         "SUBJECT",
+        "SUBJECT_COMBINATION",
         "MARKS",
         "PERCENTAGE",
         "LANGUAGE",
@@ -67,6 +71,7 @@
         "ECONOMICS",
         "COMMERCE",
         "SCIENCE",
+        "ARTS",
         "PROFESSIONAL_QUALIFICATION",
         "BED",
         "DELED",
@@ -75,9 +80,11 @@
         "DIPLOMA",
         "TET",
         "COMPUTER_KNOWLEDGE",
+        "COMPUTER_CERTIFICATE",
         "TYPING",
         "SHORTHAND",
         "DRIVING_LICENCE",
+        "OTHER_LICENCE",
         "EXPERIENCE",
         "AGE",
         "CITIZENSHIP",
@@ -85,18 +92,23 @@
         "RESERVATION",
         "CATEGORY",
         "GENDER",
+        "NATIONALITY",
         "PHYSICAL_STANDARD",
         "PHYSICAL_EFFICIENCY_TEST",
         "MEDICAL_STANDARD",
         "EYESIGHT",
         "HEIGHT",
+        "WEIGHT",
         "CHEST",
         "RUNNING",
         "WALKING",
         "CYCLING",
         "FITNESS",
+        "MEDICAL_TEST",
+        "DOCUMENT_VERIFICATION",
         "OTHER"
-      ]
+      ],
+      "description": "Type of condition expressed by this rule."
     },
 
     "operator": {
@@ -115,27 +127,159 @@
         "ALL_OF",
         "ANY_OF",
         "NONE_OF"
-      ]
+      ],
+      "description": "Deterministic comparison or collection operator used by the Eligibility Engine."
     },
 
     "value": {
-      "description": "Flexible comparison value interpreted according to conditionType and operator."
+      "description": "Flexible comparison value interpreted according to conditionType and operator. The Eligibility Engine must never infer unsupported semantics from an unspecified value."
+    },
+
+    "logic": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Optional composition metadata for deterministic evaluation of multiple conditions represented by related rules.",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "ALL_OF",
+            "ANY_OF",
+            "NONE_OF"
+          ]
+        },
+        "ruleIds": {
+          "allOf": [
+            {
+              "$ref": "shared.schema.json#/$defs/idArray"
+            },
+            {
+              "type": "array",
+              "minItems": 1
+            }
+          ]
+        }
+      }
+    },
+
+    "effect": {
+      "type": "string",
+      "enum": [
+        "ALLOW",
+        "DENY",
+        "REQUIRE_VERIFICATION",
+        "CONDITIONAL",
+        "MODIFY"
+      ],
+      "description": "Generic effect of satisfying or triggering the rule. This is rule semantics, not a candidate-specific eligibility decision."
+    },
+
+    "verificationRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "$ref": "shared.schema.json#/$defs/localizedText"
+        }
+      }
     },
 
     "qualificationIds": {
-      "$ref": "shared.schema.json#/$defs/idArray"
-    },
-
-    "subjectIds": {
-      "$ref": "shared.schema.json#/$defs/idArray"
+      "allOf": [
+        {
+          "$ref": "shared.schema.json#/$defs/idArray"
+        },
+        {
+          "type": "array",
+          "minItems": 1
+        }
+      ],
+      "description": "Qualification IDs relevant to this rule."
     },
 
     "requiredQualificationIds": {
-      "$ref": "shared.schema.json#/$defs/idArray"
+      "allOf": [
+        {
+          "$ref": "shared.schema.json#/$defs/idArray"
+        },
+        {
+          "type": "array",
+          "minItems": 1
+        }
+      ],
+      "description": "Qualifications that must be possessed for the condition to be satisfied."
+    },
+
+    "subjectIds": {
+      "allOf": [
+        {
+          "$ref": "shared.schema.json#/$defs/idArray"
+        },
+        {
+          "type": "array",
+          "minItems": 1
+        }
+      ],
+      "description": "Subject IDs associated with the condition."
     },
 
     "requiredSubjectIds": {
-      "$ref": "shared.schema.json#/$defs/idArray"
+      "allOf": [
+        {
+          "$ref": "shared.schema.json#/$defs/idArray"
+        },
+        {
+          "type": "array",
+          "minItems": 1
+        }
+      ],
+      "description": "Subject IDs that must be present in the candidate's academic history."
+    },
+
+    "educationLevel": {
+      "type": "string",
+      "enum": [
+        "CLASS_8",
+        "CLASS_10",
+        "CLASS_12",
+        "DIPLOMA",
+        "UNDERGRADUATE",
+        "GRADUATE",
+        "POSTGRADUATE",
+        "DOCTORAL",
+        "PROFESSIONAL",
+        "OTHER"
+      ]
+    },
+
+    "minimumEducationLevel": {
+      "type": "string",
+      "enum": [
+        "CLASS_8",
+        "CLASS_10",
+        "CLASS_12",
+        "DIPLOMA",
+        "UNDERGRADUATE",
+        "GRADUATE",
+        "POSTGRADUATE",
+        "DOCTORAL",
+        "PROFESSIONAL"
+      ]
+    },
+
+    "degreeNames": {
+      "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+    },
+
+    "subjectNames": {
+      "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
     },
 
     "minimumMarks": {
@@ -160,22 +304,76 @@
       "maximum": 100
     },
 
-    "minimumAge": {
-      "type": "integer",
-      "minimum": 0
-    },
-
-    "maximumAge": {
-      "type": "integer",
-      "minimum": 0
-    },
-
     "requiredLanguages": {
       "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
     },
 
     "requiredSkills": {
       "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+    },
+
+    "requiredComputerKnowledge": {
+      "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+    },
+
+    "typingRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "minimumWordsPerMinute": {
+          "type": "number",
+          "minimum": 0
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1
+        },
+        "script": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "TYPING",
+            "TRANSCRIPTION",
+            "DATA_ENTRY",
+            "OTHER"
+          ]
+        }
+      }
+    },
+
+    "shorthandRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "minimumWordsPerMinute": {
+          "type": "number",
+          "minimum": 0
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+
+    "licenceRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "licenceTypes": {
+          "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+        },
+        "minimumValidityMonths": {
+          "type": "number",
+          "minimum": 0
+        },
+        "commercialRequired": {
+          "type": "boolean"
+        }
+      }
     },
 
     "requiredExperience": {
@@ -186,15 +384,167 @@
           "type": "number",
           "minimum": 0
         },
+        "maximumYears": {
+          "type": "number",
+          "minimum": 0
+        },
         "experienceType": {
           "type": "string",
           "minLength": 1
         },
         "specificExperience": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "shared.schema.json#/$defs/localizedText"
+        },
+        "organisationTypes": {
+          "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+        },
+        "experienceDomains": {
+          "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
         }
       }
+    },
+
+    "minimumExperienceYears": {
+      "type": "number",
+      "minimum": 0
+    },
+
+    "maximumExperienceYears": {
+      "type": "number",
+      "minimum": 0
+    },
+
+    "minimumAge": {
+      "type": "integer",
+      "minimum": 0
+    },
+
+    "maximumAge": {
+      "type": "integer",
+      "minimum": 0
+    },
+
+    "ageReferenceDate": {
+      "$ref": "shared.schema.json#/$defs/date"
+    },
+
+    "ageRelaxations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "category"
+        ],
+        "properties": {
+          "category": {
+            "type": "string",
+            "minLength": 1
+          },
+          "maximumRelaxationYears": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": {
+            "$ref": "shared.schema.json#/$defs/localizedText"
+          }
+        }
+      }
+    },
+
+    "citizenship": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "allowedStatuses": {
+          "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+        }
+      }
+    },
+
+    "requiredNationality": {
+      "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+    },
+
+    "domicileRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "stateIds": {
+          "$ref": "shared.schema.json#/$defs/idArray"
+        },
+        "districtNames": {
+          "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+        },
+        "localAreaNames": {
+          "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+        },
+        "description": {
+          "$ref": "shared.schema.json#/$defs/localizedText"
+        }
+      }
+    },
+
+    "reservationRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "categories": {
+          "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+        },
+        "requiresCertificate": {
+          "type": "boolean"
+        },
+        "certificateTypes": {
+          "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+        },
+        "conditions": {
+          "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+        }
+      }
+    },
+
+    "categoryRequirement": {
+      "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+    },
+
+    "genderRequirement": {
+      "type": "string",
+      "enum": [
+        "ANY",
+        "MALE",
+        "FEMALE",
+        "OTHER"
+      ]
+    },
+
+    "recruitmentRouteTypes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "DIRECT_RECRUITMENT",
+          "PROMOTION",
+          "DEPUTATION",
+          "LATERAL_ENTRY",
+          "DEPARTMENTAL",
+          "CONTRACTUAL",
+          "TEMPORARY",
+          "ABSORPTION",
+          "OTHER"
+        ]
+      },
+      "uniqueItems": true
+    },
+
+    "recruitmentIds": {
+      "$ref": "shared.schema.json#/$defs/idArray"
     },
 
     "physicalStandard": {
@@ -216,7 +566,27 @@
           "minimum": 0
         },
 
+        "maximumHeightCm": {
+          "type": "number",
+          "minimum": 0
+        },
+
+        "minimumWeightKg": {
+          "type": "number",
+          "minimum": 0
+        },
+
+        "maximumWeightKg": {
+          "type": "number",
+          "minimum": 0
+        },
+
         "minimumChestCm": {
+          "type": "number",
+          "minimum": 0
+        },
+
+        "maximumChestCm": {
           "type": "number",
           "minimum": 0
         },
@@ -254,13 +624,72 @@
         "cyclingTimeSeconds": {
           "type": "number",
           "minimum": 0
+        },
+
+        "fitnessTests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "unit": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minimum": {
+                "type": "number"
+              },
+              "maximum": {
+                "type": "number"
+              },
+              "required": {
+                "type": "boolean"
+              }
+            }
+          }
         }
       }
     },
 
     "medicalStandard": {
       "type": "object",
+      "description": "Medical eligibility criteria that are too specific or service-dependent for a universal closed enum.",
       "additionalProperties": true
+    },
+
+    "eyesightRequirement": {
+      "type": "object",
+      "additionalProperties": true
+    },
+
+    "documentRequirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "documentType"
+        ],
+        "properties": {
+          "documentType": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mandatory": {
+            "type": "boolean"
+          },
+          "description": {
+            "$ref": "shared.schema.json#/$defs/localizedText"
+          }
+        }
+      }
     },
 
     "exceptions": {
@@ -273,8 +702,7 @@
         ],
         "properties": {
           "condition": {
-            "type": "string",
-            "minLength": 1
+            "$ref": "shared.schema.json#/$defs/localizedTextRequiredEnglish"
           },
 
           "effect": {
@@ -297,7 +725,15 @@
     },
 
     "sourceIds": {
-      "$ref": "shared.schema.json#/$defs/idArray"
+      "allOf": [
+        {
+          "$ref": "shared.schema.json#/$defs/idArray"
+        },
+        {
+          "type": "array",
+          "minItems": 1
+        }
+      ]
     },
 
     "sourceReferences": {
@@ -329,6 +765,21 @@
       "minimum": 0
     },
 
+    "mandatory": {
+      "type": "boolean",
+      "description": "Whether the condition is mandatory within the rule framework. This does not represent a candidate-specific result."
+    },
+
+    "conditional": {
+      "type": "boolean",
+      "description": "Indicates that satisfaction may require additional modeled conditions or verification."
+    },
+
+    "reviewRequired": {
+      "type": "boolean",
+      "description": "Indicates that the rule cannot be conclusively resolved without manual or authoritative verification."
+    },
+
     "notes": {
       "$ref": "shared.schema.json#/$defs/localizedText"
     },
@@ -349,7 +800,10 @@
           "ruleClass": {
             "const": "HARD"
           }
-        }
+        },
+        "required": [
+          "ruleClass"
+        ]
       },
       "then": {
         "required": [
@@ -362,13 +816,79 @@
       "if": {
         "properties": {
           "conditionType": {
-            "const": "QUALIFICATION"
+            "const": "MINIMUM_QUALIFICATION"
           }
-        }
+        },
+        "required": [
+          "conditionType"
+        ]
       },
       "then": {
+        "anyOf": [
+          {
+            "required": [
+              "minimumEducationLevel"
+            ]
+          },
+          {
+            "required": [
+              "requiredQualificationIds"
+            ]
+          }
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "QUALIFICATION"
+          }
+        },
         "required": [
-          "qualificationIds"
+          "conditionType"
+        ]
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": [
+              "qualificationIds"
+            ]
+          },
+          {
+            "required": [
+              "requiredQualificationIds"
+            ]
+          }
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "DEGREE"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": [
+              "qualificationIds"
+            ]
+          },
+          {
+            "required": [
+              "degreeNames"
+            ]
+          }
         ]
       }
     },
@@ -379,11 +899,231 @@
           "conditionType": {
             "const": "SUBJECT"
           }
-        }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": [
+              "subjectIds"
+            ]
+          },
+          {
+            "required": [
+              "subjectNames"
+            ]
+          }
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "SUBJECT_COMBINATION"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
       },
       "then": {
         "required": [
-          "subjectIds"
+          "logic"
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "MARKS"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": [
+              "minimumMarks"
+            ]
+          },
+          {
+            "required": [
+              "maximumMarks"
+            ]
+          },
+          {
+            "required": [
+              "value"
+            ]
+          }
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "PERCENTAGE"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": [
+              "minimumPercentage"
+            ]
+          },
+          {
+            "required": [
+              "maximumPercentage"
+            ]
+          },
+          {
+            "required": [
+              "value"
+            ]
+          }
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "LANGUAGE"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "required": [
+          "requiredLanguages"
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "COMPUTER_KNOWLEDGE"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": [
+              "requiredSkills"
+            ]
+          },
+          {
+            "required": [
+              "requiredComputerKnowledge"
+            ]
+          }
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "TYPING"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "required": [
+          "typingRequirement"
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "SHORTHAND"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "required": [
+          "shorthandRequirement"
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "DRIVING_LICENCE"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "required": [
+          "licenceRequirements"
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "EXPERIENCE"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": [
+              "requiredExperience"
+            ]
+          },
+          {
+            "required": [
+              "minimumExperienceYears"
+            ]
+          }
         ]
       }
     },
@@ -394,7 +1134,10 @@
           "conditionType": {
             "const": "AGE"
           }
-        }
+        },
+        "required": [
+          "conditionType"
+        ]
       },
       "then": {
         "anyOf": [
@@ -416,13 +1159,106 @@
       "if": {
         "properties": {
           "conditionType": {
-            "const": "LANGUAGE"
+            "const": "CITIZENSHIP"
           }
-        }
+        },
+        "required": [
+          "conditionType"
+        ]
       },
       "then": {
         "required": [
-          "requiredLanguages"
+          "citizenship"
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "NATIONALITY"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "required": [
+          "requiredNationality"
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "DOMICILE"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "required": [
+          "domicileRequirement"
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "RESERVATION"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "required": [
+          "reservationRequirement"
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "CATEGORY"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "required": [
+          "categoryRequirement"
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "GENDER"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "required": [
+          "genderRequirement"
         ]
       }
     },
@@ -433,7 +1269,28 @@
           "conditionType": {
             "const": "PHYSICAL_STANDARD"
           }
-        }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "required": [
+          "physicalStandard"
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "PHYSICAL_EFFICIENCY_TEST"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
       },
       "then": {
         "required": [
@@ -448,12 +1305,129 @@
           "conditionType": {
             "const": "MEDICAL_STANDARD"
           }
-        }
+        },
+        "required": [
+          "conditionType"
+        ]
       },
       "then": {
         "required": [
           "medicalStandard"
         ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "EYESIGHT"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "required": [
+          "eyesightRequirement"
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "conditionType": {
+            "const": "DOCUMENT_VERIFICATION"
+          }
+        },
+        "required": [
+          "conditionType"
+        ]
+      },
+      "then": {
+        "required": [
+          "documentRequirements"
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "minimumAge": {
+            "type": "integer"
+          },
+          "maximumAge": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "minimumAge",
+          "maximumAge"
+        ]
+      },
+      "then": {
+        "properties": {
+          "minimumAge": {
+            "maximum": {
+              "$data": "1/maximumAge"
+            }
+          }
+        }
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "minimumMarks": {
+            "type": "number"
+          },
+          "maximumMarks": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "minimumMarks",
+          "maximumMarks"
+        ]
+      },
+      "then": {
+        "properties": {
+          "minimumMarks": {
+            "maximum": {
+              "$data": "1/maximumMarks"
+            }
+          }
+        }
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "minimumPercentage": {
+            "type": "number"
+          },
+          "maximumPercentage": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "minimumPercentage",
+          "maximumPercentage"
+        ]
+      },
+      "then": {
+        "properties": {
+          "minimumPercentage": {
+            "maximum": {
+              "$data": "1/maximumPercentage"
+            }
+          }
+        }
       }
     }
   ]
