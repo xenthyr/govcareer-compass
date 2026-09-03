@@ -18,12 +18,12 @@
  * - Language selector mount
  * - Theme selector mount
  * - Responsive primary navigation
- * - Mobile navigation drawer trigger
+ * - Mobile navigation drawer trigger and markup
  * - Accessibility / focus behavior
  * - Active-route indication
  *
- * Architecture
- * ------------
+ * Architectural boundary
+ * ----------------------
  * The header is intentionally presentation/shell-only.
  *
  * It does NOT:
@@ -35,7 +35,8 @@
  * - implement AI responses;
  * - implement language dictionaries;
  * - implement theme persistence;
- * - implement state-selection persistence.
+ * - implement state-selection persistence;
+ * - implement drawer behavior.
  *
  * Those responsibilities belong to their respective modules.
  *
@@ -67,14 +68,32 @@
  * Navigation:
  *   [data-header-navigation]
  *   [data-drawer-open]
+ *   [data-header-menu-trigger]
  *
- * Custom events:
+ * Drawer:
+ *   [data-drawer]
+ *   [data-drawer-close]
+ *
+ * Custom events consumed/emitted by this shell:
  *   gcc:header-ready
  *   gcc:header-search
- *   gcc:ai:open
  *   gcc:languagechange
+ *   govcareer:languagechange
+ *   gcc:ai:open
+ *   gcc:ai:close
+ *   gcc:ai:statechange
+ *   govcareer:draweropen
+ *   govcareer:drawerclose
  *
- * The header preserves the global `gcc:languagechange` ecosystem contract.
+ * Important integration rule
+ * --------------------------
+ * The header does not implement AI or drawer behavior itself.
+ *
+ * The AI component owns opening/closing Compass AI through the stable
+ * [data-ai-trigger] / [data-header-ai-trigger] contract.
+ *
+ * The drawer component owns the [data-drawer-open] contract, focus trap,
+ * backdrop handling, Escape handling, and drawer lifecycle.
  */
 
 
@@ -100,9 +119,6 @@ const DEFAULT_AI_NAME =
 const HEADER_SELECTOR =
   '[data-component="header"]';
 
-const HEADER_ROOT_ATTRIBUTE =
-  'data-header-root';
-
 const HEADER_READY_EVENT =
   'gcc:header-ready';
 
@@ -111,6 +127,21 @@ const HEADER_SEARCH_EVENT =
 
 const AI_OPEN_EVENT =
   'gcc:ai:open';
+
+const AI_CLOSE_EVENT =
+  'gcc:ai:close';
+
+const AI_STATE_EVENT =
+  'gcc:ai:statechange';
+
+const DRAWER_OPEN_EVENT =
+  'govcareer:draweropen';
+
+const DRAWER_CLOSE_EVENT =
+  'govcareer:drawerclose';
+
+const GLOBAL_NAVIGATION_DRAWER_ID =
+  'global-navigation-drawer';
 
 
 /* --------------------------------------------------------------------------
@@ -157,14 +188,15 @@ function safeRoute(
       );
 
     if (
-      route &&
-      typeof route === 'string'
+      typeof route ===
+        'string' &&
+      route
     ) {
       return route;
     }
   } catch {
     /*
-     * Use the explicit fallback below.
+     * Configuration failure must not prevent the shell from rendering.
      */
   }
 
@@ -175,29 +207,35 @@ function safeRoute(
 function normalizePath(
   value
 ) {
-  return String(
-    value ?? ''
-  )
-    .split(
-      '#',
-      1
-    )[0]
-    .split(
-      '?',
-      1
-    )[0]
-    .replace(
-      /\/+$/,
-      ''
-    ) || '/';
+  const normalized =
+    String(
+      value ?? ''
+    )
+      .split(
+        '#',
+        1
+      )[0]
+      .split(
+        '?',
+        1
+      )[0];
+
+  const pathname =
+    normalized
+      .replace(
+        /\/+$/,
+        ''
+      );
+
+  return pathname || '/';
 }
 
 
 /**
  * Resolve route-relative links against the current document.
  *
- * The helper is intentionally defensive because the application uses
- * both index.html and pages/*.html entry points.
+ * This is used only for active-route comparison. The router remains the
+ * owner of actual navigation behavior.
  */
 function getAbsolutePath(
   href
@@ -216,7 +254,10 @@ function getAbsolutePath(
 
 
 /**
- * Avoid duplicate event listeners when the header is rendered again.
+ * Add an event listener owned by this header instance.
+ *
+ * Every listener registered through this helper can subsequently be removed
+ * by cleanupHeader().
  */
 function addManagedListener(
   mount,
@@ -227,14 +268,19 @@ function addManagedListener(
 ) {
   if (
     !mount ||
-    !target
+    !target ||
+    typeof target.addEventListener !==
+      'function'
   ) {
     return;
   }
 
   const cleanup =
-    mount.__gccHeaderCleanup ||
-    [];
+    Array.isArray(
+      mount.__gccHeaderCleanup
+    )
+      ? mount.__gccHeaderCleanup
+      : [];
 
   target.addEventListener(
     eventName,
@@ -243,12 +289,19 @@ function addManagedListener(
   );
 
   cleanup.push(
-    () =>
-      target.removeEventListener(
-        eventName,
-        handler,
-        options
-      )
+    () => {
+      try {
+        target.removeEventListener(
+          eventName,
+          handler,
+          options
+        );
+      } catch {
+        /*
+         * Listener cleanup is non-critical.
+         */
+      }
+    }
   );
 
   mount.__gccHeaderCleanup =
@@ -284,7 +337,7 @@ function cleanupHeader(
           dispose();
         } catch {
           /*
-           * Cleanup must never interrupt header rendering.
+           * Cleanup must never interrupt rendering.
            */
         }
       }
@@ -335,12 +388,6 @@ function getHeaderRoutes() {
       safeRoute(
         'compare',
         './compare.html'
-      ),
-
-    ai:
-      safeRoute(
-        'ai',
-        './ai.html'
       )
   };
 }
@@ -353,8 +400,8 @@ function getHeaderRoutes() {
 /**
  * Create the permanent site-header DOM structure.
  *
- * The returned markup intentionally contains translation hooks rather than
- * hard-coded localized UI content.
+ * Translation hooks remain on shell text so language.js remains the sole
+ * dictionary/translation authority.
  */
 function createHeaderMarkup({
   brandName =
@@ -365,7 +412,6 @@ function createHeaderMarkup({
   const routes =
     getHeaderRoutes();
 
-
   return `
     <header
       class="site-header"
@@ -373,6 +419,8 @@ function createHeaderMarkup({
       role="banner"
     >
       <div class="site-header__inner">
+
+        <!-- Brand -------------------------------------------------------- -->
 
         <a
           class="site-brand"
@@ -419,13 +467,14 @@ function createHeaderMarkup({
         </a>
 
 
+        <!-- Primary navigation ------------------------------------------ -->
+
         <nav
           class="site-navigation"
           data-header-navigation
           aria-label="Primary navigation"
           data-i18n-aria-label="header.primaryNavigation"
         >
-
           <a
             class="site-navigation__link"
             href="${escapeHtml(
@@ -480,18 +529,19 @@ function createHeaderMarkup({
           >
             Compare
           </a>
-
         </nav>
 
+
+        <!-- Global shell actions ---------------------------------------- -->
 
         <div
           class="site-header__actions"
           data-header-actions
-          data-i18n-aria-label="header.siteTools"
           aria-label="Site tools"
+          data-i18n-aria-label="header.siteTools"
         >
 
-          <!-- Global Search ------------------------------------------------ -->
+          <!-- Global Search -->
 
           <button
             type="button"
@@ -528,7 +578,7 @@ function createHeaderMarkup({
           </button>
 
 
-          <!-- Compass AI --------------------------------------------------- -->
+          <!-- Compass AI ------------------------------------------------- -->
 
           <button
             type="button"
@@ -562,7 +612,7 @@ function createHeaderMarkup({
           </button>
 
 
-          <!-- State selector ---------------------------------------------- -->
+          <!-- State selector -------------------------------------------- -->
 
           <div
             class="header-control header-control--state"
@@ -571,7 +621,7 @@ function createHeaderMarkup({
           ></div>
 
 
-          <!-- Language selector ------------------------------------------- -->
+          <!-- Language selector ----------------------------------------- -->
 
           <div
             class="header-control header-control--language"
@@ -580,7 +630,7 @@ function createHeaderMarkup({
           ></div>
 
 
-          <!-- Theme selector ---------------------------------------------- -->
+          <!-- Theme selector -------------------------------------------- -->
 
           <div
             class="header-control header-control--theme"
@@ -589,18 +639,18 @@ function createHeaderMarkup({
           ></div>
 
 
-          <!-- Mobile menu ------------------------------------------------- -->
+          <!-- Mobile navigation trigger ------------------------------- -->
 
           <button
             type="button"
             class="icon-button mobile-menu-button"
-            data-drawer-open="global-navigation-drawer"
+            data-drawer-open="${GLOBAL_NAVIGATION_DRAWER_ID}"
             data-header-menu-trigger
             data-i18n-aria-label="header.openNavigation"
             data-i18n-title="header.openNavigation"
             aria-label="Open navigation menu"
             title="Open navigation menu"
-            aria-controls="global-navigation-drawer"
+            aria-controls="${GLOBAL_NAVIGATION_DRAWER_ID}"
             aria-expanded="false"
           >
             <svg
@@ -632,7 +682,7 @@ function createHeaderMarkup({
       </div>
 
 
-      <!-- Header search panel -------------------------------------------- -->
+      <!-- Header search panel ------------------------------------------- -->
 
       <div
         id="global-header-search"
@@ -659,6 +709,110 @@ function createHeaderMarkup({
         </div>
       </div>
 
+
+      <!-- Global navigation drawer -------------------------------------- -->
+
+      <aside
+        id="${GLOBAL_NAVIGATION_DRAWER_ID}"
+        class="navigation-drawer"
+        data-drawer
+        data-drawer-backdrop-close="true"
+        aria-hidden="true"
+        hidden
+        tabindex="-1"
+      >
+        <div
+          class="navigation-drawer__panel"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation menu"
+          data-i18n-aria-label="header.navigationMenu"
+        >
+          <div
+            class="navigation-drawer__header"
+          >
+            <strong
+              class="navigation-drawer__title"
+              data-i18n="header.navigationMenu"
+            >
+              Navigation
+            </strong>
+
+            <button
+              type="button"
+              class="icon-button navigation-drawer__close"
+              data-drawer-close
+              data-i18n-aria-label="header.closeNavigation"
+              data-i18n-title="header.closeNavigation"
+              aria-label="Close navigation menu"
+              title="Close navigation menu"
+            >
+              ×
+            </button>
+          </div>
+
+          <nav
+            class="navigation-drawer__navigation"
+            aria-label="Mobile navigation"
+            data-i18n-aria-label="header.mobileNavigation"
+          >
+            <a
+              class="navigation-drawer__link"
+              href="${escapeHtml(
+                routes.careerFinder
+              )}"
+              data-route="careerFinder"
+              data-i18n="navigation.careerFinder"
+            >
+              Career Finder
+            </a>
+
+            <a
+              class="navigation-drawer__link"
+              href="${escapeHtml(
+                routes.jobs
+              )}"
+              data-route="jobs"
+              data-i18n="navigation.jobs"
+            >
+              Jobs
+            </a>
+
+            <a
+              class="navigation-drawer__link"
+              href="${escapeHtml(
+                routes.exams
+              )}"
+              data-route="exams"
+              data-i18n="navigation.exams"
+            >
+              Exams
+            </a>
+
+            <a
+              class="navigation-drawer__link"
+              href="${escapeHtml(
+                routes.rankings
+              )}"
+              data-route="rankings"
+              data-i18n="navigation.rankings"
+            >
+              Rankings
+            </a>
+
+            <a
+              class="navigation-drawer__link"
+              href="${escapeHtml(
+                routes.compare
+              )}"
+              data-route="compare"
+              data-i18n="navigation.compare"
+            >
+              Compare
+            </a>
+          </nav>
+        </div>
+      </aside>
     </header>
   `;
 }
@@ -671,17 +825,15 @@ function createHeaderMarkup({
 function ensureHeaderMount() {
   if (
     typeof document ===
-    'undefined'
+      'undefined'
   ) {
     return null;
   }
-
 
   let mount =
     document.querySelector(
       HEADER_SELECTOR
     );
-
 
   if (
     mount
@@ -689,20 +841,14 @@ function ensureHeaderMount() {
     return mount;
   }
 
-
   mount =
     document.createElement(
       'div'
     );
 
-
   mount.dataset.component =
     'header';
 
-
-  /*
-   * The permanent application header belongs before all page content.
-   */
   if (
     document.body
   ) {
@@ -710,7 +856,6 @@ function ensureHeaderMount() {
       mount
     );
   }
-
 
   return mount;
 }
@@ -720,11 +865,31 @@ function ensureHeaderMount() {
  * Search
  * -------------------------------------------------------------------------- */
 
+function getSearchFocusTarget(
+  mount
+) {
+  const stored =
+    mount?.__gccHeaderSearchFocusTarget;
+
+  if (
+    stored &&
+    stored.isConnected
+  ) {
+    return stored;
+  }
+
+  return mount?.querySelector(
+    '[data-header-search-trigger]'
+  ) || null;
+}
+
+
 function toggleSearch(
   mount,
   force,
   {
-    focus = true
+    focus = true,
+    restoreFocus = true
   } = {}
 ) {
   if (
@@ -732,7 +897,6 @@ function toggleSearch(
   ) {
     return false;
   }
-
 
   const panel =
     mount.querySelector(
@@ -744,13 +908,11 @@ function toggleSearch(
       '[data-header-search-trigger]'
     );
 
-
   if (
     !panel
   ) {
     return false;
   }
-
 
   const shouldOpen =
     typeof force ===
@@ -758,55 +920,123 @@ function toggleSearch(
       ? force
       : panel.hidden;
 
+  if (
+    shouldOpen ===
+      !panel.hidden
+  ) {
+    if (
+      shouldOpen &&
+      focus
+    ) {
+      const searchInput =
+        panel.querySelector(
+          '[data-search-input]'
+        );
+
+      searchInput?.focus();
+    }
+
+    return shouldOpen;
+  }
+
+  if (
+    shouldOpen
+  ) {
+    const activeElement =
+      typeof document !==
+        'undefined'
+        ? document.activeElement
+        : null;
+
+    if (
+      activeElement &&
+      activeElement !==
+        document.body &&
+      activeElement instanceof
+        HTMLElement
+    ) {
+      mount.__gccHeaderSearchFocusTarget =
+        activeElement;
+    } else {
+      mount.__gccHeaderSearchFocusTarget =
+        trigger || null;
+    }
+
+    panel.hidden =
+      false;
+
+    trigger?.setAttribute(
+      'aria-expanded',
+      'true'
+    );
+
+    if (
+      focus &&
+      typeof window !==
+        'undefined' &&
+      typeof window.requestAnimationFrame ===
+        'function'
+    ) {
+      window.requestAnimationFrame(
+        () => {
+          const searchInput =
+            panel.querySelector(
+              '[data-search-input]'
+            );
+
+          searchInput?.focus();
+        }
+      );
+    }
+
+    return true;
+  }
 
   panel.hidden =
-    !shouldOpen;
-
+    true;
 
   trigger?.setAttribute(
     'aria-expanded',
-    String(
-      shouldOpen
-    )
+    'false'
   );
 
-
   if (
-    shouldOpen &&
-    focus
+    restoreFocus
   ) {
-    requestAnimationFrame(
-      () => {
-        const searchInput =
-          panel.querySelector(
-            '[data-search-input]'
-          );
+    const target =
+      getSearchFocusTarget(
+        mount
+      );
 
-        searchInput?.focus();
-      }
-    );
+    target?.focus();
   }
 
+  mount.__gccHeaderSearchFocusTarget =
+    null;
 
-  return shouldOpen;
+  return false;
 }
 
 
-/**
- * Emit a semantic global search event in addition to revealing the search
- * panel. This gives search-bar.js/page controllers an integration point
- * without putting search implementation into the header.
- */
 function emitHeaderSearchEvent(
   mount
 ) {
   if (
     typeof document ===
-    'undefined'
+      'undefined'
   ) {
     return;
   }
 
+  const panel =
+    mount?.querySelector(
+      '[data-header-search-panel]'
+    ) || null;
+
+  const input =
+    mount?.querySelector(
+      '[data-search-input]'
+    ) || null;
 
   document.dispatchEvent(
     new CustomEvent(
@@ -814,15 +1044,8 @@ function emitHeaderSearchEvent(
       {
         detail: {
           mount,
-          panel:
-            mount?.querySelector(
-              '[data-header-search-panel]'
-            ) || null,
-
-          input:
-            mount?.querySelector(
-              '[data-search-input]'
-            ) || null
+          panel,
+          input
         }
       }
     )
@@ -835,11 +1058,11 @@ function emitHeaderSearchEvent(
  * -------------------------------------------------------------------------- */
 
 /**
- * Notify ai-assistant.js that the global header trigger was activated.
+ * Trigger Compass AI through its actual DOM integration contract.
  *
- * The existing [data-ai-trigger] hook remains the primary integration
- * contract. The semantic event is additive and does not require the AI
- * assistant to implement another API.
+ * The header does not call an undocumented AI method and does not implement
+ * any AI behavior. The AI assistant owns the click listener attached to the
+ * stable [data-ai-trigger] hook.
  */
 function triggerCompassAI(
   mount
@@ -849,48 +1072,29 @@ function triggerCompassAI(
       '[data-header-ai-trigger]'
     );
 
-
   if (
     !trigger
   ) {
     return false;
   }
 
-
-  /*
-   * The AI assistant may already be listening to [data-ai-trigger].
-   * Dispatching a dedicated event gives the global shell a stable public
-   * signal without assuming the assistant's internal implementation.
-   */
   if (
-    typeof document !==
-    'undefined'
+    typeof trigger.click ===
+      'function'
   ) {
-    document.dispatchEvent(
-      new CustomEvent(
-        AI_OPEN_EVENT,
-        {
-          detail: {
-            trigger,
-            source:
-              'global-header'
-          }
-        }
-      )
-    );
+    trigger.click();
+
+    return true;
   }
 
-
-  return true;
+  return false;
 }
 
 
 /**
- * Keep header AI trigger state synchronized when the AI implementation
- * announces its open/closed state.
+ * Keep the shell trigger synchronized with the real AI implementation.
  *
- * This is intentionally event-driven and tolerant: no dependency on a
- * particular ai-assistant.js implementation is assumed.
+ * Only lifecycle data announced by ai-assistant.js is consumed here.
  */
 function updateAITriggerState(
   mount,
@@ -901,13 +1105,11 @@ function updateAITriggerState(
       '[data-header-ai-trigger]'
     );
 
-
   if (
     !trigger
   ) {
     return;
   }
-
 
   trigger.setAttribute(
     'aria-expanded',
@@ -917,6 +1119,30 @@ function updateAITriggerState(
       )
     )
   );
+}
+
+
+function getAIEventState(
+  event
+) {
+  const detail =
+    event?.detail;
+
+  if (
+    typeof detail?.open ===
+      'boolean'
+  ) {
+    return detail.open;
+  }
+
+  if (
+    typeof detail?.expanded ===
+      'boolean'
+  ) {
+    return detail.expanded;
+  }
+
+  return null;
 }
 
 
@@ -933,13 +1159,11 @@ function updateMenuTriggerState(
       '[data-header-menu-trigger]'
     );
 
-
   if (
     !trigger
   ) {
     return;
   }
-
 
   trigger.setAttribute(
     'aria-expanded',
@@ -967,53 +1191,40 @@ function bindHeaderInteractions(
     return;
   }
 
-
   cleanupHeader(
     mount
   );
-
 
   const searchTrigger =
     mount.querySelector(
       '[data-header-search-trigger]'
     );
 
-
-  const aiTrigger =
-    mount.querySelector(
-      '[data-header-ai-trigger]'
-    );
-
-
-  const menuTrigger =
-    mount.querySelector(
-      '[data-header-menu-trigger]'
-    );
-
-
   const globalEscapeHandler =
     () => {
+      /*
+       * Search belongs to the header, so Escape may safely close it.
+       *
+       * Compass AI and the drawer are deliberately not manipulated here.
+       * Their respective modules consume the same project-wide Escape event
+       * and own their lifecycle.
+       */
       toggleSearch(
         mount,
         false,
         {
           focus:
-            false
+            false,
+          restoreFocus:
+            true
         }
       );
-
-      updateAITriggerState(
-        mount,
-        false
-      );
     };
-
 
   const outsideClickHandler =
     (event) => {
       const target =
         event.target;
-
 
       if (
         !(target instanceof
@@ -1021,7 +1232,6 @@ function bindHeaderInteractions(
       ) {
         return;
       }
-
 
       if (
         !mount.contains(
@@ -1033,92 +1243,101 @@ function bindHeaderInteractions(
           false,
           {
             focus:
+              false,
+            restoreFocus:
               false
           }
         );
       }
     };
 
-
   const languageChangeHandler =
     () => {
       /*
-       * Do not rerender the header here.
-       *
-       * language.js owns the translation pass. The header only refreshes
-       * localized state that belongs specifically to its generated controls.
+       * language.js performs the actual translation pass.
+       * The header only repairs shell-local accessibility relationships.
        */
       updateHeaderAccessibleState(
         mount
       );
     };
 
-
   const aiStateHandler =
     (
       event
     ) => {
       const expanded =
-        event.detail?.open ??
-        event.detail?.expanded;
-
+        getAIEventState(
+          event
+        );
 
       if (
         expanded ===
-          undefined
+          null
       ) {
         return;
       }
-
 
       updateAITriggerState(
         mount,
-        Boolean(
-          expanded
-        )
+        expanded
       );
     };
 
+  const aiCloseHandler =
+    () => {
+      updateAITriggerState(
+        mount,
+        false
+      );
+    };
 
-  const drawerStateHandler =
+  const drawerOpenHandler =
     (
       event
     ) => {
-      const drawerId =
-        event.detail?.id ??
-        event.detail?.drawerId;
-
+      const drawer =
+        event.detail?.drawer;
 
       if (
-        drawerId &&
-        drawerId !==
-          'global-navigation-drawer'
+        drawer &&
+        drawer.id &&
+        drawer.id !==
+          GLOBAL_NAVIGATION_DRAWER_ID
       ) {
         return;
       }
-
-
-      const expanded =
-        event.detail?.open ??
-        event.detail?.expanded;
-
-
-      if (
-        expanded ===
-          undefined
-      ) {
-        return;
-      }
-
 
       updateMenuTriggerState(
         mount,
-        Boolean(
-          expanded
-        )
+        true
       );
     };
 
+  const drawerCloseHandler =
+    (
+      event
+    ) => {
+      const drawer =
+        event.detail?.drawer;
+
+      if (
+        drawer &&
+        drawer.id &&
+        drawer.id !==
+          GLOBAL_NAVIGATION_DRAWER_ID
+      ) {
+        return;
+      }
+
+      updateMenuTriggerState(
+        mount,
+        false
+      );
+    };
+
+
+  /* Search --------------------------------------------------------------- */
 
   addManagedListener(
     mount,
@@ -1141,40 +1360,7 @@ function bindHeaderInteractions(
   );
 
 
-  addManagedListener(
-    mount,
-    aiTrigger,
-    'click',
-    () => {
-      triggerCompassAI(
-        mount
-      );
-    }
-  );
-
-
-  /*
-   * Do not directly operate the global drawer here.
-   *
-   * data-drawer-open is already the stable contract consumed by drawer.js.
-   */
-  addManagedListener(
-    mount,
-    menuTrigger,
-    'click',
-    () => {
-      /*
-       * The drawer module will update aria-expanded through its own lifecycle
-       * event when available. Setting true here provides immediate keyboard
-       * feedback without taking drawer ownership.
-       */
-      menuTrigger?.setAttribute(
-        'aria-expanded',
-        'true'
-      );
-    }
-  );
-
+  /* Escape ---------------------------------------------------------------- */
 
   addManagedListener(
     mount,
@@ -1184,6 +1370,8 @@ function bindHeaderInteractions(
   );
 
 
+  /* Click outside --------------------------------------------------------- */
+
   addManagedListener(
     mount,
     document,
@@ -1192,12 +1380,15 @@ function bindHeaderInteractions(
   );
 
 
+  /* Language lifecycle ---------------------------------------------------- */
+
   /*
-   * Required project-wide language event.
+   * gcc:languagechange is the canonical language event.
    *
-   * Keep this listener even though language.js performs the actual DOM
-   * translation pass. It preserves the header's ability to synchronize
-   * component-local accessibility state.
+   * govcareer:languagechange is retained as a compatibility listener because
+   * the existing ecosystem still emits it and selector components consume it.
+   *
+   * The actual event handlers are intentionally lightweight and idempotent.
    */
   addManagedListener(
     mount,
@@ -1206,10 +1397,6 @@ function bindHeaderInteractions(
     languageChangeHandler
   );
 
-
-  /*
-   * Retain compatibility with the earlier application event namespace.
-   */
   addManagedListener(
     mount,
     document,
@@ -1218,25 +1405,20 @@ function bindHeaderInteractions(
   );
 
 
-  /*
-   * Optional AI lifecycle hooks.
-   */
+  /* AI lifecycle ---------------------------------------------------------- */
+
   addManagedListener(
     mount,
     document,
-    'gcc:ai:statechange',
+    AI_STATE_EVENT,
     aiStateHandler
   );
 
-
   addManagedListener(
     mount,
     document,
-    'gcc:ai:open',
+    AI_OPEN_EVENT,
     () => {
-      /*
-       * An external caller opened Compass AI. Mark the global trigger active.
-       */
       updateAITriggerState(
         mount,
         true
@@ -1244,15 +1426,28 @@ function bindHeaderInteractions(
     }
   );
 
-
-  /*
-   * Optional drawer lifecycle hook.
-   */
   addManagedListener(
     mount,
     document,
-    'gcc:drawerstatechange',
-    drawerStateHandler
+    AI_CLOSE_EVENT,
+    aiCloseHandler
+  );
+
+
+  /* Drawer lifecycle ------------------------------------------------------ */
+
+  addManagedListener(
+    mount,
+    document,
+    DRAWER_OPEN_EVENT,
+    drawerOpenHandler
+  );
+
+  addManagedListener(
+    mount,
+    document,
+    DRAWER_CLOSE_EVENT,
+    drawerCloseHandler
   );
 }
 
@@ -1270,12 +1465,10 @@ function updateHeaderAccessibleState(
     return;
   }
 
-
   const brand =
     mount.querySelector(
       '[data-header-brand]'
     );
-
 
   if (
     brand &&
@@ -1285,17 +1478,14 @@ function updateHeaderAccessibleState(
   ) {
     brand.setAttribute(
       'aria-label',
-      DEFAULT_BRAND_NAME +
-        ' — Home'
+      `${DEFAULT_BRAND_NAME} — Home`
     );
   }
-
 
   const aiTrigger =
     mount.querySelector(
       '[data-header-ai-trigger]'
     );
-
 
   if (
     aiTrigger &&
@@ -1306,6 +1496,59 @@ function updateHeaderAccessibleState(
     aiTrigger.setAttribute(
       'aria-controls',
       'compass-ai-panel'
+    );
+  }
+
+  const menuTrigger =
+    mount.querySelector(
+      '[data-header-menu-trigger]'
+    );
+
+  if (
+    menuTrigger
+  ) {
+    menuTrigger.setAttribute(
+      'aria-controls',
+      GLOBAL_NAVIGATION_DRAWER_ID
+    );
+
+    if (
+      !menuTrigger.hasAttribute(
+        'aria-expanded'
+      )
+    ) {
+      menuTrigger.setAttribute(
+        'aria-expanded',
+        'false'
+      );
+    }
+  }
+
+  const searchTrigger =
+    mount.querySelector(
+      '[data-header-search-trigger]'
+    );
+
+  const searchPanel =
+    mount.querySelector(
+      '[data-header-search-panel]'
+    );
+
+  if (
+    searchTrigger &&
+    searchPanel
+  ) {
+    searchTrigger.setAttribute(
+      'aria-controls',
+      searchPanel.id ||
+        'global-header-search'
+    );
+
+    searchTrigger.setAttribute(
+      'aria-expanded',
+      String(
+        !searchPanel.hidden
+      )
     );
   }
 }
@@ -1330,19 +1573,16 @@ function updateHeaderActiveRoute(
         )
       : null;
 
-
   if (
     !mount
   ) {
     return;
   }
 
-
   const currentPath =
     normalizePath(
       pathname
     );
-
 
   mount
     .querySelectorAll(
@@ -1352,31 +1592,6 @@ function updateHeaderActiveRoute(
       (
         link
       ) => {
-        const href =
-          link.getAttribute(
-            'href'
-          );
-
-
-        if (
-          !href
-        ) {
-          return;
-        }
-
-
-        const linkPath =
-          normalizePath(
-            getAbsolutePath(
-              href
-            )
-          );
-
-
-        /*
-         * The AI route is a global feature trigger and should not normally
-         * receive active-navigation styling because it is a button.
-         */
         if (
           !link.matches(
             'a'
@@ -1385,17 +1600,32 @@ function updateHeaderActiveRoute(
           return;
         }
 
+        const href =
+          link.getAttribute(
+            'href'
+          );
+
+        if (
+          !href
+        ) {
+          return;
+        }
+
+        const linkPath =
+          normalizePath(
+            getAbsolutePath(
+              href
+            )
+          );
 
         const active =
           linkPath ===
           currentPath;
 
-
         link.classList.toggle(
           'is-active',
           active
         );
-
 
         if (
           active
@@ -1419,10 +1649,10 @@ function updateHeaderActiveRoute(
  * -------------------------------------------------------------------------- */
 
 /**
- * Notify selector components that their header hosts now exist.
+ * Notify selector/search components that their header hosts now exist.
  *
- * This does not call undocumented functions from those components.
- * Their existing initialization system can consume the event safely.
+ * This is informational only. Existing component initializers retain
+ * ownership of their own mounting and event binding.
  */
 function emitHeaderReady(
   mount
@@ -1434,7 +1664,6 @@ function emitHeaderReady(
   ) {
     return;
   }
-
 
   document.dispatchEvent(
     new CustomEvent(
@@ -1471,6 +1700,11 @@ function emitHeaderReady(
           menuTrigger:
             mount.querySelector(
               '[data-header-menu-trigger]'
+            ),
+
+          navigationDrawer:
+            mount.querySelector(
+              `[data-drawer="${GLOBAL_NAVIGATION_DRAWER_ID}"], #${GLOBAL_NAVIGATION_DRAWER_ID}`
             )
         }
       }
@@ -1493,10 +1727,8 @@ function renderHeader(
     return null;
   }
 
-
   const mount =
     ensureHeaderMount();
-
 
   if (
     !mount
@@ -1504,35 +1736,28 @@ function renderHeader(
     return null;
   }
 
-
   cleanupHeader(
     mount
   );
-
 
   mount.innerHTML =
     createHeaderMarkup(
       options
     );
 
-
   bindHeaderInteractions(
     mount
   );
-
 
   updateHeaderAccessibleState(
     mount
   );
 
-
   updateHeaderActiveRoute();
-
 
   emitHeaderReady(
     mount
   );
-
 
   return mount;
 }
@@ -1550,10 +1775,13 @@ let initializedMount =
 
 
 /**
- * Initialize the global header once per document.
+ * Initialize the global header once per document lifecycle.
  *
- * Repeated calls return the existing header instead of creating duplicate
- * shell instances.
+ * Repeated calls return the currently initialized header without creating
+ * duplicate shell instances or listeners.
+ *
+ * If the DOM instance was externally removed, a fresh shell is rendered and
+ * rebound safely.
  */
 function initializeHeader(
   options = {}
@@ -1565,28 +1793,31 @@ function initializeHeader(
     return null;
   }
 
-
   const existing =
     document.querySelector(
       HEADER_SELECTOR
     );
 
-
   if (
-    existing &&
-    initialized
+    initialized &&
+    initializedMount &&
+    initializedMount.isConnected &&
+    existing ===
+      initializedMount
   ) {
     updateHeaderActiveRoute();
 
-    return existing;
-  }
+    updateHeaderAccessibleState(
+      initializedMount
+    );
 
+    return initializedMount;
+  }
 
   const mount =
     renderHeader(
       options
     );
-
 
   if (
     !mount
@@ -1594,22 +1825,22 @@ function initializeHeader(
     return null;
   }
 
-
   initialized =
     true;
 
   initializedMount =
     mount;
 
-
   /*
-   * Client-side route changes.
+   * Client-side history changes.
+   *
+   * The main application is multi-page, so this is only a lightweight
+   * presentation synchronization hook.
    */
   const popstateHandler =
     () => {
       updateHeaderActiveRoute();
     };
-
 
   addManagedListener(
     mount,
@@ -1618,17 +1849,15 @@ function initializeHeader(
     popstateHandler
   );
 
-
   /*
-   * History-driven SPA navigation may not trigger popstate when another
-   * router calls pushState/replaceState, so expose an application-level route
-   * hook without taking router ownership.
+   * Optional application-level route hook.
+   *
+   * The header does not own router behavior; it only refreshes active state.
    */
   const routeChangeHandler =
     () => {
       updateHeaderActiveRoute();
     };
-
 
   addManagedListener(
     mount,
@@ -1636,7 +1865,6 @@ function initializeHeader(
     'gcc:routechange',
     routeChangeHandler
   );
-
 
   return mount;
 }
@@ -1648,11 +1876,17 @@ function initializeHeader(
 
 function getHeaderMount() {
   if (
-    initializedMount
+    initializedMount &&
+    initializedMount.isConnected
   ) {
     return initializedMount;
   }
 
+  initializedMount =
+    null;
+
+  initialized =
+    false;
 
   if (
     typeof document ===
@@ -1660,7 +1894,6 @@ function getHeaderMount() {
   ) {
     return null;
   }
-
 
   return document.querySelector(
     HEADER_SELECTOR
@@ -1675,20 +1908,17 @@ function openSearch() {
   const mount =
     getHeaderMount();
 
-
   if (
     !mount
   ) {
     return false;
   }
 
-
   const opened =
     toggleSearch(
       mount,
       true
     );
-
 
   if (
     opened
@@ -1697,7 +1927,6 @@ function openSearch() {
       mount
     );
   }
-
 
   return opened;
 }
@@ -1710,35 +1939,32 @@ function closeSearch() {
   const mount =
     getHeaderMount();
 
-
   return toggleSearch(
     mount,
     false,
     {
       focus:
-        false
+        false,
+      restoreFocus:
+        true
     }
   );
 }
 
 
 /**
- * Programmatically trigger Compass AI.
- *
- * This emits the same public event used by the header trigger and keeps the
- * internal AI implementation outside the header's responsibility boundary.
+ * Programmatically trigger Compass AI through the same stable DOM trigger
+ * used by users.
  */
 function openCompassAI() {
   const mount =
     getHeaderMount();
-
 
   if (
     !mount
   ) {
     return false;
   }
-
 
   return triggerCompassAI(
     mount
@@ -1757,7 +1983,13 @@ export {
   HEADER_SELECTOR,
   HEADER_READY_EVENT,
   HEADER_SEARCH_EVENT,
+
   AI_OPEN_EVENT,
+  AI_CLOSE_EVENT,
+  AI_STATE_EVENT,
+
+  DRAWER_OPEN_EVENT,
+  DRAWER_CLOSE_EVENT,
 
   createHeaderMarkup,
 
