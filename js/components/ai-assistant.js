@@ -7,7 +7,8 @@
  *
  * Purpose
  * -------
- * Global, responsive Compass AI interface used from the shared site shell.
+ * Canonical global, responsive Compass AI interface used from the
+ * shared site shell.
  *
  * Architectural boundary
  * ----------------------
@@ -24,6 +25,7 @@
  * - confidence display when supplied by the canonical pipeline
  * - warning rendering when supplied by the canonical pipeline
  * - accessibility/focus behavior
+ * - orchestration of the existing AI client/context contracts
  *
  * This component does NOT own:
  * - eligibility decisions
@@ -34,9 +36,11 @@
  * - recommendation logic
  * - AI prompt policy
  * - backend secrets
+ * - the /api/chat implementation
+ * - a second storage namespace
  *
- * Intelligence pipeline
- * ---------------------
+ * Canonical intelligence pipeline
+ * -------------------------------
  *
  * ai-assistant.js
  *      ↓
@@ -44,11 +48,15 @@
  *      ↓
  * context-builder.js
  *      ↓
- * safety.js (only for its defined client-side safety helpers)
+ * safety.js
  *      ↓
  * client.js
  *      ↓
  * /api/chat
+ *      ↓
+ * server-side configuration / prompt policy
+ *      ↓
+ * OpenRouter
  *      ↓
  * response-parser.js
  *      ↓
@@ -77,13 +85,20 @@
  *   getIdentityResponse(...)
  *   normalizeLanguage(...)
  *
- * There is intentionally no guessed multi-name adapter layer.
+ * storage.js
+ *   getItem(...)
+ *   setItem(...)
+ *   removeItem(...)
+ *
+ * There is intentionally no guessed multi-name AI adapter layer.
  *
  * Required integration hooks
  * --------------------------
  * Header:
  * [data-ai-trigger]
  * [data-header-ai-trigger]
+ * [data-compass-ai-trigger]
+ * #compassAiTrigger
  *
  * AI:
  * [data-ai-panel]
@@ -91,11 +106,22 @@
  * [data-ai-send]
  * [data-ai-mode]
  *
+ * Optional page context:
+ * [data-ai-page-context]
+ *
  * Events:
  * gcc:languagechange
  * gcc:ai:open
  * gcc:ai:close
  * gcc:ai:statechange
+ *
+ * Lifecycle integration
+ * ---------------------
+ * The component exposes initializeCompassAI() so the canonical app
+ * bootstrap can initialize the global assistant explicitly.
+ *
+ * The existing auto-mount behavior is retained for compatibility with
+ * direct imports and pages that load the component independently.
  */
 
 import * as ContextBuilder
@@ -115,137 +141,197 @@ import {
   getCurrentLanguage
 } from '../language.js';
 
+import {
+  getItem,
+  setItem,
+  removeItem
+} from '../storage.js';
+
 import config from '../config.js';
+
+
+/* ============================================================
+ * CONFIGURATION-DERIVED PUBLIC IDENTITY
+ * ============================================================ */
+
+/*
+ * Product and assistant identity are public configuration values.
+ *
+ * The client must never contain server secrets.
+ *
+ * The optional nested identity object allows the public configuration
+ * contract to provide owner metadata when that metadata is explicitly
+ * exposed for public UI use.
+ *
+ * The server-side configuration remains the authoritative source for
+ * server-side identity and prompt behavior.
+ */
+const PUBLIC_IDENTITY =
+  Object.freeze({
+    productName:
+      String(
+        config?.ai?.identity?.productName ||
+        config?.app?.name ||
+        'GovCareer Compass'
+      ).trim(),
+
+    assistantName:
+      String(
+        config?.ai?.identity?.assistantName ||
+        config?.ai?.assistantName ||
+        'Compass AI'
+      ).trim(),
+
+    ownerPublicName:
+      String(
+        config?.ai?.identity?.ownerPublicName ||
+        ''
+      ).trim(),
+
+    ownerPublicRole:
+      String(
+        config?.ai?.identity?.ownerPublicRole ||
+        ''
+      ).trim()
+  });
+
+
+const APP_NAME =
+  PUBLIC_IDENTITY.productName;
+
+const AI_NAME =
+  PUBLIC_IDENTITY.assistantName;
 
 
 /* ============================================================
  * CONSTANTS
  * ============================================================ */
 
-const APP_NAME =
-  'GovCareer Compass';
-
-const AI_NAME =
-  'Compass AI';
-
-const OWNER_NAME =
-  'Abhijit Dutta';
-
-const OWNER_PUBLIC_ROLE =
-  'Developer and owner of GovCareer Compass';
-
-const ENDPOINT =
-  config?.ai?.endpoint ||
-  '/api/chat';
-
-const AI_METHOD =
-  config?.ai?.method ||
-  'POST';
-
-const STORAGE = Object.freeze({
-  history:
-    config?.storage?.aiConversation ||
-    'gcc_ai_conversation',
-
-  mode:
-    'gcc.compass-ai.mode'
-});
-
-const LIMITS = Object.freeze({
-  maxInputLength:
-    4000,
-
-  maxHistoryItems:
-    20,
-
-  maxStoredMessages:
-    40,
-
-  maxVisibleSources:
-    6,
-
-  maxRelatedItems:
-    6
-});
-
-const MODES = Object.freeze([
+const STORAGE =
   Object.freeze({
-    id:
-      'auto',
+    history:
+      config?.storage?.aiConversation ||
+      'gcc_ai_conversation',
 
-    translationKey:
-      'ai.modes.auto',
+    mode:
+      'gcc.compass-ai.mode'
+  });
 
-    fallbackKey:
-      'Auto'
-  }),
 
+const LIMITS =
   Object.freeze({
-    id:
-      'career',
+    maxInputLength:
+      Number.isInteger(
+        config?.ai?.maxInputCharacters
+      ) &&
+      config.ai.maxInputCharacters > 0
+        ? Math.min(
+            config.ai.maxInputCharacters,
+            8000
+          )
+        : 4000,
 
-    translationKey:
-      'ai.modes.career',
+    maxHistoryItems:
+      Number.isInteger(
+        config?.ai?.maxConversationMessages
+      ) &&
+      config.ai.maxConversationMessages > 0
+        ? Math.min(
+            config.ai.maxConversationMessages,
+            20
+          )
+        : 20,
 
-    fallbackKey:
-      'Career'
-  }),
+    maxStoredMessages:
+      40,
 
-  Object.freeze({
-    id:
-      'eligibility',
+    maxVisibleSources:
+      6,
 
-    translationKey:
-      'ai.modes.eligibility',
+    maxRelatedItems:
+      6
+  });
 
-    fallbackKey:
-      'Eligibility'
-  }),
 
-  Object.freeze({
-    id:
-      'exams',
+const MODES =
+  Object.freeze([
+    Object.freeze({
+      id:
+        'auto',
 
-    translationKey:
-      'ai.modes.exams',
+      translationKey:
+        'ai.modes.auto',
 
-    fallbackKey:
-      'Exams'
-  }),
+      fallbackKey:
+        'Auto'
+    }),
 
-  Object.freeze({
-    id:
-      'jobs',
+    Object.freeze({
+      id:
+        'career',
 
-    translationKey:
-      'ai.modes.jobs',
+      translationKey:
+        'ai.modes.career',
 
-    fallbackKey:
-      'Jobs'
-  }),
+      fallbackKey:
+        'Career'
+    }),
 
-  Object.freeze({
-    id:
-      'salary',
+    Object.freeze({
+      id:
+        'eligibility',
 
-    translationKey:
-      'ai.modes.salary',
+      translationKey:
+        'ai.modes.eligibility',
 
-    fallbackKey:
-      'Salary'
-  }),
+      fallbackKey:
+        'Eligibility'
+    }),
 
-  Object.freeze({
-    id:
-      'compare',
+    Object.freeze({
+      id:
+        'exams',
 
-    translationKey:
-      'ai.modes.compare',
+      translationKey:
+        'ai.modes.exams',
 
-    fallbackKey:
-      'Compare'
-  })
-]);
+      fallbackKey:
+        'Exams'
+    }),
+
+    Object.freeze({
+      id:
+        'jobs',
+
+      translationKey:
+        'ai.modes.jobs',
+
+      fallbackKey:
+        'Jobs'
+    }),
+
+    Object.freeze({
+      id:
+        'salary',
+
+      translationKey:
+        'ai.modes.salary',
+
+      fallbackKey:
+        'Salary'
+    }),
+
+    Object.freeze({
+      id:
+        'compare',
+
+      translationKey:
+        'ai.modes.compare',
+
+      fallbackKey:
+        'Compare'
+    })
+  ]);
 
 
 /* ============================================================
@@ -297,7 +383,9 @@ function normalizeLocale(
         : 'en';
     }
   } catch {
-    // Fall through to deterministic locale handling.
+    /*
+     * Fall through to deterministic locale handling.
+     */
   }
 
   return String(
@@ -314,100 +402,51 @@ function normalizeLocale(
  * STORAGE
  * ============================================================ */
 
-/**
- * The canonical storage.js module already namespaces its own keys.
+/*
+ * Storage ownership is intentionally delegated to js/storage.js.
  *
- * This component uses its own bounded history serialization because
- * the existing public storage contract is intentionally generic.
+ * This component does not:
+ * - construct a second application namespace;
+ * - directly manage localStorage keys;
+ * - duplicate serialization/deserialization;
+ * - maintain a separate memory fallback.
  *
- * No secrets are stored.
+ * storage.js already:
+ * - applies the canonical application namespace;
+ * - serializes values;
+ * - deserializes values;
+ * - provides a memory fallback when browser storage is unavailable.
  */
 
-function safeStorageGet(
-  key,
-  fallback = null
-) {
-  try {
-    const raw =
-      globalThis.localStorage?.getItem(
-        makeLocalStorageKey(
-          key
-        )
-      );
-
-    return raw ===
-      null
-      ? fallback
-      : raw;
-  } catch {
-    return fallback;
-  }
-}
-
-
-function safeStorageSet(
-  key,
-  value
-) {
-  try {
-    globalThis.localStorage?.setItem(
-      makeLocalStorageKey(
-        key
-      ),
-      String(
-        value
-      )
+function loadHistory() {
+  const value =
+    getItem(
+      STORAGE.history,
+      []
     );
 
-    return true;
-  } catch {
-    return false;
-  }
+  return normalizeHistory(
+    value
+  );
 }
 
 
-function safeStorageRemove(
-  key
+function saveHistory(
+  history
 ) {
-  try {
-    globalThis.localStorage?.removeItem(
-      makeLocalStorageKey(
-        key
-      )
-    );
-
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-
-function makeLocalStorageKey(
-  key
-) {
-  const namespace =
-    config?.app?.storageNamespace ||
-    'govcareer-compass';
-
-  const normalized =
-    String(
-      key ?? ''
-    ).trim();
-
-  if (
-    normalized.startsWith(
-      `${namespace}:`
+  setItem(
+    STORAGE.history,
+    normalizeHistory(
+      history
     )
-  ) {
-    return normalized;
-  }
+  );
+}
 
-  /*
-   * Preserve the existing storage namespace while allowing the component's
-   * dedicated AI mode key to remain stable.
-   */
-  return `${namespace}:${normalized}`;
+
+function clearStoredHistory() {
+  removeItem(
+    STORAGE.history
+  );
 }
 
 
@@ -577,12 +616,62 @@ function getModeLabel(
  * DETERMINISTIC PLATFORM IDENTITY
  * ============================================================ */
 
-/**
- * Platform-identity responses are intentionally deterministic.
+/*
+ * Identity answers are handled locally only when their required public
+ * metadata is available through the configuration contract.
  *
- * These responses do not inspect career records and do not bypass
- * the canonical career-data pipeline.
+ * This keeps identity responses deterministic without embedding private
+ * server configuration in browser JavaScript.
+ *
+ * Generic assistant identity can always be answered from the public
+ * product/assistant configuration.
+ *
+ * Owner-specific responses require the optional public owner metadata.
+ * When those values are not present in public config, the request is not
+ * fabricated locally and may continue through the normal server path.
  */
+
+function createAssistantIdentityAnswer(
+  locale
+) {
+  if (
+    locale ===
+    'bn'
+  ) {
+    return `আমি ${AI_NAME}, ${APP_NAME}-এর AI assistant।`;
+  }
+
+  return `I’m ${AI_NAME}, the AI assistant for ${APP_NAME}.`;
+}
+
+
+function createOwnerIdentityAnswer(
+  locale
+) {
+  const ownerName =
+    PUBLIC_IDENTITY.ownerPublicName;
+
+  const ownerRole =
+    PUBLIC_IDENTITY.ownerPublicRole;
+
+  if (
+    !ownerName ||
+    !ownerRole
+  ) {
+    return null;
+  }
+
+  if (
+    locale ===
+    'bn'
+  ) {
+    return `${ownerName} ${ownerRole}-এর সঙ্গে ${APP_NAME}-এর মালিক হিসেবে পরিচিত।`;
+  }
+
+  return `${ownerName} is ${ownerRole}.`;
+}
+
+
 function getLocalIdentityAnswer(
   question
 ) {
@@ -596,44 +685,113 @@ function getLocalIdentityAnswer(
       .trim()
       .toLowerCase();
 
-  const ownerPatterns = [
-    'who made you',
-    'who created you',
-    'who built you',
-    'who developed you',
-    'who is your creator',
-    'who is your owner',
-    'who owns you',
-    'who made compass ai',
-    'who created compass ai',
-    'who built compass ai',
-    'who developed compass ai',
+  const ownerPatterns =
+    [
+      'who made you',
+      'who created you',
+      'who built you',
+      'who developed you',
+      'who is your creator',
+      'who is your owner',
+      'who owns you',
+      'who made compass ai',
+      'who created compass ai',
+      'who built compass ai',
+      'who developed compass ai',
 
-    'কে তোমাকে বানিয়েছে',
-    'কে তোমাকে তৈরি করেছে',
-    'কে তোমাকে বানিয়েছে',
-    'কে তোমাকে তৈরি করেছে',
-    'তোমাকে কে বানিয়েছে',
-    'তোমাকে কে তৈরি করেছে',
-    'তোমার নির্মাতা কে',
-    'তোমার মালিক কে',
-    'কম্পাস এআই কে বানিয়েছে',
-    'কম্পাস এআই কে তৈরি করেছে',
-    'কম্পাস AI কে বানিয়েছে',
-    'কম্পাস AI কে তৈরি করেছে'
-  ];
+      'কে তোমাকে বানিয়েছে',
+      'কে তোমাকে তৈরি করেছে',
+      'কে তোমাকে বানিয়েছে',
+      'তোমাকে কে বানিয়েছে',
+      'তোমাকে কে তৈরি করেছে',
+      'তোমার নির্মাতা কে',
+      'তোমার মালিক কে',
+      'কম্পাস এআই কে বানিয়েছে',
+      'কম্পাস এআই কে তৈরি করেছে',
+      'কম্পাস AI কে বানিয়েছে',
+      'কম্পাস AI কে তৈরি করেছে'
+    ];
 
-  const aboutOwnerPatterns = [
-    'who is abhijit dutta',
-    'about abhijit dutta',
-    'abhijit dutta কে',
-    'অভিজিৎ দত্ত কে',
-    'অভিজিত দত্ত কে'
-  ];
+  const aboutOwnerPatterns =
+    [
+      'who is abhijit dutta',
+      'about abhijit dutta',
+      'abhijit dutta কে',
+      'অভিজিৎ দত্ত কে',
+      'অভিজিত দত্ত কে'
+    ];
 
-  /*
-   * Use the actual safety module for the broad "who are you" class.
-   */
+  if (
+    ownerPatterns.some(
+      pattern =>
+        text.includes(
+          pattern
+        )
+    )
+  ) {
+    const answer =
+      createOwnerIdentityAnswer(
+        locale
+      );
+
+    if (
+      answer
+    ) {
+      return {
+        answer,
+
+        intent:
+          'platform_identity',
+
+        confidence:
+          'high',
+
+        local:
+          true
+      };
+    }
+
+    /*
+     * Owner metadata is intentionally not invented on the client.
+     * Allow the normal server-side identity policy to answer if the
+     * public configuration does not expose owner metadata.
+     */
+    return null;
+  }
+
+  if (
+    aboutOwnerPatterns.some(
+      pattern =>
+        text.includes(
+          pattern
+        )
+    )
+  ) {
+    const answer =
+      createOwnerIdentityAnswer(
+        locale
+      );
+
+    if (
+      answer
+    ) {
+      return {
+        answer,
+
+        intent:
+          'platform_identity',
+
+        confidence:
+          'high',
+
+        local:
+          true
+      };
+    }
+
+    return null;
+  }
+
   let safetyIdentity =
     false;
 
@@ -648,95 +806,20 @@ function getLocalIdentityAnswer(
   }
 
   if (
-    ownerPatterns.some(
-      pattern =>
-        text.includes(
-          pattern
-        )
-    )
-  ) {
-    return {
-      answer:
-        t(
-          'ai.identity.owner',
-          {
-            owner:
-              OWNER_NAME
-          },
-          locale ===
-            'bn'
-            ? `আমি GovCareer Compass-এর AI সহকারী Compass AI। আমাকে GovCareer Compass-এর মালিক ${OWNER_NAME} তৈরি করেছেন।`
-            : `I’m Compass AI, the AI assistant of GovCareer Compass. I was created by ${OWNER_NAME}, the owner of GovCareer Compass.`
-        ),
-
-      intent:
-        'platform_identity',
-
-      confidence:
-        'high',
-
-      local:
-        true
-    };
-  }
-
-  if (
-    aboutOwnerPatterns.some(
-      pattern =>
-        text.includes(
-          pattern
-        )
-    )
-  ) {
-    return {
-      answer:
-        t(
-          'ai.identity.ownerAbout',
-          {
-            owner:
-              OWNER_NAME
-          },
-          locale ===
-            'bn'
-            ? `${OWNER_NAME} একজন ডেভেলপার এবং GovCareer Compass-এর মালিক।`
-            : `${OWNER_NAME} is a developer and the owner of GovCareer Compass.`
-        ),
-
-      intent:
-        'platform_identity',
-
-      confidence:
-        'high',
-
-      local:
-        true
-    };
-  }
-
-  if (
     safetyIdentity
   ) {
-    let answer = '';
-
-    try {
-      answer =
-        Safety.getIdentityResponse(
-          locale
-        );
-    } catch {
-      answer =
-        locale ===
-          'bn'
-          ? 'আমি Compass AI, GovCareer Compass-এর AI career assistant।'
-          : 'I’m Compass AI, the AI career assistant for GovCareer Compass.';
-    }
-
     return {
-      answer,
+      answer:
+        createAssistantIdentityAnswer(
+          locale
+        ),
+
       intent:
         'platform_identity',
+
       confidence:
         'high',
+
       local:
         true
     };
@@ -812,50 +895,8 @@ function normalizeHistory(
 }
 
 
-function loadHistory() {
-  const raw =
-    safeStorageGet(
-      STORAGE.history,
-      null
-    );
-
-  if (
-    !raw
-  ) {
-    return [];
-  }
-
-  try {
-    return normalizeHistory(
-      JSON.parse(
-        raw
-      )
-    );
-  } catch {
-    return [];
-  }
-}
-
-
-function saveHistory(
-  history
-) {
-  const normalized =
-    normalizeHistory(
-      history
-    );
-
-  safeStorageSet(
-    STORAGE.history,
-    JSON.stringify(
-      normalized
-    )
-  );
-}
-
-
 /* ============================================================
- * PAGE / CANDIDATE CONTEXT
+ * PAGE / APPLICATION CONTEXT
  * ============================================================ */
 
 function collectPageContext() {
@@ -891,12 +932,6 @@ function collectPageContext() {
       ''
   };
 
-  /*
-   * Page-level structured context is optional and untrusted.
-   *
-   * It is transported to context-builder.js and never treated as
-   * authoritative by this component.
-   */
   const contextElement =
     document.querySelector(
       '[data-ai-page-context]'
@@ -931,15 +966,13 @@ function collectPageContext() {
             parsed;
         }
       } catch {
-        // Ignore malformed optional page context.
+        /*
+         * Optional page context must never break the assistant.
+         */
       }
     }
   }
 
-  /*
-   * Application-level context may expose canonical selected IDs or already
-   * resolved records. This component only transports the data.
-   */
   try {
     const app =
       globalThis.GovCareerCompass;
@@ -962,7 +995,9 @@ function collectPageContext() {
       }
     }
   } catch {
-    // Optional integration surface.
+    /*
+     * Optional application integration.
+     */
   }
 
   return context;
@@ -991,7 +1026,9 @@ function collectCandidateContext() {
       }
     }
   } catch {
-    // Candidate context is optional.
+    /*
+     * Candidate context is optional.
+     */
   }
 
   return {};
@@ -1040,11 +1077,6 @@ function getStructuredPageValue(
 }
 
 
-/**
- * Prepare the exact structured arguments expected by buildCompassContext().
- *
- * The assistant does not calculate any career result here.
- */
 function buildStructuredContextInput({
   candidateContext,
   pageContext,
@@ -1093,13 +1125,16 @@ function buildStructuredContextInput({
       candidateContext,
 
     preferences:
-      preferences || null,
+      preferences ||
+      null,
 
     selectedCareer:
-      selectedCareer || null,
+      selectedCareer ||
+      null,
 
     selectedExam:
-      selectedExam || null,
+      selectedExam ||
+      null,
 
     comparison:
       Array.isArray(
@@ -1109,10 +1144,12 @@ function buildStructuredContextInput({
         : [],
 
     eligibility:
-      eligibility || null,
+      eligibility ||
+      null,
 
     recommendation:
-      recommendation || null,
+      recommendation ||
+      null,
 
     language:
       routeResult?.language ||
@@ -1122,22 +1159,16 @@ function buildStructuredContextInput({
 
 
 /* ============================================================
- * CANONICAL AI PIPELINE
+ * AI PIPELINE
  * ============================================================ */
 
-async function routeIntent({
+function routeIntent({
   message,
   mode,
   language,
   conversation,
   pageContext
 }) {
-  /*
-   * intent-router.js is intentionally a browser-global IIFE module.
-   *
-   * Importing it as a namespace does not expose ESM exports. The actual
-   * public API is window.GovCareerCompassAIIntentRouter.
-   */
   const router =
     globalThis.GovCareerCompassAIIntentRouter;
 
@@ -1163,15 +1194,7 @@ async function routeIntent({
 
       conversation,
 
-      pageContext,
-
-      clientContext: {
-        platform:
-          APP_NAME,
-
-        assistant:
-          AI_NAME
-      }
+      pageContext
     });
 
   if (
@@ -1191,7 +1214,7 @@ async function routeIntent({
 }
 
 
-async function buildCanonicalContext({
+function buildCanonicalContext({
   candidateContext,
   pageContext,
   routeResult
@@ -1209,61 +1232,71 @@ async function buildCanonicalContext({
   const structured =
     buildStructuredContextInput({
       candidateContext,
+
       pageContext,
+
       routeResult
     });
 
-  /*
-   * buildCompassContext() is the canonical context builder.
-   *
-   * The route result is deliberately kept outside the career data object;
-   * routing metadata is sent separately in the client request.
-   */
   return ContextBuilder.buildCompassContext(
     structured
   );
 }
 
 
-function applyDefinedClientSafety({
+function normalizeRequestInput(
   message,
   language
-}) {
-  /*
-   * safety.js currently defines identity handling and language normalization,
-   * but no request sanitizer. Do not invent a sanitizer API.
-   */
-  const normalizedLanguage =
-    Safety.normalizeLanguage(
-      language
-    );
-
-  return {
-    message:
-      String(
-        message
+) {
+  const text =
+    String(
+      message ?? ''
+    )
+      .replace(
+        /\u0000/g,
+        ''
       )
-        .replace(
-          /\u0000/g,
-          ''
-        )
-        .trim()
-        .slice(
-          0,
-          LIMITS.maxInputLength
-        ),
+      .trim()
+      .slice(
+        0,
+        LIMITS.maxInputLength
+      );
 
-    language:
-      normalizedLanguage
+  let normalizedLanguage =
+    'en';
+
+  try {
+    const normalized =
+      Safety.normalizeLanguage(
+        language
+      );
+
+    normalizedLanguage =
+      String(
+        normalized || 'en'
+      )
         .toLowerCase()
         .startsWith('bn')
         ? 'bn'
-        : 'en'
+        : 'en';
+  } catch {
+    normalizedLanguage =
+      normalizeLocale(
+        language
+      );
+  }
+
+  return {
+    message:
+      text,
+
+    language:
+      normalizedLanguage
   };
 }
 
 
-async function callAIClient({
+function callAIClient({
   messages,
   context,
   language,
@@ -1280,10 +1313,9 @@ async function callAIClient({
   }
 
   /*
-   * client.js owns the /api/chat network contract.
+   * client.js owns the actual network endpoint and HTTP contract.
    *
-   * ENDPOINT is kept as the public configuration contract, but the browser
-   * client is deliberately not given a different endpoint here.
+   * This component deliberately does not construct a second API client.
    */
   return AIClient.askCompassAI({
     messages,
@@ -1298,7 +1330,7 @@ async function callAIClient({
 
 
 function parseAIResponse(
-  rawResponse
+  response
 ) {
   if (
     typeof ResponseParser.parseCompassResponse !==
@@ -1310,12 +1342,8 @@ function parseAIResponse(
     );
   }
 
-  /*
-   * response-parser.js is the source of truth for response-shape
-   * normalization.
-   */
   return ResponseParser.parseCompassResponse(
-    rawResponse
+    response
   );
 }
 
@@ -1337,27 +1365,9 @@ function createPipelineError(
 
 
 /* ============================================================
- * RESPONSE PRESENTATION ADAPTER
+ * RESPONSE PRESENTATION
  * ============================================================ */
 
-/**
- * The live response-parser.js currently returns:
- *
- *   answer
- *   assistant
- *   provider
- *   model
- *   language
- *   scope
- *   researchBaseline
- *   usage
- *
- * This function preserves the UI's richer presentation surface without
- * inventing missing confidence/warnings/source data.
- *
- * Optional metadata are used only when a future compatible parser supplies
- * them.
- */
 function enrichParsedResponse(
   parsed,
   rawResponse,
@@ -1414,8 +1424,10 @@ function enrichParsedResponse(
       null,
 
     /*
-     * These fields are display-only and remain empty unless the canonical
-     * parser/backend actually provides them.
+     * These are optional display values.
+     *
+     * They are only displayed when the actual backend/parser response
+     * supplies them. No values are fabricated here.
      */
     intent:
       typeof raw.intent ===
@@ -1506,7 +1518,7 @@ function normalizeSource(
         isSafeUrl(
           source
         )
-          ? source
+          ? source.trim()
           : ''
     };
   }
@@ -1637,7 +1649,8 @@ function formatResponseText(
   /*
    * Model output is untrusted text.
    *
-   * No HTML or Markdown execution occurs.
+   * It is HTML-escaped before display. No model-generated HTML is
+   * executed.
    */
   return escapeHTML(
     String(
@@ -2544,14 +2557,6 @@ class CompassAIAssistant {
     options = {}
   ) {
     this.options = {
-      endpoint:
-        options.endpoint ||
-        ENDPOINT,
-
-      method:
-        options.method ||
-        AI_METHOD,
-
       triggerSelector:
         options.triggerSelector ||
         '[data-ai-trigger], [data-header-ai-trigger], [data-compass-ai-trigger], #compassAiTrigger',
@@ -2577,7 +2582,7 @@ class CompassAIAssistant {
       currentLocale();
 
     const storedMode =
-      safeStorageGet(
+      getItem(
         STORAGE.mode,
         'auto'
       );
@@ -2603,7 +2608,8 @@ class CompassAIAssistant {
     this.isBusy =
       false;
 
-    this.dom = {};
+    this.dom =
+      {};
 
     this.boundTriggers =
       new WeakSet();
@@ -2619,6 +2625,18 @@ class CompassAIAssistant {
 
     this.destroyed =
       false;
+
+    this.boundResizeHandler =
+      null;
+
+    this.boundEscapeHandler =
+      null;
+
+    this.boundLanguageHandler =
+      null;
+
+    this.boundAIEventHandler =
+      null;
 
     if (
       this.options.autoMount
@@ -3134,7 +3152,7 @@ class CompassAIAssistant {
     this.dom.send?.addEventListener(
       'click',
       () =>
-        this.submit()
+        void this.submit()
     );
 
     this.dom.input?.addEventListener(
@@ -3172,8 +3190,7 @@ class CompassAIAssistant {
         this.closeConfirm()
     );
 
-    document.addEventListener(
-      'keydown',
+    this.boundEscapeHandler =
       event => {
         if (
           !this.openState
@@ -3206,20 +3223,23 @@ class CompassAIAssistant {
             event
           );
         }
-      }
+      };
+
+    document.addEventListener(
+      'keydown',
+      this.boundEscapeHandler
     );
 
     /*
-     * Listen to the canonical event only.
+     * Listen to the canonical language event only.
      *
      * language.js emits both:
      *   gcc:languagechange
      *   govcareer:languagechange
      *
-     * Listening to both here would cause duplicate UI refreshes.
+     * Listening to both creates duplicate UI refreshes.
      */
-    document.addEventListener(
-      'gcc:languagechange',
+    this.boundLanguageHandler =
       event => {
         const language =
           event.detail?.language ||
@@ -3229,20 +3249,34 @@ class CompassAIAssistant {
         this.setLocale(
           language
         );
-      }
-    );
+      };
 
     document.addEventListener(
-      'gcc:ai:open',
+      'gcc:languagechange',
+      this.boundLanguageHandler
+    );
+
+    /*
+     * External callers can open the canonical global assistant by dispatching
+     * gcc:ai:open. The assistant itself remains the owner of visual state.
+     */
+    this.boundAIEventHandler =
       () => {
         if (
           !this.openState
         ) {
           this.open();
         }
-      }
+      };
+
+    document.addEventListener(
+      'gcc:ai:open',
+      this.boundAIEventHandler
     );
 
+    /*
+     * app.js accessibility integration can request a global escape close.
+     */
     document.addEventListener(
       'govcareer:escape',
       () => {
@@ -3254,11 +3288,14 @@ class CompassAIAssistant {
       }
     );
 
-    window.addEventListener(
-      'resize',
+    this.boundResizeHandler =
       () => {
         this.resizeTextarea();
-      }
+      };
+
+    window.addEventListener(
+      'resize',
+      this.boundResizeHandler
     );
   }
 
@@ -3275,6 +3312,13 @@ class CompassAIAssistant {
               trigger
             )
           ) {
+            trigger.setAttribute(
+              'aria-expanded',
+              String(
+                this.openState
+              )
+            );
+
             return;
           }
 
@@ -3294,9 +3338,21 @@ class CompassAIAssistant {
             )
           );
 
+          trigger.setAttribute(
+            'aria-controls',
+            this.dom.panel?.id ||
+              'gcc-ai-panel'
+          );
+
           trigger.addEventListener(
             'click',
             event => {
+              /*
+               * The stable AI trigger owns the opening action.
+               *
+               * A header link is prevented from navigating when it is
+               * intentionally marked as the AI trigger.
+               */
               if (
                 trigger.matches(
                   'a'
@@ -3437,8 +3493,8 @@ class CompassAIAssistant {
           {},
           this.locale ===
             'bn'
-            ? 'সরকারি ক্যারিয়ার সম্পর্কে Compass AI-কে জিজ্ঞাসা করুন...'
-            : 'Ask Compass AI about government careers...'
+            ? `${AI_NAME}-কে সরকারি ক্যারিয়ার সম্পর্কে জিজ্ঞাসা করুন...`
+            : `Ask ${AI_NAME} about government careers...`
         );
     }
 
@@ -3450,7 +3506,7 @@ class CompassAIAssistant {
         t(
           'ai.modeList',
           {},
-          'Compass AI modes'
+          `${AI_NAME} modes`
         )
       );
     }
@@ -3458,25 +3514,38 @@ class CompassAIAssistant {
     if (
       this.dom.footnote
     ) {
-      this.dom.footnote.textContent =
-        `${t(
+      const verifiedLabel =
+        t(
           'ai.verifiedPlatformData',
           {},
           this.locale ===
             'bn'
             ? 'যাচাইকৃত প্ল্যাটফর্ম ডেটা'
             : 'Verified platform data'
-        )} · ${t(
-          'ai.createdBy',
-          {
-            owner:
-              OWNER_NAME
-          },
-          this.locale ===
-            'bn'
-            ? `${OWNER_NAME} দ্বারা তৈরি`
-            : `Created by ${OWNER_NAME}`
-        )}`;
+        );
+
+      const ownerName =
+        PUBLIC_IDENTITY.ownerPublicName;
+
+      if (
+        ownerName
+      ) {
+        this.dom.footnote.textContent =
+          `${verifiedLabel} · ${t(
+            'ai.createdBy',
+            {
+              owner:
+                ownerName
+            },
+            this.locale ===
+              'bn'
+              ? `${ownerName} দ্বারা তৈরি`
+              : `Created by ${ownerName}`
+          )}`;
+      } else {
+        this.dom.footnote.textContent =
+          verifiedLabel;
+      }
     }
 
     this.renderModes();
@@ -3492,21 +3561,6 @@ class CompassAIAssistant {
       normalizeLocale(
         locale
       );
-
-    if (
-      normalized ===
-      this.locale
-    ) {
-      /*
-       * Still refresh mode labels/DOM translations because another global
-       * component may have changed the page dictionary before this event.
-       */
-      this.applyLocale(
-        normalized
-      );
-
-      return;
-    }
 
     this.applyLocale(
       normalized
@@ -3591,7 +3645,7 @@ class CompassAIAssistant {
     this.mode =
       normalized;
 
-    safeStorageSet(
+    setItem(
       STORAGE.mode,
       this.mode
     );
@@ -3799,8 +3853,8 @@ class CompassAIAssistant {
               {},
               this.locale ===
                 'bn'
-                ? 'নমস্কার। আমি Compass AI, GovCareer Compass-এর সহকারী। সরকারি চাকরি, পরীক্ষা, eligibility, salary, recruitment, career fit, comparison বা সম্পর্কিত তথ্য সম্পর্কে প্রশ্ন করুন।'
-                : 'Hello. I’m Compass AI, your GovCareer Compass assistant. Ask me about government jobs, exams, eligibility, salary, recruitment, career fit, comparisons or related information.'
+                ? `নমস্কার। আমি ${AI_NAME}, ${APP_NAME}-এর সহকারী। সরকারি চাকরি, পরীক্ষা, eligibility, salary, recruitment, career fit, comparison বা সম্পর্কিত তথ্য সম্পর্কে প্রশ্ন করুন।`
+                : `Hello. I’m ${AI_NAME}, your ${APP_NAME} assistant. Ask me about government jobs, exams, eligibility, salary, recruitment, career fit, comparisons or related information.`
             )
           )}
         </p>
@@ -4159,7 +4213,8 @@ class CompassAIAssistant {
           class="gcc-ai__meta"
         >
           ${escapeHTML(
-            AI_NAME
+            response.assistant ||
+              AI_NAME
           )}
         </div>
 
@@ -4432,7 +4487,11 @@ class CompassAIAssistant {
                       href="${escapeAttribute(
                         item.url
                       )}"
-                      ${item.url.startsWith('/') ? '' : 'target="_blank" rel="noopener noreferrer"'}
+                      ${
+                        item.url.startsWith('/')
+                          ? ''
+                          : 'target="_blank" rel="noopener noreferrer"'
+                      }
                     >
                       ${content}
                     </a>
@@ -4544,30 +4603,37 @@ class CompassAIAssistant {
         'eligib',
         'eligibility'
       ],
+
       [
         'qualification',
         'eligibility'
       ],
+
       [
         'exam',
         'exams'
       ],
+
       [
         'salary',
         'salary'
       ],
+
       [
         'pay',
         'salary'
       ],
+
       [
         'compar',
         'compare'
       ],
+
       [
         'job',
         'jobs'
       ],
+
       [
         'career',
         'career'
@@ -4610,14 +4676,14 @@ class CompassAIAssistant {
       return;
     }
 
-    const question =
+    const rawQuestion =
       String(
         this.dom.input?.value ||
           ''
       ).trim();
 
     if (
-      !question
+      !rawQuestion
     ) {
       this.appendErrorMessage(
         t(
@@ -4634,7 +4700,7 @@ class CompassAIAssistant {
     }
 
     if (
-      question.length >
+      rawQuestion.length >
       LIMITS.maxInputLength
     ) {
       this.appendErrorMessage(
@@ -4652,13 +4718,10 @@ class CompassAIAssistant {
     }
 
     const safeRequest =
-      applyDefinedClientSafety({
-        message:
-          question,
-
-        language:
-          this.locale
-      });
+      normalizeRequestInput(
+        rawQuestion,
+        this.locale
+      );
 
     if (
       !safeRequest.message
@@ -4817,7 +4880,7 @@ class CompassAIAssistant {
         );
 
     const routeResult =
-      await routeIntent({
+      routeIntent({
         message:
           question,
 
@@ -4832,17 +4895,13 @@ class CompassAIAssistant {
       });
 
     /*
-     * A route result can explicitly identify platform identity, clarification,
-     * general information, career intent, etc. It is metadata only.
+     * Platform identity should normally have been handled before entering
+     * the network path. This is a defensive compatibility guard.
      */
     if (
       routeResult.intent ===
       'platform_identity'
     ) {
-      /*
-       * Platform identity is normally handled locally. This branch is only
-       * a defensive guard against an externally supplied router result.
-       */
       const local =
         getLocalIdentityAnswer(
           question
@@ -4851,12 +4910,20 @@ class CompassAIAssistant {
       if (
         local
       ) {
-        return local;
+        return {
+          parsed:
+            local,
+
+          rawResponse:
+            local,
+
+          routeResult
+        };
       }
     }
 
     const canonicalContext =
-      await buildCanonicalContext({
+      buildCanonicalContext({
         candidateContext,
 
         pageContext,
@@ -4864,46 +4931,41 @@ class CompassAIAssistant {
         routeResult
       });
 
-    const requestEnvelope =
+    const requestContext =
       {
-        messages: [
-          ...conversation,
-          {
-            role:
-              'user',
+        intent:
+          routeResult.intent,
 
-            content:
-              question
-          }
-        ],
+        secondaryIntents:
+          Array.isArray(
+            routeResult.secondaryIntents
+          )
+            ? routeResult.secondaryIntents
+            : [],
 
-        context:
-          canonicalContext,
+        retrievalPlan:
+          routeResult.retrievalPlan ||
+          null,
 
-        language,
+        page:
+          pageContext,
 
-        /*
-         * Client-side routing metadata are deliberately included inside
-         * context rather than treated as authoritative facts.
-         */
-        requestContext: {
-          intent:
-            routeResult.intent,
+        mode:
+          this.mode
+      };
 
-          secondaryIntents:
-            routeResult.secondaryIntents ||
-            [],
+    /*
+     * The actual browser → /api/chat request remains owned by client.js.
+     *
+     * The additional requestContext is placed inside the structured
+     * application context so the component does not create a second API
+     * abstraction.
+     */
+    const contextForRequest =
+      {
+        ...canonicalContext,
 
-          retrievalPlan:
-            routeResult.retrievalPlan ||
-            null,
-
-          page:
-            pageContext,
-
-          mode:
-            this.mode
-        }
+        requestContext
       };
 
     this.abortController =
@@ -4912,15 +4974,19 @@ class CompassAIAssistant {
     try {
       const rawResponse =
         await callAIClient({
-          messages:
-            requestEnvelope.messages,
+          messages: [
+            ...conversation,
+            {
+              role:
+                'user',
 
-          context: {
-            ...requestEnvelope.context,
+              content:
+                question
+            }
+          ],
 
-            requestContext:
-              requestEnvelope.requestContext
-          },
+          context:
+            contextForRequest,
 
           language,
 
@@ -4958,16 +5024,10 @@ class CompassAIAssistant {
       );
     }
 
-    const parsed =
-      result.parsed;
-
-    const raw =
-      result.rawResponse;
-
     const enriched =
       enrichParsedResponse(
-        parsed,
-        raw,
+        result.parsed,
+        result.rawResponse,
         language
       );
 
@@ -4981,8 +5041,9 @@ class CompassAIAssistant {
     }
 
     /*
-     * Keep routing metadata as display metadata only. No UI code uses this
-     * to calculate eligibility, score careers or rank recommendations.
+     * Router metadata may be used for UI explanation only.
+     *
+     * It is never used to calculate eligibility, scores or rankings.
      */
     if (
       !enriched.intent &&
@@ -5016,7 +5077,7 @@ class CompassAIAssistant {
     const fallback =
       this.locale ===
         'bn'
-        ? 'AI পরিষেবাটি বর্তমানে সাময়িকভাবে unavailable। আবার চেষ্টা করুন।'
+        ? 'AI পরিষেবাটি বর্তমানে unavailable। আবার চেষ্টা করুন।'
         : 'The AI service is temporarily unavailable. Please try again.';
 
     const code =
@@ -5027,13 +5088,13 @@ class CompassAIAssistant {
 
     if (
       code ===
-      'AI_INTENT_ROUTER_UNAVAILABLE' ||
+        'AI_INTENT_ROUTER_UNAVAILABLE' ||
       code ===
-      'AI_CONTEXT_BUILDER_UNAVAILABLE' ||
+        'AI_CONTEXT_BUILDER_UNAVAILABLE' ||
       code ===
-      'AI_CLIENT_UNAVAILABLE' ||
+        'AI_CLIENT_UNAVAILABLE' ||
       code ===
-      'AI_RESPONSE_PARSER_UNAVAILABLE'
+        'AI_RESPONSE_PARSER_UNAVAILABLE'
     ) {
       return t(
         'ai.error.unavailable',
@@ -5048,10 +5109,6 @@ class CompassAIAssistant {
           ''
       ).trim();
 
-    /*
-     * Do not expose raw server internals when the error comes from a generic
-     * network/server failure. Known user-safe client errors remain visible.
-     */
     if (
       code ===
         'EMPTY_MESSAGES' ||
@@ -5293,7 +5350,9 @@ class CompassAIAssistant {
         );
       }
     } catch {
-      // Clipboard access is optional.
+      /*
+       * Clipboard access is optional.
+       */
     }
   }
 
@@ -5376,9 +5435,11 @@ class CompassAIAssistant {
     this.history =
       [];
 
-    safeStorageRemove(
-      STORAGE.history
-    );
+    if (
+      this.options.persistHistory
+    ) {
+      clearStoredHistory();
+    }
 
     this.closeConfirm();
 
@@ -5538,6 +5599,15 @@ class CompassAIAssistant {
 
     this.refreshTriggerBinding();
 
+    /*
+     * Do not dispatch gcc:ai:open here.
+     *
+     * gcc:ai:open is an external open request event in this architecture.
+     * Dispatching the same event from open() would recursively trigger
+     * the listener that calls open().
+     *
+     * State changes are emitted through gcc:ai:statechange.
+     */
     this.emitState(
       true
     );
@@ -5648,6 +5718,12 @@ class CompassAIAssistant {
               this.openState
             )
           );
+
+          trigger.setAttribute(
+            'aria-controls',
+            this.dom.panel?.id ||
+              'gcc-ai-panel'
+          );
         }
       );
   }
@@ -5674,17 +5750,6 @@ class CompassAIAssistant {
     document.dispatchEvent(
       new CustomEvent(
         'gcc:ai:statechange',
-        {
-          detail
-        }
-      )
-    );
-
-    document.dispatchEvent(
-      new CustomEvent(
-        open
-          ? 'gcc:ai:open'
-          : 'gcc:ai:close',
         {
           detail
         }
@@ -5730,9 +5795,46 @@ class CompassAIAssistant {
 
     this.close();
 
+    if (
+      this.boundEscapeHandler
+    ) {
+      document.removeEventListener(
+        'keydown',
+        this.boundEscapeHandler
+      );
+    }
+
+    if (
+      this.boundLanguageHandler
+    ) {
+      document.removeEventListener(
+        'gcc:languagechange',
+        this.boundLanguageHandler
+      );
+    }
+
+    if (
+      this.boundAIEventHandler
+    ) {
+      document.removeEventListener(
+        'gcc:ai:open',
+        this.boundAIEventHandler
+      );
+    }
+
+    if (
+      this.boundResizeHandler
+    ) {
+      window.removeEventListener(
+        'resize',
+        this.boundResizeHandler
+      );
+    }
+
     this.dom.root?.remove();
 
-    this.dom = {};
+    this.dom =
+      {};
 
     this.initialized =
       false;
@@ -5750,7 +5852,7 @@ class CompassAIAssistant {
 
 
 /* ============================================================
- * GLOBAL FACTORY / INTEGRATION
+ * GLOBAL FACTORY / INITIALIZATION
  * ============================================================ */
 
 function createCompassAI(
@@ -5762,24 +5864,83 @@ function createCompassAI(
 }
 
 
-const assistant =
-  createCompassAI({
-    endpoint:
-      ENDPOINT,
+/*
+ * A single canonical singleton is retained.
+ *
+ * This prevents multiple global AI overlays from being created when
+ * multiple modules request the shared assistant.
+ */
+let assistant =
+  null;
 
-    method:
-      AI_METHOD,
 
-    autoMount:
-      true
-  });
+function initializeCompassAI(
+  options = {}
+) {
+  if (
+    assistant &&
+    !assistant.destroyed
+  ) {
+    assistant.init();
 
+    assistant.refreshTriggerBinding();
+
+    return assistant;
+  }
+
+  assistant =
+    createCompassAI({
+      autoMount:
+        true,
+
+      ...options
+    });
+
+  globalThis.GovCareerCompassAI =
+    assistant;
+
+  return assistant;
+}
+
+
+/*
+ * Preserve the existing compatibility behavior:
+ *
+ * - direct module import automatically creates the global component;
+ * - app.js can later explicitly initialize the same singleton.
+ */
+assistant =
+  initializeCompassAI();
+
+
+/* ============================================================
+ * GLOBAL INTEGRATION CONTRACT
+ * ============================================================ */
 
 globalThis.GovCareerCompassAI =
   assistant;
 
 globalThis.GovCareerCompassAI.create =
   createCompassAI;
+
+globalThis.GovCareerCompassAI.initialize =
+  initializeCompassAI;
+
+globalThis.GovCareerCompassAI.getIdentity =
+  () =>
+    Object.freeze({
+      productName:
+        PUBLIC_IDENTITY.productName,
+
+      assistantName:
+        PUBLIC_IDENTITY.assistantName,
+
+      ownerPublicName:
+        PUBLIC_IDENTITY.ownerPublicName,
+
+      ownerPublicRole:
+        PUBLIC_IDENTITY.ownerPublicRole
+    });
 
 globalThis.GovCareerCompass =
   globalThis.GovCareerCompass ||
@@ -5798,14 +5959,17 @@ globalThis.GovCareerCompass.toggleAI =
     assistant.toggle();
 
 
-/*
- * The header uses the stable AI trigger data attributes.
- *
- * The assistant also refreshes bindings after DOM readiness so headers or
- * navigation fragments rendered later can be connected without duplicate
- * listeners.
- */
+/* ============================================================
+ * DOM-READINESS COMPATIBILITY
+ * ============================================================ */
+
 function bindAfterDomReady() {
+  if (
+    !assistant
+  ) {
+    return;
+  }
+
   assistant.bindTriggerElements();
 
   assistant.refreshTriggerBinding();
@@ -5835,7 +5999,8 @@ if (
 
 export {
   CompassAIAssistant,
-  createCompassAI
+  createCompassAI,
+  initializeCompassAI
 };
 
 
