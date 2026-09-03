@@ -35,7 +35,9 @@ function readNonNegativeInteger(
     : fallback;
 }
 
-function readOriginList(value) {
+function readOriginList(
+  value
+) {
   if (
     typeof value !== "string" ||
     !value.trim()
@@ -45,24 +47,44 @@ function readOriginList(value) {
 
   return value
     .split(",")
-    .map((origin) => origin.trim())
+    .map(
+      (origin) =>
+        origin.trim()
+    )
     .filter(Boolean);
 }
 
 export const COMPASS_CONFIG =
   Object.freeze({
-    assistantName: "CompassAI",
+    assistantName:
+      "CompassAI",
 
     productName:
       "GovCareer Compass",
 
+    identity:
+      Object.freeze({
+        productName:
+          "GovCareer Compass",
+
+        assistantName:
+          "CompassAI",
+
+        ownerPublicName:
+          "Abhijit Dutta",
+
+        ownerPublicRole:
+          "Developer and owner of GovCareer Compass"
+      }),
+
     researchBaseline:
       "31 August 2026",
 
-    researchScope: Object.freeze([
-      "Central Government",
-      "West Bengal Government"
-    ]),
+    researchScope:
+      Object.freeze([
+        "Central Government",
+        "West Bengal Government"
+      ]),
 
     openRouterBaseUrl:
       "https://openrouter.ai/api/v1",
@@ -132,14 +154,18 @@ export function validateServerConfiguration() {
     );
   }
 
-  if (!COMPASS_CONFIG.openRouterModel) {
+  if (
+    !COMPASS_CONFIG.openRouterModel
+  ) {
     missing.push(
       "OPENROUTER_MODEL"
     );
   }
 
   return {
-    valid: missing.length === 0,
+    valid:
+      missing.length === 0,
+
     missing
   };
 }
