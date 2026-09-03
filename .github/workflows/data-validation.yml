@@ -1,0 +1,244 @@
+name: Validate GovCareer Compass data
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: data-validation-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-data:
+    name: Validate canonical data
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.14.0
+
+      - name: Verify validation modules are present
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -f js/database/loader.js
+          test -f js/database/validators.js
+          test -f js/database/normalizer.js
+          test -d data
+
+          echo "Canonical database validation modules are present."
+
+      - name: Validate JSON syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node --input-type=module <<'NODE'
+          import { readdir, readFile } from 'node:fs/promises';
+          import { extname, join, relative } from 'node:path';
+
+          const root = 'data';
+          const failures = [];
+
+          async function walk(directory) {
+            const entries = await readdir(directory, { withFileTypes: true });
+
+            for (const entry of entries) {
+              const fullPath = join(directory, entry.name);
+
+              if (entry.isDirectory()) {
+                await walk(fullPath);
+                continue;
+              }
+
+              if (extname(entry.name).toLowerCase() !== '.json') {
+                continue;
+              }
+
+              try {
+                const text = await readFile(fullPath, 'utf8');
+                JSON.parse(text);
+              } catch (error) {
+                failures.push(`${relative('.', fullPath)}: ${error.message}`);
+              }
+            }
+          }
+
+          await walk(root);
+
+          if (failures.length) {
+            console.error('JSON syntax validation failed:');
+            console.error(failures.join('\n'));
+            process.exit(1);
+          }
+
+          console.log('All JSON files under data/ are syntactically valid.');
+          NODE
+
+      - name: Run canonical database validation
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node --input-type=module <<'NODE'
+          import { readFile } from 'node:fs/promises';
+          import { resolve } from 'node:path';
+          import { pathToFileURL } from 'node:url';
+
+          const repositoryRoot = resolve('.');
+
+          /*
+           * The browser application loads canonical datasets through fetch().
+           * CI does not need a second data-loading implementation: provide a
+           * deterministic local fetch adapter and execute the project's own
+           * loader/validator pipeline.
+           */
+          const nativeFetch = globalThis.fetch;
+
+          globalThis.fetch = async (input, init = {}) => {
+            const value = typeof input === 'string' ? input : input?.url;
+
+            if (!value) {
+              throw new Error('CI fetch adapter received an empty URL.');
+            }
+
+            const raw = String(value);
+
+            /*
+             * Remote URLs are intentionally rejected. Data validation must be
+             * deterministic and must never depend on external network state.
+             */
+            if (/^[a-z][a-z0-9+.-]*:\/\//i.test(raw) && !raw.startsWith('file://')) {
+              throw new Error(`External URL is not permitted during data validation: ${raw}`);
+            }
+
+            let filePath;
+
+            if (raw.startsWith('file://')) {
+              filePath = new URL(raw);
+            } else {
+              const normalized = raw.replace(/^\/+/, '');
+              filePath = resolve(repositoryRoot, normalized);
+            }
+
+            try {
+              const body = await readFile(filePath);
+
+              return new Response(body, {
+                status: 200,
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              });
+            } catch (error) {
+              return new Response(
+                JSON.stringify({
+                  error: error.message,
+                  path: String(filePath)
+                }),
+                {
+                  status: 404,
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                }
+              );
+            }
+          };
+
+          try {
+            const loader = await import(
+              pathToFileURL(resolve('js/database/loader.js')).href
+            );
+
+            if (typeof loader.loadDatabase !== 'function') {
+              throw new Error(
+                'js/database/loader.js does not export loadDatabase(). The CI workflow must use the project validation entry point.'
+              );
+            }
+
+            const result = await loader.loadDatabase({
+              includeI18n: true,
+              validate: true,
+              strict: true
+            });
+
+            /*
+             * Different validator revisions may return either:
+             * - { validation: { valid, errors, warnings }, ... }
+             * - { validation: { errors, warnings }, ... }
+             * - a direct validation result.
+             *
+             * CI treats any reported fatal/error condition as a failure.
+             */
+            const validation = result?.validation ?? result ?? {};
+
+            const errors = Array.isArray(validation.errors)
+              ? validation.errors
+              : [];
+
+            const fatalErrors = Array.isArray(validation.fatalErrors)
+              ? validation.fatalErrors
+              : [];
+
+            const validFlag = validation.valid;
+
+            if (fatalErrors.length) {
+              console.error('Fatal data-integrity errors:');
+              console.error(JSON.stringify(fatalErrors, null, 2));
+              process.exit(1);
+            }
+
+            if (errors.length) {
+              console.error('Data-integrity errors:');
+              console.error(JSON.stringify(errors, null, 2));
+              process.exit(1);
+            }
+
+            if (validFlag === false) {
+              console.error(
+                'The canonical validator reported an invalid database without returning a separate error array.'
+              );
+              process.exit(1);
+            }
+
+            console.log('Canonical database validation passed.');
+            console.log(
+              JSON.stringify(
+                {
+                  valid: validation.valid ?? true,
+                  warnings: Array.isArray(validation.warnings)
+                    ? validation.warnings.length
+                    : 0,
+                  engineVersion: validation.engineVersion ?? null
+                },
+                null,
+                2
+              )
+            );
+          } finally {
+            globalThis.fetch = nativeFetch;
+          }
+          NODE
+
+      - name: Validate validator module syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check js/database/loader.js
+          node --check js/database/normalizer.js
+          node --check js/database/validators.js
+          echo "Validation modules have valid JavaScript syntax."
