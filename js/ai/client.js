@@ -3,10 +3,33 @@
  * Browser client for CompassAI.
  *
  * There is intentionally NO OpenRouter API key here.
+ *
+ * Endpoint source of truth:
+ *   config.ai.endpoint
+ *
+ * Deterministic fallback:
+ *   /api/chat
  */
 
-const COMPASS_AI_ENDPOINT =
+import config from "../config.js";
+
+const DEFAULT_COMPASS_AI_ENDPOINT =
   "/api/chat";
+
+function resolveCompassAIEndpoint() {
+  const configuredEndpoint =
+    config?.ai?.endpoint;
+
+  if (
+    typeof configuredEndpoint ===
+      "string" &&
+    configuredEndpoint.trim()
+  ) {
+    return configuredEndpoint.trim();
+  }
+
+  return DEFAULT_COMPASS_AI_ENDPOINT;
+}
 
 function createClientError(
   message,
@@ -93,7 +116,7 @@ export async function askCompassAI({
 
   const response =
     await fetch(
-      COMPASS_AI_ENDPOINT,
+      resolveCompassAIEndpoint(),
       {
         method: "POST",
 
