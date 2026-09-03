@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://govcareer-compass.example/schema/service-cadre.schema.json",
   "title": "GovCareer Compass Service Cadre",
-  "description": "Canonical schema for a government service or cadre. A service/cadre is distinct from an individual post and from a recruitment examination.",
+  "description": "Canonical schema for a government service or cadre. A service/cadre is a distinct organizational/service entity and is not an individual post, examination, recruitment record, or candidate-specific eligibility result.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -15,11 +15,13 @@
   ],
   "properties": {
     "id": {
-      "$ref": "shared.schema.json#/$defs/id"
+      "$ref": "shared.schema.json#/$defs/id",
+      "description": "Stable, language-neutral identifier for the service/cadre."
     },
 
     "name": {
-      "$ref": "shared.schema.json#/$defs/localizedTextRequiredEnglish"
+      "$ref": "shared.schema.json#/$defs/localizedTextRequiredEnglish",
+      "description": "Canonical service/cadre name."
     },
 
     "shortName": {
@@ -32,11 +34,13 @@
     },
 
     "governmentId": {
-      "$ref": "shared.schema.json#/$defs/id"
+      "$ref": "shared.schema.json#/$defs/id",
+      "description": "Government under which the service/cadre exists."
     },
 
     "stateId": {
-      "$ref": "shared.schema.json#/$defs/id"
+      "$ref": "shared.schema.json#/$defs/id",
+      "description": "Applicable state ID for a state-scoped service/cadre. Omitted for genuinely all-India/central entities."
     },
 
     "ministryId": {
@@ -52,7 +56,8 @@
     },
 
     "parentServiceCadreId": {
-      "$ref": "shared.schema.json#/$defs/id"
+      "$ref": "shared.schema.json#/$defs/id",
+      "description": "Optional parent service/cadre relationship. Must not contain an embedded service-cadre object."
     },
 
     "type": {
@@ -99,7 +104,8 @@
         "DEPARTMENTAL",
         "ORGANISATION_SPECIFIC",
         "UNKNOWN"
-      ]
+      ],
+      "description": "Primary administrative/cadre-control classification."
     },
 
     "classification": {
@@ -117,40 +123,301 @@
       ]
     },
 
+    "cadreAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Authority responsible for administering, controlling or formally governing the service/cadre.",
+      "properties": {
+        "authorityType": {
+          "type": "string",
+          "enum": [
+            "MINISTRY",
+            "DEPARTMENT",
+            "ORGANISATION",
+            "STATE_GOVERNMENT",
+            "CENTRAL_GOVERNMENT",
+            "COMMISSION",
+            "BOARD",
+            "STATUTORY_AUTHORITY",
+            "OTHER",
+            "UNKNOWN"
+          ]
+        },
+
+        "authorityId": {
+          "$ref": "shared.schema.json#/$defs/id"
+        },
+
+        "authorityName": {
+          "$ref": "shared.schema.json#/$defs/localizedText"
+        },
+
+        "description": {
+          "$ref": "shared.schema.json#/$defs/localizedText"
+        }
+      }
+    },
+
+    "cadreScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Geographic and organizational scope of the cadre.",
+      "properties": {
+        "scopeType": {
+          "type": "string",
+          "enum": [
+            "STATE",
+            "ALL_INDIA",
+            "REGION",
+            "ZONE",
+            "DISTRICT",
+            "DEPARTMENT",
+            "ORGANISATION",
+            "JOINT",
+            "OTHER",
+            "UNKNOWN"
+          ]
+        },
+
+        "stateIds": {
+          "$ref": "shared.schema.json#/$defs/idArray"
+        },
+
+        "regionNames": {
+          "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+        },
+
+        "districtNames": {
+          "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+        },
+
+        "description": {
+          "$ref": "shared.schema.json#/$defs/localizedText"
+        }
+      }
+    },
+
+    "entryRoutes": {
+      "type": "array",
+      "description": "Canonical entry routes through which the service/cadre may be entered.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "routeType"
+        ],
+        "properties": {
+          "routeType": {
+            "type": "string",
+            "enum": [
+              "DIRECT_RECRUITMENT",
+              "PROMOTION",
+              "DEPUTATION",
+              "LATERAL_ENTRY",
+              "DEPARTMENTAL",
+              "ABSORPTION",
+              "TRANSFER",
+              "CONTRACTUAL",
+              "TEMPORARY",
+              "OTHER"
+            ]
+          },
+
+          "examIds": {
+            "$ref": "shared.schema.json#/$defs/idArray"
+          },
+
+          "recruitmentIds": {
+            "$ref": "shared.schema.json#/$defs/idArray"
+          },
+
+          "description": {
+            "$ref": "shared.schema.json#/$defs/localizedText"
+          }
+        }
+      },
+      "uniqueItems": false
+    },
+
     "postIds": {
-      "$ref": "shared.schema.json#/$defs/idArray"
+      "$ref": "shared.schema.json#/$defs/idArray",
+      "description": "IDs of individual job/post records belonging to or associated with this service/cadre."
     },
 
     "examIds": {
-      "$ref": "shared.schema.json#/$defs/idArray"
+      "$ref": "shared.schema.json#/$defs/idArray",
+      "description": "IDs of examinations associated with entry into this service/cadre."
+    },
+
+    "recruitmentIds": {
+      "$ref": "shared.schema.json#/$defs/idArray",
+      "description": "IDs of canonical recruitment records associated with this service/cadre."
     },
 
     "recruitmentRouteIds": {
-      "$ref": "shared.schema.json#/$defs/idArray"
+      "$ref": "shared.schema.json#/$defs/idArray",
+      "description": "Backward-compatible legacy relationship. New canonical records should prefer recruitmentIds."
     },
 
     "eligibilityRuleIds": {
-      "$ref": "shared.schema.json#/$defs/idArray"
+      "$ref": "shared.schema.json#/$defs/idArray",
+      "description": "IDs of canonical eligibility-rule records applying to this service/cadre."
     },
 
     "payIds": {
-      "$ref": "shared.schema.json#/$defs/idArray"
+      "$ref": "shared.schema.json#/$defs/idArray",
+      "description": "IDs of pay records associated with the service/cadre."
     },
 
     "promotionIds": {
-      "$ref": "shared.schema.json#/$defs/idArray"
+      "$ref": "shared.schema.json#/$defs/idArray",
+      "description": "IDs of promotion-framework records associated with the service/cadre."
     },
 
     "benefitIds": {
-      "$ref": "shared.schema.json#/$defs/idArray"
+      "$ref": "shared.schema.json#/$defs/idArray",
+      "description": "IDs of benefit records associated with the service/cadre."
     },
 
     "locationIds": {
-      "$ref": "shared.schema.json#/$defs/idArray"
+      "$ref": "shared.schema.json#/$defs/idArray",
+      "description": "Canonical location IDs relevant to the service/cadre."
     },
 
-    "sourceIds": {
-      "$ref": "shared.schema.json#/$defs/idArray"
+    "postingScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "General posting geography or organizational reach of the service/cadre. This describes the cadre, not an individual employee's guaranteed posting.",
+      "properties": {
+        "scopeType": {
+          "type": "string",
+          "enum": [
+            "STATE_WIDE",
+            "ALL_INDIA",
+            "REGIONAL",
+            "ZONE",
+            "DISTRICT",
+            "CITY",
+            "DEPARTMENTAL",
+            "ORGANISATION_SPECIFIC",
+            "OTHER",
+            "UNKNOWN"
+          ]
+        },
+
+        "locationIds": {
+          "$ref": "shared.schema.json#/$defs/idArray"
+        },
+
+        "stateIds": {
+          "$ref": "shared.schema.json#/$defs/idArray"
+        },
+
+        "description": {
+          "$ref": "shared.schema.json#/$defs/localizedText"
+        }
+      }
+    },
+
+    "transferControl": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Structural information about transfer/cadre control. This must not be interpreted as a guarantee of posting location.",
+      "properties": {
+        "controlType": {
+          "type": "string",
+          "enum": [
+            "STATE_CADRE",
+            "CENTRAL_CADRE",
+            "JOINT_CADRE",
+            "DEPARTMENT_CONTROLLED",
+            "ORGANISATION_CONTROLLED",
+            "ZONE_CONTROLLED",
+            "REGION_CONTROLLED",
+            "DISTRICT_CONTROLLED",
+            "OTHER",
+            "UNKNOWN"
+          ]
+        },
+
+        "transferAuthorityId": {
+          "$ref": "shared.schema.json#/$defs/id"
+        },
+
+        "transferAuthorityName": {
+          "$ref": "shared.schema.json#/$defs/localizedText"
+        },
+
+        "transferScope": {
+          "type": "string",
+          "enum": [
+            "WITHIN_CADRE",
+            "WITHIN_STATE",
+            "INTER_STATE",
+            "ALL_INDIA",
+            "REGIONAL",
+            "DEPARTMENTAL",
+            "ORGANISATION",
+            "UNKNOWN"
+          ]
+        },
+
+        "description": {
+          "$ref": "shared.schema.json#/$defs/localizedText"
+        }
+      }
+    },
+
+    "serviceRuleReferences": {
+      "type": "array",
+      "description": "References to authoritative service-rule material governing the service/cadre. This is reference metadata, not an embedded copy of the rules.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "title": {
+            "$ref": "shared.schema.json#/$defs/localizedTextRequiredEnglish"
+          },
+
+          "ruleType": {
+            "type": "string",
+            "enum": [
+              "SERVICE_RULE",
+              "CADRE_RULE",
+              "RECRUITMENT_RULE",
+              "CONDUCT_RULE",
+              "PROMOTION_RULE",
+              "TRANSFER_RULE",
+              "OTHER"
+            ]
+          },
+
+          "reference": {
+            "type": "string",
+            "minLength": 1
+          },
+
+          "section": {
+            "type": "string",
+            "minLength": 1
+          },
+
+          "sourceIds": {
+            "$ref": "shared.schema.json#/$defs/idArray"
+          },
+
+          "sourceReferences": {
+            "$ref": "shared.schema.json#/$defs/sourceReferenceArray"
+          },
+
+          "description": {
+            "$ref": "shared.schema.json#/$defs/localizedText"
+          }
+        }
+      }
     },
 
     "keywords": {
@@ -190,6 +457,10 @@
       "$ref": "shared.schema.json#/$defs/localizedText"
     },
 
+    "sourceIds": {
+      "$ref": "shared.schema.json#/$defs/idArray"
+    },
+
     "sourceReferences": {
       "$ref": "shared.schema.json#/$defs/sourceReferenceArray"
     },
@@ -213,6 +484,94 @@
       "then": {
         "required": [
           "governmentId"
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "classification": {
+            "const": "STATE_GOVERNMENT_SERVICE"
+          }
+        },
+        "required": [
+          "classification"
+        ]
+      },
+      "then": {
+        "required": [
+          "stateId"
+        ]
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "classification": {
+            "const": "CENTRAL_GOVERNMENT_SERVICE"
+          }
+        },
+        "required": [
+          "classification"
+        ]
+      },
+      "then": {
+        "not": {
+          "required": [
+            "stateId"
+          ]
+        }
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "cadreScope": {
+            "required": [
+              "scopeType"
+            ],
+            "properties": {
+              "scopeType": {
+                "const": "STATE"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "cadreScope": {
+            "required": [
+              "stateIds"
+            ]
+          }
+        }
+      }
+    },
+
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "HISTORICAL",
+              "RENAMED",
+              "MERGED",
+              "REORGANISED",
+              "ABOLISHED"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "effectiveTo"
         ]
       }
     }
