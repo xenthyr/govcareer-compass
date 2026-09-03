@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://govcareercompass.in/schemas/i18n.schema.json",
+  "title": "GovCareer Compass Internationalization Catalog",
+  "description": "Schema for GovCareer Compass localization catalogs such as en.json and bn.json. The catalog stores user-facing translated strings separately from application data, eligibility rules, recommendation logic, and other domain entities.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "_meta"
+  ],
+  "properties": {
+    "_meta": {
+      "$ref": "#/$defs/catalogMetadata"
+    }
+  },
+  "patternProperties": {
+    "^(?!_meta$)[A-Za-z0-9][A-Za-z0-9._-]*$": {
+      "$ref": "#/$defs/translationNode"
+    }
+  },
+  "$defs": {
+    "catalogMetadata": {
+      "type": "object",
+      "description": "Metadata describing the localization catalog. Metadata is not user-facing translation content.",
+      "additionalProperties": false,
+      "required": [
+        "locale"
+      ],
+      "properties": {
+        "locale": {
+          "type": "string",
+          "description": "BCP 47 language tag identifying the catalog locale.",
+          "pattern": "^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$",
+          "examples": [
+            "en",
+            "bn",
+            "en-IN",
+            "bn-IN"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable language name in the catalog's own language or the project's canonical language.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "nativeName": {
+          "type": "string",
+          "description": "Native-language display name of the locale.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "direction": {
+          "type": "string",
+          "description": "Text direction used by the locale.",
+          "enum": [
+            "ltr",
+            "rtl"
+          ],
+          "default": "ltr"
+        },
+        "version": {
+          "type": "string",
+          "description": "Optional catalog version. This is useful when localized catalogs evolve independently.",
+          "minLength": 1,
+          "maxLength": 50
+        },
+        "fallbackLocale": {
+          "type": "string",
+          "description": "Optional fallback locale used when a translation is missing.",
+          "pattern": "^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$"
+        },
+        "sourceLocale": {
+          "type": "string",
+          "description": "Optional canonical/source locale from which this catalog is translated.",
+          "pattern": "^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "Optional ISO 8601 timestamp identifying the latest catalog update.",
+          "format": "date-time"
+        },
+        "translator": {
+          "type": "string",
+          "description": "Optional attribution for the person/team responsible for the translation catalog.",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "status": {
+          "type": "string",
+          "description": "Translation catalog lifecycle state.",
+          "enum": [
+            "draft",
+            "review",
+            "complete",
+            "deprecated"
+          ]
+        }
+      }
+    },
+
+    "translationNode": {
+      "description": "A translated value or a nested group of translated values.",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "A directly translated user-facing string.",
+          "minLength": 1
+        },
+        {
+          "$ref": "#/$defs/translationGroup"
+        }
+      ]
+    },
+
+    "translationGroup": {
+      "type": "object",
+      "description": "Nested translation namespace containing additional translation nodes.",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[A-Za-z0-9][A-Za-z0-9._-]*$": {
+          "$ref": "#/$defs/translationNode"
+        }
+      }
+    }
+  }
+}
