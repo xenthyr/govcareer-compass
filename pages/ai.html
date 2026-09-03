@@ -11,7 +11,7 @@
 
   <meta
     name="description"
-    content="CompassAI — the GovCareer Compass AI assistant for government exams, eligibility, government jobs, pay, preparation and career comparisons."
+    content="Meet CompassAI, the GovCareer Compass AI assistant for government exams, eligibility, government jobs, pay, preparation and career comparisons."
   >
 
   <title>CompassAI — GovCareer Compass</title>
@@ -65,6 +65,10 @@
 
 <body>
 
+  <!--
+    Shared application shell.
+    header.js / footer.js own these surfaces through app.js.
+  -->
   <header
     id="site-header"
     aria-label="Site header"
@@ -72,6 +76,26 @@
 
   <main>
 
+    <!--
+      Dedicated CompassAI discoverability surface.
+
+      IMPORTANT:
+      This page does not implement an AI client.
+      It does not own:
+      - conversation history
+      - message rendering
+      - safety handling
+      - context building
+      - API requests
+      - response parsing
+      - identity handling
+
+      The canonical implementation remains:
+        js/components/ai-assistant.js
+
+      Any element carrying [data-ai-trigger] is a request
+      to open that canonical global assistant.
+    -->
     <section
       class="ai-hero"
       aria-labelledby="ai-title"
@@ -79,36 +103,105 @@
 
       <div class="container">
 
-        <p class="eyebrow">
+        <p
+          class="eyebrow"
+          data-i18n="ai.page.eyebrow"
+        >
           GOVCAREER COMPASS AI
         </p>
 
-        <h1 id="ai-title">
+        <h1
+          id="ai-title"
+          data-i18n="ai.page.title"
+        >
           Meet CompassAI
         </h1>
 
-        <p>
-          Your dedicated AI assistant for
-          government exams, jobs, eligibility,
-          pay, preparation and career decisions.
+        <p
+          data-i18n="ai.page.description"
+        >
+          Your dedicated AI assistant for government
+          exams, jobs, eligibility, pay, preparation
+          and career decisions.
         </p>
 
         <div
           class="ai-scope"
           aria-label="CompassAI capabilities"
+          data-i18n-aria-label="ai.page.capabilitiesLabel"
         >
-          <span>Eligibility</span>
-          <span>Government Jobs</span>
-          <span>Exams</span>
-          <span>Pay</span>
-          <span>Comparison</span>
-          <span>Preparation</span>
+
+          <span
+            data-i18n="ai.page.capabilities.eligibility"
+          >
+            Eligibility
+          </span>
+
+          <span
+            data-i18n="ai.page.capabilities.jobs"
+          >
+            Government Jobs
+          </span>
+
+          <span
+            data-i18n="ai.page.capabilities.exams"
+          >
+            Exams
+          </span>
+
+          <span
+            data-i18n="ai.page.capabilities.pay"
+          >
+            Pay
+          </span>
+
+          <span
+            data-i18n="ai.page.capabilities.comparison"
+          >
+            Comparison
+          </span>
+
+          <span
+            data-i18n="ai.page.capabilities.preparation"
+          >
+            Preparation
+          </span>
+
+        </div>
+
+        <!--
+          Canonical assistant trigger.
+
+          ai-assistant.js discovers this through:
+            [data-ai-trigger]
+
+          No page-level click handler is required.
+        -->
+        <div class="ai-page-actions">
+
+          <button
+            type="button"
+            class="button button-primary"
+            data-ai-trigger
+            aria-controls="gcc-ai-panel"
+            data-i18n="ai.page.openAssistant"
+          >
+            Open CompassAI
+          </button>
+
         </div>
 
       </div>
 
     </section>
 
+    <!--
+      Dedicated explanatory surface.
+
+      This intentionally does NOT become a second chatbot.
+      The real conversation remains in the same global responsive
+      CompassAI panel used by the header.
+    -->
     <section
       class="ai-chat-section"
       aria-labelledby="chat-heading"
@@ -126,94 +219,62 @@
                 aria-hidden="true"
               ></span>
 
-              <strong>
+              <strong
+                data-i18n="ai.page.assistantName"
+              >
                 CompassAI
               </strong>
             </div>
 
-            <span>
+            <span
+              data-i18n="ai.page.productName"
+            >
               GovCareer Compass
             </span>
 
           </div>
 
-          <div
-            id="ai-messages"
-            class="ai-messages"
-            aria-live="polite"
-            aria-relevant="additions"
-            aria-label="CompassAI conversation"
-          >
+          <div class="ai-shell-content">
 
-            <article
-              class="ai-message ai-message-assistant"
+            <h2
+              id="chat-heading"
+              data-i18n="ai.page.chatHeading"
             >
+              Your career questions, in one place
+            </h2>
 
-              <div
-                class="ai-message-author"
-              >
-                CompassAI
-              </div>
-
-              <div
-                class="ai-message-content"
-              >
-                Hello. I'm CompassAI, the AI
-                career assistant for GovCareer
-                Compass. Ask me about government
-                exams, jobs, eligibility, pay,
-                postings, preparation or career
-                comparisons.
-              </div>
-
-            </article>
-
-          </div>
-
-          <form
-            id="ai-chat-form"
-            class="ai-input-area"
-            novalidate
-          >
-
-            <label
-              for="ai-user-input"
-              class="sr-only"
+            <p
+              data-i18n="ai.page.chatDescription"
             >
-              Ask CompassAI a government-career question
-            </label>
+              Open CompassAI to ask questions about
+              government careers, examinations,
+              eligibility, jobs, pay, preparation,
+              postings and career comparisons.
+            </p>
 
-            <textarea
-              id="ai-user-input"
-              name="message"
-              rows="3"
-              maxlength="6000"
-              placeholder="Ask CompassAI about a government exam or career..."
-              autocomplete="off"
-              required
-            ></textarea>
-
-            <div
-              class="ai-input-actions"
+            <p
+              data-i18n="ai.page.globalAssistantNote"
             >
+              The same CompassAI assistant is available
+              from the global header and opens as the
+              responsive assistant panel across the site.
+            </p>
 
-              <span
-                id="ai-character-count"
-                aria-live="polite"
-              >
-                0 / 6000
-              </span>
+            <div class="ai-page-actions">
 
               <button
-                id="ai-send-button"
-                type="submit"
+                type="button"
+                class="button button-primary"
+                data-ai-trigger
+                aria-controls="gcc-ai-panel"
+                data-i18n="ai.page.startConversation"
               >
-                Ask CompassAI
+                Start a conversation
               </button>
 
             </div>
 
-          </form>
+          </div>
 
         </div>
 
@@ -223,241 +284,35 @@
 
   </main>
 
+  <!-- Shared footer surface. -->
   <footer
     id="site-footer"
   ></footer>
 
-  <script type="module">
+  <!--
+    Canonical application bootstrap.
 
-    import {
-      askCompassAI
-    } from "../js/ai/client.js";
+    app.js owns:
+    - storage initialization
+    - theme/language initialization
+    - routing
+    - shared header/footer
+    - shared components
+    - page lifecycle
 
-    import {
-      buildCompassContext
-    } from "../js/ai/context-builder.js";
+    The page deliberately does NOT import:
+      ai/client.js
+      ai/context-builder.js
+      ai/safety.js
+      ai/response-parser.js
 
-    import {
-      isIdentityQuestion,
-      getIdentityResponse,
-      normalizeLanguage
-    } from "../js/ai/safety.js";
-
-    const form =
-      document.getElementById(
-        "ai-chat-form"
-      );
-
-    const input =
-      document.getElementById(
-        "ai-user-input"
-      );
-
-    const messages =
-      document.getElementById(
-        "ai-messages"
-      );
-
-    const button =
-      document.getElementById(
-        "ai-send-button"
-      );
-
-    const counter =
-      document.getElementById(
-        "ai-character-count"
-      );
-
-    const history = [];
-
-    function getLanguage() {
-      return normalizeLanguage(
-        document.documentElement
-          .lang || "en"
-      );
-    }
-
-    function addMessage(
-      role,
-      text
-    ) {
-      const article =
-        document.createElement(
-          "article"
-        );
-
-      article.className =
-        `ai-message ai-message-${role}`;
-
-      const author =
-        document.createElement(
-          "div"
-        );
-
-      author.className =
-        "ai-message-author";
-
-      author.textContent =
-        role === "assistant"
-          ? "CompassAI"
-          : "You";
-
-      const content =
-        document.createElement(
-          "div"
-        );
-
-      content.className =
-        "ai-message-content";
-
-      content.textContent =
-        text;
-
-      article.append(
-        author,
-        content
-      );
-
-      messages.appendChild(
-        article
-      );
-
-      messages.scrollTop =
-        messages.scrollHeight;
-    }
-
-    input.addEventListener(
-      "input",
-      () => {
-        counter.textContent =
-          `${input.value.length} / 6000`;
-      }
-    );
-
-    form.addEventListener(
-      "submit",
-      async (event) => {
-
-        event.preventDefault();
-
-        const question =
-          input.value.trim();
-
-        if (!question) {
-          return;
-        }
-
-        const language =
-          getLanguage();
-
-        addMessage(
-          "user",
-          question
-        );
-
-        history.push({
-          role: "user",
-          content: question
-        });
-
-        input.value = "";
-
-        counter.textContent =
-          "0 / 6000";
-
-        button.disabled =
-          true;
-
-        button.textContent =
-          language.startsWith("bn")
-            ? "ভাবছে..."
-            : "Thinking...";
-
-        try {
-
-          if (
-            isIdentityQuestion(
-              question
-            )
-          ) {
-            const answer =
-              getIdentityResponse(
-                language
-              );
-
-            addMessage(
-              "assistant",
-              answer
-            );
-
-            history.push({
-              role: "assistant",
-              content: answer
-            });
-
-            return;
-          }
-
-          const context =
-            buildCompassContext({
-              language
-            });
-
-          const response =
-            await askCompassAI({
-              messages:
-                history,
-              context,
-              language
-            });
-
-          addMessage(
-            "assistant",
-            response.answer
-          );
-
-          history.push({
-            role: "assistant",
-            content:
-              response.answer
-          });
-
-        } catch (error) {
-
-          console.error(
-            "CompassAI UI error:",
-            error
-          );
-
-          addMessage(
-            "assistant",
-            error?.message ||
-              (
-                language.startsWith(
-                  "bn"
-                )
-                  ? "CompassAI বর্তমানে উপলব্ধ নয়। অনুগ্রহ করে আবার চেষ্টা করুন।"
-                  : "CompassAI is currently unavailable. Please try again."
-              )
-          );
-
-        } finally {
-
-          button.disabled =
-            false;
-
-          button.textContent =
-            language.startsWith("bn")
-              ? "CompassAI-কে জিজ্ঞাসা করুন"
-              : "Ask CompassAI";
-
-          input.focus();
-
-        }
-      }
-    );
-
-  </script>
+    Those responsibilities belong to the canonical CompassAI
+    component and its supporting AI modules.
+  -->
+  <script
+    type="module"
+    src="../js/app.js"
+  ></script>
 
 </body>
 </html>
