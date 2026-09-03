@@ -1,10 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "job.schema.json",
+  "$id": "https://govcareer-compass.example/schema/job.schema.json",
   "title": "GovCareer Compass Government Job",
-  "description": "Canonical government post/career record.",
+  "description": "Canonical relational government post/career record. A job represents an individual government post or career entry and references authoritative eligibility, recruitment, pay, location, housing, promotion, benefits, service-cadre and source entities rather than embedding those entities. Candidate-specific eligibility and recommendation outcomes are not canonical job facts.",
   "type": "object",
   "additionalProperties": false,
+
   "required": [
     "id",
     "identity",
@@ -23,47 +24,76 @@
     "lastVerified",
     "dataVersion"
   ],
+
   "properties": {
     "id": {
-      "$ref": "shared.schema.json#/$defs/id"
+      "$ref": "shared.schema.json#/$defs/id",
+      "description": "Stable, language-neutral canonical identifier for the individual government post/career."
     },
 
     "identity": {
       "type": "object",
       "additionalProperties": false,
+
       "required": [
         "governmentId",
         "departmentId",
         "organisationId",
         "post"
       ],
+
       "properties": {
         "governmentId": {
           "$ref": "shared.schema.json#/$defs/id"
         },
+
         "stateId": {
           "$ref": "shared.schema.json#/$defs/id"
         },
+
         "departmentId": {
           "$ref": "shared.schema.json#/$defs/id"
         },
+
         "organisationId": {
           "$ref": "shared.schema.json#/$defs/id"
         },
+
         "serviceCadreId": {
-          "$ref": "shared.schema.json#/$defs/id"
+          "$ref": "shared.schema.json#/$defs/id",
+          "description": "Optional canonical service/cadre relationship. The complete service/cadre record is stored separately."
         },
+
         "post": {
-          "$ref": "shared.schema.json#/$defs/localizedText"
+          "$ref": "shared.schema.json#/$defs/localizedText",
+          "description": "Canonical post/designation name."
         },
+
         "abbreviation": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
+
         "roleType": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
+
         "description": {
           "$ref": "shared.schema.json#/$defs/localizedText"
+        },
+
+        "parentPostId": {
+          "$ref": "shared.schema.json#/$defs/id",
+          "description": "Optional hierarchical relationship to another canonical post. This is a reference only."
+        },
+
+        "aliases": {
+          "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
+        },
+
+        "historicalNames": {
+          "$ref": "shared.schema.json#/$defs/nonEmptyStringArray"
         }
       }
     },
@@ -71,16 +101,30 @@
     "recruitment": {
       "type": "object",
       "additionalProperties": false,
+
       "required": [
         "routeIds",
         "mode",
         "careerStatus",
         "freshEntryEligible"
       ],
+
       "properties": {
         "routeIds": {
-          "$ref": "shared.schema.json#/$defs/stringArray"
+          "$ref": "shared.schema.json#/$defs/stringArray",
+          "description": "Canonical route identifiers or route classifications. These are not candidate-specific results."
         },
+
+        "examIds": {
+          "$ref": "shared.schema.json#/$defs/idArray",
+          "description": "Examination IDs through which the post may be recruited."
+        },
+
+        "recruitmentIds": {
+          "$ref": "shared.schema.json#/$defs/idArray",
+          "description": "Canonical recruitment-record IDs governing one or more recruitment routes for this post."
+        },
+
         "mode": {
           "type": "string",
           "enum": [
@@ -92,9 +136,13 @@
             "TEMPORARY",
             "SCHEME_PROJECT",
             "OUTSOURCED",
+            "ABSORPTION",
+            "LATERAL_ENTRY",
+            "DEPARTMENTAL",
             "OTHER"
           ]
         },
+
         "careerStatus": {
           "type": "string",
           "enum": [
@@ -102,11 +150,32 @@
             "HISTORICAL",
             "ABOLISHED",
             "REPLACED",
-            "NOT_VERIFIED"
+            "SUPERSEDED",
+            "NOT_VERIFIED",
+            "UNKNOWN"
           ]
         },
+
         "freshEntryEligible": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Whether the post/career currently has a modeled fresh-entry route according to the associated recruitment data. This does not determine an individual candidate's eligibility."
+        },
+
+        "currentRecruitmentStatus": {
+          "type": "string",
+          "enum": [
+            "OPEN",
+            "NOTIFIED",
+            "RECURRING_ROUTE",
+            "CLOSED",
+            "NOT_CURRENTLY_NOTIFIED",
+            "HISTORICAL",
+            "UNKNOWN"
+          ]
+        },
+
+        "recruitmentNotes": {
+          "$ref": "shared.schema.json#/$defs/localizedText"
         }
       }
     },
@@ -114,12 +183,14 @@
     "eligibility": {
       "type": "object",
       "additionalProperties": false,
+
       "required": [
         "educationLevel",
         "minimumQualification",
         "ruleIds",
         "baEnglishAssessment"
       ],
+
       "properties": {
         "educationLevel": {
           "type": "string",
@@ -136,12 +207,28 @@
             "OTHER"
           ]
         },
+
         "minimumQualification": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable minimum qualification summary. Authoritative qualification requirements are represented by ruleIds and qualification references."
         },
+
+        "qualificationIds": {
+          "$ref": "shared.schema.json#/$defs/idArray",
+          "description": "Canonical qualification IDs associated with the post's minimum or relevant qualification requirements."
+        },
+
+        "minimumQualificationId": {
+          "$ref": "shared.schema.json#/$defs/id",
+          "description": "Primary canonical qualification ID for the minimum qualification where one exists."
+        },
+
         "ruleIds": {
-          "$ref": "shared.schema.json#/$defs/stringArray"
+          "$ref": "shared.schema.json#/$defs/idArray",
+          "description": "Canonical eligibility-rule IDs. These rules are the authoritative runtime eligibility source."
         },
+
         "baEnglishAssessment": {
           "type": "string",
           "enum": [
@@ -151,8 +238,10 @@
             "CURRENT_NOTIFICATION_REQUIRED",
             "NOT_VERIFIED",
             "NOT_APPLICABLE"
-          ]
+          ],
+          "description": "Research-time assessment of the baseline B.A. English Honours profile. It is not the authoritative runtime eligibility decision."
         },
+
         "overqualification": {
           "type": "string",
           "enum": [
@@ -161,38 +250,52 @@
             "HIGHER_QUALIFICATION_RESTRICTED",
             "EXACT_QUALIFICATION_REQUIRED",
             "CURRENT_NOTIFICATION_REQUIRED",
-            "NOT_APPLICABLE"
+            "NOT_APPLICABLE",
+            "NOT_VERIFIED"
           ]
         },
+
+        "eligibilitySummary": {
+          "$ref": "shared.schema.json#/$defs/localizedText"
+        },
+
         "notes": {
-          "type": "string"
+          "$ref": "shared.schema.json#/$defs/localizedText"
         }
       }
     },
 
     "payProfileId": {
-      "$ref": "shared.schema.json#/$defs/id"
+      "$ref": "shared.schema.json#/$defs/id",
+      "description": "Reference to the canonical pay profile. Pay details must not be duplicated here."
     },
 
     "locationProfileId": {
-      "$ref": "shared.schema.json#/$defs/id"
+      "$ref": "shared.schema.json#/$defs/id",
+      "description": "Reference to the canonical posting/location profile."
     },
 
     "housingProfileId": {
-      "$ref": "shared.schema.json#/$defs/id"
+      "$ref": "shared.schema.json#/$defs/id",
+      "description": "Reference to the canonical housing/quarter profile."
     },
 
     "promotionProfileId": {
-      "$ref": "shared.schema.json#/$defs/id"
+      "$ref": "shared.schema.json#/$defs/id",
+      "description": "Reference to the canonical promotion profile."
     },
 
     "benefitProfileId": {
-      "$ref": "shared.schema.json#/$defs/id"
+      "$ref": "shared.schema.json#/$defs/id",
+      "description": "Reference to the canonical benefits profile."
     },
 
     "lifestyle": {
       "type": "object",
       "additionalProperties": false,
+
+      "description": "Analytical work-profile characteristics derived from documented service/post conditions. These are not canonical recruitment or eligibility rules.",
+
       "properties": {
         "deskField": {
           "type": "string",
@@ -205,56 +308,142 @@
             "NOT_VERIFIED"
           ]
         },
+
         "publicInteractionScore": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "computerWorkScore": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "legalWorkScore": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "accountsWorkScore": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "investigationScore": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "inspectionScore": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "supervisionScore": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "workLifeScore": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "predictabilityScore": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "stressBurden": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "riskBurden": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "nightDutyBurden": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "shiftDutyBurden": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "holidayDutyBurden": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "emergencyDutyBurden": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "travelBurden": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "courtDutyBurden": {
           "$ref": "shared.schema.json#/$defs/score"
+        },
+
+        "uniformStatus": {
+          "type": "string",
+          "enum": [
+            "REQUIRED",
+            "NOT_REQUIRED",
+            "POST_DEPENDENT",
+            "OPERATIONAL",
+            "UNKNOWN",
+            "NOT_APPLICABLE"
+          ]
+        },
+
+        "uniformScore": {
+          "$ref": "shared.schema.json#/$defs/score"
+        },
+
+        "nightDutyStatus": {
+          "type": "string",
+          "enum": [
+            "NONE",
+            "RARE",
+            "OCCASIONAL",
+            "REGULAR",
+            "SHIFT_BASED",
+            "EMERGENCY_ONLY",
+            "POST_DEPENDENT",
+            "UNKNOWN"
+          ]
+        },
+
+        "shiftDutyStatus": {
+          "type": "string",
+          "enum": [
+            "NONE",
+            "RARE",
+            "OCCASIONAL",
+            "REGULAR",
+            "SHIFT_BASED",
+            "POST_DEPENDENT",
+            "UNKNOWN"
+          ]
+        },
+
+        "holidayDutyStatus": {
+          "type": "string",
+          "enum": [
+            "NONE",
+            "RARE",
+            "OCCASIONAL",
+            "REGULAR",
+            "EMERGENCY_ONLY",
+            "POST_DEPENDENT",
+            "UNKNOWN"
+          ]
+        },
+
+        "emergencyDutyStatus": {
+          "type": "string",
+          "enum": [
+            "NONE",
+            "RARE",
+            "OCCASIONAL",
+            "REGULAR",
+            "EMERGENCY_ONLY",
+            "POST_DEPENDENT",
+            "UNKNOWN"
+          ]
         }
       }
     },
@@ -262,28 +451,86 @@
     "analysis": {
       "type": "object",
       "additionalProperties": false,
+
+      "description": "Derived analytical characteristics used by the recommendation, comparison and ranking systems. These values are analytical assessments rather than official recruitment facts.",
+
       "properties": {
         "familyCompatibilityBase": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "parentCareCompatibilityBase": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "authority": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "socialStatus": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "careerGrowth": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "safety": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
         "housingAdvantage": {
           "$ref": "shared.schema.json#/$defs/score"
         },
+
+        "kolkataStability": {
+          "$ref": "shared.schema.json#/$defs/score"
+        },
+
+        "ruralPostingBurden": {
+          "$ref": "shared.schema.json#/$defs/score"
+        },
+
+        "transferBurden": {
+          "$ref": "shared.schema.json#/$defs/score"
+        },
+
+        "postingPredictability": {
+          "$ref": "shared.schema.json#/$defs/score"
+        },
+
+        "parentCareRisk": {
+          "$ref": "shared.schema.json#/$defs/score"
+        },
+
+        "physicalRisk": {
+          "$ref": "shared.schema.json#/$defs/score"
+        },
+
+        "workLife": {
+          "$ref": "shared.schema.json#/$defs/score"
+        },
+
+        "stress": {
+          "$ref": "shared.schema.json#/$defs/score"
+        },
+
+        "risk": {
+          "$ref": "shared.schema.json#/$defs/score"
+        },
+
+        "familyCompatibility": {
+          "$ref": "shared.schema.json#/$defs/score"
+        },
+
+        "parentCareCompatibility": {
+          "$ref": "shared.schema.json#/$defs/score"
+        },
+
+        "physicalSafety": {
+          "$ref": "shared.schema.json#/$defs/score"
+        },
+
         "englishAdvantage": {
           "type": "string",
           "enum": [
@@ -295,12 +542,54 @@
             "NOT_APPLICABLE",
             "NOT_VERIFIED"
           ]
+        },
+
+        "analyticalNotes": {
+          "$ref": "shared.schema.json#/$defs/localizedText"
+        }
+      }
+    },
+
+    "derived": {
+      "type": "object",
+      "additionalProperties": false,
+
+      "description": "Non-canonical values generated by application/indexing pipelines. These values must never replace authoritative source records.",
+
+      "properties": {
+        "searchTokens": {
+          "$ref": "shared.schema.json#/$defs/stringArray"
+        },
+
+        "normalizedName": {
+          "type": "string"
+        },
+
+        "normalizedAliases": {
+          "$ref": "shared.schema.json#/$defs/stringArray"
+        },
+
+        "searchRank": {
+          "type": "number"
+        },
+
+        "indexVersion": {
+          "$ref": "shared.schema.json#/$defs/version"
+        },
+
+        "generatedAt": {
+          "$ref": "shared.schema.json#/$defs/dateTime"
         }
       }
     },
 
     "sourceIds": {
-      "$ref": "shared.schema.json#/$defs/stringArray"
+      "$ref": "shared.schema.json#/$defs/stringArray",
+      "description": "Canonical source IDs supporting the factual and analytical record."
+    },
+
+    "sourceReferences": {
+      "$ref": "shared.schema.json#/$defs/sourceReferenceArray"
     },
 
     "confidence": {
@@ -317,6 +606,68 @@
 
     "dataVersion": {
       "$ref": "shared.schema.json#/$defs/version"
+    },
+
+    "effectiveFrom": {
+      "$ref": "shared.schema.json#/$defs/date"
+    },
+
+    "effectiveTo": {
+      "$ref": "shared.schema.json#/$defs/date"
+    },
+
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "HISTORICAL",
+        "ABOLISHED",
+        "REPLACED",
+        "SUPERSEDED",
+        "UNKNOWN"
+      ]
+    },
+
+    "notes": {
+      "$ref": "shared.schema.json#/$defs/localizedText"
     }
-  }
+  },
+
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "identity"
+        ],
+        "properties": {
+          "identity": {
+            "required": [
+              "stateId"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "identity": {
+            "required": [
+              "governmentId"
+            ]
+          }
+        }
+      }
+    },
+
+    {
+      "if": {
+        "required": [
+          "effectiveFrom",
+          "effectiveTo"
+        ]
+      },
+      "then": {
+        "description": "Runtime validation additionally enforces effectiveFrom <= effectiveTo."
+      }
+    }
+  ]
 }
