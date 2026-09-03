@@ -4,45 +4,57 @@
  * Runtime Database Validator
  * ============================================================
  *
- * Runtime validation complements repository-level JSON Schema
- * validation.
+ * Runtime validation complements repository-level JSON Schema validation.
  *
- * Responsibilities:
- * - validate canonical runtime entity collections;
- * - validate stable IDs and entity types;
- * - validate references between entities;
- * - validate numeric, date, status and confidence fields;
- * - validate localized structures;
- * - validate eligibility-rule integrity;
- * - validate scoring-rule integrity;
- * - validate derived index/data consistency;
- * - detect inappropriate cross-namespace ID collisions;
- * - detect circular references in hierarchical relationships;
- * - return structured errors, warnings and informational findings.
+ * Architectural responsibility
+ * -----------------------------
+ * This module validates already-normalized canonical runtime data.
  *
- * Validation policy:
+ * It does NOT:
+ * - normalize records;
+ * - repair records;
+ * - mutate canonical records;
+ * - load data;
+ * - resolve candidate eligibility;
+ * - calculate preference fit;
+ * - score careers;
+ * - rank careers;
+ * - perform AI work;
+ * - treat derived indexes as canonical data;
+ * - use legacy `baEligibility` as an authority.
  *
- *   ERROR
- *     Fatal integrity problem. The runtime database must not be
- *     registered as canonical application data.
+ * Canonical source-of-truth order
+ * -------------------------------
  *
- *   WARNING
- *     The database can technically load, but data quality or
- *     completeness requires attention.
+ *   source JSON
+ *       ↓
+ *   loader
+ *       ↓
+ *   normalizer
+ *       ↓
+ *   validator
+ *       ↓
+ *   runtime registry
+ *       ↓
+ *   derived indexes
+ *       ↓
+ *   search / filters / recommendation / AI explanation
  *
- *   INFO
- *     Non-fatal diagnostic information useful for CI, development,
- *     research and debugging.
+ * Fatal integrity problems are returned in `errors`.
+ * Non-fatal data-quality problems are returned in `warnings`.
+ * Diagnostics are returned in `infos`.
  *
- * This module does NOT:
- * - repair canonical data;
- * - mutate database records;
- * - resolve eligibility;
- * - calculate recommendations;
- * - calculate rankings;
- * - fetch external sources;
- * - modify indexes;
- * - silently invent missing values.
+ * The validator intentionally performs semantic checks that JSON Schema
+ * cannot safely express in the repository contract, including:
+ * - minimum <= maximum;
+ * - effectiveFrom <= effectiveTo;
+ * - eligibility dependency integrity;
+ * - eligibility dependency cycles;
+ * - hierarchical service-cadre cycles;
+ * - cross-entity reference integrity;
+ * - duplicate IDs;
+ * - cross-namespace ID collisions;
+ * - derived-index references to canonical IDs.
  */
 
 /* -------------------------------------------------------------------------- */
@@ -50,78 +62,120 @@
 /* -------------------------------------------------------------------------- */
 
 const VALID_JOB_ELIGIBILITY =
-  new Set([
-    'DIRECT',
-    'CONDITIONAL',
-    'NOT_ELIGIBLE',
-    'MANUAL_VERIFICATION',
-    'UNKNOWN',
-    'REVIEW_REQUIRED'
-  ]);
+  Object.freeze(
+    new Set([
+      'DIRECT',
+      'CONDITIONAL',
+      'NOT_ELIGIBLE',
+      'MANUAL_VERIFICATION',
+      'REVIEW_REQUIRED',
+      'UNKNOWN'
+    ])
+  );
 
 const VALID_RULE_CLASSES =
-  new Set([
-    'HARD',
-    'SOFT'
-  ]);
+  Object.freeze(
+    new Set([
+      'HARD',
+      'SOFT'
+    ])
+  );
+
+const VALID_RULE_EFFECTS =
+  Object.freeze(
+    new Set([
+      'ALLOW',
+      'DENY',
+      'REQUIRE_VERIFICATION',
+      'CONDITIONAL',
+      'MODIFY'
+    ])
+  );
+
+const VALID_OPERATORS =
+  Object.freeze(
+    new Set([
+      'EQ',
+      'NEQ',
+      'GT',
+      'GTE',
+      'LT',
+      'LTE',
+      'IN',
+      'NOT_IN',
+      'HAS',
+      'NOT_HAS',
+      'ALL_OF',
+      'ANY_OF',
+      'NONE_OF'
+    ])
+  );
 
 const VALID_CONFIDENCE =
-  new Set([
-    'HIGH',
-    'MEDIUM_HIGH',
-    'MEDIUM',
-    'LOW',
-    'ESTIMATE',
-    'NOT_VERIFIED',
-    'UNKNOWN'
-  ]);
+  Object.freeze(
+    new Set([
+      'HIGH',
+      'MEDIUM_HIGH',
+      'MEDIUM',
+      'LOW',
+      'ESTIMATE',
+      'NOT_VERIFIED',
+      'UNKNOWN'
+    ])
+  );
 
 const VALID_SEVERITIES =
-  new Set([
-    'ERROR',
-    'WARNING',
-    'INFO'
-  ]);
+  Object.freeze(
+    new Set([
+      'ERROR',
+      'WARNING',
+      'INFO'
+    ])
+  );
 
 const VALID_METRIC_DIRECTIONS =
-  new Set([
-    'higher_is_better',
-    'higher_is_worse',
-    'lower_is_better',
-    'lower_is_worse',
-    'neutral'
-  ]);
+  Object.freeze(
+    new Set([
+      'higher_is_better',
+      'higher_is_worse',
+      'lower_is_better',
+      'lower_is_worse',
+      'neutral'
+    ])
+  );
 
 const VALID_ENTITY_TYPES =
-  new Set([
-    'JOB',
-    'EXAM',
-    'DEPARTMENT',
-    'ORGANISATION',
-    'SERVICE_CADRE',
-    'ELIGIBILITY_RULE',
-    'RECRUITMENT',
-    'PAY',
-    'LOCATION',
-    'HOUSING',
-    'PROMOTION',
-    'BENEFIT',
-    'SOURCE',
-    'GOVERNMENT',
-    'STATE',
-    'QUALIFICATION',
-    'CATEGORY',
-    'GLOSSARY',
-    'SCORING_RULE',
-    'STATUS',
-    'CONFIDENCE_LEVEL',
-    'SOURCE_TYPE',
-    'ASSESSMENT_QUESTION',
-    'ASSESSMENT_OPTION',
-    'ASSESSMENT_BRANCHING',
-    'ASSESSMENT_PROFILE_FIELD',
-    'ASSESSMENT_RESPONSE_SCORING'
-  ]);
+  Object.freeze(
+    new Set([
+      'JOB',
+      'EXAM',
+      'DEPARTMENT',
+      'ORGANISATION',
+      'SERVICE_CADRE',
+      'ELIGIBILITY_RULE',
+      'RECRUITMENT',
+      'PAY',
+      'LOCATION',
+      'HOUSING',
+      'PROMOTION',
+      'BENEFIT',
+      'SOURCE',
+      'GOVERNMENT',
+      'STATE',
+      'QUALIFICATION',
+      'CATEGORY',
+      'GLOSSARY',
+      'SCORING_RULE',
+      'STATUS',
+      'CONFIDENCE_LEVEL',
+      'SOURCE_TYPE',
+      'ASSESSMENT_QUESTION',
+      'ASSESSMENT_OPTION',
+      'ASSESSMENT_BRANCHING',
+      'ASSESSMENT_PROFILE_FIELD',
+      'ASSESSMENT_RESPONSE_SCORING'
+    ])
+  );
 
 const SCORE_FIELDS =
   Object.freeze([
@@ -139,218 +193,97 @@ const SCORE_FIELDS =
     'physicalSafety'
   ]);
 
-const PERCENTAGE_FIELDS =
-  new Set([
-    'percentage',
-    'minimumPercentage',
-    'maximumPercentage',
-    'minimumMarksPercentage',
-    'maximumMarksPercentage',
-    'minimumAggregatePercentage',
-    'maximumAggregatePercentage',
-    'reservationPercentage',
-    'daPercentage',
-    'hraPercentage',
-    'otherAllowancePercentage'
+const SCORE_FIELD_PATHS =
+  Object.freeze([
+    ...SCORE_FIELDS.map(
+      field =>
+        `analysis.${field}`
+    ),
+
+    ...SCORE_FIELDS.map(
+      field =>
+        `lifestyle.${field}`
+    ),
+
+    ...SCORE_FIELDS
   ]);
+
+const PERCENTAGE_FIELDS =
+  Object.freeze(
+    new Set([
+      'percentage',
+      'minimumPercentage',
+      'maximumPercentage',
+      'minPercentage',
+      'maxPercentage',
+      'minimumMarksPercentage',
+      'maximumMarksPercentage',
+      'minimumAggregatePercentage',
+      'maximumAggregatePercentage',
+      'reservationPercentage',
+      'daPercentage',
+      'hraPercentage',
+      'otherAllowancePercentage'
+    ])
+  );
 
 const NON_NEGATIVE_NUMERIC_FIELDS =
-  new Set([
-    'startingBasic',
-    'maximumBasic',
-    'basicPay',
-    'minimumPay',
-    'maximumPay',
-    'age',
-    'minimumAge',
-    'maximumAge',
-    'minimumMarks',
-    'maximumMarks',
-    'experienceYears',
-    'minimumExperienceYears',
-    'maximumExperienceYears',
-    'vacancies',
-    'sanctionedStrength',
-    'yearsOfService',
-    'probationMonths',
-    'noticePeriodDays'
-  ]);
+  Object.freeze(
+    new Set([
+      'startingBasic',
+      'maximumBasic',
+      'basicPay',
+      'minimumPay',
+      'maximumPay',
+      'minPay',
+      'maxPay',
+      'age',
+      'minimumAge',
+      'maximumAge',
+      'minAge',
+      'maxAge',
+      'minimumMarks',
+      'maximumMarks',
+      'minMarks',
+      'maxMarks',
+      'experienceYears',
+      'minimumExperienceYears',
+      'maximumExperienceYears',
+      'minExperienceYears',
+      'maxExperienceYears',
+      'vacancies',
+      'sanctionedStrength',
+      'yearsOfService',
+      'probationMonths',
+      'noticePeriodDays',
+      'priority',
+      'weight',
+      'score',
+      'minimumScore',
+      'maximumScore'
+    ])
+  );
 
 const DATE_FIELDS =
-  new Set([
-    'date',
-    'startDate',
-    'endDate',
-    'effectiveFrom',
-    'effectiveTo',
-    'validFrom',
-    'validTo',
-    'notificationDate',
-    'publicationDate',
-    'lastUpdated',
-    'sourceDate',
-    'asOfDate'
-  ]);
-
-const HIERARCHICAL_REFERENCE_FIELDS =
-  Object.freeze([
-    'parentId',
-    'parentDepartmentId',
-    'parentOrganisationId',
-    'parentLocationId',
-    'parentStateId',
-    'parentCategoryId',
-    'supersedesId',
-    'replacesId',
-    'previousRuleId',
-    'nextRuleId'
-  ]);
-
-const REFERENCE_FIELD_MAP =
-  Object.freeze({
-    jobs: Object.freeze({
-      departmentId: 'departments',
-      organisationId: 'organisations',
-      serviceCadreId: 'serviceCadres',
-      recruitmentId: 'recruitment',
-      payId: 'pay',
-      locationId: 'locations',
-      housingId: 'housing',
-      promotionId: 'promotion',
-      benefitIds: 'benefits',
-      examIds: 'exams',
-      eligibilityRuleIds: 'eligibilityRules',
-      sourceIds: 'sources',
-      qualificationIds: 'qualifications',
-      categoryId: 'categories',
-      governmentId: 'governments',
-      stateId: 'states'
-    }),
-
-    exams: Object.freeze({
-      departmentId: 'departments',
-      organisationId: 'organisations',
-      serviceCadreId: 'serviceCadres',
-      recruitmentId: 'recruitment',
-      governmentId: 'governments',
-      stateId: 'states',
-      sourceIds: 'sources',
-      postIds: 'jobs',
-      jobIds: 'jobs',
-      qualificationIds: 'qualifications'
-    }),
-
-    serviceCadres: Object.freeze({
-      departmentId: 'departments',
-      organisationId: 'organisations',
-      governmentId: 'governments',
-      stateId: 'states',
-      postIds: 'jobs',
-      jobIds: 'jobs',
-      examIds: 'exams',
-      eligibilityRuleIds: 'eligibilityRules',
-      recruitmentIds: 'recruitment',
-      promotionIds: 'promotion',
-      sourceIds: 'sources'
-    }),
-
-    eligibilityRules: Object.freeze({
-      targetId: '__TARGET__',
-      jobId: 'jobs',
-      serviceCadreId: 'serviceCadres',
-      examId: 'exams',
-      targetJobId: 'jobs',
-      targetServiceCadreId: 'serviceCadres',
-      qualificationIds: 'qualifications',
-      requiredQualificationIds: 'qualifications',
-      sourceIds: 'sources'
-    }),
-
-    departments: Object.freeze({
-      governmentId: 'governments',
-      stateId: 'states',
-      organisationId: 'organisations',
-      parentDepartmentId: 'departments',
-      parentId: 'departments',
-      sourceIds: 'sources'
-    }),
-
-    organisations: Object.freeze({
-      governmentId: 'governments',
-      stateId: 'states',
-      parentOrganisationId: 'organisations',
-      parentId: 'organisations',
-      departmentId: 'departments',
-      sourceIds: 'sources'
-    }),
-
-    recruitment: Object.freeze({
-      examId: 'exams',
-      jobIds: 'jobs',
-      postIds: 'jobs',
-      serviceCadreId: 'serviceCadres',
-      departmentId: 'departments',
-      organisationId: 'organisations',
-      sourceIds: 'sources'
-    }),
-
-    pay: Object.freeze({
-      jobId: 'jobs',
-      serviceCadreId: 'serviceCadres',
-      sourceIds: 'sources'
-    }),
-
-    locations: Object.freeze({
-      stateId: 'states',
-      parentLocationId: 'locations',
-      sourceIds: 'sources'
-    }),
-
-    housing: Object.freeze({
-      jobId: 'jobs',
-      locationId: 'locations',
-      stateId: 'states',
-      sourceIds: 'sources'
-    }),
-
-    promotion: Object.freeze({
-      jobId: 'jobs',
-      serviceCadreId: 'serviceCadres',
-      nextJobId: 'jobs',
-      previousJobId: 'jobs',
-      sourceIds: 'sources'
-    }),
-
-    benefits: Object.freeze({
-      jobId: 'jobs',
-      governmentId: 'governments',
-      stateId: 'states',
-      sourceIds: 'sources'
-    }),
-
-    sources: Object.freeze({
-      governmentId: 'governments',
-      stateId: 'states'
-    }),
-
-    qualifications: Object.freeze({
-      sourceIds: 'sources'
-    }),
-
-    categories: Object.freeze({
-      parentCategoryId: 'categories',
-      sourceIds: 'sources'
-    }),
-
-    governments: Object.freeze({
-      sourceIds: 'sources'
-    }),
-
-    states: Object.freeze({
-      governmentId: 'governments',
-      sourceIds: 'sources'
-    })
-  });
+  Object.freeze(
+    new Set([
+      'date',
+      'startDate',
+      'endDate',
+      'effectiveFrom',
+      'effectiveTo',
+      'validFrom',
+      'validTo',
+      'notificationDate',
+      'publicationDate',
+      'lastUpdated',
+      'lastVerified',
+      'sourceDate',
+      'asOfDate',
+      'effectiveDate',
+      'publishedDate'
+    ])
+  );
 
 const COLLECTION_ENTITY_TYPES =
   Object.freeze({
@@ -380,7 +313,943 @@ const COLLECTION_ENTITY_TYPES =
     assessmentOptions: 'ASSESSMENT_OPTION',
     assessmentBranching: 'ASSESSMENT_BRANCHING',
     assessmentProfileFields: 'ASSESSMENT_PROFILE_FIELD',
-    assessmentResponseScoring: 'ASSESSMENT_RESPONSE_SCORING'
+    assessmentResponseScoring:
+      'ASSESSMENT_RESPONSE_SCORING'
+  });
+
+const HIERARCHY_RELATIONSHIPS =
+  Object.freeze([
+    Object.freeze({
+      collection: 'departments',
+      field: 'parentDepartmentId',
+      targetCollection: 'departments'
+    }),
+
+    Object.freeze({
+      collection: 'departments',
+      field: 'parentId',
+      targetCollection: 'departments'
+    }),
+
+    Object.freeze({
+      collection: 'organisations',
+      field: 'parentOrganisationId',
+      targetCollection: 'organisations'
+    }),
+
+    Object.freeze({
+      collection: 'organisations',
+      field: 'parentId',
+      targetCollection: 'organisations'
+    }),
+
+    Object.freeze({
+      collection: 'locations',
+      field: 'parentLocationId',
+      targetCollection: 'locations'
+    }),
+
+    Object.freeze({
+      collection: 'categories',
+      field: 'parentCategoryId',
+      targetCollection: 'categories'
+    }),
+
+    Object.freeze({
+      collection: 'serviceCadres',
+      field: 'parentServiceCadreId',
+      targetCollection: 'serviceCadres'
+    })
+  ]);
+
+/*
+ * Canonical reference contract.
+ *
+ * IMPORTANT:
+ * These paths intentionally follow the finalized relational schemas rather
+ * than the retired flat job shape.
+ */
+const REFERENCE_PATHS =
+  Object.freeze({
+    jobs:
+      Object.freeze([
+        Object.freeze({
+          path: 'identity.governmentId',
+          target: 'governments',
+          kind: 'one'
+        }),
+
+        Object.freeze({
+          path: 'identity.stateId',
+          target: 'states',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'identity.departmentId',
+          target: 'departments',
+          kind: 'one'
+        }),
+
+        Object.freeze({
+          path: 'identity.organisationId',
+          target: 'organisations',
+          kind: 'one'
+        }),
+
+        Object.freeze({
+          path: 'identity.serviceCadreId',
+          target: 'serviceCadres',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'identity.parentPostId',
+          target: 'jobs',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'recruitment.examIds',
+          target: 'exams',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'recruitment.recruitmentIds',
+          target: 'recruitment',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'eligibility.qualificationIds',
+          target: 'qualifications',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'eligibility.minimumQualificationId',
+          target: 'qualifications',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'eligibility.ruleIds',
+          target: 'eligibilityRules',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'payProfileId',
+          target: 'pay',
+          kind: 'one'
+        }),
+
+        Object.freeze({
+          path: 'locationProfileId',
+          target: 'locations',
+          kind: 'one'
+        }),
+
+        Object.freeze({
+          path: 'housingProfileId',
+          target: 'housing',
+          kind: 'one'
+        }),
+
+        Object.freeze({
+          path: 'promotionProfileId',
+          target: 'promotion',
+          kind: 'one'
+        }),
+
+        Object.freeze({
+          path: 'benefitProfileId',
+          target: 'benefits',
+          kind: 'one'
+        }),
+
+        Object.freeze({
+          path: 'sourceIds',
+          target: 'sources',
+          kind: 'many'
+        })
+      ]),
+
+    exams:
+      Object.freeze([
+        Object.freeze({
+          path: 'governmentId',
+          target: 'governments',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'stateId',
+          target: 'states',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'recruitingAuthorityId',
+          target: 'organisations',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'departmentId',
+          target: 'departments',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'organisationId',
+          target: 'organisations',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'serviceCadreId',
+          target: 'serviceCadres',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'qualificationLevelIds',
+          target: 'qualifications',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'qualificationIds',
+          target: 'qualifications',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'postIds',
+          target: 'jobs',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'jobIds',
+          target: 'jobs',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'sourceIds',
+          target: 'sources',
+          kind: 'many',
+          optional: true
+        })
+      ]),
+
+    serviceCadres:
+      Object.freeze([
+        Object.freeze({
+          path: 'governmentId',
+          target: 'governments',
+          kind: 'one'
+        }),
+
+        Object.freeze({
+          path: 'stateId',
+          target: 'states',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'ministryId',
+          target: 'departments',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'departmentId',
+          target: 'departments',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'organisationId',
+          target: 'organisations',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'parentServiceCadreId',
+          target: 'serviceCadres',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'postIds',
+          target: 'jobs',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'examIds',
+          target: 'exams',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'recruitmentIds',
+          target: 'recruitment',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'eligibilityRuleIds',
+          target: 'eligibilityRules',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'payIds',
+          target: 'pay',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'promotionIds',
+          target: 'promotion',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'benefitIds',
+          target: 'benefits',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'locationIds',
+          target: 'locations',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'postingScope.locationIds',
+          target: 'locations',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'cadreScope.stateIds',
+          target: 'states',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'sourceIds',
+          target: 'sources',
+          kind: 'many',
+          optional: true
+        })
+      ]),
+
+    eligibilityRules:
+      Object.freeze([
+        Object.freeze({
+          path: 'qualificationIds',
+          target: 'qualifications',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'requiredQualificationIds',
+          target: 'qualifications',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'subjectIds',
+          target: 'qualifications',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'requiredSubjectIds',
+          target: 'qualifications',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'recruitmentIds',
+          target: 'recruitment',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'sourceIds',
+          target: 'sources',
+          kind: 'many'
+        }),
+
+        Object.freeze({
+          path: 'dependsOnRuleIds',
+          target: 'eligibilityRules',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'parentRuleIds',
+          target: 'eligibilityRules',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'logic.ruleIds',
+          target: 'eligibilityRules',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'jobId',
+          target: 'jobs',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'serviceCadreId',
+          target: 'serviceCadres',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'examId',
+          target: 'exams',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'targetJobId',
+          target: 'jobs',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'targetServiceCadreId',
+          target: 'serviceCadres',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'governmentId',
+          target: 'governments',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'stateId',
+          target: 'states',
+          kind: 'one',
+          optional: true
+        })
+      ]),
+
+    recruitment:
+      Object.freeze([
+        Object.freeze({
+          path: 'examId',
+          target: 'exams',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'jobIds',
+          target: 'jobs',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'postIds',
+          target: 'jobs',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'serviceCadreId',
+          target: 'serviceCadres',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'departmentId',
+          target: 'departments',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'organisationId',
+          target: 'organisations',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'sourceIds',
+          target: 'sources',
+          kind: 'many',
+          optional: true
+        })
+      ]),
+
+    pay:
+      Object.freeze([
+        Object.freeze({
+          path: 'jobId',
+          target: 'jobs',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'serviceCadreId',
+          target: 'serviceCadres',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'sourceIds',
+          target: 'sources',
+          kind: 'many',
+          optional: true
+        })
+      ]),
+
+    locations:
+      Object.freeze([
+        Object.freeze({
+          path: 'stateId',
+          target: 'states',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'parentLocationId',
+          target: 'locations',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'sourceIds',
+          target: 'sources',
+          kind: 'many',
+          optional: true
+        })
+      ]),
+
+    housing:
+      Object.freeze([
+        Object.freeze({
+          path: 'jobId',
+          target: 'jobs',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'locationId',
+          target: 'locations',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'stateId',
+          target: 'states',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'sourceIds',
+          target: 'sources',
+          kind: 'many',
+          optional: true
+        })
+      ]),
+
+    promotion:
+      Object.freeze([
+        Object.freeze({
+          path: 'jobId',
+          target: 'jobs',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'serviceCadreId',
+          target: 'serviceCadres',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'nextJobId',
+          target: 'jobs',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'previousJobId',
+          target: 'jobs',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'sourceIds',
+          target: 'sources',
+          kind: 'many',
+          optional: true
+        })
+      ]),
+
+    benefits:
+      Object.freeze([
+        Object.freeze({
+          path: 'jobId',
+          target: 'jobs',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'governmentId',
+          target: 'governments',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'stateId',
+          target: 'states',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'sourceIds',
+          target: 'sources',
+          kind: 'many',
+          optional: true
+        })
+      ]),
+
+    departments:
+      Object.freeze([
+        Object.freeze({
+          path: 'governmentId',
+          target: 'governments',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'stateId',
+          target: 'states',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'ministryId',
+          target: 'departments',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'organisationIds',
+          target: 'organisations',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'serviceCadreIds',
+          target: 'serviceCadres',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'examIds',
+          target: 'exams',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'jobIds',
+          target: 'jobs',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'locationIds',
+          target: 'locations',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'categoryIds',
+          target: 'categories',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'recruitmentAuthorityIds',
+          target: 'organisations',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'sourceIds',
+          target: 'sources',
+          kind: 'many',
+          optional: true
+        })
+      ]),
+
+    organisations:
+      Object.freeze([
+        Object.freeze({
+          path: 'governmentId',
+          target: 'governments',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'stateId',
+          target: 'states',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'departmentId',
+          target: 'departments',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'departmentIds',
+          target: 'departments',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'serviceCadreIds',
+          target: 'serviceCadres',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'examIds',
+          target: 'exams',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'jobIds',
+          target: 'jobs',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'locationIds',
+          target: 'locations',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'sourceIds',
+          target: 'sources',
+          kind: 'many',
+          optional: true
+        })
+      ]),
+
+    sources:
+      Object.freeze([
+        Object.freeze({
+          path: 'governmentId',
+          target: 'governments',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'stateId',
+          target: 'states',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'departmentId',
+          target: 'departments',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'organisationId',
+          target: 'organisations',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'examIds',
+          target: 'exams',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'jobIds',
+          target: 'jobs',
+          kind: 'many',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'serviceCadreIds',
+          target: 'serviceCadres',
+          kind: 'many',
+          optional: true
+        })
+      ]),
+
+    states:
+      Object.freeze([
+        Object.freeze({
+          path: 'governmentId',
+          target: 'governments',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'sourceIds',
+          target: 'sources',
+          kind: 'many',
+          optional: true
+        })
+      ]),
+
+    qualifications:
+      Object.freeze([
+        Object.freeze({
+          path: 'sourceIds',
+          target: 'sources',
+          kind: 'many',
+          optional: true
+        })
+      ]),
+
+    categories:
+      Object.freeze([
+        Object.freeze({
+          path: 'parentCategoryId',
+          target: 'categories',
+          kind: 'one',
+          optional: true
+        }),
+
+        Object.freeze({
+          path: 'sourceIds',
+          target: 'sources',
+          kind: 'many',
+          optional: true
+        })
+      ]),
+
+    governments:
+      Object.freeze([
+        Object.freeze({
+          path: 'sourceIds',
+          target: 'sources',
+          kind: 'many',
+          optional: true
+        })
+      ])
   });
 
 /* -------------------------------------------------------------------------- */
@@ -403,6 +1272,15 @@ function isNonEmptyString(
   return (
     typeof value === 'string' &&
     value.trim().length > 0
+  );
+}
+
+function isFiniteNumber(
+  value
+) {
+  return (
+    typeof value === 'number' &&
+    Number.isFinite(value)
   );
 }
 
@@ -466,46 +1344,178 @@ function makeResult(
   };
 }
 
-function addIssue(
-  bucket,
-  validationIssue
+function addIssues(
+  target,
+  values
 ) {
   if (
-    validationIssue &&
-    VALID_SEVERITIES.has(
-      validationIssue.severity
-    )
+    !Array.isArray(values)
   ) {
-    bucket.push(
-      validationIssue
-    );
+    return;
   }
+
+  target.push(
+    ...values
+  );
 }
 
 function getArray(
   value
 ) {
-  return Array.isArray(
-    value
-  )
+  return Array.isArray(value)
     ? value
     : [];
 }
 
-function uniqueStrings(
-  values
+function trimId(
+  value
 ) {
-  return [
-    ...new Set(
-      getArray(values).filter(
-        isNonEmptyString
-      )
-    )
-  ];
+  return isNonEmptyString(
+    value
+  )
+    ? value.trim()
+    : '';
 }
 
 /* -------------------------------------------------------------------------- */
-/* Entity/object validation                                                   */
+/* Object-path helpers                                                        */
+/* -------------------------------------------------------------------------- */
+
+function getPathValue(
+  object,
+  path
+) {
+  if (
+    !path
+  ) {
+    return undefined;
+  }
+
+  const parts =
+    String(path)
+      .split('.')
+      .filter(Boolean);
+
+  let current =
+    object;
+
+  for (
+    const part of parts
+  ) {
+    if (
+      current === null ||
+      current === undefined ||
+      typeof current !== 'object'
+    ) {
+      return undefined;
+    }
+
+    current =
+      current[part];
+  }
+
+  return current;
+}
+
+function getPathEntries(
+  object,
+  path
+) {
+  return flattenValues(
+    getPathValue(
+      object,
+      path
+    )
+  );
+}
+
+function flattenValues(
+  value
+) {
+  if (
+    value === undefined ||
+    value === null
+  ) {
+    return [];
+  }
+
+  if (
+    typeof value ===
+      'string' ||
+    typeof value ===
+      'number' ||
+    typeof value ===
+      'boolean'
+  ) {
+    return [
+      value
+    ];
+  }
+
+  if (
+    Array.isArray(
+      value
+    )
+  ) {
+    return value.flatMap(
+      flattenValues
+    );
+  }
+
+  if (
+    typeof value ===
+      'object'
+  ) {
+    return Object.values(
+      value
+    ).flatMap(
+      flattenValues
+    );
+  }
+
+  return [];
+}
+
+function getFirstScalar(
+  object,
+  paths
+) {
+  const candidates =
+    Array.isArray(paths)
+      ? paths
+      : [
+          paths
+        ];
+
+  for (
+    const path of candidates
+  ) {
+    const values =
+      getPathEntries(
+        object,
+        path
+      );
+
+    const value =
+      values.find(
+        item =>
+          isNonEmptyString(
+            String(item)
+          )
+      );
+
+    if (
+      value !== undefined
+    ) {
+      return value;
+    }
+  }
+
+  return '';
+}
+
+/* -------------------------------------------------------------------------- */
+/* Collection / entity validation                                             */
 /* -------------------------------------------------------------------------- */
 
 function validateObjectRecords(
@@ -583,7 +1593,7 @@ function validateIds(
           issue(
             'ERROR',
             'MISSING_ID',
-            `${entityName} record requires a stable ID.`,
+            `${entityName} record requires a stable non-empty string ID.`,
             `${entityName}[${index}].id`
           )
         );
@@ -591,20 +1601,24 @@ function validateIds(
         return;
       }
 
-      const normalizedId =
+      const normalized =
         id.trim();
 
       if (
         seen.has(
-          normalizedId
+          normalized
         )
       ) {
         errors.push(
           issue(
             'ERROR',
             'DUPLICATE_ID',
-            `Duplicate ${entityName} ID "${normalizedId}".`,
-            `${entityName}[${index}].id`
+            `Duplicate ${entityName} ID "${normalized}".`,
+            `${entityName}[${index}].id`,
+            {
+              id:
+                normalized
+            }
           )
         );
 
@@ -612,7 +1626,7 @@ function validateIds(
       }
 
       seen.add(
-        normalizedId
+        normalized
       );
     }
   );
@@ -643,25 +1657,33 @@ function validateEntityTypes(
 
       const explicitType =
         record.entityType ??
-        record.type ??
         record._type;
 
+      /*
+       * `record.type` is deliberately not interpreted as entityType.
+       *
+       * Many canonical records legitimately use `type` as a domain field:
+       * service-cadre.type, source.type, qualification.type, etc.
+       */
       if (
         explicitType ===
-        undefined
+          undefined ||
+        explicitType ===
+          null
       ) {
         return;
       }
 
       if (
-        typeof explicitType !==
-        'string'
+        !isNonEmptyString(
+          explicitType
+        )
       ) {
         errors.push(
           issue(
             'ERROR',
             'INVALID_ENTITY_TYPE',
-            `${entityName} entityType must be a string.`,
+            `${entityName}.entityType must be a non-empty string when present.`,
             `${entityName}[${index}].entityType`
           )
         );
@@ -669,14 +1691,14 @@ function validateEntityTypes(
         return;
       }
 
-      const normalizedType =
+      const normalized =
         explicitType
           .trim()
           .toUpperCase();
 
       if (
         !VALID_ENTITY_TYPES.has(
-          normalizedType
+          normalized
         )
       ) {
         errors.push(
@@ -693,14 +1715,14 @@ function validateEntityTypes(
 
       if (
         expectedEntityType &&
-        normalizedType !==
+        normalized !==
           expectedEntityType
       ) {
         errors.push(
           issue(
             'ERROR',
             'ENTITY_TYPE_MISMATCH',
-            `${entityName} record declares "${normalizedType}" but expected "${expectedEntityType}".`,
+            `${entityName} record declares "${normalized}" but expected "${expectedEntityType}".`,
             `${entityName}[${index}].entityType`
           )
         );
@@ -712,433 +1734,115 @@ function validateEntityTypes(
 }
 
 /* -------------------------------------------------------------------------- */
-/* Reference validation                                                       */
+/* Numeric/date validation                                                    */
 /* -------------------------------------------------------------------------- */
 
-function createIdSet(
-  records
-) {
-  return new Set(
-    getArray(records)
-      .map(
-        record =>
-          record?.id
-      )
-      .filter(
-        isNonEmptyString
-      )
-      .map(
-        id =>
-          id.trim()
-      )
-  );
-}
-
-function validateReferenceArray(
-  records,
-  field,
-  validIds,
-  entityName
-) {
-  const errors = [];
-
-  if (
-    !Array.isArray(records)
-  ) {
-    return errors;
-  }
-
-  const ids =
-    validIds instanceof Set
-      ? validIds
-      : createIdSet(
-          validIds
-        );
-
-  records.forEach(
-    (record, index) => {
-      if (
-        !isObject(record)
-      ) {
-        return;
-      }
-
-      const values =
-        record[field];
-
-      if (
-        values ===
-          undefined ||
-        values === null
-      ) {
-        return;
-      }
-
-      if (
-        !Array.isArray(values)
-      ) {
-        errors.push(
-          issue(
-            'ERROR',
-            'REFERENCE_NOT_ARRAY',
-            `${field} must be an array.`,
-            `${entityName}[${index}].${field}`
-          )
-        );
-
-        return;
-      }
-
-      values.forEach(
-        (
-          value,
-          referenceIndex
-        ) => {
-          if (
-            !isNonEmptyString(
-              value
-            ) ||
-            !ids.has(
-              value.trim()
-            )
-          ) {
-            errors.push(
-              issue(
-                'ERROR',
-                'BROKEN_REFERENCE',
-                `${entityName}.${field} references unknown ID "${String(
-                  value
-                )}".`,
-                `${entityName}[${index}].${field}[${referenceIndex}]`
-              )
-            );
-          }
-        }
-      );
-    }
-  );
-
-  return errors;
-}
-
-function validateReferenceField(
-  records,
-  field,
-  validIds,
-  entityName
-) {
-  const errors = [];
-
-  if (
-    !Array.isArray(records)
-  ) {
-    return errors;
-  }
-
-  const ids =
-    validIds instanceof Set
-      ? validIds
-      : createIdSet(
-          validIds
-        );
-
-  records.forEach(
-    (record, index) => {
-      if (
-        !isObject(record)
-      ) {
-        return;
-      }
-
-      const value =
-        record[field];
-
-      if (
-        value ===
-          undefined ||
-        value === null ||
-        value === ''
-      ) {
-        return;
-      }
-
-      if (
-        !isNonEmptyString(
-          value
-        ) ||
-        !ids.has(
-          value.trim()
-        )
-      ) {
-        errors.push(
-          issue(
-            'ERROR',
-            'BROKEN_REFERENCE',
-            `${entityName}.${field} references unknown ID "${String(
-              value
-            )}".`,
-            `${entityName}[${index}].${field}`
-          )
-        );
-      }
-    }
-  );
-
-  return errors;
-}
-
-function validateFlexibleReference(
-  records,
-  field,
-  targetIds,
-  entityName,
+function validateNumericFields(
+  value,
+  path,
   {
-    allowArray = true,
-    allowString = true
+    recursive = true
   } = {}
 ) {
   const errors = [];
 
   if (
-    !Array.isArray(records)
+    !isObject(value)
   ) {
     return errors;
   }
 
-  const ids =
-    targetIds instanceof Set
-      ? targetIds
-      : createIdSet(
-          targetIds
-        );
-
-  records.forEach(
-    (record, index) => {
-      if (
-        !isObject(record)
-      ) {
-        return;
-      }
-
-      const value =
-        record[field];
+  Object.entries(
+    value
+  ).forEach(
+    ([
+      field,
+      fieldValue
+    ]) => {
+      const currentPath =
+        `${path}.${field}`;
 
       if (
-        value ===
-          undefined ||
-        value === null
-      ) {
-        return;
-      }
-
-      if (
-        allowArray &&
-        Array.isArray(
-          value
+        recursive &&
+        isObject(
+          fieldValue
         )
       ) {
-        value.forEach(
-          (
-            item,
-            itemIndex
-          ) => {
-            if (
-              !isNonEmptyString(
-                item
-              ) ||
-              !ids.has(
-                item.trim()
-              )
-            ) {
-              errors.push(
-                issue(
-                  'ERROR',
-                  'BROKEN_REFERENCE',
-                  `${entityName}.${field} references unknown ID "${String(
-                    item
-                  )}".`,
-                  `${entityName}[${index}].${field}[${itemIndex}]`
-                )
-              );
+        errors.push(
+          ...validateNumericFields(
+            fieldValue,
+            currentPath,
+            {
+              recursive: true
             }
-          }
+          )
         );
-
-        return;
       }
 
       if (
-        allowString &&
-        isNonEmptyString(
-          value
+        NON_NEGATIVE_NUMERIC_FIELDS.has(
+          field
         )
       ) {
         if (
-          !ids.has(
-            value.trim()
-          )
+          fieldValue ===
+            undefined ||
+          fieldValue ===
+            null
+        ) {
+          return;
+        }
+
+        if (
+          !isFiniteNumber(
+            fieldValue
+          ) ||
+          fieldValue < 0
         ) {
           errors.push(
             issue(
               'ERROR',
-              'BROKEN_REFERENCE',
-              `${entityName}.${field} references unknown ID "${value}".`,
-              `${entityName}[${index}].${field}`
+              'INVALID_NON_NEGATIVE_NUMBER',
+              `${field} must be a finite non-negative number.`,
+              currentPath
             )
           );
         }
-
-        return;
       }
 
-      errors.push(
-        issue(
-          'ERROR',
-          'INVALID_REFERENCE_SHAPE',
-          `${entityName}.${field} must contain a valid ID or ID array.`,
-          `${entityName}[${index}].${field}`
+      if (
+        PERCENTAGE_FIELDS.has(
+          field
         )
-      );
-    }
-  );
-
-  return errors;
-}
-
-/* -------------------------------------------------------------------------- */
-/* Scalar/date/numeric validation                                             */
-/* -------------------------------------------------------------------------- */
-
-function validateScores(
-  record,
-  entityName,
-  index
-) {
-  const errors = [];
-
-  SCORE_FIELDS.forEach(
-    field => {
-      const value =
-        record?.[field];
-
-      if (
-        value ===
-          undefined ||
-        value === null
       ) {
-        return;
-      }
+        if (
+          fieldValue ===
+            undefined ||
+          fieldValue ===
+            null
+        ) {
+          return;
+        }
 
-      if (
-        typeof value !==
-          'number' ||
-        !Number.isFinite(
-          value
-        ) ||
-        value < 0 ||
-        value > 10
-      ) {
-        errors.push(
-          issue(
-            'ERROR',
-            'INVALID_SCORE',
-            `${field} must be a finite number from 0 to 10.`,
-            `${entityName}[${index}].${field}`
-          )
-        );
+        if (
+          !isFiniteNumber(
+            fieldValue
+          ) ||
+          fieldValue < 0 ||
+          fieldValue > 100
+        ) {
+          errors.push(
+            issue(
+              'ERROR',
+              'INVALID_PERCENTAGE',
+              `${field} must be a finite number from 0 to 100.`,
+              currentPath
+            )
+          );
+        }
       }
     }
   );
-
-  return errors;
-}
-
-function validateNumericFields(
-  record,
-  entityName,
-  index
-) {
-  const errors = [];
-
-  if (
-    !isObject(record)
-  ) {
-    return errors;
-  }
-
-  for (
-    const [
-      field,
-      value
-    ] of Object.entries(
-      record
-    )
-  ) {
-    if (
-      NON_NEGATIVE_NUMERIC_FIELDS.has(
-        field
-      )
-    ) {
-      if (
-        value ===
-          undefined ||
-        value === null
-      ) {
-        continue;
-      }
-
-      if (
-        typeof value !==
-          'number' ||
-        !Number.isFinite(
-          value
-        ) ||
-        value < 0
-      ) {
-        errors.push(
-          issue(
-            'ERROR',
-            'INVALID_NUMERIC_FIELD',
-            `${field} must be a finite non-negative number.`,
-            `${entityName}[${index}].${field}`
-          )
-        );
-      }
-    }
-
-    if (
-      PERCENTAGE_FIELDS.has(
-        field
-      )
-    ) {
-      if (
-        value ===
-          undefined ||
-        value === null
-      ) {
-        continue;
-      }
-
-      if (
-        typeof value !==
-          'number' ||
-        !Number.isFinite(
-          value
-        ) ||
-        value < 0 ||
-        value > 100
-      ) {
-        errors.push(
-          issue(
-            'ERROR',
-            'INVALID_PERCENTAGE',
-            `${field} must be a number from 0 to 100.`,
-            `${entityName}[${index}].${field}`
-          )
-        );
-      }
-    }
-  }
 
   return errors;
 }
@@ -1154,98 +1858,197 @@ function isValidDateString(
     return false;
   }
 
+  const text =
+    value.trim();
+
+  if (
+    !/^\d{4}-\d{2}-\d{2}(?:T.*)?$/.test(
+      text
+    )
+  ) {
+    return false;
+  }
+
   const date =
     new Date(
-      value
+      text
+    );
+
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
+    return false;
+  }
+
+  /*
+   * Reject impossible calendar dates such as 2026-02-31.
+   */
+  const datePart =
+    text.slice(
+      0,
+      10
+    );
+
+  const [
+    year,
+    month,
+    day
+  ] =
+    datePart
+      .split(
+        '-'
+      )
+      .map(
+        Number
+      );
+
+  const reconstructed =
+    new Date(
+      Date.UTC(
+        year,
+        month - 1,
+        day
+      )
     );
 
   return (
-    !Number.isNaN(
-      date.getTime()
-    ) &&
-    /^\d{4}-\d{2}-\d{2}/.test(
-      value.trim()
-    )
+    reconstructed.getUTCFullYear() ===
+      year &&
+    reconstructed.getUTCMonth() ===
+      month - 1 &&
+    reconstructed.getUTCDate() ===
+      day
   );
 }
 
-function validateDateFields(
-  record,
-  entityName,
-  index
+function validateDateFieldsRecursive(
+  value,
+  path
 ) {
   const errors = [];
 
   if (
-    !isObject(record)
+    !isObject(value)
   ) {
     return errors;
   }
 
-  for (
-    const field of DATE_FIELDS
-  ) {
-    const value =
-      record[field];
+  Object.entries(
+    value
+  ).forEach(
+    ([
+      field,
+      fieldValue
+    ]) => {
+      const currentPath =
+        `${path}.${field}`;
 
-    if (
-      value ===
-        undefined ||
-      value === null ||
-      value === ''
-    ) {
-      continue;
-    }
-
-    if (
-      !isValidDateString(
-        value
-      )
-    ) {
-      errors.push(
-        issue(
-          'ERROR',
-          'INVALID_DATE',
-          `${field} must be a valid ISO-like date string (YYYY-MM-DD...).`,
-          `${entityName}[${index}].${field}`
+      if (
+        DATE_FIELDS.has(
+          field
         )
-      );
+      ) {
+        if (
+          fieldValue ===
+            undefined ||
+          fieldValue ===
+            null ||
+          fieldValue ===
+            ''
+        ) {
+          return;
+        }
+
+        if (
+          !isValidDateString(
+            fieldValue
+          )
+        ) {
+          errors.push(
+            issue(
+              'ERROR',
+              'INVALID_DATE',
+              `${field} must use YYYY-MM-DD or an ISO datetime with a valid calendar date.`,
+              currentPath
+            )
+          );
+        }
+
+        return;
+      }
+
+      if (
+        isObject(
+          fieldValue
+        )
+      ) {
+        errors.push(
+          ...validateDateFieldsRecursive(
+            fieldValue,
+            currentPath
+          )
+        );
+
+        return;
+      }
+
+      if (
+        Array.isArray(
+          fieldValue
+        )
+      ) {
+        fieldValue.forEach(
+          (
+            item,
+            index
+          ) => {
+            if (
+              isObject(
+                item
+              )
+            ) {
+              errors.push(
+                ...validateDateFieldsRecursive(
+                  item,
+                  `${currentPath}[${index}]`
+                )
+              );
+            }
+          }
+        );
+      }
     }
-  }
+  );
 
   return errors;
 }
 
-function compareDates(
-  from,
-  to
+function dateValue(
+  value
 ) {
   if (
-    !isValidDateString(from) ||
-    !isValidDateString(to)
+    !isValidDateString(
+      value
+    )
   ) {
     return null;
   }
 
-  return (
-    new Date(
-      from
-    ).getTime() <=
-    new Date(
-      to
-    ).getTime()
-  );
+  return new Date(
+    value
+  ).getTime();
 }
 
 function validateDateRanges(
-  record,
-  entityName,
-  index
+  value,
+  path
 ) {
   const errors = [];
 
   if (
-    !isObject(record)
+    !isObject(value)
   ) {
     return errors;
   }
@@ -1255,10 +2058,12 @@ function validateDateRanges(
       'effectiveFrom',
       'effectiveTo'
     ],
+
     [
       'validFrom',
       'validTo'
     ],
+
     [
       'startDate',
       'endDate'
@@ -1271,37 +2076,247 @@ function validateDateRanges(
       toField
     ]) => {
       const from =
-        record[fromField];
+        value[
+          fromField
+        ];
 
       const to =
-        record[toField];
+        value[
+          toField
+        ];
 
       if (
         from ===
           undefined ||
-        from === null ||
+        from ===
+          null ||
+        from ===
+          '' ||
         to ===
           undefined ||
-        to === null
+        to ===
+          null ||
+        to ===
+          ''
       ) {
         return;
       }
 
-      const valid =
-        compareDates(
-          from,
+      const fromTime =
+        dateValue(
+          from
+        );
+
+      const toTime =
+        dateValue(
           to
         );
 
       if (
-        valid === false
+        fromTime === null ||
+        toTime === null
+      ) {
+        return;
+      }
+
+      if (
+        fromTime >
+        toTime
       ) {
         errors.push(
           issue(
             'ERROR',
-            'INCONSISTENT_EFFECTIVE_DATES',
+            'INVALID_DATE_RANGE',
             `${fromField} cannot be later than ${toField}.`,
-            `${entityName}[${index}]`
+            path,
+            {
+              fromField,
+              toField
+            }
+          )
+        );
+      }
+    }
+  );
+
+  return errors;
+}
+
+function validateDateRangesRecursive(
+  value,
+  path
+) {
+  const errors = [];
+
+  if (
+    !isObject(value)
+  ) {
+    return errors;
+  }
+
+  errors.push(
+    ...validateDateRanges(
+      value,
+      path
+    )
+  );
+
+  Object.entries(
+    value
+  ).forEach(
+    ([
+      field,
+      fieldValue
+    ]) => {
+      const currentPath =
+        `${path}.${field}`;
+
+      if (
+        isObject(
+          fieldValue
+        )
+      ) {
+        errors.push(
+          ...validateDateRangesRecursive(
+            fieldValue,
+            currentPath
+          )
+        );
+      }
+
+      if (
+        Array.isArray(
+          fieldValue
+        )
+      ) {
+        fieldValue.forEach(
+          (
+            item,
+            index
+          ) => {
+            if (
+              isObject(
+                item
+              )
+            ) {
+              errors.push(
+                ...validateDateRangesRecursive(
+                  item,
+                  `${currentPath}[${index}]`
+                )
+              );
+            }
+          }
+        );
+      }
+    }
+  );
+
+  return errors;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Confidence / scores                                                        */
+/* -------------------------------------------------------------------------- */
+
+function validateConfidence(
+  record,
+  path
+) {
+  const errors = [];
+
+  const confidence =
+    record?.confidence;
+
+  if (
+    confidence ===
+      undefined ||
+    confidence ===
+      null ||
+    confidence ===
+      ''
+  ) {
+    return errors;
+  }
+
+  if (
+    !isNonEmptyString(
+      confidence
+    )
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'INVALID_CONFIDENCE',
+        'confidence must be a string.',
+        `${path}.confidence`
+      )
+    );
+
+    return errors;
+  }
+
+  const normalized =
+    confidence
+      .trim()
+      .toUpperCase();
+
+  if (
+    !VALID_CONFIDENCE.has(
+      normalized
+    )
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'INVALID_CONFIDENCE',
+        `Invalid confidence "${confidence}".`,
+        `${path}.confidence`
+      )
+    );
+  }
+
+  return errors;
+}
+
+function validateScores(
+  record,
+  path
+) {
+  const errors = [];
+
+  SCORE_FIELD_PATHS.forEach(
+    fieldPath => {
+      const value =
+        getPathValue(
+          record,
+          fieldPath
+        );
+
+      if (
+        value ===
+          undefined ||
+        value ===
+          null ||
+        value ===
+          ''
+      ) {
+        return;
+      }
+
+      if (
+        !isFiniteNumber(
+          value
+        ) ||
+        value < 0 ||
+        value > 10
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'INVALID_SCORE',
+            `${fieldPath} must be a finite number from 0 to 10.`,
+            `${path}.${fieldPath}`
           )
         );
       }
@@ -1312,111 +2327,19 @@ function validateDateRanges(
 }
 
 /* -------------------------------------------------------------------------- */
-/* Confidence/status/localization validation                                  */
+/* Localization                                                              */
 /* -------------------------------------------------------------------------- */
 
-function validateConfidence(
-  record,
-  entityName,
-  index
+function isSupportedLocaleTag(
+  locale
 ) {
-  const errors = [];
-
-  if (
-    !isObject(record)
-  ) {
-    return errors;
-  }
-
-  const confidence =
-    record.confidence;
-
-  if (
-    confidence ===
-      undefined ||
-    confidence ===
-      null
-  ) {
-    return errors;
-  }
-
-  if (
-    typeof confidence !==
-    'string'
-  ) {
-    errors.push(
-      issue(
-        'ERROR',
-        'INVALID_CONFIDENCE',
-        'confidence must be a string.',
-        `${entityName}[${index}].confidence`
-      )
-    );
-
-    return errors;
-  }
-
-  if (
-    !VALID_CONFIDENCE.has(
-      confidence
-        .trim()
-        .toUpperCase()
+  return (
+    typeof locale ===
+      'string' &&
+    /^[a-z]{2,3}(?:-[A-Z][a-zA-Z]{2,})?$/.test(
+      locale
     )
-  ) {
-    errors.push(
-      issue(
-        'ERROR',
-        'INVALID_CONFIDENCE',
-        `Invalid confidence "${confidence}".`,
-        `${entityName}[${index}].confidence`
-      )
-    );
-  }
-
-  return errors;
-}
-
-function validateStatus(
-  record,
-  entityName,
-  index
-) {
-  const errors = [];
-
-  if (
-    !isObject(record)
-  ) {
-    return errors;
-  }
-
-  const status =
-    record.status ??
-    record.currentStatus;
-
-  if (
-    status ===
-      undefined ||
-    status ===
-      null
-  ) {
-    return errors;
-  }
-
-  if (
-    typeof status !==
-    'string'
-  ) {
-    errors.push(
-      issue(
-        'ERROR',
-        'INVALID_STATUS',
-        'status/currentStatus must be a string.',
-        `${entityName}[${index}].status`
-      )
-    );
-  }
-
-  return errors;
+  );
 }
 
 function validateLocalizedValue(
@@ -1424,17 +2347,23 @@ function validateLocalizedValue(
   path,
   {
     supportedLocales = null,
-    allowPlainString = true
+    allowPlainString = true,
+    requireEnglish = false
   } = {}
 ) {
   const errors = [];
+  const warnings = [];
 
   if (
     value ===
       undefined ||
-    value === null
+    value ===
+      null
   ) {
-    return errors;
+    return {
+      errors,
+      warnings
+    };
   }
 
   if (
@@ -1445,23 +2374,45 @@ function validateLocalizedValue(
       allowPlainString &&
       value.trim()
     ) {
-      return errors;
+      if (
+        requireEnglish &&
+        !value.trim()
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'MISSING_ENGLISH_LOCALIZATION',
+            'Localized value requires English content.',
+            path
+          )
+        );
+      }
+
+      return {
+        errors,
+        warnings
+      };
     }
 
     errors.push(
       issue(
         'ERROR',
         'INVALID_LOCALIZED_VALUE',
-        'Localized value must be a non-empty string.',
+        'Localized value must be a non-empty string or locale map.',
         path
       )
     );
 
-    return errors;
+    return {
+      errors,
+      warnings
+    };
   }
 
   if (
-    !isObject(value)
+    !isObject(
+      value
+    )
   ) {
     errors.push(
       issue(
@@ -1472,7 +2423,10 @@ function validateLocalizedValue(
       )
     );
 
-    return errors;
+    return {
+      errors,
+      warnings
+    };
   }
 
   const entries =
@@ -1481,7 +2435,8 @@ function validateLocalizedValue(
     );
 
   if (
-    entries.length === 0
+    entries.length ===
+    0
   ) {
     errors.push(
       issue(
@@ -1492,7 +2447,10 @@ function validateLocalizedValue(
       )
     );
 
-    return errors;
+    return {
+      errors,
+      warnings
+    };
   }
 
   entries.forEach(
@@ -1501,7 +2459,7 @@ function validateLocalizedValue(
       text
     ]) => {
       if (
-        !/^[a-z]{2,3}(?:-[A-Z][a-zA-Z]{2,})?$/.test(
+        !isSupportedLocaleTag(
           locale
         )
       ) {
@@ -1522,7 +2480,7 @@ function validateLocalizedValue(
           locale
         )
       ) {
-        errors.push(
+        warnings.push(
           issue(
             'WARNING',
             'UNSUPPORTED_LOCALE',
@@ -1549,7 +2507,26 @@ function validateLocalizedValue(
     }
   );
 
-  return errors;
+  if (
+    requireEnglish &&
+    !isNonEmptyString(
+      value.en
+    )
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'MISSING_ENGLISH_LOCALIZATION',
+        'Localized value requires a non-empty English translation.',
+        `${path}.en`
+      )
+    );
+  }
+
+  return {
+    errors,
+    warnings
+  };
 }
 
 function validateLocalizedFields(
@@ -1559,51 +2536,83 @@ function validateLocalizedFields(
   supportedLocales
 ) {
   const errors = [];
+  const warnings = [];
 
   if (
-    !isObject(record)
+    !isObject(
+      record
+    )
   ) {
-    return errors;
+    return {
+      errors,
+      warnings
+    };
   }
 
-  const localizedFields =
-    [
-      'name',
-      'localizedName',
-      'title',
-      'localizedTitle',
-      'description',
-      'localizedDescription',
-      'shortName',
-      'nativeName'
-    ];
+  const localizedPaths = [
+    'name',
+    'shortName',
+    'title',
+    'description',
+    'officialName',
+    'displayName',
+    'identity.post',
+    'identity.description',
+    'eligibility.eligibilitySummary',
+    'eligibility.notes',
+    'recruitment.recruitmentNotes',
+    'cadreAuthority.authorityName',
+    'cadreAuthority.description',
+    'cadreScope.description',
+    'postingScope.description',
+    'transferControl.description',
+    'notes',
+    'analyticalNotes',
+    'analysis.analyticalNotes'
+  ];
 
-  localizedFields.forEach(
-    field => {
+  localizedPaths.forEach(
+    path => {
+      const value =
+        getPathValue(
+          record,
+          path
+        );
+
       if (
-        record[field] ===
+        value ===
           undefined
       ) {
         return;
       }
 
-      errors.push(
-        ...validateLocalizedValue(
-          record[field],
-          `${entityName}[${index}].${field}`,
+      const result =
+        validateLocalizedValue(
+          value,
+          `${entityName}[${index}].${path}`,
           {
             supportedLocales
           }
-        )
+        );
+
+      errors.push(
+        ...result.errors
+      );
+
+      warnings.push(
+        ...result.warnings
       );
     }
   );
 
-  return errors;
+  return {
+    errors,
+    warnings
+  };
 }
 
 /* -------------------------------------------------------------------------- */
-/* Job validation                                                             */
+/* Entity-specific validation                                                 */
 /* -------------------------------------------------------------------------- */
 
 function validateJobs(
@@ -1636,57 +2645,399 @@ function validateJobs(
   );
 
   if (
-    !Array.isArray(jobs)
+    !Array.isArray(
+      jobs
+    )
   ) {
-    return errors;
+    return {
+      errors,
+      warnings
+    };
   }
 
   jobs.forEach(
     (job, index) => {
       if (
-        !isObject(job)
+        !isObject(
+          job
+        )
       ) {
         return;
       }
 
-      const eligibility =
-        job.eligibilityStatus ??
-        job.baEligibility;
+      const path =
+        `jobs[${index}]`;
+
+      /*
+       * Required canonical Job structure.
+       */
+      if (
+        !isObject(
+          job.identity
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'MISSING_IDENTITY_OBJECT',
+            'Canonical job must contain an identity object.',
+            `${path}.identity`
+          )
+        );
+      } else {
+        [
+          'governmentId',
+          'departmentId',
+          'organisationId',
+          'post'
+        ].forEach(
+          field => {
+            if (
+              job.identity[
+                field
+              ] ===
+                undefined ||
+              job.identity[
+                field
+              ] ===
+                null ||
+              job.identity[
+                field
+              ] ===
+                ''
+            ) {
+              errors.push(
+                issue(
+                  'ERROR',
+                  'MISSING_REQUIRED_JOB_IDENTITY',
+                  `Canonical job identity requires "${field}".`,
+                  `${path}.identity.${field}`
+                )
+              );
+            }
+          }
+        );
+      }
 
       if (
-        eligibility !==
-          undefined &&
-        eligibility !==
-          null
+        !isObject(
+          job.recruitment
+        )
       ) {
-        const normalized =
-          String(
-            eligibility
+        errors.push(
+          issue(
+            'ERROR',
+            'MISSING_RECRUITMENT_OBJECT',
+            'Canonical job must contain a recruitment object.',
+            `${path}.recruitment`
           )
-            .trim()
-            .toUpperCase();
+        );
+      } else {
+        if (
+          !Array.isArray(
+            job.recruitment.routeIds
+          )
+        ) {
+          errors.push(
+            issue(
+              'ERROR',
+              'INVALID_ROUTE_IDS',
+              'job.recruitment.routeIds must be an array.',
+              `${path}.recruitment.routeIds`
+            )
+          );
+        }
+
+        if (
+          !isNonEmptyString(
+            job.recruitment.mode
+          )
+        ) {
+          errors.push(
+            issue(
+              'ERROR',
+              'MISSING_RECRUITMENT_MODE',
+              'job.recruitment.mode is required.',
+              `${path}.recruitment.mode`
+            )
+          );
+        }
+
+        if (
+          !isNonEmptyString(
+            job.recruitment.careerStatus
+          )
+        ) {
+          errors.push(
+            issue(
+              'ERROR',
+              'MISSING_CAREER_STATUS',
+              'job.recruitment.careerStatus is required.',
+              `${path}.recruitment.careerStatus`
+            )
+          );
+        }
+
+        if (
+          typeof job.recruitment.freshEntryEligible !==
+            'boolean'
+        ) {
+          errors.push(
+            issue(
+              'ERROR',
+              'INVALID_FRESH_ENTRY_ELIGIBILITY',
+              'job.recruitment.freshEntryEligible must be boolean.',
+              `${path}.recruitment.freshEntryEligible`
+            )
+          );
+        }
+      }
+
+      if (
+        !isObject(
+          job.eligibility
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'MISSING_ELIGIBILITY_OBJECT',
+            'Canonical job must contain an eligibility object.',
+            `${path}.eligibility`
+          )
+        );
+      } else {
+        if (
+          !isNonEmptyString(
+            job.eligibility.educationLevel
+          )
+        ) {
+          errors.push(
+            issue(
+              'ERROR',
+              'MISSING_EDUCATION_LEVEL',
+              'job.eligibility.educationLevel is required.',
+              `${path}.eligibility.educationLevel`
+            )
+          );
+        }
+
+        if (
+          !isNonEmptyString(
+            job.eligibility.minimumQualification
+          )
+        ) {
+          errors.push(
+            issue(
+              'ERROR',
+              'MISSING_MINIMUM_QUALIFICATION',
+              'job.eligibility.minimumQualification is required.',
+              `${path}.eligibility.minimumQualification`
+            )
+          );
+        }
+
+        if (
+          !Array.isArray(
+            job.eligibility.ruleIds
+          )
+        ) {
+          errors.push(
+            issue(
+              'ERROR',
+              'INVALID_JOB_RULE_IDS',
+              'job.eligibility.ruleIds must be an array.',
+              `${path}.eligibility.ruleIds`
+            )
+          );
+        }
+
+        if (
+          !isNonEmptyString(
+            job.eligibility.baEnglishAssessment
+          )
+        ) {
+          errors.push(
+            issue(
+              'ERROR',
+              'MISSING_BASELINE_ENGLISH_ASSESSMENT',
+              'job.eligibility.baEnglishAssessment is required by the canonical schema.',
+              `${path}.eligibility.baEnglishAssessment`
+            )
+          );
+        }
 
         /*
-         * Backward compatibility:
-         * legacy A/B/C values are accepted but produce a warning because
-         * canonical eligibility is now rule-driven.
+         * baEnglishAssessment is display/research metadata only.
+         * It is explicitly forbidden from becoming the runtime eligibility
+         * authority.
          */
         if (
-          /^[ABC](?:\s|$)/i.test(
-            String(
-              eligibility
-            )
+          Object.prototype.hasOwnProperty.call(
+            job,
+            'eligibilityStatus'
           )
         ) {
           warnings.push(
             issue(
               'WARNING',
-              'LEGACY_ELIGIBILITY_FIELD',
-              'Legacy A/B/C eligibility is present; canonical eligibility must be resolved from eligibility rules.',
-              `jobs[${index}].baEligibility`
+              'LEGACY_FLAT_ELIGIBILITY_STATUS',
+              'Flat job.eligibilityStatus is not authoritative in the canonical model; candidate eligibility must come from eligibility rules.',
+              `${path}.eligibilityStatus`
             )
           );
-        } else if (
+        }
+
+        if (
+          Object.prototype.hasOwnProperty.call(
+            job,
+            'baEligibility'
+          )
+        ) {
+          warnings.push(
+            issue(
+              'WARNING',
+              'LEGACY_BA_ELIGIBILITY',
+              'Legacy baEligibility is retained only as non-authoritative compatibility metadata and must not drive eligibility.',
+              `${path}.baEligibility`
+            )
+          );
+        }
+      }
+
+      [
+        'payProfileId',
+        'locationProfileId',
+        'housingProfileId',
+        'promotionProfileId',
+        'benefitProfileId'
+      ].forEach(
+        field => {
+          if (
+            !isNonEmptyString(
+              job[field]
+            )
+          ) {
+            errors.push(
+              issue(
+                'ERROR',
+                'MISSING_PROFILE_REFERENCE',
+                `${field} is required by the canonical job schema.`,
+                `${path}.${field}`
+              )
+            );
+          }
+        }
+      );
+
+      if (
+        !isObject(
+          job.lifestyle
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'MISSING_LIFESTYLE_OBJECT',
+            'Canonical job must contain lifestyle.',
+            `${path}.lifestyle`
+          )
+        );
+      }
+
+      if (
+        !isObject(
+          job.analysis
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'MISSING_ANALYSIS_OBJECT',
+            'Canonical job must contain analysis.',
+            `${path}.analysis`
+          )
+        );
+      }
+
+      if (
+        !Array.isArray(
+          job.sourceIds
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'INVALID_JOB_SOURCE_IDS',
+            'Canonical job sourceIds must be an array.',
+            `${path}.sourceIds`
+          )
+        );
+      }
+
+      if (
+        !isNonEmptyString(
+          job.currentness
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'MISSING_CURRENTNESS',
+            'Canonical job currentness is required.',
+            `${path}.currentness`
+          )
+        );
+      }
+
+      if (
+        !isNonEmptyString(
+          job.lastVerified
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'MISSING_LAST_VERIFIED',
+            'Canonical job lastVerified is required.',
+            `${path}.lastVerified`
+          )
+        );
+      }
+
+      if (
+        !isNonEmptyString(
+          job.dataVersion
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'MISSING_DATA_VERSION',
+            'Canonical job dataVersion is required.',
+            `${path}.dataVersion`
+          )
+        );
+      }
+
+      const eligibilityStatus =
+        job.recommendationEligibilityStatus ??
+        job.runtimeEligibilityStatus;
+
+      if (
+        eligibilityStatus !==
+          undefined &&
+        eligibilityStatus !==
+          null
+      ) {
+        const normalized =
+          String(
+            eligibilityStatus
+          )
+            .trim()
+            .toUpperCase();
+
+        if (
           !VALID_JOB_ELIGIBILITY.has(
             normalized
           )
@@ -1695,10 +3046,10 @@ function validateJobs(
             issue(
               'ERROR',
               'INVALID_ELIGIBILITY_STATUS',
-              `Invalid job eligibility status "${String(
-                eligibility
+              `Invalid candidate eligibility result "${String(
+                eligibilityStatus
               )}".`,
-              `jobs[${index}].eligibilityStatus`
+              `${path}.recommendationEligibilityStatus`
             )
           );
         }
@@ -1707,137 +3058,83 @@ function validateJobs(
       errors.push(
         ...validateConfidence(
           job,
-          'jobs',
-          index
-        )
-      );
-
-      errors.push(
-        ...validateStatus(
-          job,
-          'jobs',
-          index
+          path
         )
       );
 
       errors.push(
         ...validateScores(
           job,
-          'jobs',
-          index
+          path
         )
       );
 
       errors.push(
         ...validateNumericFields(
           job,
-          'jobs',
-          index
+          path
         )
       );
 
       errors.push(
-        ...validateDateFields(
+        ...validateDateFieldsRecursive(
           job,
-          'jobs',
-          index
+          path
         )
       );
 
       errors.push(
-        ...validateDateRanges(
+        ...validateDateRangesRecursive(
           job,
-          'jobs',
-          index
+          path
         )
       );
 
-      const startingBasic =
-        job.startingBasic;
-
-      const maximumBasic =
-        job.maximumBasic;
+      const score =
+        job.analysis?.score ??
+        job.score;
 
       if (
-        startingBasic !==
+        score !==
           undefined &&
-        startingBasic !==
-          null &&
-        maximumBasic !==
-          undefined &&
-        maximumBasic !==
-          null &&
-        typeof startingBasic ===
-          'number' &&
-        typeof maximumBasic ===
-          'number' &&
-        startingBasic >
-          maximumBasic
-      ) {
-        errors.push(
-          issue(
-            'ERROR',
-            'INVALID_PAY_RANGE',
-            'startingBasic cannot exceed maximumBasic.',
-            `jobs[${index}]`
-          )
-        );
-      }
-
-      if (
-        !Array.isArray(
-          job.sourceIds
-        ) &&
-        job.sourceIds !==
-          undefined &&
-        job.sourceIds !==
+        score !==
           null
       ) {
-        errors.push(
-          issue(
-            'ERROR',
-            'INVALID_SOURCE_IDS',
-            'sourceIds must be an array when provided.',
-            `jobs[${index}].sourceIds`
-          )
-        );
+        if (
+          !isFiniteNumber(
+            score
+          ) ||
+          score <
+            0 ||
+          score >
+            100
+        ) {
+          errors.push(
+            issue(
+              'ERROR',
+              'INVALID_JOB_SCORE',
+              'Any stored job score must be a finite number from 0 to 100.',
+              `${path}.score`
+            )
+          );
+        }
       }
 
-      if (
-        options.requireSources &&
-        !Array.isArray(
-          job.sourceIds
-        )
-      ) {
-        warnings.push(
-          issue(
-            'WARNING',
-            'MISSING_SOURCE_IDS',
-            'Job does not contain sourceIds.',
-            `jobs[${index}].sourceIds`
-          )
-        );
-      }
+      void options;
     }
   );
 
-  /*
-   * Warnings are deliberately not returned from the legacy validateJobs()
-   * signature. validateDatabase() performs the complete warning-aware pass.
-   */
-  void warnings;
-
-  return errors;
+  return {
+    errors,
+    warnings
+  };
 }
-
-/* -------------------------------------------------------------------------- */
-/* Exam validation                                                            */
-/* -------------------------------------------------------------------------- */
 
 function validateExams(
   exams
 ) {
   const errors = [];
+  const warnings = [];
 
   errors.push(
     ...validateObjectRecords(
@@ -1862,25 +3159,36 @@ function validateExams(
   );
 
   if (
-    !Array.isArray(exams)
+    !Array.isArray(
+      exams
+    )
   ) {
-    return errors;
+    return {
+      errors,
+      warnings
+    };
   }
 
   exams.forEach(
     (exam, index) => {
       if (
-        !isObject(exam)
+        !isObject(
+          exam
+        )
       ) {
         return;
       }
+
+      const path =
+        `exams[${index}]`;
 
       if (
         exam.year !==
           undefined &&
         exam.year !==
-          null &&
-        (
+          null
+      ) {
+        if (
           !Number.isInteger(
             exam.year
           ) ||
@@ -1888,47 +3196,66 @@ function validateExams(
             1900 ||
           exam.year >
             2200
-        )
-      ) {
-        errors.push(
-          issue(
-            'ERROR',
-            'INVALID_YEAR',
-            'Exam year must be a valid integer between 1900 and 2200.',
-            `exams[${index}].year`
-          )
-        );
+        ) {
+          errors.push(
+            issue(
+              'ERROR',
+              'INVALID_YEAR',
+              'Exam year must be an integer between 1900 and 2200.',
+              `${path}.year`
+            )
+          );
+        }
       }
 
       errors.push(
-        ...validateDateFields(
+        ...validateNumericFields(
           exam,
-          'exams',
-          index
+          path
         )
       );
 
       errors.push(
-        ...validateDateRanges(
+        ...validateDateFieldsRecursive(
           exam,
-          'exams',
-          index
+          path
         )
       );
+
+      errors.push(
+        ...validateDateRangesRecursive(
+          exam,
+          path
+        )
+      );
+
+      if (
+        exam.status ===
+        'UNKNOWN'
+      ) {
+        warnings.push(
+          issue(
+            'WARNING',
+            'UNKNOWN_EXAM_STATUS',
+            'Exam status is UNKNOWN.',
+            `${path}.status`
+          )
+        );
+      }
     }
   );
 
-  return errors;
+  return {
+    errors,
+    warnings
+  };
 }
-
-/* -------------------------------------------------------------------------- */
-/* Service-cadre validation                                                   */
-/* -------------------------------------------------------------------------- */
 
 function validateServiceCadres(
   serviceCadres
 ) {
   const errors = [];
+  const warnings = [];
 
   errors.push(
     ...validateObjectRecords(
@@ -1957,7 +3284,10 @@ function validateServiceCadres(
       serviceCadres
     )
   ) {
-    return errors;
+    return {
+      errors,
+      warnings
+    };
   }
 
   serviceCadres.forEach(
@@ -1966,48 +3296,760 @@ function validateServiceCadres(
       index
     ) => {
       if (
-        !isObject(record)
+        !isObject(
+          record
+        )
       ) {
         return;
+      }
+
+      const path =
+        `serviceCadres[${index}]`;
+
+      if (
+        !isNonEmptyString(
+          record.name
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'MISSING_SERVICE_CADRE_NAME',
+            'Service-cadre requires a canonical name.',
+            `${path}.name`
+          )
+        );
+      }
+
+      if (
+        !isNonEmptyString(
+          record.governmentId
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'MISSING_SERVICE_CADRE_GOVERNMENT_ID',
+            'Service-cadre requires governmentId.',
+            `${path}.governmentId`
+          )
+        );
+      }
+
+      if (
+        record.entryRoutes !==
+          undefined &&
+        !Array.isArray(
+          record.entryRoutes
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'INVALID_ENTRY_ROUTES',
+            'serviceCadres.entryRoutes must be an array.',
+            `${path}.entryRoutes`
+          )
+        );
+      }
+
+      if (
+        isObject(
+          record.cadreScope
+        ) &&
+        record.cadreScope.scopeType ===
+          'STATE' &&
+        !Array.isArray(
+          record.cadreScope.stateIds
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'STATE_CADRE_WITHOUT_STATE_IDS',
+            'A STATE service-cadre scope requires cadreScope.stateIds.',
+            `${path}.cadreScope.stateIds`
+          )
+        );
+      }
+
+      if (
+        record.classification ===
+          'STATE_GOVERNMENT_SERVICE' &&
+        !isNonEmptyString(
+          record.stateId
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'STATE_SERVICE_WITHOUT_STATE_ID',
+            'STATE_GOVERNMENT_SERVICE requires stateId.',
+            `${path}.stateId`
+          )
+        );
+      }
+
+      if (
+        record.classification ===
+          'CENTRAL_GOVERNMENT_SERVICE' &&
+        isNonEmptyString(
+          record.stateId
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'CENTRAL_SERVICE_HAS_STATE_ID',
+            'CENTRAL_GOVERNMENT_SERVICE must not carry a stateId.',
+            `${path}.stateId`
+          )
+        );
       }
 
       errors.push(
         ...validateConfidence(
           record,
-          'serviceCadres',
-          index
+          path
         )
       );
 
       errors.push(
-        ...validateDateFields(
+        ...validateNumericFields(
           record,
-          'serviceCadres',
-          index
+          path
         )
       );
 
       errors.push(
-        ...validateDateRanges(
+        ...validateDateFieldsRecursive(
           record,
-          'serviceCadres',
-          index
+          path
         )
       );
+
+      errors.push(
+        ...validateDateRangesRecursive(
+          record,
+          path
+        )
+      );
+
+      if (
+        Array.isArray(
+          record.postIds
+        ) &&
+        record.postIds.length ===
+          0
+      ) {
+        warnings.push(
+          issue(
+            'WARNING',
+            'EMPTY_SERVICE_CADRE_POST_IDS',
+            'Service-cadre postIds is present but empty.',
+            `${path}.postIds`
+          )
+        );
+      }
+
+      if (
+        record.status !==
+          undefined &&
+        [
+          'HISTORICAL',
+          'RENAMED',
+          'MERGED',
+          'REORGANISED',
+          'ABOLISHED'
+        ].includes(
+          record.status
+        ) &&
+        !isNonEmptyString(
+          record.effectiveTo
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'HISTORICAL_SERVICE_WITHOUT_END_DATE',
+            'Historical/retired service-cadre records require effectiveTo.',
+            `${path}.effectiveTo`
+          )
+        );
+      }
     }
   );
 
-  return errors;
+  return {
+    errors,
+    warnings
+  };
 }
 
 /* -------------------------------------------------------------------------- */
 /* Eligibility-rule validation                                                */
 /* -------------------------------------------------------------------------- */
 
+function validateEligibilityRuleTargets(
+  rule,
+  index
+) {
+  const errors = [];
+
+  const explicitTargetFields = [
+    'targetId',
+    'jobId',
+    'serviceCadreId',
+    'examId',
+    'targetJobId',
+    'targetServiceCadreId'
+  ];
+
+  const hasExplicitTarget =
+    explicitTargetFields.some(
+      field =>
+        isNonEmptyString(
+          rule[field]
+        )
+    );
+
+  if (
+    !hasExplicitTarget
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'MISSING_RULE_TARGET',
+        'Eligibility rule must identify at least one target through targetId or an explicit job/service-cadre/exam target reference.',
+        `eligibilityRules[${index}]`
+      )
+    );
+  }
+
+  if (
+    isNonEmptyString(
+      rule.targetType
+    )
+  ) {
+    const targetType =
+      rule.targetType
+        .trim()
+        .toUpperCase();
+
+    const supportedTargets =
+      new Set([
+        'JOB',
+        'EXAM',
+        'SERVICE_CADRE',
+        'RECRUITMENT'
+      ]);
+
+    if (
+      !supportedTargets.has(
+        targetType
+      )
+    ) {
+      errors.push(
+        issue(
+          'ERROR',
+          'INVALID_RULE_TARGET_TYPE',
+          `Unsupported eligibility-rule targetType "${rule.targetType}".`,
+          `eligibilityRules[${index}].targetType`
+        )
+      );
+    }
+  } else {
+    errors.push(
+      issue(
+        'ERROR',
+        'MISSING_RULE_TARGET_TYPE',
+        'Eligibility rule requires targetType.',
+        `eligibilityRules[${index}].targetType`
+      )
+    );
+  }
+
+  return errors;
+}
+
+function validateEligibilityRuleStructure(
+  rule,
+  index
+) {
+  const errors = [];
+  const warnings = [];
+
+  const path =
+    `eligibilityRules[${index}]`;
+
+  if (
+    !isNonEmptyString(
+      rule.ruleClass
+    )
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'MISSING_RULE_CLASS',
+        'Eligibility rule ruleClass is required.',
+        `${path}.ruleClass`
+      )
+    );
+  } else if (
+    !VALID_RULE_CLASSES.has(
+      rule.ruleClass
+        .trim()
+        .toUpperCase()
+    )
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'INVALID_RULE_CLASS',
+        `Invalid ruleClass "${rule.ruleClass}".`,
+        `${path}.ruleClass`
+      )
+    );
+  }
+
+  if (
+    !isNonEmptyString(
+      rule.effect
+    )
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'MISSING_RULE_EFFECT',
+        'Eligibility rule effect is required.',
+        `${path}.effect`
+      )
+    );
+  } else if (
+    !VALID_RULE_EFFECTS.has(
+      rule.effect
+        .trim()
+        .toUpperCase()
+    )
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'INVALID_RULE_EFFECT',
+        `Invalid rule effect "${rule.effect}".`,
+        `${path}.effect`
+      )
+    );
+  }
+
+  if (
+    rule.conditionType !==
+      undefined &&
+    rule.conditionType !==
+      null &&
+    !isNonEmptyString(
+      rule.conditionType
+    )
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'INVALID_CONDITION_TYPE',
+        'conditionType must be a non-empty string when present.',
+        `${path}.conditionType`
+      )
+    );
+  }
+
+  if (
+    rule.operator !==
+      undefined &&
+    rule.operator !==
+      null
+  ) {
+    if (
+      !isNonEmptyString(
+        rule.operator
+      )
+    ) {
+      errors.push(
+        issue(
+          'ERROR',
+          'INVALID_OPERATOR',
+          'operator must be a non-empty string when present.',
+          `${path}.operator`
+        )
+      );
+    } else if (
+      !VALID_OPERATORS.has(
+        rule.operator
+          .trim()
+          .toUpperCase()
+      )
+    ) {
+      errors.push(
+        issue(
+          'ERROR',
+          'UNKNOWN_OPERATOR',
+          `Unknown eligibility operator "${rule.operator}".`,
+          `${path}.operator`
+        )
+      );
+    }
+  }
+
+  if (
+    rule.logic !==
+      undefined &&
+    rule.logic !==
+      null
+  ) {
+    if (
+      !isObject(
+        rule.logic
+      )
+    ) {
+      errors.push(
+        issue(
+          'ERROR',
+          'INVALID_RULE_LOGIC',
+          'Eligibility rule logic must be an object.',
+          `${path}.logic`
+        )
+      );
+    } else {
+      if (
+        rule.logic.mode !==
+          undefined &&
+        !isNonEmptyString(
+          rule.logic.mode
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'INVALID_RULE_LOGIC_MODE',
+            'logic.mode must be a non-empty string when present.',
+            `${path}.logic.mode`
+          )
+        );
+      }
+
+      if (
+        rule.logic.ruleIds !==
+          undefined &&
+        !Array.isArray(
+          rule.logic.ruleIds
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'INVALID_RULE_LOGIC_IDS',
+            'logic.ruleIds must be an array when present.',
+            `${path}.logic.ruleIds`
+          )
+        );
+      }
+    }
+  }
+
+  if (
+    rule.verificationRequirement !==
+      undefined &&
+    !isNonEmptyString(
+      rule.verificationRequirement
+    ) &&
+    !isObject(
+      rule.verificationRequirement
+    )
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'INVALID_VERIFICATION_REQUIREMENT',
+        'verificationRequirement must be a string or object.',
+        `${path}.verificationRequirement`
+      )
+    );
+  }
+
+  if (
+    rule.mandatory !==
+      undefined &&
+    typeof rule.mandatory !==
+      'boolean'
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'INVALID_MANDATORY_FLAG',
+        'mandatory must be boolean when present.',
+        `${path}.mandatory`
+      )
+    );
+  }
+
+  if (
+    rule.conditional !==
+      undefined &&
+    typeof rule.conditional !==
+      'boolean'
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'INVALID_CONDITIONAL_FLAG',
+        'conditional must be boolean when present.',
+        `${path}.conditional`
+      )
+    );
+  }
+
+  if (
+    rule.reviewRequired !==
+      undefined &&
+    typeof rule.reviewRequired !==
+      'boolean'
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'INVALID_REVIEW_REQUIRED_FLAG',
+        'reviewRequired must be boolean when present.',
+        `${path}.reviewRequired`
+      )
+    );
+  }
+
+  if (
+    rule.priority !==
+      undefined &&
+    rule.priority !==
+      null
+  ) {
+    if (
+      !Number.isFinite(
+        rule.priority
+      )
+    ) {
+      errors.push(
+        issue(
+          'ERROR',
+          'INVALID_RULE_PRIORITY',
+          'priority must be a finite number.',
+          `${path}.priority`
+        )
+      );
+    }
+  }
+
+  /*
+   * Runtime cross-field checks required because JSON Schema cannot safely
+   * express all of these relationships without non-standard constructs.
+   */
+  const ageMin =
+    rule.minAge ??
+    rule.minimumAge;
+
+  const ageMax =
+    rule.maxAge ??
+    rule.maximumAge;
+
+  if (
+    isFiniteNumber(ageMin) &&
+    isFiniteNumber(ageMax) &&
+    ageMin >
+      ageMax
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'INVALID_AGE_RANGE',
+        'Minimum age cannot exceed maximum age.',
+        path
+      )
+    );
+  }
+
+  const percentageMin =
+    rule.minPercentage ??
+    rule.minimumPercentage;
+
+  const percentageMax =
+    rule.maxPercentage ??
+    rule.maximumPercentage;
+
+  if (
+    isFiniteNumber(
+      percentageMin
+    ) &&
+    isFiniteNumber(
+      percentageMax
+    ) &&
+    percentageMin >
+      percentageMax
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'INVALID_PERCENTAGE_RANGE',
+        'Minimum percentage cannot exceed maximum percentage.',
+        path
+      )
+    );
+  }
+
+  const marksMin =
+    rule.minMarks ??
+    rule.minimumMarks ??
+    rule.minimumMarksPercentage;
+
+  const marksMax =
+    rule.maxMarks ??
+    rule.maximumMarks ??
+    rule.maximumMarksPercentage;
+
+  if (
+    isFiniteNumber(
+      marksMin
+    ) &&
+    isFiniteNumber(
+      marksMax
+    ) &&
+    marksMin >
+      marksMax
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'INVALID_MARKS_RANGE',
+        'Minimum marks cannot exceed maximum marks.',
+        path
+      )
+    );
+  }
+
+  const experienceMin =
+    rule.minExperienceYears ??
+    rule.minimumExperienceYears ??
+    rule.requiredExperienceYears;
+
+  const experienceMax =
+    rule.maxExperienceYears ??
+    rule.maximumExperienceYears;
+
+  if (
+    isFiniteNumber(
+      experienceMin
+    ) &&
+    isFiniteNumber(
+      experienceMax
+    ) &&
+    experienceMin >
+      experienceMax
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'INVALID_EXPERIENCE_RANGE',
+        'Minimum experience cannot exceed maximum experience.',
+        path
+      )
+    );
+  }
+
+  errors.push(
+    ...validateConfidence(
+      rule,
+      path
+    )
+  );
+
+  errors.push(
+    ...validateNumericFields(
+      rule,
+      path
+    )
+  );
+
+  errors.push(
+    ...validateDateFieldsRecursive(
+      rule,
+      path
+    )
+  );
+
+  errors.push(
+    ...validateDateRangesRecursive(
+      rule,
+      path
+    )
+  );
+
+  if (
+    rule.ruleClass ===
+      'HARD' &&
+    (
+      !Array.isArray(
+        rule.sourceIds
+      ) ||
+      rule.sourceIds.length ===
+        0
+    )
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'HARD_RULE_WITHOUT_SOURCE',
+        'Hard eligibility rules require at least one sourceId.',
+        `${path}.sourceIds`
+      )
+    );
+  }
+
+  if (
+    rule.effect ===
+      'REQUIRE_VERIFICATION' &&
+    !rule.verificationRequirement
+  ) {
+    warnings.push(
+      issue(
+        'WARNING',
+        'VERIFICATION_EFFECT_WITHOUT_REQUIREMENT',
+        'Rule uses REQUIRE_VERIFICATION but does not specify verificationRequirement.',
+        `${path}.verificationRequirement`
+      )
+    );
+  }
+
+  if (
+    rule.effect ===
+      'CONDITIONAL' &&
+    rule.conditional ===
+      false
+  ) {
+    warnings.push(
+      issue(
+        'WARNING',
+        'CONDITIONAL_EFFECT_WITHOUT_FLAG',
+        'Rule has CONDITIONAL effect while conditional=false.',
+        `${path}.conditional`
+      )
+    );
+  }
+
+  return {
+    errors,
+    warnings
+  };
+}
+
 function validateEligibilityRules(
   rules
 ) {
   const errors = [];
+  const warnings = [];
 
   errors.push(
     ...validateObjectRecords(
@@ -2032,231 +4074,60 @@ function validateEligibilityRules(
   );
 
   if (
-    !Array.isArray(rules)
+    !Array.isArray(
+      rules
+    )
   ) {
-    return errors;
+    return {
+      errors,
+      warnings
+    };
   }
 
   rules.forEach(
     (rule, index) => {
       if (
-        !isObject(rule)
+        !isObject(
+          rule
+        )
       ) {
         return;
       }
 
-      if (
-        rule.ruleClass !==
-          undefined &&
-        rule.ruleClass !==
-          null
-      ) {
-        if (
-          typeof rule.ruleClass !==
-          'string' ||
-          !VALID_RULE_CLASSES.has(
-            rule.ruleClass
-              .trim()
-              .toUpperCase()
-          )
-        ) {
-          errors.push(
-            issue(
-              'ERROR',
-              'INVALID_RULE_CLASS',
-              `Invalid ruleClass "${String(
-                rule.ruleClass
-              )}".`,
-              `eligibilityRules[${index}].ruleClass`
-            )
-          );
-        }
-      }
-
-      if (
-        rule.minimumAge !==
-          undefined &&
-        rule.maximumAge !==
-          undefined &&
-        typeof rule.minimumAge ===
-          'number' &&
-        typeof rule.maximumAge ===
-          'number' &&
-        rule.minimumAge >
-          rule.maximumAge
-      ) {
-        errors.push(
-          issue(
-            'ERROR',
-            'INVALID_AGE_RANGE',
-            'minimumAge cannot exceed maximumAge.',
-            `eligibilityRules[${index}]`
-          )
-        );
-      }
-
-      if (
-        rule.minimumPercentage !==
-          undefined &&
-        rule.maximumPercentage !==
-          undefined &&
-        typeof rule.minimumPercentage ===
-          'number' &&
-        typeof rule.maximumPercentage ===
-          'number' &&
-        rule.minimumPercentage >
-          rule.maximumPercentage
-      ) {
-        errors.push(
-          issue(
-            'ERROR',
-            'INVALID_PERCENTAGE_RANGE',
-            'minimumPercentage cannot exceed maximumPercentage.',
-            `eligibilityRules[${index}]`
-          )
-        );
-      }
-
       errors.push(
-        ...validateConfidence(
+        ...validateEligibilityRuleTargets(
           rule,
-          'eligibilityRules',
           index
         )
       );
 
-      errors.push(
-        ...validateNumericFields(
+      const structure =
+        validateEligibilityRuleStructure(
           rule,
-          'eligibilityRules',
           index
-        )
-      );
-
-      errors.push(
-        ...validateDateFields(
-          rule,
-          'eligibilityRules',
-          index
-        )
-      );
-
-      errors.push(
-        ...validateDateRanges(
-          rule,
-          'eligibilityRules',
-          index
-        )
-      );
-
-      if (
-        rule.ruleClass ===
-          'HARD' &&
-        (
-          !Array.isArray(
-            rule.sourceIds
-          ) ||
-          rule.sourceIds.length ===
-            0
-        )
-      ) {
-        errors.push(
-          issue(
-            'ERROR',
-            'HARD_RULE_WITHOUT_SOURCE',
-            'A hard eligibility rule must contain at least one sourceId.',
-            `eligibilityRules[${index}].sourceIds`
-          )
-        );
-      }
-
-      /*
-       * A canonical rule must identify what it applies to.
-       */
-      const targetFields = [
-        'targetId',
-        'jobId',
-        'serviceCadreId',
-        'examId',
-        'targetJobId',
-        'targetServiceCadreId'
-      ];
-
-      const hasTarget =
-        targetFields.some(
-          field =>
-            isNonEmptyString(
-              rule[field]
-            )
         );
 
-      if (
-        !hasTarget
-      ) {
-        errors.push(
-          issue(
-            'ERROR',
-            'MISSING_RULE_TARGET',
-            'Eligibility rule must identify at least one target job, service cadre or exam.',
-            `eligibilityRules[${index}]`
-          )
-        );
-      }
+      errors.push(
+        ...structure.errors
+      );
 
-      /*
-       * Rule logic should never contain an empty requirement object.
-       */
-      const requirementCollections = [
-        rule.requirements,
-        rule.conditions,
-        rule.criteria,
-        rule.requirementsAll,
-        rule.requirementsAny
-      ];
-
-      requirementCollections.forEach(
-        (
-          collection,
-          collectionIndex
-        ) => {
-          if (
-            collection ===
-              undefined ||
-            collection ===
-              null
-          ) {
-            return;
-          }
-
-          if (
-            typeof collection !==
-              'object'
-          ) {
-            errors.push(
-              issue(
-                'ERROR',
-                'INVALID_RULE_REQUIREMENTS',
-                'Eligibility-rule requirement structure must be an object, array or valid modeled value.',
-                `eligibilityRules[${index}].requirements[${collectionIndex}]`
-              )
-            );
-          }
-        }
+      warnings.push(
+        ...structure.warnings
       );
     }
   );
 
-  return errors;
+  return {
+    errors,
+    warnings
+  };
 }
-
-/* -------------------------------------------------------------------------- */
-/* Qualification validation                                                   */
-/* -------------------------------------------------------------------------- */
 
 function validateQualifications(
   qualifications
 ) {
   const errors = [];
+  const warnings = [];
 
   errors.push(
     ...validateObjectRecords(
@@ -2285,7 +4156,10 @@ function validateQualifications(
       qualifications
     )
   ) {
-    return errors;
+    return {
+      errors,
+      warnings
+    };
   }
 
   qualifications.forEach(
@@ -2301,29 +4175,40 @@ function validateQualifications(
         return;
       }
 
+      const path =
+        `qualifications[${index}]`;
+
       errors.push(
         ...validateConfidence(
           qualification,
-          'qualifications',
-          index
+          path
         )
       );
 
       errors.push(
-        ...validateDateFields(
+        ...validateNumericFields(
           qualification,
-          'qualifications',
-          index
+          path
+        )
+      );
+
+      errors.push(
+        ...validateDateFieldsRecursive(
+          qualification,
+          path
         )
       );
     }
   );
 
-  return errors;
+  return {
+    errors,
+    warnings
+  };
 }
 
 /* -------------------------------------------------------------------------- */
-/* Generic entity validation                                                  */
+/* Generic collection validation                                              */
 /* -------------------------------------------------------------------------- */
 
 function validateGeneric(
@@ -2351,20 +4236,18 @@ function validateGeneric(
       entityName
     ];
 
-  if (
-    expectedType
-  ) {
-    errors.push(
-      ...validateEntityTypes(
-        records,
-        entityName,
-        expectedType
-      )
-    );
-  }
+  errors.push(
+    ...validateEntityTypes(
+      records,
+      entityName,
+      expectedType
+    )
+  );
 
   if (
-    !Array.isArray(records)
+    !Array.isArray(
+      records
+    )
   ) {
     return errors;
   }
@@ -2375,48 +4258,41 @@ function validateGeneric(
       index
     ) => {
       if (
-        !isObject(record)
+        !isObject(
+          record
+        )
       ) {
         return;
       }
 
+      const path =
+        `${entityName}[${index}]`;
+
       errors.push(
         ...validateConfidence(
           record,
-          entityName,
-          index
-        )
-      );
-
-      errors.push(
-        ...validateStatus(
-          record,
-          entityName,
-          index
+          path
         )
       );
 
       errors.push(
         ...validateNumericFields(
           record,
-          entityName,
-          index
+          path
         )
       );
 
       errors.push(
-        ...validateDateFields(
+        ...validateDateFieldsRecursive(
           record,
-          entityName,
-          index
+          path
         )
       );
 
       errors.push(
-        ...validateDateRanges(
+        ...validateDateRangesRecursive(
           record,
-          entityName,
-          index
+          path
         )
       );
     }
@@ -2426,13 +4302,619 @@ function validateGeneric(
 }
 
 /* -------------------------------------------------------------------------- */
-/* Cross-namespace ID validation                                              */
+/* ID/reference maps                                                          */
+/* -------------------------------------------------------------------------- */
+
+function createIdSet(
+  records
+) {
+  const ids =
+    new Set();
+
+  getArray(
+    records
+  ).forEach(
+    record => {
+      if (
+        isNonEmptyString(
+          record?.id
+        )
+      ) {
+        ids.add(
+          record.id.trim()
+        );
+      }
+    }
+  );
+
+  return ids;
+}
+
+function createReferenceSets(
+  database
+) {
+  const sets = {};
+
+  Object.keys(
+    COLLECTION_ENTITY_TYPES
+  ).forEach(
+    collection => {
+      sets[
+        collection
+      ] =
+        createIdSet(
+          database?.[
+            collection
+          ]
+        );
+    }
+  );
+
+  return sets;
+}
+
+function normalizeReferenceValues(
+  value
+) {
+  if (
+    value ===
+      undefined ||
+    value ===
+      null
+  ) {
+    return [];
+  }
+
+  if (
+    Array.isArray(
+      value
+    )
+  ) {
+    return value;
+  }
+
+  return [
+    value
+  ];
+}
+
+function validateReferenceDescriptor(
+  record,
+  descriptor,
+  sourceCollection,
+  sourceIndex,
+  referenceSets
+) {
+  const errors = [];
+
+  const value =
+    getPathValue(
+      record,
+      descriptor.path
+    );
+
+  if (
+    value ===
+      undefined ||
+    value ===
+      null ||
+    value ===
+      ''
+  ) {
+    if (
+      descriptor.optional
+    ) {
+      return errors;
+    }
+
+    /*
+     * The JSON schema remains the authority for which fields are structurally
+     * required. This semantic validator only complains about missing required
+     * references when the descriptor itself is explicitly required.
+     */
+    errors.push(
+      issue(
+        'ERROR',
+        'MISSING_REQUIRED_REFERENCE',
+        `${descriptor.path} is required but is missing.`,
+        `${sourceCollection}[${sourceIndex}].${descriptor.path}`
+      )
+    );
+
+    return errors;
+  }
+
+  const expected =
+    descriptor.kind ===
+      'many'
+      ? 'array'
+      : 'scalar';
+
+  if (
+    expected ===
+      'array' &&
+    !Array.isArray(
+      value
+    )
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'REFERENCE_NOT_ARRAY',
+        `${descriptor.path} must be an array.`,
+        `${sourceCollection}[${sourceIndex}].${descriptor.path}`
+      )
+    );
+
+    return errors;
+  }
+
+  if (
+    expected ===
+      'scalar' &&
+    Array.isArray(
+      value
+    )
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'REFERENCE_UNEXPECTED_ARRAY',
+        `${descriptor.path} must contain one canonical ID, not an array.`,
+        `${sourceCollection}[${sourceIndex}].${descriptor.path}`
+      )
+    );
+
+    return errors;
+  }
+
+  const values =
+    normalizeReferenceValues(
+      value
+    );
+
+  const targetIds =
+    referenceSets[
+      descriptor.target
+    ] ||
+    new Set();
+
+  values.forEach(
+    (
+      referencedId,
+      referenceIndex
+    ) => {
+      if (
+        !isNonEmptyString(
+          referencedId
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'INVALID_REFERENCE_ID',
+            `${descriptor.path} contains an invalid reference ID.`,
+            `${sourceCollection}[${sourceIndex}].${descriptor.path}${
+              descriptor.kind ===
+              'many'
+                ? `[${referenceIndex}]`
+                : ''
+            }`
+          )
+        );
+
+        return;
+      }
+
+      const id =
+        referencedId.trim();
+
+      if (
+        !targetIds.has(
+          id
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'BROKEN_REFERENCE',
+            `${sourceCollection}.${descriptor.path} references unknown ${descriptor.target} ID "${id}".`,
+            `${sourceCollection}[${sourceIndex}].${descriptor.path}${
+              descriptor.kind ===
+              'many'
+                ? `[${referenceIndex}]`
+                : ''
+            }`,
+            {
+              sourceCollection,
+              targetCollection:
+                descriptor.target,
+              id
+            }
+          )
+        );
+      }
+    }
+  );
+
+  return errors;
+}
+
+function validateCrossReferences(
+  database
+) {
+  const errors = [];
+  const referenceSets =
+    createReferenceSets(
+      database
+    );
+
+  Object.entries(
+    REFERENCE_PATHS
+  ).forEach(
+    ([
+      sourceCollection,
+      descriptors
+    ]) => {
+      const records =
+        database?.[
+          sourceCollection
+        ];
+
+      if (
+        !Array.isArray(
+          records
+        )
+      ) {
+        return;
+      }
+
+      records.forEach(
+        (
+          record,
+          sourceIndex
+        ) => {
+          if (
+            !isObject(
+              record
+            )
+          ) {
+            return;
+          }
+
+          descriptors.forEach(
+            descriptor => {
+              errors.push(
+                ...validateReferenceDescriptor(
+                  record,
+                  descriptor,
+                  sourceCollection,
+                  sourceIndex,
+                  referenceSets
+                )
+              );
+            }
+          );
+        }
+      );
+    }
+  );
+
+  /*
+   * Explicit runtime registry relationships.
+   *
+   * Some references are semantically represented in arrays of structured
+   * objects rather than direct ID fields.
+   */
+  errors.push(
+    ...validateServiceCadreEntryRoutes(
+      database,
+      referenceSets
+    )
+  );
+
+  errors.push(
+    ...validateServiceCadreRuleReferences(
+      database,
+      referenceSets
+    )
+  );
+
+  errors.push(
+    ...validateEligibilityRuleTargetsAgainstType(
+      database,
+      referenceSets
+    )
+  );
+
+  return errors;
+}
+
+function validateServiceCadreEntryRoutes(
+  database,
+  referenceSets
+) {
+  const errors = [];
+
+  getArray(
+    database?.serviceCadres
+  ).forEach(
+    (
+      serviceCadre,
+      index
+    ) => {
+      getArray(
+        serviceCadre.entryRoutes
+      ).forEach(
+        (
+          route,
+          routeIndex
+        ) => {
+          if (
+            !isObject(
+              route
+            )
+          ) {
+            errors.push(
+              issue(
+                'ERROR',
+                'INVALID_ENTRY_ROUTE',
+                'Service-cadre entry route must be an object.',
+                `serviceCadres[${index}].entryRoutes[${routeIndex}]`
+              )
+            );
+
+            return;
+          }
+
+          [
+            [
+              'examIds',
+              'exams'
+            ],
+            [
+              'recruitmentIds',
+              'recruitment'
+            ]
+          ].forEach(
+            ([
+              field,
+              target
+            ]) => {
+              if (
+                route[field] ===
+                  undefined
+              ) {
+                return;
+              }
+
+              if (
+                !Array.isArray(
+                  route[field]
+                )
+              ) {
+                errors.push(
+                  issue(
+                    'ERROR',
+                    'ENTRY_ROUTE_REFERENCE_NOT_ARRAY',
+                    `${field} must be an array.`,
+                    `serviceCadres[${index}].entryRoutes[${routeIndex}].${field}`
+                  )
+                );
+
+                return;
+              }
+
+              route[field].forEach(
+                (
+                  id,
+                  idIndex
+                ) => {
+                  if (
+                    !isNonEmptyString(
+                      id
+                    ) ||
+                    !referenceSets[
+                      target
+                    ]?.has(
+                      id.trim()
+                    )
+                  ) {
+                    errors.push(
+                      issue(
+                        'ERROR',
+                        'BROKEN_ENTRY_ROUTE_REFERENCE',
+                        `${field} references unknown ID "${String(
+                          id
+                        )}".`,
+                        `serviceCadres[${index}].entryRoutes[${routeIndex}].${field}[${idIndex}]`
+                      )
+                    );
+                  }
+                }
+              );
+            }
+          );
+        }
+      );
+    }
+  );
+
+  return errors;
+}
+
+function validateServiceCadreRuleReferences(
+  database,
+  referenceSets
+) {
+  const errors = [];
+
+  getArray(
+    database?.serviceCadres
+  ).forEach(
+    (
+      serviceCadre,
+      index
+    ) => {
+      getArray(
+        serviceCadre.serviceRuleReferences
+      ).forEach(
+        (
+          reference,
+          referenceIndex
+        ) => {
+          if (
+            !isObject(
+              reference
+            )
+          ) {
+            errors.push(
+              issue(
+                'ERROR',
+                'INVALID_SERVICE_RULE_REFERENCE',
+                'serviceRuleReferences entries must be objects.',
+                `serviceCadres[${index}].serviceRuleReferences[${referenceIndex}]`
+              )
+            );
+
+            return;
+          }
+
+          if (
+            reference.sourceIds !==
+              undefined
+          ) {
+            if (
+              !Array.isArray(
+                reference.sourceIds
+              )
+            ) {
+              errors.push(
+                issue(
+                  'ERROR',
+                  'INVALID_SERVICE_RULE_SOURCE_IDS',
+                  'serviceRuleReferences.sourceIds must be an array.',
+                  `serviceCadres[${index}].serviceRuleReferences[${referenceIndex}].sourceIds`
+                )
+              );
+
+              return;
+            }
+
+            reference.sourceIds.forEach(
+              (
+                sourceId,
+                sourceIndex
+              ) => {
+                if (
+                  !referenceSets.sources?.has(
+                    trimId(
+                      sourceId
+                    )
+                  )
+                ) {
+                  errors.push(
+                    issue(
+                      'ERROR',
+                      'BROKEN_SERVICE_RULE_SOURCE_REFERENCE',
+                      `serviceRuleReferences.sourceIds references unknown source ID "${String(
+                        sourceId
+                      )}".`,
+                      `serviceCadres[${index}].serviceRuleReferences[${referenceIndex}].sourceIds[${sourceIndex}]`
+                    )
+                  );
+                }
+              }
+            );
+          }
+        }
+      );
+    }
+  );
+
+  return errors;
+}
+
+function validateEligibilityRuleTargetsAgainstType(
+  database,
+  referenceSets
+) {
+  const errors = [];
+
+  getArray(
+    database?.eligibilityRules
+  ).forEach(
+    (
+      rule,
+      index
+    ) => {
+      if (
+        !isNonEmptyString(
+          rule.targetType
+        ) ||
+        !isNonEmptyString(
+          rule.targetId
+        )
+      ) {
+        return;
+      }
+
+      const targetType =
+        rule.targetType
+          .trim()
+          .toUpperCase();
+
+      const collectionByType = {
+        JOB: 'jobs',
+        EXAM: 'exams',
+        SERVICE_CADRE:
+          'serviceCadres',
+        RECRUITMENT:
+          'recruitment'
+      };
+
+      const targetCollection =
+        collectionByType[
+          targetType
+        ];
+
+      if (
+        !targetCollection
+      ) {
+        return;
+      }
+
+      if (
+        !referenceSets[
+          targetCollection
+        ]?.has(
+          rule.targetId.trim()
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'BROKEN_RULE_TARGET',
+            `Eligibility rule targetId "${rule.targetId}" does not exist in ${targetCollection}.`,
+            `eligibilityRules[${index}].targetId`
+          )
+        );
+      }
+    }
+  );
+
+  return errors;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Cross-namespace identity integrity                                         */
 /* -------------------------------------------------------------------------- */
 
 function collectEntityIds(
   database
 ) {
-  const result = new Map();
+  const occurrences =
+    new Map();
 
   Object.entries(
     COLLECTION_ENTITY_TYPES
@@ -2455,7 +4937,10 @@ function collectEntityIds(
       }
 
       records.forEach(
-        record => {
+        (
+          record,
+          index
+        ) => {
           if (
             !isNonEmptyString(
               record?.id
@@ -2468,72 +4953,72 @@ function collectEntityIds(
             record.id.trim();
 
           if (
-            !result.has(
+            !occurrences.has(
               id
             )
           ) {
-            result.set(
+            occurrences.set(
               id,
               []
             );
           }
 
-          result
-            .get(id)
+          occurrences
+            .get(
+              id
+            )
             .push({
               collection,
-              entityType
+              entityType,
+              index
             });
         }
       );
     }
   );
 
-  return result;
+  return occurrences;
 }
 
 function validateCrossNamespaceIds(
   database
 ) {
   const errors = [];
-  const allIds =
+  const occurrences =
     collectEntityIds(
       database
     );
 
-  allIds.forEach(
+  occurrences.forEach(
     (
-      occurrences,
+      records,
       id
     ) => {
-      const namespaces =
-        uniqueStrings(
-          occurrences.map(
-            occurrence =>
-              occurrence.collection
+      const collections =
+        [
+          ...new Set(
+            records.map(
+              record =>
+                record.collection
+            )
           )
-        );
+        ];
 
-      /*
-       * Same ID reused by multiple canonical entity collections creates
-       * ambiguity for generic references, search, AI context and registry
-       * lookup.
-       */
       if (
-        namespaces.length >
+        collections.length >
         1
       ) {
         errors.push(
           issue(
             'ERROR',
             'CROSS_NAMESPACE_ID_COLLISION',
-            `ID "${id}" is used by multiple entity collections: ${namespaces.join(
-              ', '
-            )}.`,
+            `Canonical ID "${id}" is used by multiple entity collections.`,
             null,
             {
               id,
-              occurrences
+              collections,
+              occurrences:
+                records
             }
           )
         );
@@ -2545,270 +5030,203 @@ function validateCrossNamespaceIds(
 }
 
 /* -------------------------------------------------------------------------- */
-/* Cross-reference validation                                                */
+/* Eligibility dependency cycles                                              */
 /* -------------------------------------------------------------------------- */
 
-function getReferenceTargets(
-  database
+function collectRuleDependencies(
+  rule
 ) {
-  const targets = {};
+  return [
+    ...new Set(
+      [
+        ...getArray(
+          rule?.dependsOnRuleIds
+        ),
+        ...getArray(
+          rule?.parentRuleIds
+        ),
+        ...getArray(
+          rule?.logic?.ruleIds
+        )
+      ]
+        .filter(
+          isNonEmptyString
+        )
+        .map(
+          value =>
+            value.trim()
+        )
+    )
+  ];
+}
 
-  Object.keys(
-    COLLECTION_ENTITY_TYPES
+function validateEligibilityRuleCycles(
+  rules
+) {
+  const errors = [];
+  const byId =
+    new Map();
+
+  getArray(
+    rules
   ).forEach(
-    collection => {
-      targets[
-        collection
-      ] =
-        createIdSet(
-          database?.[
-            collection
-          ]
+    rule => {
+      if (
+        isNonEmptyString(
+          rule?.id
+        )
+      ) {
+        byId.set(
+          rule.id.trim(),
+          rule
         );
+      }
     }
   );
 
-  return targets;
-}
+  const graph =
+    new Map();
 
-function resolveTargetSet(
-  targetName,
-  targetIds,
-  database,
-  record
-) {
-  if (
-    targetName ===
-      '__TARGET__'
-  ) {
-    const targetSet =
-      new Set();
-
-    [
-      'jobs',
-      'exams',
-      'serviceCadres'
-    ].forEach(
-      collection => {
-        createIdSet(
-          database?.[
-            collection
-          ]
-        ).forEach(
-          id =>
-            targetSet.add(
-              id
-            )
-        );
-      }
-    );
-
-    return targetSet;
-  }
-
-  return (
-    targetIds[
-      targetName
-    ] ||
-    new Set()
-  );
-}
-
-function validateMappedReferences(
-  database
-) {
-  const errors = [];
-  const targets =
-    getReferenceTargets(
-      database
-    );
-
-  Object.entries(
-    REFERENCE_FIELD_MAP
-  ).forEach(
-    ([
-      collection,
-      fieldMap
-    ]) => {
-      const records =
-        database?.[
-          collection
-        ];
-
-      if (
-        !Array.isArray(
-          records
+  byId.forEach(
+    (
+      rule,
+      id
+    ) => {
+      graph.set(
+        id,
+        collectRuleDependencies(
+          rule
         )
-      ) {
-        return;
-      }
-
-      Object.entries(
-        fieldMap
-      ).forEach(
-        ([
-          field,
-          targetCollection
-        ]) => {
-          const targetIds =
-            resolveTargetSet(
-              targetCollection,
-              targets,
-              database
-            );
-
-          if (
-            Array.isArray(
-              records
-            )
-          ) {
-            records.forEach(
-              (
-                record,
-                index
-              ) => {
-                if (
-                  !isObject(
-                    record
-                  )
-                ) {
-                  return;
-                }
-
-                const value =
-                  record[field];
-
-                if (
-                  value ===
-                    undefined ||
-                  value ===
-                    null ||
-                  value ===
-                    ''
-                ) {
-                  return;
-                }
-
-                if (
-                  Array.isArray(
-                    value
-                  )
-                ) {
-                  value.forEach(
-                    (
-                      item,
-                      itemIndex
-                    ) => {
-                      if (
-                        !isNonEmptyString(
-                          item
-                        ) ||
-                        !targetIds.has(
-                          item.trim()
-                        )
-                      ) {
-                        errors.push(
-                          issue(
-                            'ERROR',
-                            'BROKEN_REFERENCE',
-                            `${collection}.${field} references unknown ID "${String(
-                              item
-                            )}".`,
-                            `${collection}[${index}].${field}[${itemIndex}]`
-                          )
-                        );
-                      }
-                    }
-                  );
-
-                  return;
-                }
-
-                if (
-                  isNonEmptyString(
-                    value
-                  )
-                ) {
-                  if (
-                    !targetIds.has(
-                      value.trim()
-                    )
-                  ) {
-                    errors.push(
-                      issue(
-                        'ERROR',
-                        'BROKEN_REFERENCE',
-                        `${collection}.${field} references unknown ID "${value}".`,
-                        `${collection}[${index}].${field}`
-                      )
-                    );
-                  }
-
-                  return;
-                }
-
-                errors.push(
-                  issue(
-                    'ERROR',
-                    'INVALID_REFERENCE_SHAPE',
-                    `${collection}.${field} must contain an ID or array of IDs.`,
-                    `${collection}[${index}].${field}`
-                  )
-                );
-              }
-            );
-          }
-        }
       );
     }
   );
 
-  /*
-   * Additional cross-reference field aliases that may exist in data while
-   * keeping the canonical schema intentionally flexible.
-   */
-  errors.push(
-    ...validateReferenceArray(
-      database?.eligibilityRules,
-      'sourceIds',
-      targets.sources,
-      'eligibilityRules'
-    )
-  );
+  const state =
+    new Map();
 
-  errors.push(
-    ...validateReferenceArray(
-      database?.eligibilityRules,
-      'qualificationIds',
-      targets.qualifications,
-      'eligibilityRules'
-    )
-  );
+  const reported =
+    new Set();
 
-  errors.push(
-    ...validateReferenceArray(
-      database?.eligibilityRules,
-      'requiredQualificationIds',
-      targets.qualifications,
-      'eligibilityRules'
-    )
+  function visit(
+    node,
+    stack
+  ) {
+    const current =
+      state.get(
+        node
+      );
+
+    if (
+      current ===
+        'VISITING'
+    ) {
+      const start =
+        stack.indexOf(
+          node
+        );
+
+      const cycle =
+        (
+          start >= 0
+            ? stack.slice(
+                start
+              )
+            : stack
+        ).concat(
+          node
+        );
+
+      const signature =
+        cycle.join(
+          '→'
+        );
+
+      if (
+        !reported.has(
+          signature
+        )
+      ) {
+        reported.add(
+          signature
+        );
+
+        errors.push(
+          issue(
+            'ERROR',
+            'ELIGIBILITY_DEPENDENCY_CYCLE',
+            `Eligibility-rule dependency cycle detected: ${cycle.join(
+              ' → '
+            )}.`,
+            `eligibilityRules.${node}`,
+            {
+              cycle
+            }
+          )
+        );
+      }
+
+      return;
+    }
+
+    if (
+      current ===
+        'VISITED'
+    ) {
+      return;
+    }
+
+    state.set(
+      node,
+      'VISITING'
+    );
+
+    const dependencies =
+      graph.get(
+        node
+      ) ||
+      [];
+
+    dependencies.forEach(
+      dependencyId => {
+        if (
+          graph.has(
+            dependencyId
+          )
+        ) {
+          visit(
+            dependencyId,
+            [
+              ...stack,
+              node
+            ]
+          );
+        }
+      }
+    );
+
+    state.set(
+      node,
+      'VISITED'
+    );
+  }
+
+  graph.forEach(
+    (
+      _dependencies,
+      node
+    ) => {
+      visit(
+        node,
+        []
+      );
+    }
   );
 
   return errors;
 }
 
-function validateCrossReferences(
-  database
-) {
-  return [
-    ...validateMappedReferences(
-      database
-    )
-  ];
-}
-
 /* -------------------------------------------------------------------------- */
-/* Circular-reference validation                                              */
+/* Hierarchy cycles                                                           */
 /* -------------------------------------------------------------------------- */
 
 function validateHierarchyCycles(
@@ -2816,31 +5234,14 @@ function validateHierarchyCycles(
 ) {
   const errors = [];
 
-  /*
-   * Only hierarchy-like relationships are checked.
-   *
-   * We deliberately do NOT treat all job↔exam↔service-cadre references as
-   * cycle errors because legitimate bidirectional references are expected.
-   */
-  const collections =
-    Object.keys(
-      COLLECTION_ENTITY_TYPES
-    );
-
-  collections.forEach(
-    collection => {
+  HIERARCHY_RELATIONSHIPS.forEach(
+    relationship => {
       const records =
-        database?.[
-          collection
-        ];
-
-      if (
-        !Array.isArray(
-          records
-        )
-      ) {
-        return;
-      }
+        getArray(
+          database?.[
+            relationship.collection
+          ]
+        );
 
       const byId =
         new Map();
@@ -2860,168 +5261,151 @@ function validateHierarchyCycles(
         }
       );
 
-      HIERARCHICAL_REFERENCE_FIELDS.forEach(
-        field => {
-          const graph =
-            new Map();
+      const graph =
+        new Map();
 
-          records.forEach(
-            record => {
-              if (
-                !isNonEmptyString(
-                  record?.id
-                )
-              ) {
-                return;
-              }
-
-              const sourceId =
-                record.id.trim();
-
-              const value =
-                record[field];
-
-              if (
-                isNonEmptyString(
-                  value
-                )
-              ) {
-                graph.set(
-                  sourceId,
-                  value.trim()
-                );
-              }
-            }
-          );
-
-          /*
-           * Self-reference.
-           */
-          graph.forEach(
-            (
-              targetId,
-              sourceId
-            ) => {
-              if (
-                sourceId ===
-                targetId &&
-                byId.has(
-                  sourceId
-                )
-              ) {
-                errors.push(
-                  issue(
-                    'ERROR',
-                    'SELF_REFERENCE_CYCLE',
-                    `${collection} record "${sourceId}" references itself through ${field}.`,
-                    `${collection}.${sourceId}.${field}`
-                  )
-                );
-              }
-            }
-          );
-
-          /*
-           * Multi-node directed cycle detection.
-           */
-          const state =
-            new Map();
-
-          function visit(
-            node,
-            stack = []
-          ) {
-            const currentState =
-              state.get(
-                node
-              );
-
-            if (
-              currentState ===
-              'VISITING'
-            ) {
-              const cycleStart =
-                stack.indexOf(
-                  node
-                );
-
-              const cycle =
-                (
-                  cycleStart >=
-                  0
-                    ? stack.slice(
-                        cycleStart
-                      )
-                    : stack
-                ).concat(
-                  node
-                );
-
-              errors.push(
-                issue(
-                  'ERROR',
-                  'CIRCULAR_REFERENCE',
-                  `Circular ${field} relationship detected: ${cycle.join(
-                    ' → '
-                  )}.`,
-                  `${collection}.${node}.${field}`,
-                  {
-                    collection,
-                    field,
-                    cycle
-                  }
-                )
-              );
-
-              return;
-            }
-
-            if (
-              currentState ===
-              'VISITED'
-            ) {
-              return;
-            }
-
-            state.set(
-              node,
-              'VISITING'
+      records.forEach(
+        record => {
+          const sourceId =
+            trimId(
+              record?.id
             );
 
-            const next =
-              graph.get(
-                node
-              );
+          const parentId =
+            trimId(
+              record?.[
+                relationship.field
+              ]
+            );
 
-            if (
-              next &&
-              byId.has(
-                next
+          if (
+            sourceId &&
+            parentId
+          ) {
+            graph.set(
+              sourceId,
+              parentId
+            );
+          }
+        }
+      );
+
+      const state =
+        new Map();
+
+      const reported =
+        new Set();
+
+      function visit(
+        node,
+        stack
+      ) {
+        if (
+          state.get(
+            node
+          ) ===
+          'VISITING'
+        ) {
+          const start =
+            stack.indexOf(
+              node
+            );
+
+          const cycle =
+            (
+              start >= 0
+                ? stack.slice(
+                    start
+                  )
+                : stack
+            ).concat(
+              node
+            );
+
+          const signature =
+            `${relationship.collection}:${relationship.field}:${cycle.join(
+              '→'
+            )}`;
+
+          if (
+            !reported.has(
+              signature
+            )
+          ) {
+            reported.add(
+              signature
+            );
+
+            errors.push(
+              issue(
+                'ERROR',
+                'HIERARCHY_CYCLE',
+                `Circular hierarchy detected through ${relationship.field}: ${cycle.join(
+                  ' → '
+                )}.`,
+                `${relationship.collection}.${node}.${relationship.field}`,
+                {
+                  collection:
+                    relationship.collection,
+                  field:
+                    relationship.field,
+                  cycle
+                }
               )
-            ) {
-              visit(
-                next,
-                stack.concat(
-                  node
-                )
-              );
-            }
-
-            state.set(
-              node,
-              'VISITED'
             );
           }
 
-          graph.forEach(
-            (
-              _target,
-              source
-            ) => {
-              visit(
-                source
-              );
-            }
+          return;
+        }
+
+        if (
+          state.get(
+            node
+          ) ===
+          'VISITED'
+        ) {
+          return;
+        }
+
+        state.set(
+          node,
+          'VISITING'
+        );
+
+        const next =
+          graph.get(
+            node
+          );
+
+        if (
+          next &&
+          byId.has(
+            next
+          )
+        ) {
+          visit(
+            next,
+            [
+              ...stack,
+              node
+            ]
+          );
+        }
+
+        state.set(
+          node,
+          'VISITED'
+        );
+      }
+
+      graph.forEach(
+        (
+          _parent,
+          sourceId
+        ) => {
+          visit(
+            sourceId,
+            []
           );
         }
       );
@@ -3032,22 +5416,8 @@ function validateHierarchyCycles(
 }
 
 /* -------------------------------------------------------------------------- */
-/* Scoring-rule validation                                                     */
+/* Scoring-rule validation                                                    */
 /* -------------------------------------------------------------------------- */
-
-function collectScoringRules(
-  scoringRules
-) {
-  if (
-    !Array.isArray(
-      scoringRules
-    )
-  ) {
-    return [];
-  }
-
-  return scoringRules;
-}
 
 function validateScoringRules(
   scoringRules
@@ -3055,34 +5425,40 @@ function validateScoringRules(
   const errors = [];
   const warnings = [];
 
-  const rules =
-    collectScoringRules(
-      scoringRules
-    );
-
   errors.push(
     ...validateObjectRecords(
-      rules,
+      scoringRules,
       'scoringRules'
     )
   );
 
   errors.push(
     ...validateIds(
-      rules,
+      scoringRules,
       'scoringRules'
     )
   );
 
   errors.push(
     ...validateEntityTypes(
-      rules,
+      scoringRules,
       'scoringRules',
       'SCORING_RULE'
     )
   );
 
-  rules.forEach(
+  if (
+    !Array.isArray(
+      scoringRules
+    )
+  ) {
+    return {
+      errors,
+      warnings
+    };
+  }
+
+  scoringRules.forEach(
     (
       rule,
       index
@@ -3095,27 +5471,8 @@ function validateScoringRules(
         return;
       }
 
-      const metric =
-        rule.metric ??
-        rule.field ??
-        rule.key ??
-        rule.name;
-
-      if (
-        metric ===
-          undefined ||
-        metric ===
-          null
-      ) {
-        warnings.push(
-          issue(
-            'WARNING',
-            'SCORING_RULE_WITHOUT_METRIC',
-            'Scoring rule does not explicitly identify a metric.',
-            `scoringRules[${index}]`
-          )
-        );
-      }
+      const path =
+        `scoringRules[${index}]`;
 
       const direction =
         rule.direction ??
@@ -3129,8 +5486,9 @@ function validateScoringRules(
           null
       ) {
         if (
-          typeof direction !==
-          'string' ||
+          !isNonEmptyString(
+            direction
+          ) ||
           !VALID_METRIC_DIRECTIONS.has(
             direction
               .trim()
@@ -3141,63 +5499,79 @@ function validateScoringRules(
             issue(
               'ERROR',
               'INVALID_METRIC_DIRECTION',
-              `Invalid scoring metric direction "${String(
+              `Invalid metric direction "${String(
                 direction
               )}".`,
-              `scoringRules[${index}].direction`
+              `${path}.direction`
             )
           );
         }
-      } else {
-        warnings.push(
-          issue(
-            'WARNING',
-            'MISSING_METRIC_DIRECTION',
-            'Scoring rule does not specify an explicit metric direction.',
-            `scoringRules[${index}].direction`
-          )
-        );
       }
 
       if (
         rule.weight !==
           undefined &&
+        rule.weight !==
+          null &&
         (
-          typeof rule.weight !==
-            'number' ||
-          !Number.isFinite(
+          !isFiniteNumber(
             rule.weight
-          )
+          ) ||
+          rule.weight < 0
         )
       ) {
         errors.push(
           issue(
             'ERROR',
             'INVALID_SCORING_WEIGHT',
-            'Scoring rule weight must be a finite number.',
-            `scoringRules[${index}].weight`
+            'Scoring-rule weight must be a finite non-negative number.',
+            `${path}.weight`
           )
         );
       }
 
+      const minimum =
+        rule.minimum ??
+        rule.min;
+
+      const maximum =
+        rule.maximum ??
+        rule.max;
+
       if (
-        rule.minimum !==
-          undefined &&
-        rule.maximum !==
-          undefined &&
-        typeof rule.minimum ===
-          'number' &&
-        typeof rule.maximum ===
-          'number' &&
-        rule.minimum >
-          rule.maximum
+        isFiniteNumber(
+          minimum
+        ) &&
+        isFiniteNumber(
+          maximum
+        ) &&
+        minimum >
+          maximum
       ) {
         errors.push(
           issue(
             'ERROR',
             'INVALID_SCORING_RANGE',
-            'Scoring rule minimum cannot exceed maximum.',
-            `scoringRules[${index}]`
+            'Scoring-rule minimum cannot exceed maximum.',
+            path
+          )
+        );
+      }
+
+      if (
+        rule.metric ===
+          undefined &&
+        rule.field ===
+          undefined &&
+        rule.key ===
+          undefined
+      ) {
+        warnings.push(
+          issue(
+            'WARNING',
+            'SCORING_RULE_WITHOUT_METRIC',
+            'Scoring rule does not explicitly identify a metric.',
+            path
           )
         );
       }
@@ -3211,14 +5585,274 @@ function validateScoringRules(
 }
 
 /* -------------------------------------------------------------------------- */
-/* i18n validation                                                            */
+/* Source integrity                                                           */
+/* -------------------------------------------------------------------------- */
+
+function validateSourceIntegrity(
+  database
+) {
+  const errors = [];
+  const warnings = [];
+
+  getArray(
+    database?.sources
+  ).forEach(
+    (
+      source,
+      index
+    ) => {
+      if (
+        !isObject(
+          source
+        )
+      ) {
+        return;
+      }
+
+      const path =
+        `sources[${index}]`;
+
+      if (
+        source.url !==
+          undefined &&
+        source.url !==
+          null &&
+        source.url !==
+          ''
+      ) {
+        if (
+          !isNonEmptyString(
+            source.url
+          )
+        ) {
+          errors.push(
+            issue(
+              'ERROR',
+              'INVALID_SOURCE_URL',
+              'Source URL must be a non-empty string.',
+              `${path}.url`
+            )
+          );
+        } else {
+          try {
+            new URL(
+              source.url
+            );
+          } catch {
+            warnings.push(
+              issue(
+                'WARNING',
+                'INVALID_SOURCE_URL_FORMAT',
+                'Source URL is not a syntactically valid absolute URL.',
+                `${path}.url`
+              )
+            );
+          }
+        }
+      }
+
+      const sourceTypeId =
+        source.sourceTypeId;
+
+      if (
+        sourceTypeId !==
+          undefined &&
+        sourceTypeId !==
+          null &&
+        !isNonEmptyString(
+          sourceTypeId
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'INVALID_SOURCE_TYPE_ID',
+            'sourceTypeId must be a non-empty string when present.',
+            `${path}.sourceTypeId`
+          )
+        );
+      }
+
+      if (
+        !source.url &&
+        !source.documentId &&
+        !source.reference &&
+        !source.title
+      ) {
+        warnings.push(
+          issue(
+            'WARNING',
+            'SOURCE_WITHOUT_LOCATOR',
+            'Source has no obvious URL, document ID, reference or title locator.',
+            path
+          )
+        );
+      }
+
+      const confidence =
+        source.confidence;
+
+      if (
+        confidence !==
+          undefined &&
+        confidence !==
+          null
+      ) {
+        const normalized =
+          String(
+            confidence
+          )
+            .trim()
+            .toUpperCase();
+
+        if (
+          !VALID_CONFIDENCE.has(
+            normalized
+          )
+        ) {
+          errors.push(
+            issue(
+              'ERROR',
+              'INVALID_SOURCE_CONFIDENCE',
+              `Invalid source confidence "${String(
+                confidence
+              )}".`,
+              `${path}.confidence`
+            )
+          );
+        }
+      }
+    }
+  );
+
+  return {
+    errors,
+    warnings
+  };
+}
+
+/* -------------------------------------------------------------------------- */
+/* Source coverage                                                            */
+/* -------------------------------------------------------------------------- */
+
+function validateSourceCoverage(
+  database,
+  {
+    requireSources = false,
+    hardEligibilityRequiresSources = true
+  } = {}
+) {
+  const errors = [];
+  const warnings = [];
+
+  const sourceBearingCollections = [
+    'jobs',
+    'exams',
+    'serviceCadres',
+    'eligibilityRules',
+    'recruitment',
+    'pay',
+    'locations',
+    'housing',
+    'promotion',
+    'benefits',
+    'qualifications'
+  ];
+
+  sourceBearingCollections.forEach(
+    collection => {
+      getArray(
+        database?.[
+          collection
+        ]
+      ).forEach(
+        (
+          record,
+          index
+        ) => {
+          if (
+            !isObject(
+              record
+            )
+          ) {
+            return;
+          }
+
+          const sourceIds =
+            record.sourceIds;
+
+          if (
+            Array.isArray(
+              sourceIds
+            ) &&
+            sourceIds.length >
+              0
+          ) {
+            return;
+          }
+
+          if (
+            collection ===
+              'eligibilityRules' &&
+            record.ruleClass ===
+              'HARD' &&
+            hardEligibilityRequiresSources
+          ) {
+            errors.push(
+              issue(
+                'ERROR',
+                'HARD_RULE_WITHOUT_SOURCE',
+                'Hard eligibility rules require sourceIds.',
+                `${collection}[${index}].sourceIds`
+              )
+            );
+
+            return;
+          }
+
+          if (
+            requireSources
+          ) {
+            errors.push(
+              issue(
+                'ERROR',
+                'MISSING_REQUIRED_SOURCE',
+                `${collection} record has no sourceIds.`,
+                `${collection}[${index}].sourceIds`
+              )
+            );
+          } else {
+            warnings.push(
+              issue(
+                'WARNING',
+                'MISSING_SOURCE_IDS',
+                `${collection} record has no sourceIds.`,
+                `${collection}[${index}].sourceIds`
+              )
+            );
+          }
+        }
+      );
+    }
+  );
+
+  return {
+    errors,
+    warnings
+  };
+}
+
+/* -------------------------------------------------------------------------- */
+/* I18n validation                                                            */
 /* -------------------------------------------------------------------------- */
 
 function collectLocales(
   i18n
 ) {
   if (
-    !isObject(i18n)
+    !isObject(
+      i18n
+    )
   ) {
     return new Set();
   }
@@ -3227,10 +5861,7 @@ function collectLocales(
     Object.keys(
       i18n
     ).filter(
-      key =>
-        /^[a-z]{2,3}(?:-[A-Z][a-zA-Z]{2,})?$/.test(
-          key
-        )
+      isSupportedLocaleTag
     )
   );
 }
@@ -3238,7 +5869,7 @@ function collectLocales(
 function validateI18nCatalog(
   catalog,
   locale,
-  path = `i18n.${locale}`
+  path
 ) {
   const errors = [];
 
@@ -3265,7 +5896,7 @@ function validateI18nCatalog(
   ) {
     if (
       typeof value ===
-      'string'
+        'string'
     ) {
       if (
         !value.trim()
@@ -3329,7 +5960,7 @@ function validateI18nCatalog(
       issue(
         'ERROR',
         'INVALID_TRANSLATION_NODE',
-        'Translation node must be a string, array or object.',
+        'Translation nodes must be strings, arrays or objects.',
         currentPath
       )
     );
@@ -3350,7 +5981,7 @@ function flattenTranslationKeys(
 ) {
   if (
     typeof value ===
-    'string'
+      'string'
   ) {
     output.add(
       prefix
@@ -3484,7 +6115,7 @@ function validateI18n(
   locales.forEach(
     locale => {
       if (
-        !/^[a-z]{2,3}(?:-[A-Z][a-zA-Z]{2,})?$/.test(
+        !isSupportedLocaleTag(
           locale
         )
       ) {
@@ -3503,7 +6134,8 @@ function validateI18n(
       errors.push(
         ...validateI18nCatalog(
           i18n[locale],
-          locale
+          locale,
+          `i18n.${locale}`
         )
       );
     }
@@ -3606,190 +6238,105 @@ function validateI18n(
 }
 
 /* -------------------------------------------------------------------------- */
-/* Index/data validation                                                      */
+/* Derived-index validation                                                   */
 /* -------------------------------------------------------------------------- */
 
-function collectReferencedStrings(
-  value,
-  output = []
-) {
-  if (
-    typeof value ===
-    'string'
-  ) {
-    output.push(
-      value
-    );
-
-    return output;
-  }
-
-  if (
-    Array.isArray(
-      value
-    )
-  ) {
-    value.forEach(
-      item =>
-        collectReferencedStrings(
-          item,
-          output
-        )
-    );
-
-    return output;
-  }
-
-  if (
-    isObject(
-      value
-    )
-  ) {
-    Object.values(
-      value
-    ).forEach(
-      child =>
-        collectReferencedStrings(
-          child,
-          output
-        )
-    );
-  }
-
-  return output;
-}
-
-function looksLikeId(
+function isIndexPostingObject(
   value
 ) {
   return (
-    isNonEmptyString(
+    isObject(
       value
     ) &&
-    /^[a-zA-Z0-9][a-zA-Z0-9._-]{1,150}$/.test(
-      value.trim()
+    (
+      isNonEmptyString(
+        value.id
+      ) ||
+      isNonEmptyString(
+        value.recordId
+      ) ||
+      isNonEmptyString(
+        value.entityId
+      ) ||
+      isNonEmptyString(
+        value.canonicalId
+      )
     )
   );
 }
 
-function validateIndexShape(
-  indexValue,
-  indexName
-) {
-  const errors = [];
-
-  if (
-    !Array.isArray(
-      indexValue
-    ) &&
-    !isObject(
-      indexValue
-    )
-  ) {
-    errors.push(
-      issue(
-        'ERROR',
-        'INVALID_INDEX_SHAPE',
-        `${indexName} must be an array or object.`,
-        `indexes.${indexName}`
-      )
-    );
-  }
-
-  return errors;
-}
-
-function getIndexCandidateIds(
-  indexValue
+function extractIndexPostingIds(
+  value,
+  {
+    includeObjectKeys = true
+  } = {}
 ) {
   const ids =
     new Set();
 
-  if (
-    Array.isArray(
-      indexValue
-    )
+  function visit(
+    current
   ) {
-    indexValue.forEach(
-      item => {
+    if (
+      current ===
+        undefined ||
+      current ===
+        null
+    ) {
+      return;
+    }
+
+    if (
+      typeof current ===
+        'string'
+    ) {
+      return;
+    }
+
+    if (
+      Array.isArray(
+        current
+      )
+    ) {
+      current.forEach(
+        visit
+      );
+
+      return;
+    }
+
+    if (
+      !isObject(
+        current
+      )
+    ) {
+      return;
+    }
+
+    [
+      'id',
+      'recordId',
+      'entityId',
+      'canonicalId',
+      'jobId',
+      'examId',
+      'qualificationId',
+      'serviceCadreId',
+      'eligibilityRuleId'
+    ].forEach(
+      field => {
         if (
           isNonEmptyString(
-            item
+            current[field]
           )
         ) {
           ids.add(
-            item.trim()
-          );
-        }
-
-        if (
-          isObject(
-            item
-          )
-        ) {
-          [
-            'id',
-            'entityId',
-            'jobId',
-            'examId',
-            'qualificationId',
-            'serviceCadreId',
-            'eligibilityRuleId'
-          ].forEach(
-            field => {
-              if (
-                isNonEmptyString(
-                  item[field]
-                )
-              ) {
-                ids.add(
-                  item[field].trim()
-                );
-              }
-            }
-          );
-
-          [
-            'ids',
-            'entityIds',
-            'jobIds',
-            'examIds',
-            'qualificationIds'
-          ].forEach(
-            field => {
-              if (
-                Array.isArray(
-                  item[field]
-                )
-              ) {
-                item[field].forEach(
-                  id => {
-                    if (
-                      isNonEmptyString(
-                        id
-                      )
-                    ) {
-                      ids.add(
-                        id.trim()
-                      );
-                    }
-                  }
-                );
-              }
-            }
+            current[field].trim()
           );
         }
       }
     );
 
-    return ids;
-  }
-
-  if (
-    isObject(
-      indexValue
-    )
-  ) {
     [
       'ids',
       'entityIds',
@@ -3802,10 +6349,10 @@ function getIndexCandidateIds(
       field => {
         if (
           Array.isArray(
-            indexValue[field]
+            current[field]
           )
         ) {
-          indexValue[field].forEach(
+          current[field].forEach(
             id => {
               if (
                 isNonEmptyString(
@@ -3823,55 +6370,267 @@ function getIndexCandidateIds(
     );
 
     Object.entries(
-      indexValue
+      current
     ).forEach(
       ([
         key,
-        value
+        child
       ]) => {
         if (
-          [
+          includeObjectKeys &&
+          isNonEmptyString(
+            key
+          ) &&
+          ![
             'metadata',
+            'meta',
             '_meta',
             'version',
-            'generatedAt'
+            'generatedAt',
+            'description'
           ].includes(
             key
           )
         ) {
-          return;
-        }
-
-        if (
-          looksLikeId(
-            key
-          )
-        ) {
-          ids.add(
-            key.trim()
-          );
-        }
-
-        collectReferencedStrings(
-          value
-        ).forEach(
-          stringValue => {
+          /*
+           * Keys are not automatically IDs. We only inspect them when their
+           * child resembles a postings list/object.
+           */
+          if (
+            Array.isArray(
+              child
+            ) ||
+            isIndexPostingObject(
+              child
+            )
+          ) {
             if (
-              looksLikeId(
-                stringValue
+              !isNonEmptyString(
+                key
               )
             ) {
-              ids.add(
-                stringValue.trim()
-              );
+              return;
             }
           }
+        }
+
+        visit(
+          child
         );
       }
     );
   }
 
+  visit(
+    value
+  );
+
   return ids;
+}
+
+function validateRuntimeIndexGroup(
+  group,
+  domain,
+  canonicalIds,
+  path,
+  {
+    tokenIndex = false
+  } = {}
+) {
+  const errors = [];
+  const warnings = [];
+
+  if (
+    group ===
+      null ||
+    group ===
+      undefined
+  ) {
+    return {
+      errors,
+      warnings
+    };
+  }
+
+  if (
+    !isObject(
+      group
+    )
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'INVALID_INDEX_GROUP',
+        `${domain} index group must be an object.`,
+        path
+      )
+    );
+
+    return {
+      errors,
+      warnings
+    };
+  }
+
+  Object.entries(
+    group
+  ).forEach(
+    ([
+      indexName,
+      indexValue
+    ]) => {
+      if (
+        indexValue instanceof Map
+      ) {
+        indexValue.forEach(
+          (
+            postingValues,
+            key
+          ) => {
+            if (
+              !(postingValues instanceof Set) &&
+              !Array.isArray(
+                postingValues
+              )
+            ) {
+              errors.push(
+                issue(
+                  'ERROR',
+                  'INVALID_INDEX_POSTINGS',
+                  `Index ${indexName} must map keys to Sets or arrays of IDs.`,
+                  `${path}.${indexName}`
+                )
+              );
+
+              return;
+            }
+
+            const postings =
+              postingValues instanceof
+                Set
+                ? [
+                    ...postingValues
+                  ]
+                : postingValues;
+
+            postings.forEach(
+              id => {
+                if (
+                  !isNonEmptyString(
+                    id
+                  )
+                ) {
+                  errors.push(
+                    issue(
+                      'ERROR',
+                      'INVALID_INDEX_ID',
+                      `Index ${indexName} contains a non-string ID.`,
+                      `${path}.${indexName}.${String(
+                        key
+                      )}`
+                    )
+                  );
+
+                  return;
+                }
+
+                if (
+                  !canonicalIds.has(
+                    id.trim()
+                  )
+                ) {
+                  warnings.push(
+                    issue(
+                      'WARNING',
+                      'INDEX_UNKNOWN_ID',
+                      `Derived index ${indexName} contains ID "${id}" that is absent from the canonical ${domain} collection.`,
+                      `${path}.${indexName}.${String(
+                        key
+                      )}`,
+                      {
+                        domain,
+                        id:
+                          id.trim()
+                      }
+                    )
+                  );
+                }
+              }
+            );
+          }
+        );
+
+        return;
+      }
+
+      /*
+       * Serialized/static index shape.
+       */
+      if (
+        isObject(
+          indexValue
+        )
+      ) {
+        const candidateIds =
+          extractIndexPostingIds(
+            indexValue
+          );
+
+        candidateIds.forEach(
+          id => {
+            if (
+              !canonicalIds.has(
+                id
+              )
+            ) {
+              warnings.push(
+                issue(
+                  'WARNING',
+                  'INDEX_UNKNOWN_ID',
+                  `Derived index ${indexName} contains ID "${id}" absent from canonical ${domain} records.`,
+                  `${path}.${indexName}`,
+                  {
+                    domain,
+                    id
+                  }
+                )
+              );
+            }
+          }
+        );
+
+        return;
+      }
+
+      if (
+        tokenIndex &&
+        typeof indexValue ===
+          'string'
+      ) {
+        return;
+      }
+
+      if (
+        !Array.isArray(
+          indexValue
+        )
+      ) {
+        errors.push(
+          issue(
+            'ERROR',
+            'INVALID_INDEX_VALUE',
+            `Index ${indexName} contains an unsupported value.`,
+            `${path}.${indexName}`
+          )
+        );
+      }
+    }
+  );
+
+  return {
+    errors,
+    warnings
+  };
 }
 
 function validateIndexes(
@@ -3927,143 +6686,267 @@ function validateIndexes(
     };
   }
 
-  const canonicalCollections =
-    {
-      serviceCadre: 'serviceCadres',
-      serviceCadres: 'serviceCadres',
-      eligibilityRule:
-        'eligibilityRules',
-      eligibilityRules:
-        'eligibilityRules',
-      qualification:
-        'qualifications',
-      qualifications:
-        'qualifications',
-      job: 'jobs',
-      jobs: 'jobs',
-      exam: 'exams',
-      exams: 'exams',
-      department: 'departments',
-      departments: 'departments',
-      source: 'sources',
-      sources: 'sources'
-    };
+  const mappings = [
+    [
+      'jobs',
+      'jobs'
+    ],
+    [
+      'exams',
+      'exams'
+    ],
+    [
+      'departments',
+      'departments'
+    ],
+    [
+      'organisations',
+      'organisations'
+    ],
+    [
+      'serviceCadres',
+      'serviceCadres'
+    ],
+    [
+      'eligibilityRules',
+      'eligibilityRules'
+    ],
+    [
+      'qualifications',
+      'qualifications'
+    ],
+    [
+      'sources',
+      'sources'
+    ]
+  ];
 
-  Object.entries(
-    indexes
-  ).forEach(
+  mappings.forEach(
     ([
-      indexName,
-      indexValue
+      indexDomain,
+      collection
     ]) => {
-      errors.push(
-        ...validateIndexShape(
-          indexValue,
-          indexName
-        )
-      );
-
-      const targetCollection =
-        canonicalCollections[
-          indexName
+      const group =
+        indexes[
+          indexDomain
         ];
 
       if (
-        !targetCollection
+        group ===
+          undefined
       ) {
-        infos.push(
-          issue(
-            'INFO',
-            'INDEX_DETECTED',
-            `Derived index "${indexName}" is loaded.`,
-            `indexes.${indexName}`
-          )
-        );
-
         return;
       }
 
-      const canonicalIds =
-        createIdSet(
-          database?.[
-            targetCollection
-          ]
+      const result =
+        validateRuntimeIndexGroup(
+          group,
+          collection,
+          createIdSet(
+            database?.[
+              collection
+            ]
+          ),
+          `indexes.${indexDomain}`
         );
 
-      const candidateIds =
-        getIndexCandidateIds(
-          indexValue
-        );
+      errors.push(
+        ...result.errors
+      );
 
-      const unknownIds =
-        [
-          ...candidateIds
-        ].filter(
-          id =>
-            !canonicalIds.has(
-              id
-            )
-        );
-
-      /*
-       * We only flag an ID as broken when the index clearly expresses it as
-       * an entity identifier. Generic search-token strings are intentionally
-       * not treated as references.
-       */
-      unknownIds
-        .slice(
-          0,
-          100
-        )
-        .forEach(
-          id => {
-            warnings.push(
-              issue(
-                'WARNING',
-                'INDEX_UNKNOWN_ID',
-                `Index "${indexName}" contains ID "${id}" that is not present in ${targetCollection}.`,
-                `indexes.${indexName}`,
-                {
-                  targetCollection,
-                  id
-                }
-              )
-            );
-          }
-        );
-
-      if (
-        candidateIds.size >
-          0 &&
-        canonicalIds.size ===
-          0
-      ) {
-        errors.push(
-          issue(
-            'ERROR',
-            'INDEX_WITHOUT_SOURCE_DATA',
-            `Index "${indexName}" contains entries but ${targetCollection} has no loaded canonical records.`,
-            `indexes.${indexName}`
-          )
-        );
-      }
+      warnings.push(
+        ...result.warnings
+      );
 
       infos.push(
         issue(
           'INFO',
           'INDEX_VALIDATED',
-          `Validated derived index "${indexName}".`,
-          `indexes.${indexName}`,
-          {
-            candidateReferences:
-              candidateIds.size,
-            canonicalRecords:
-              canonicalIds.size
-          }
+          `Derived index group "${indexDomain}" was inspected.`,
+          `indexes.${indexDomain}`
         )
       );
     }
   );
+
+  /*
+   * Unified search index.
+   *
+   * Search documents may contain references and copied display metadata.
+   * They are derived structures, so the validator verifies reference targets
+   * but never treats them as canonical records.
+   */
+  const search =
+    indexes.search;
+
+  if (
+    search !==
+      undefined &&
+    search !==
+      null
+  ) {
+    if (
+      !isObject(
+        search
+      )
+    ) {
+      errors.push(
+        issue(
+          'ERROR',
+          'INVALID_SEARCH_INDEX',
+          'Unified search index must be an object.',
+          'indexes.search'
+        )
+      );
+    } else {
+      const documents =
+        Array.isArray(
+          search.documents
+        )
+          ? search.documents
+          : [];
+
+      const searchIds =
+        new Set();
+
+      documents.forEach(
+        (
+          document,
+          index
+        ) => {
+          if (
+            !isObject(
+              document
+            )
+          ) {
+            errors.push(
+              issue(
+                'ERROR',
+                'INVALID_SEARCH_DOCUMENT',
+                'Search index documents must be objects.',
+                `indexes.search.documents[${index}]`
+              )
+            );
+
+            return;
+          }
+
+          if (
+            !isNonEmptyString(
+              document.id
+            )
+          ) {
+            errors.push(
+              issue(
+                'ERROR',
+                'SEARCH_DOCUMENT_WITHOUT_ID',
+                'Search index documents require canonical IDs.',
+                `indexes.search.documents[${index}].id`
+              )
+            );
+
+            return;
+          }
+
+          const composite =
+            `${
+              document.entityType ||
+              ''
+            }:${document.id}`;
+
+          if (
+            searchIds.has(
+              composite
+            )
+          ) {
+            errors.push(
+              issue(
+                'ERROR',
+                'DUPLICATE_SEARCH_DOCUMENT',
+                `Duplicate search document "${composite}".`,
+                `indexes.search.documents[${index}].id`
+              )
+            );
+          }
+
+          searchIds.add(
+            composite
+          );
+
+          if (
+            isNonEmptyString(
+              document.entityType
+            )
+          ) {
+            const type =
+              document.entityType
+                .trim()
+                .toUpperCase();
+
+            if (
+              !VALID_ENTITY_TYPES.has(
+                type
+              )
+            ) {
+              errors.push(
+                issue(
+                  'ERROR',
+                  'INVALID_SEARCH_ENTITY_TYPE',
+                  `Search document entityType "${document.entityType}" is invalid.`,
+                  `indexes.search.documents[${index}].entityType`
+                )
+              );
+            } else {
+              const targetCollection =
+                Object.entries(
+                  COLLECTION_ENTITY_TYPES
+                ).find(
+                  ([
+                    _collection,
+                    entityType
+                  ]) =>
+                    entityType ===
+                    type
+                )?.[0];
+
+              if (
+                targetCollection &&
+                !createIdSet(
+                  database?.[
+                    targetCollection
+                  ]
+                ).has(
+                  document.id.trim()
+                )
+              ) {
+                warnings.push(
+                  issue(
+                    'WARNING',
+                    'SEARCH_DOCUMENT_UNKNOWN_CANONICAL_ID',
+                    `Search document references unknown canonical ID "${document.id}".`,
+                    `indexes.search.documents[${index}].id`
+                  )
+                );
+              }
+            }
+          }
+        }
+      );
+
+      infos.push(
+        issue(
+          'INFO',
+          'SEARCH_INDEX_VALIDATED',
+          `Unified search index contains ${documents.length} derived document(s).`,
+          'indexes.search.documents',
+          {
+            documents:
+              documents.length
+          }
+        )
+      );
+    }
+  }
 
   return {
     errors,
@@ -4073,362 +6956,207 @@ function validateIndexes(
 }
 
 /* -------------------------------------------------------------------------- */
-/* Source validation                                                          */
+/* Dataset presence                                                           */
 /* -------------------------------------------------------------------------- */
 
-function validateSourceIntegrity(
+function validateDatasetPresence(
   database
 ) {
   const errors = [];
   const warnings = [];
+  const infos = [];
 
-  const sources =
-    getArray(
-      database?.sources
-    );
+  const requiredCollections = [
+    'jobs',
+    'exams',
+    'qualifications'
+  ];
 
-  sources.forEach(
-    (
-      source,
-      index
-    ) => {
-      if (
-        !isObject(
-          source
-        )
-      ) {
-        return;
-      }
+  requiredCollections.forEach(
+    collection => {
+      const value =
+        database?.[
+          collection
+        ];
 
       if (
-        source.url !==
-          undefined &&
-        source.url !==
-          null &&
-        source.url !==
-          ''
-      ) {
-        if (
-          !isNonEmptyString(
-            source.url
-          )
-        ) {
-          errors.push(
-            issue(
-              'ERROR',
-              'INVALID_SOURCE_URL',
-              'Source URL must be a non-empty string.',
-              `sources[${index}].url`
-            )
-          );
-        }
-      }
-
-      const sourceType =
-        source.sourceType ??
-        source.type;
-
-      if (
-        sourceType !==
-          undefined &&
-        (
-          typeof sourceType !==
-            'string' ||
-          !sourceType.trim()
+        !Array.isArray(
+          value
         )
       ) {
         errors.push(
           issue(
             'ERROR',
-            'INVALID_SOURCE_TYPE',
-            'Source type must be a non-empty string when provided.',
-            `sources[${index}].sourceType`
+            'MISSING_REQUIRED_COLLECTION',
+            `${collection} must be a loaded array.`,
+            collection
           )
         );
       }
+    }
+  );
 
-      if (
-        !Array.isArray(
-          source.sourceTypes
-        ) &&
-        Array.isArray(
-          source.sourceTypeIds
+  Object.keys(
+    COLLECTION_ENTITY_TYPES
+  )
+    .filter(
+      collection =>
+        !requiredCollections.includes(
+          collection
         )
-      ) {
-        source.sourceTypeIds.forEach(
-          (
-            id,
-            idIndex
-          ) => {
-            if (
-              !isNonEmptyString(
-                id
-              )
-            ) {
-              errors.push(
-                issue(
-                  'ERROR',
-                  'INVALID_SOURCE_TYPE_ID',
-                  'sourceTypeIds entries must be non-empty strings.',
-                  `sources[${index}].sourceTypeIds[${idIndex}]`
-                )
-              );
-            }
-          }
-        );
-      }
-
-      if (
-        !source.url &&
-        !source.documentId &&
-        !source.reference &&
-        !source.title
-      ) {
-        warnings.push(
-          issue(
-            'WARNING',
-            'SOURCE_WITHOUT_LOCATOR',
-            'Source has no obvious URL, document ID, reference or title locator.',
-            `sources[${index}]`
-          )
-        );
-      }
-    }
-  );
-
-  return {
-    errors,
-    warnings
-  };
-}
-
-/* -------------------------------------------------------------------------- */
-/* Required source coverage                                                   */
-/* -------------------------------------------------------------------------- */
-
-function validateRequiredSourceCoverage(
-  database,
-  {
-    requireSources = false
-  } = {}
-) {
-  const errors = [];
-  const warnings = [];
-
-  const sourceBearingCollections =
-    [
-      'jobs',
-      'exams',
-      'serviceCadres',
-      'eligibilityRules',
-      'recruitment',
-      'pay',
-      'locations',
-      'housing',
-      'promotion',
-      'benefits',
-      'qualifications'
-    ];
-
-  sourceBearingCollections.forEach(
-    collection => {
-      const records =
-        getArray(
+    )
+    .forEach(
+      collection => {
+        const value =
           database?.[
             collection
-          ]
-        );
+          ];
 
-      records.forEach(
-        (
-          record,
-          index
-        ) => {
-          if (
-            !isObject(
-              record
+        if (
+          value ===
+            undefined ||
+          value ===
+            null
+        ) {
+          infos.push(
+            issue(
+              'INFO',
+              'COLLECTION_NOT_LOADED',
+              `${collection} collection is not currently loaded.`,
+              collection
             )
-          ) {
-            return;
-          }
+          );
 
-          const sourceIds =
-            record.sourceIds;
-
-          if (
-            Array.isArray(
-              sourceIds
-            ) &&
-            sourceIds.length >
-              0
-          ) {
-            return;
-          }
-
-          /*
-           * Hard eligibility rules are always fatal without source coverage;
-           * other entities can be handled as warnings unless strict mode is
-           * explicitly requested.
-           */
-          if (
-            collection ===
-              'eligibilityRules' &&
-            record.ruleClass ===
-              'HARD'
-          ) {
-            errors.push(
-              issue(
-                'ERROR',
-                'HARD_RULE_WITHOUT_SOURCE',
-                'Hard eligibility rule must have sourceIds.',
-                `${collection}[${index}].sourceIds`
-              )
-            );
-
-            return;
-          }
-
-          if (
-            requireSources
-          ) {
-            errors.push(
-              issue(
-                'ERROR',
-                'MISSING_REQUIRED_SOURCE',
-                `${collection} record has no sourceIds.`,
-                `${collection}[${index}].sourceIds`
-              )
-            );
-          } else {
-            warnings.push(
-              issue(
-                'WARNING',
-                'MISSING_SOURCE_IDS',
-                `${collection} record has no sourceIds.`,
-                `${collection}[${index}].sourceIds`
-              )
-            );
-          }
+          return;
         }
-      );
-    }
-  );
 
-  return {
-    errors,
-    warnings
-  };
-}
-
-/* -------------------------------------------------------------------------- */
-/* Required-field/entity completeness                                         */
-/* -------------------------------------------------------------------------- */
-
-function validateRequiredEntityFields(
-  database
-) {
-  const errors = [];
-  const warnings = [];
-
-  const requirements =
-    {
-      jobs: [
-        'id'
-      ],
-
-      exams: [
-        'id'
-      ],
-
-      serviceCadres: [
-        'id'
-      ],
-
-      eligibilityRules: [
-        'id',
-        'ruleClass'
-      ],
-
-      qualifications: [
-        'id'
-      ],
-
-      sources: [
-        'id'
-      ]
-    };
-
-  Object.entries(
-    requirements
-  ).forEach(
-    ([
-      collection,
-      fields
-    ]) => {
-      const records =
-        getArray(
-          database?.[
-            collection
-          ]
-        );
-
-      records.forEach(
-        (
-          record,
-          index
-        ) => {
-          if (
-            !isObject(
-              record
+        if (
+          !Array.isArray(
+            value
+          )
+        ) {
+          errors.push(
+            issue(
+              'ERROR',
+              'COLLECTION_NOT_ARRAY',
+              `${collection} must be an array when loaded.`,
+              collection
             )
-          ) {
-            return;
-          }
-
-          fields.forEach(
-            field => {
-              if (
-                field ===
-                  'id'
-              ) {
-                /*
-                 * validateIds() handles IDs.
-                 */
-                return;
-              }
-
-              if (
-                record[field] ===
-                  undefined ||
-                record[field] ===
-                  null ||
-                record[field] ===
-                  ''
-              ) {
-                warnings.push(
-                  issue(
-                    'WARNING',
-                    'MISSING_RECOMMENDED_FIELD',
-                    `${collection} record does not contain recommended field "${field}".`,
-                    `${collection}[${index}].${field}`
-                  )
-                );
-              }
-            }
           );
         }
-      );
-    }
-  );
+      }
+    );
 
   return {
     errors,
-    warnings
+    warnings,
+    infos
   };
 }
 
 /* -------------------------------------------------------------------------- */
-/* Database collection validation                                              */
+/* Registry compatibility                                                     */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Validate a runtime registry snapshot produced by the finalized registry.
+ *
+ * This is intentionally optional and does not import registry.js, preventing
+ * any circular dependency:
+ *
+ *   registry → no validator import
+ *   validator → no registry import
+ */
+function validateRegistrySnapshot(
+  snapshot,
+  options = {}
+) {
+  const errors = [];
+  const warnings = [];
+  const infos = [];
+
+  if (
+    !isObject(
+      snapshot
+    )
+  ) {
+    errors.push(
+      issue(
+        'ERROR',
+        'INVALID_REGISTRY_SNAPSHOT',
+        'Registry snapshot must be an object.',
+        'registry'
+      )
+    );
+
+    return makeResult(
+      errors,
+      warnings,
+      infos
+    );
+  }
+
+  const collections =
+    isObject(
+      snapshot.collections
+    )
+      ? snapshot.collections
+      : {};
+
+  const database = {};
+
+  Object.entries(
+    COLLECTION_ENTITY_TYPES
+  ).forEach(
+    ([
+      collection
+    ]) => {
+      database[
+        collection
+      ] =
+        Array.isArray(
+          collections[
+            collection
+          ]
+        )
+          ? collections[
+              collection
+            ]
+          : [];
+    }
+  );
+
+  if (
+    isObject(
+      snapshot.indexes
+    )
+  ) {
+    database.indexes =
+      snapshot.indexes;
+  }
+
+  if (
+    isObject(
+      snapshot.i18n
+    )
+  ) {
+    database.i18n =
+      snapshot.i18n;
+  }
+
+  return validateDatabase(
+    database,
+    {
+      ...options,
+      validateIndexes:
+        options.validateIndexes ??
+        true
+    }
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Complete database validation                                               */
 /* -------------------------------------------------------------------------- */
 
 function validateAllCollections(
@@ -4440,23 +7168,32 @@ function validateAllCollections(
   const errors = [];
   const warnings = [];
 
-  const specialValidators =
-    {
-      jobs: validateJobs,
-      exams: validateExams,
-      serviceCadres:
-        validateServiceCadres,
-      eligibilityRules:
-        validateEligibilityRules,
-      qualifications:
-        validateQualifications
-    };
+  const specialValidators = {
+    jobs:
+      validateJobs,
+
+    exams:
+      validateExams,
+
+    serviceCadres:
+      validateServiceCadres,
+
+    eligibilityRules:
+      validateEligibilityRules,
+
+    qualifications:
+      validateQualifications,
+
+    scoringRules:
+      validateScoringRules
+  };
 
   Object.entries(
     COLLECTION_ENTITY_TYPES
   ).forEach(
     ([
-      collection
+      collection,
+      expectedType
     ]) => {
       const records =
         database?.[
@@ -4477,13 +7214,38 @@ function validateAllCollections(
           collection
         ]
       ) {
-        errors.push(
-          ...specialValidators[
+        const result =
+          specialValidators[
             collection
           ](
             records
+          );
+
+        /*
+         * Most entity validators return { errors, warnings }.
+         * validateScoringRules is handled the same way.
+         */
+        errors.push(
+          ...(
+            Array.isArray(
+              result
+            )
+              ? result
+              : result.errors ||
+                []
           )
         );
+
+        if (
+          !Array.isArray(
+            result
+          )
+        ) {
+          warnings.push(
+            ...(result.warnings ||
+              [])
+          );
+        }
       } else {
         errors.push(
           ...validateGeneric(
@@ -4503,26 +7265,27 @@ function validateAllCollections(
             record,
             index
           ) => {
-            if (
-              !isObject(
-                record
-              )
-            ) {
-              return;
-            }
-
-            /*
-             * Localization validation is intentionally applied only when
-             * actual localized fields exist.
-             */
-            errors.push(
-              ...validateLocalizedFields(
+            const localized =
+              validateLocalizedFields(
                 record,
                 collection,
                 index,
                 supportedLocales
-              )
+              );
+
+            errors.push(
+              ...localized.errors
             );
+
+            warnings.push(
+              ...localized.warnings
+            );
+
+            /*
+             * Avoid accepting a record's domain `type` field as its
+             * entityType. The expected collection type is supplied above.
+             */
+            void expectedType;
           }
         );
       }
@@ -4535,120 +7298,18 @@ function validateAllCollections(
   };
 }
 
-/* -------------------------------------------------------------------------- */
-/* Dataset presence / completeness                                            */
-/* -------------------------------------------------------------------------- */
-
-function validateDatasetPresence(
-  database
-) {
-  const errors = [];
-  const warnings = [];
-  const infos = [];
-
-  const coreCollections =
-    [
-      'jobs',
-      'exams',
-      'qualifications'
-    ];
-
-  coreCollections.forEach(
-    collection => {
-      if (
-        !Array.isArray(
-          database?.[
-            collection
-          ]
-        )
-      ) {
-        errors.push(
-          issue(
-            'ERROR',
-            'MISSING_COLLECTION',
-            `${collection} collection must be an array.`,
-            collection
-          )
-        );
-      }
-    }
-  );
-
-  const optionalCollections =
-    [
-      'serviceCadres',
-      'eligibilityRules',
-      'recruitment',
-      'pay',
-      'locations',
-      'housing',
-      'promotion',
-      'benefits',
-      'sources',
-      'departments',
-      'organisations',
-      'governments',
-      'states'
-    ];
-
-  optionalCollections.forEach(
-    collection => {
-      const value =
-        database?.[
-          collection
-        ];
-
-      if (
-        value ===
-          undefined ||
-        value ===
-          null
-      ) {
-        infos.push(
-          issue(
-            'INFO',
-            'COLLECTION_NOT_LOADED',
-            `${collection} collection is not currently loaded.`,
-            collection
-          )
-        );
-      } else if (
-        !Array.isArray(
-          value
-        )
-      ) {
-        errors.push(
-          issue(
-            'ERROR',
-            'COLLECTION_NOT_ARRAY',
-            `${collection} must be an array.`,
-            collection
-          )
-        );
-      }
-    }
-  );
-
-  return {
-    errors,
-    warnings,
-    infos
-  };
-}
-
-/* -------------------------------------------------------------------------- */
-/* Primary database validation                                                */
-/* -------------------------------------------------------------------------- */
-
 function validateDatabase(
   database = {},
   {
     strict = false,
     requireSources = false,
-    validateIndexes: shouldValidateIndexes = true,
-    validateI18n: shouldValidateI18n = true,
+    validateIndexes:
+      shouldValidateIndexes = true,
+    validateI18n:
+      shouldValidateI18n = true,
     detectCycles = true,
-    detectCrossNamespaceCollisions = true
+    detectCrossNamespaceCollisions = true,
+    hardEligibilityRequiresSources = true
   } = {}
 ) {
   const errors = [];
@@ -4677,17 +7338,9 @@ function validateDatabase(
   }
 
   /*
-   * Determine loaded locale set before validating entity localized fields.
+   * Validate database presence first so all later checks can safely inspect
+   * canonical collections.
    */
-  const supportedLocales =
-    collectLocales(
-      database.i18n
-    );
-
-  /* ---------------------------------------------------------------------- */
-  /* Dataset presence                                                        */
-  /* ---------------------------------------------------------------------- */
-
   const presence =
     validateDatasetPresence(
       database
@@ -4705,10 +7358,14 @@ function validateDatabase(
     ...presence.infos
   );
 
-  /* ---------------------------------------------------------------------- */
-  /* Entity collections                                                       */
-  /* ---------------------------------------------------------------------- */
+  const supportedLocales =
+    collectLocales(
+      database.i18n
+    );
 
+  /*
+   * Entity collection validation.
+   */
   const collections =
     validateAllCollections(
       database,
@@ -4725,10 +7382,9 @@ function validateDatabase(
     ...collections.warnings
   );
 
-  /* ---------------------------------------------------------------------- */
-  /* Cross-namespace identity                                                */
-  /* ---------------------------------------------------------------------- */
-
+  /*
+   * Cross-namespace identity collisions.
+   */
   if (
     detectCrossNamespaceCollisions
   ) {
@@ -4739,23 +7395,27 @@ function validateDatabase(
     );
   }
 
-  /* ---------------------------------------------------------------------- */
-  /* References                                                              */
-  /* ---------------------------------------------------------------------- */
-
+  /*
+   * Canonical relationship integrity.
+   */
   errors.push(
     ...validateCrossReferences(
       database
     )
   );
 
-  /* ---------------------------------------------------------------------- */
-  /* Circular hierarchy references                                           */
-  /* ---------------------------------------------------------------------- */
-
+  /*
+   * Eligibility dependency integrity.
+   */
   if (
     detectCycles
   ) {
+    errors.push(
+      ...validateEligibilityRuleCycles(
+        database.eligibilityRules
+      )
+    );
+
     errors.push(
       ...validateHierarchyCycles(
         database
@@ -4763,78 +7423,57 @@ function validateDatabase(
     );
   }
 
-  /* ---------------------------------------------------------------------- */
-  /* Scoring rules                                                           */
-  /* ---------------------------------------------------------------------- */
-
-  const scoring =
-    validateScoringRules(
-      database.scoringRules ||
-        []
-    );
-
-  errors.push(
-    ...scoring.errors
-  );
-
-  warnings.push(
-    ...scoring.warnings
-  );
-
-  /* ---------------------------------------------------------------------- */
-  /* Indexes                                                                  */
-  /* ---------------------------------------------------------------------- */
-
+  /*
+   * Derived indexes.
+   */
   if (
     shouldValidateIndexes
   ) {
-    const indexes =
+    const indexResult =
       validateIndexes(
         database
       );
 
     errors.push(
-      ...indexes.errors
+      ...indexResult.errors
     );
 
     warnings.push(
-      ...indexes.warnings
+      ...indexResult.warnings
     );
 
     infos.push(
-      ...indexes.infos
+      ...indexResult.infos
     );
   }
 
-  /* ---------------------------------------------------------------------- */
-  /* i18n                                                                     */
-  /* ---------------------------------------------------------------------- */
-
+  /*
+   * i18n catalogs.
+   */
   if (
     shouldValidateI18n
   ) {
-    const i18n =
+    const i18nResult =
       validateI18n(
         database.i18n
       );
 
     errors.push(
-      ...i18n.errors
+      ...i18nResult.errors
     );
 
     warnings.push(
-      ...i18n.warnings
+      ...i18nResult.warnings
     );
 
     infos.push(
-      ...i18n.infos
+      ...i18nResult.infos
     );
   }
 
-  /* ---------------------------------------------------------------------- */
-  /* Sources                                                                  */
-  /* ---------------------------------------------------------------------- */
-
+  /*
+   * Source integrity and source coverage.
+   */
   const sourceIntegrity =
     validateSourceIntegrity(
       database
@@ -4849,12 +7488,14 @@ function validateDatabase(
   );
 
   const sourceCoverage =
-    validateRequiredSourceCoverage(
+    validateSourceCoverage(
       database,
       {
         requireSources:
           strict ||
-          requireSources
+          requireSources,
+
+        hardEligibilityRequiresSources
       }
     );
 
@@ -4866,27 +7507,9 @@ function validateDatabase(
     ...sourceCoverage.warnings
   );
 
-  /* ---------------------------------------------------------------------- */
-  /* Required fields                                                          */
-  /* ---------------------------------------------------------------------- */
-
-  const requiredFields =
-    validateRequiredEntityFields(
-      database
-    );
-
-  errors.push(
-    ...requiredFields.errors
-  );
-
-  warnings.push(
-    ...requiredFields.warnings
-  );
-
-  /* ---------------------------------------------------------------------- */
-  /* Basic quality diagnostics                                                */
-  /* ---------------------------------------------------------------------- */
-
+  /*
+   * High-level diagnostics.
+   */
   const jobCount =
     getArray(
       database.jobs
@@ -4902,41 +7525,130 @@ function validateDatabase(
       database.qualifications
     ).length;
 
+  const serviceCadreCount =
+    getArray(
+      database.serviceCadres
+    ).length;
+
+  const eligibilityRuleCount =
+    getArray(
+      database.eligibilityRules
+    ).length;
+
+  const sourceCount =
+    getArray(
+      database.sources
+    ).length;
+
   if (
-    jobCount === 0
+    jobCount ===
+    0
   ) {
     warnings.push(
       issue(
         'WARNING',
         'NO_JOBS',
-        'No job records are currently loaded.',
+        'No canonical job records are currently loaded.',
         'jobs'
       )
     );
   }
 
   if (
-    examCount === 0
+    examCount ===
+    0
   ) {
     warnings.push(
       issue(
         'WARNING',
         'NO_EXAMS',
-        'No exam records are currently loaded.',
+        'No canonical exam records are currently loaded.',
         'exams'
       )
     );
   }
 
   if (
-    qualificationCount === 0
+    qualificationCount ===
+    0
   ) {
     warnings.push(
       issue(
         'WARNING',
         'NO_QUALIFICATIONS',
-        'No qualification records are currently loaded.',
+        'No canonical qualification records are currently loaded.',
         'qualifications'
+      )
+    );
+  }
+
+  if (
+    serviceCadreCount ===
+    0
+  ) {
+    infos.push(
+      issue(
+        'INFO',
+        'NO_SERVICE_CADRES',
+        'No service-cadre records are currently loaded.',
+        'serviceCadres'
+      )
+    );
+  }
+
+  if (
+    eligibilityRuleCount ===
+    0
+  ) {
+    warnings.push(
+      issue(
+        'WARNING',
+        'NO_ELIGIBILITY_RULES',
+        'No canonical eligibility-rule records are currently loaded.',
+        'eligibilityRules'
+      )
+    );
+  }
+
+  if (
+    sourceCount ===
+    0
+  ) {
+    warnings.push(
+      issue(
+        'WARNING',
+        'NO_SOURCES',
+        'No source records are currently loaded.',
+        'sources'
+      )
+    );
+  }
+
+  /*
+   * Explicitly document the legacy-field boundary in diagnostics rather than
+   * silently treating old fields as authority.
+   */
+  const legacyBaEligibilityCount =
+    getArray(
+      database.jobs
+    ).filter(
+      job =>
+        Object.prototype.hasOwnProperty.call(
+          job,
+          'baEligibility'
+        )
+    ).length;
+
+  if (
+    legacyBaEligibilityCount >
+      0
+  ) {
+    warnings.push(
+      issue(
+        'WARNING',
+        'LEGACY_BA_ELIGIBILITY_PRESENT',
+        `${legacyBaEligibilityCount} job record(s) contain legacy baEligibility metadata. It is not used as runtime eligibility authority.`,
+        'jobs'
       )
     );
   }
@@ -4945,30 +7657,39 @@ function validateDatabase(
     issue(
       'INFO',
       'DATABASE_VALIDATION_COMPLETED',
-      'Runtime database validation completed.',
+      'Runtime canonical database validation completed.',
       'database',
       {
+        strict,
+
         counts: {
           jobs:
             jobCount,
+
           exams:
             examCount,
+
           qualifications:
             qualificationCount,
+
           serviceCadres:
-            getArray(
-              database.serviceCadres
-            ).length,
+            serviceCadreCount,
+
           eligibilityRules:
-            getArray(
-              database.eligibilityRules
-            ).length,
+            eligibilityRuleCount,
+
           sources:
-            getArray(
-              database.sources
-            ).length
+            sourceCount
         },
-        strict
+
+        canonicalArchitecture:
+          'relational',
+
+        eligibilityAuthority:
+          'eligibilityRules',
+
+        legacyBaEligibility:
+          'non-authoritative'
       }
     )
   );
@@ -4981,12 +7702,14 @@ function validateDatabase(
 }
 
 /* -------------------------------------------------------------------------- */
-/* Exports                                                                    */
+/* Compatibility exports                                                      */
 /* -------------------------------------------------------------------------- */
 
 export {
   VALID_JOB_ELIGIBILITY,
   VALID_RULE_CLASSES,
+  VALID_RULE_EFFECTS,
+  VALID_OPERATORS,
   VALID_CONFIDENCE,
   VALID_METRIC_DIRECTIONS,
   SCORE_FIELDS,
@@ -4998,14 +7721,13 @@ export {
   validateIds,
   validateEntityTypes,
 
-  validateReferenceArray,
-  validateReferenceField,
-  validateFlexibleReference,
-
-  validateScores,
   validateNumericFields,
-  validateDateFields,
+  validateDateFieldsRecursive,
   validateDateRanges,
+  validateDateRangesRecursive,
+
+  validateConfidence,
+  validateScores,
 
   validateLocalizedValue,
   validateLocalizedFields,
@@ -5019,16 +7741,17 @@ export {
 
   validateCrossReferences,
   validateCrossNamespaceIds,
+  validateEligibilityRuleCycles,
   validateHierarchyCycles,
 
   validateScoringRules,
+  validateSourceIntegrity,
+  validateSourceCoverage,
   validateI18n,
   validateIndexes,
 
-  validateSourceIntegrity,
-  validateRequiredSourceCoverage,
-  validateRequiredEntityFields,
   validateDatasetPresence,
+  validateRegistrySnapshot,
 
   validateDatabase
 };
@@ -5036,8 +7759,11 @@ export {
 export default {
   validateDatabase,
 
+  validateRegistrySnapshot,
+
   validateCrossReferences,
   validateCrossNamespaceIds,
+  validateEligibilityRuleCycles,
   validateHierarchyCycles,
 
   validateJobs,
@@ -5047,6 +7773,9 @@ export default {
   validateQualifications,
 
   validateScoringRules,
+  validateSourceIntegrity,
+  validateSourceCoverage,
+
   validateI18n,
   validateIndexes
 };
