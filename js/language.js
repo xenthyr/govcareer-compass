@@ -11,19 +11,28 @@
  * - Bengali
  *
  * Responsibilities:
- * - Load locale dictionaries from config/data/i18n.
+ * - Load locale dictionaries from config.data.i18n.
  * - Support nested translation keys.
- * - Resolve missing active-language keys through a fallback language.
- * - Persist the selected locale.
+ * - Resolve active-language values before configured fallback-language values.
+ * - Preserve explicit caller fallback and key fallback behavior.
+ * - Persist the selected locale through STORAGE_KEYS.
  * - Update <html lang=""> and <html dir="">.
- * - Update DOM translation bindings.
- * - Handle missing translation keys without breaking UI rendering.
- * - Emit language-change lifecycle events.
- * - Support future language expansion without changing stable record IDs.
+ * - Maintain language/direction data attributes.
+ * - Update DOM translation bindings safely.
+ * - Support interpolation.
+ * - Handle missing translations non-fatally while emitting diagnostics.
+ * - Emit canonical language lifecycle events.
+ * - Prevent duplicate listeners during repeated initialization.
+ * - Support future configured languages without component rewrites.
  *
- * Important architecture rule:
- * UI components must not hard-code translations that belong in
- * data/i18n dictionaries. Components should use translation keys.
+ * Architectural boundaries:
+ * - config.js owns public locale configuration.
+ * - storage.js owns persistence.
+ * - data/i18n/*.json owns translation content.
+ * - UI components consume this service; they do not own translations.
+ *
+ * This module contains no career, eligibility, scoring, ranking,
+ * database or AI business logic.
  */
 
 import config, {
@@ -36,11 +45,12 @@ import {
 } from './storage.js';
 
 
-/* --------------------------------------------------------------------------
- * Internal state
- * -------------------------------------------------------------------------- */
+/* ============================================================
+ * INTERNAL STATE
+ * ============================================================ */
 
-let translations = {};
+let translations =
+  {};
 
 let activeLanguage =
   resolveConfiguredDefaultLanguage();
@@ -55,9 +65,35 @@ let controlsBound =
   false;
 
 
-/* --------------------------------------------------------------------------
- * Configuration helpers
- * -------------------------------------------------------------------------- */
+/* ============================================================
+ * CONSTANTS
+ * ============================================================ */
+
+const LANGUAGE_ATTRIBUTE =
+  'data-language';
+
+const DIRECTION_ATTRIBUTE =
+  'data-direction';
+
+const ACTIVE_LANGUAGE_EVENT =
+  'gcc:languagechange';
+
+const COMPATIBILITY_LANGUAGE_EVENT =
+  'govcareer:languagechange';
+
+const READY_EVENT =
+  'govcareer:i18n-ready';
+
+const MISSING_KEY_EVENT =
+  'govcareer:i18n-missing';
+
+const LANGUAGE_ERROR_EVENT =
+  'govcareer:languageerror';
+
+
+/* ============================================================
+ * CONFIGURATION HELPERS
+ * ============================================================ */
 
 function getConfiguredLanguages() {
   const configured =
@@ -127,57 +163,44 @@ function resolveConfiguredFallbackLanguage() {
   const supported =
     getConfiguredLanguages();
 
-  const configuredFallback =
+  const configured =
     normalizeLanguageCode(
       config?.app?.fallbackLanguage
     );
 
   if (
-    configuredFallback &&
+    configured &&
     supported.includes(
-      configuredFallback
+      configured
     )
   ) {
-    return configuredFallback;
+    return configured;
   }
 
   /*
-   * The default application language is the natural fallback when a separate
-   * fallbackLanguage is not configured.
+   * A configured fallback is preferred. When it is omitted or invalid,
+   * the configured default language becomes the deterministic fallback.
    */
   return resolveConfiguredDefaultLanguage();
 }
 
 
+/* ============================================================
+ * LANGUAGE METADATA
+ * ============================================================ */
+
 /**
- * Resolve locale metadata from config.
+ * Read locale metadata from config without embedding translation content.
  *
- * Supported future shapes include:
+ * Canonical config.js currently exposes:
  *
- * config.app.languages = {
- *   en: {
- *     direction: 'ltr'
- *   },
- *   bn: {
- *     direction: 'ltr'
- *   }
- * }
+ *   config.app.languages
+ *   config.app.languageMeta
+ *   config.app.languageMetadata
+ *   config.app.languageDirections
  *
- * or:
- *
- * config.app.languageMeta = {
- *   en: {
- *     direction: 'ltr'
- *   }
- * }
- *
- * or:
- *
- * config.app.languageDirections = {
- *   en: 'ltr'
- * }
- *
- * LTR remains the safe default for unsupported/missing metadata.
+ * The feature-detection order keeps this service extensible while still
+ * using one configuration source.
  */
 function getLanguageMetadata(
   language
@@ -210,7 +233,8 @@ function getLanguageMetadata(
       ];
 
     if (
-      typeof entry === 'string'
+      typeof entry ===
+        'string'
     ) {
       return {
         direction:
@@ -222,14 +246,15 @@ function getLanguageMetadata(
 
     if (
       entry &&
-      typeof entry === 'object'
+      typeof entry ===
+        'object'
     ) {
       return {
         ...entry,
         direction:
           normalizeDirection(
             entry.direction ||
-              entry.dir
+            entry.dir
           )
       };
     }
@@ -277,11 +302,14 @@ function normalizeDirection(
 }
 
 
-/* --------------------------------------------------------------------------
- * Persistence
- * -------------------------------------------------------------------------- */
+/* ============================================================
+ * PERSISTENCE
+ * ============================================================ */
 
 function getStoredLanguage() {
+  const supported =
+    getConfiguredLanguages();
+
   const stored =
     normalizeLanguageCode(
       getItem(
@@ -289,9 +317,6 @@ function getStoredLanguage() {
         null
       )
     );
-
-  const supported =
-    getConfiguredLanguages();
 
   if (
     stored &&
@@ -306,9 +331,9 @@ function getStoredLanguage() {
 }
 
 
-/* --------------------------------------------------------------------------
- * Translation resource loading
- * -------------------------------------------------------------------------- */
+/* ============================================================
+ * TRANSLATION RESOURCE PATHS
+ * ============================================================ */
 
 function getLanguagePath(
   language
@@ -318,32 +343,60 @@ function getLanguagePath(
       language
     );
 
+  const i18n =
+    config?.data?.i18n;
+
+  if (
+    i18n &&
+    typeof i18n ===
+      'object'
+  ) {
+    const path =
+      i18n[
+        normalized
+      ];
+
+    if (
+      typeof path ===
+        'string' &&
+      path.trim()
+    ) {
+      return path;
+    }
+  }
+
   /*
-   * Current canonical config:
-   * config.data.i18n[language]
+   * Compatibility with future configuration structures.
    *
-   * Additional supported future structures are intentionally feature-detected
-   * so the service does not have to be rewritten when config is reorganized.
+   * These do not introduce additional configuration sources at runtime;
+   * they merely allow the service to consume the same configured map if
+   * the shape is reorganized later.
    */
-  const configuredMaps = [
-    config?.data?.i18n,
+  const alternateMaps = [
     config?.data?.locales,
     config?.data?.languages
   ];
 
   for (
-    const map of configuredMaps
+    const map of alternateMaps
   ) {
     if (
       map &&
-      typeof map === 'object' &&
-      map[
-        normalized
-      ]
+      typeof map ===
+        'object'
     ) {
-      return map[
-        normalized
-      ];
+      const path =
+        map[
+          normalized
+        ];
+
+      if (
+        typeof path ===
+          'string' &&
+        path.trim()
+      ) {
+        return path;
+      }
     }
   }
 
@@ -351,9 +404,6 @@ function getLanguagePath(
 }
 
 
-/**
- * Validate that the supplied locale is actually configured.
- */
 function assertSupportedLanguage(
   language
 ) {
@@ -380,11 +430,24 @@ function assertSupportedLanguage(
 }
 
 
+/* ============================================================
+ * LOCALE LOADING / CACHING
+ * ============================================================ */
+
 /**
- * Load one locale dictionary.
+ * Load a locale dictionary.
  *
- * Loading is cached by locale. Concurrent callers share the same Promise
- * through the cache entry rather than issuing duplicate requests.
+ * loadedLanguages may contain either:
+ *
+ *   Promise<object>
+ *
+ * while the locale is loading, or:
+ *
+ *   object
+ *
+ * after resolution.
+ *
+ * Failed loads are removed from the cache so a later retry remains possible.
  */
 async function loadLanguage(
   language
@@ -394,29 +457,21 @@ async function loadLanguage(
       language
     );
 
-
   const cached =
     loadedLanguages.get(
       normalized
     );
 
-
   if (
     cached
   ) {
-    /*
-     * A cached Promise is supported during loading; after resolution the
-     * dictionary itself is retained.
-     */
     return await cached;
   }
-
 
   const path =
     getLanguagePath(
       normalized
     );
-
 
   if (
     !path
@@ -426,11 +481,18 @@ async function loadLanguage(
     );
   }
 
-
   const loadPromise =
     fetch(
       path,
       {
+        method:
+          'GET',
+
+        headers: {
+          Accept:
+            'application/json'
+        },
+
         cache:
           'default'
       }
@@ -470,9 +532,6 @@ async function loadLanguage(
         (
           error
         ) => {
-          /*
-           * A rejected Promise must not poison the cache permanently.
-           */
           loadedLanguages.delete(
             normalized
           );
@@ -481,22 +540,50 @@ async function loadLanguage(
         }
       );
 
-
   loadedLanguages.set(
     normalized,
     loadPromise
   );
 
-
   return await loadPromise;
 }
 
 
-/**
- * Preload multiple languages.
- *
- * Useful when the application wants instant language switching after startup.
- */
+async function ensureLanguageDictionary(
+  language
+) {
+  const normalized =
+    assertSupportedLanguage(
+      language
+    );
+
+  const cached =
+    loadedLanguages.get(
+      normalized
+    );
+
+  if (
+    cached &&
+    typeof cached.then !==
+      'function'
+  ) {
+    return cached;
+  }
+
+  const dictionary =
+    await loadLanguage(
+      normalized
+    );
+
+  loadedLanguages.set(
+    normalized,
+    dictionary
+  );
+
+  return dictionary;
+}
+
+
 async function preloadLanguages(
   languages = []
 ) {
@@ -509,7 +596,6 @@ async function preloadLanguages(
           languages
         ];
 
-
   const normalized =
     [
       ...new Set(
@@ -521,13 +607,10 @@ async function preloadLanguages(
       )
     ];
 
-
   return Promise.all(
     normalized.map(
-      (
-        language
-      ) =>
-        loadLanguage(
+      language =>
+        ensureLanguageDictionary(
           language
         )
     )
@@ -535,23 +618,61 @@ async function preloadLanguages(
 }
 
 
-/* --------------------------------------------------------------------------
- * Nested translation lookup
- * -------------------------------------------------------------------------- */
+function getCachedDictionary(
+  language
+) {
+  const normalized =
+    normalizeLanguageCode(
+      language
+    );
+
+  const cached =
+    loadedLanguages.get(
+      normalized
+    );
+
+  if (
+    !cached
+  ) {
+    return null;
+  }
+
+  if (
+    typeof cached.then ===
+      'function'
+  ) {
+    return null;
+  }
+
+  if (
+    typeof cached !==
+      'object' ||
+    Array.isArray(
+      cached
+    )
+  ) {
+    return null;
+  }
+
+  return cached;
+}
+
+
+/* ============================================================
+ * NESTED LOOKUP
+ * ============================================================ */
 
 function deepGet(
   object,
   path
 ) {
   if (
-    !object ||
-    typeof object !==
-      'object' ||
+    object === null ||
+    object === undefined ||
     !path
   ) {
     return undefined;
   }
-
 
   const segments =
     Array.isArray(
@@ -563,7 +684,6 @@ function deepGet(
         )
           .split('.')
           .filter(Boolean);
-
 
   return segments.reduce(
     (
@@ -593,13 +713,6 @@ function deepGet(
 }
 
 
-/**
- * Resolve either a leaf value or a localized object.
- *
- * Translation dictionaries normally contain leaf strings, but returning an
- * object unchanged is useful for structured translation resources and keeps
- * lookup generic.
- */
 function resolveTranslationValue(
   dictionary,
   key
@@ -611,43 +724,61 @@ function resolveTranslationValue(
 }
 
 
-/* --------------------------------------------------------------------------
- * Interpolation
- * -------------------------------------------------------------------------- */
+/* ============================================================
+ * INTERPOLATION
+ * ============================================================ */
 
+/**
+ * Supports both interpolation conventions used by the project:
+ *
+ *   {name}
+ *
+ * and:
+ *
+ *   {{name}}
+ *
+ * Nested variable paths are supported:
+ *
+ *   {user.name}
+ *   {{user.name}}
+ */
 function interpolate(
   text,
   variables = {}
 ) {
   if (
     typeof text !==
-    'string'
+      'string'
   ) {
     return text;
   }
 
-
   const values =
     variables &&
-    typeof variables === 'object'
+    typeof variables ===
+      'object'
       ? variables
       : {};
 
-
   return text.replace(
-    /\{\{\s*([^}]+?)\s*\}\}/g,
+    /\{\{\s*([^{}]+?)\s*\}\}|\{\s*([A-Za-z0-9_$.-]+)\s*\}/g,
     (
       _match,
-      variablePath
+      doubleBraceVariable,
+      singleBraceVariable
     ) => {
+      const variablePath =
+        (
+          doubleBraceVariable ??
+          singleBraceVariable ??
+          ''
+        ).trim();
+
       const value =
         deepGet(
           values,
-          String(
-            variablePath
-          ).trim()
+          variablePath
         );
-
 
       return (
         value === undefined ||
@@ -662,9 +793,9 @@ function interpolate(
 }
 
 
-/* --------------------------------------------------------------------------
- * Missing-key handling
- * -------------------------------------------------------------------------- */
+/* ============================================================
+ * TRANSLATION FALLBACKS
+ * ============================================================ */
 
 function isTranslationLeaf(
   value
@@ -682,89 +813,77 @@ function resolveMissingTranslation(
   key,
   fallback
 ) {
-  const explicitFallback =
-    fallback !== undefined &&
-    fallback !== null &&
-    String(
-      fallback
-    ) !== ''
-      ? String(
-          fallback
-        )
-      : '';
-
-
   if (
-    explicitFallback
+    fallback !==
+      undefined &&
+    fallback !==
+      null
   ) {
-    return explicitFallback;
+    const explicit =
+      String(
+        fallback
+      );
+
+    if (
+      explicit !==
+      ''
+    ) {
+      return explicit;
+    }
   }
 
-
-  /*
-   * Missing keys should remain diagnosable during development. Returning the
-   * key is preferable to rendering "undefined" or throwing a runtime error.
-   */
   return String(
     key
   );
 }
 
 
-/**
- * Emit a diagnostic event for missing keys.
- *
- * This is intentionally non-fatal. Production UI must continue to render.
- */
 function emitMissingKey(
   key,
   language
 ) {
   if (
     typeof document ===
-    'undefined'
+      'undefined'
   ) {
     return;
   }
 
+  const detail = {
+    key,
+    language,
+    fallbackLanguage:
+      activeFallbackLanguage
+  };
 
   document.dispatchEvent(
     new CustomEvent(
-      'govcareer:i18n-missing',
+      MISSING_KEY_EVENT,
       {
-        detail: {
-          key,
-          language
-        }
+        detail
       }
     )
   );
 }
 
 
-/* --------------------------------------------------------------------------
- * Translation API
- * -------------------------------------------------------------------------- */
+/* ============================================================
+ * SYNCHRONOUS TRANSLATION API
+ * ============================================================ */
 
 /**
- * Translate a nested key.
+ * Synchronous translation API.
  *
- * Resolution order:
+ * Resolution:
  *
- * 1. Active language
- * 2. Configured fallback language
- * 3. Explicit caller fallback
- * 4. Translation key itself
+ *   1. active language
+ *   2. configured fallback language
+ *   3. explicit caller fallback
+ *   4. translation key
  *
- * The fallback dictionary is loaded lazily only when needed and only when
- * possible.
- *
- * IMPORTANT:
- * translate() is intentionally synchronous to preserve the existing API.
- * It therefore uses dictionaries that have already been loaded.
- *
- * For guaranteed fallback availability before synchronous translation calls,
- * initializeLanguage() loads both the preferred and fallback dictionaries.
+ * The fallback dictionary must already be cached for synchronous fallback
+ * resolution. initializeLanguage() and setLanguage() guarantee that under
+ * normal application startup/change flows.
  */
 function translate(
   key,
@@ -776,7 +895,6 @@ function translate(
       key ?? ''
     ).trim();
 
-
   if (
     !normalizedKey
   ) {
@@ -786,13 +904,11 @@ function translate(
     );
   }
 
-
   let value =
     resolveTranslationValue(
       translations,
       normalizedKey
     );
-
 
   if (
     isTranslationLeaf(
@@ -807,16 +923,10 @@ function translate(
     );
   }
 
-
-  /*
-   * Fallback dictionary is represented separately in the cache and is loaded
-   * during initialization/setLanguage where possible.
-   */
   const fallbackDictionary =
     getCachedDictionary(
       activeFallbackLanguage
     );
-
 
   if (
     fallbackDictionary
@@ -826,7 +936,6 @@ function translate(
         fallbackDictionary,
         normalizedKey
       );
-
 
     if (
       isTranslationLeaf(
@@ -842,12 +951,10 @@ function translate(
     }
   }
 
-
   emitMissingKey(
     normalizedKey,
     activeLanguage
   );
-
 
   return interpolate(
     resolveMissingTranslation(
@@ -859,12 +966,10 @@ function translate(
 }
 
 
-/**
- * Asynchronous translation lookup.
- *
- * Useful when a caller needs fallback resolution even though the fallback
- * locale has not yet been loaded.
- */
+/* ============================================================
+ * ASYNCHRONOUS TRANSLATION API
+ * ============================================================ */
+
 async function translateAsync(
   key,
   variables = {},
@@ -875,7 +980,6 @@ async function translateAsync(
       key ?? ''
     ).trim();
 
-
   if (
     !normalizedKey
   ) {
@@ -885,13 +989,11 @@ async function translateAsync(
     );
   }
 
-
   let value =
     resolveTranslationValue(
       translations,
       normalizedKey
     );
-
 
   if (
     isTranslationLeaf(
@@ -906,10 +1008,8 @@ async function translateAsync(
     );
   }
 
-
   const fallbackLanguage =
     activeFallbackLanguage;
-
 
   if (
     fallbackLanguage &&
@@ -917,18 +1017,16 @@ async function translateAsync(
       activeLanguage
   ) {
     try {
-      const dictionary =
-        await loadLanguage(
+      const fallbackDictionary =
+        await ensureLanguageDictionary(
           fallbackLanguage
         );
 
-
       value =
         resolveTranslationValue(
-          dictionary,
+          fallbackDictionary,
           normalizedKey
         );
-
 
       if (
         isTranslationLeaf(
@@ -944,17 +1042,15 @@ async function translateAsync(
       }
     } catch {
       /*
-       * Caller fallback/key is still returned below.
+       * Explicit fallback/key fallback remains available below.
        */
     }
   }
-
 
   emitMissingKey(
     normalizedKey,
     activeLanguage
   );
-
 
   return interpolate(
     resolveMissingTranslation(
@@ -966,120 +1062,92 @@ async function translateAsync(
 }
 
 
-function getCachedDictionary(
-  language
+/* ============================================================
+ * DOM TRANSLATION VARIABLES
+ * ============================================================ */
+
+function getElementTranslationVariables(
+  element
 ) {
-  const normalized =
-    normalizeLanguageCode(
-      language
-    );
-
-  const cached =
-    loadedLanguages.get(
-      normalized
-    );
-
-
-  /*
-   * During normal initialization the Promise resolves before translations
-   * are exposed. This helper deliberately only returns already-resolved
-   * dictionaries.
-   */
-  if (
-    cached &&
-    typeof cached.then ===
-      'function'
-  ) {
-    return null;
-  }
-
+  const raw =
+    element?.dataset
+      ?.i18nVars;
 
   if (
-    cached &&
-    typeof cached ===
-      'object'
+    !raw
   ) {
-    return cached;
+    return {};
   }
 
+  try {
+    const parsed =
+      JSON.parse(
+        raw
+      );
 
-  return null;
-}
-
-
-/* --------------------------------------------------------------------------
- * Dictionary cache finalization
- * -------------------------------------------------------------------------- */
-
-/**
- * Replace cached Promise values with resolved dictionaries.
- *
- * This keeps synchronous translate() useful after initialization.
- */
-async function cacheDictionary(
-  language,
-  dictionary
-) {
-  const normalized =
-    normalizeLanguageCode(
-      language
+    return (
+      parsed &&
+      typeof parsed ===
+        'object' &&
+      !Array.isArray(
+        parsed
+      )
+        ? parsed
+        : {}
     );
-
-  loadedLanguages.set(
-    normalized,
-    dictionary
-  );
-
-  return dictionary;
+  } catch {
+    return {};
+  }
 }
 
 
 /**
- * Because loadLanguage() supports concurrent Promise caching, this helper
- * retrieves the dictionary and converts its cache entry into the resolved
- * dictionary representation.
+ * Preserve the original DOM fallback instead of allowing translated
+ * content from a previous language to become the next fallback.
  */
-async function ensureLanguageDictionary(
-  language
+function getElementFallback(
+  element
 ) {
-  const normalized =
-    assertSupportedLanguage(
-      language
-    );
+  const existing =
+    element.dataset
+      .i18nFallback;
 
-  const dictionary =
-    await loadLanguage(
-      normalized
-    );
+  if (
+    existing !==
+      undefined
+  ) {
+    return existing;
+  }
 
-  await cacheDictionary(
-    normalized,
-    dictionary
-  );
+  const fallback =
+    element.textContent ??
+    '';
 
-  return dictionary;
+  element.dataset.i18nFallback =
+    fallback;
+
+  return fallback;
 }
 
 
-/* --------------------------------------------------------------------------
- * DOM translation updates
- * -------------------------------------------------------------------------- */
+/* ============================================================
+ * DOM TRANSLATION
+ * ============================================================ */
 
 function updateTranslatedElements() {
   if (
     typeof document ===
-    'undefined'
+      'undefined'
   ) {
     return;
   }
-
 
   document
     .querySelectorAll(
       '[data-i18n]'
     )
     .forEach(
-      (element) => {
+      element => {
         const key =
           element.dataset.i18n;
 
@@ -1089,26 +1157,19 @@ function updateTranslatedElements() {
           return;
         }
 
-
-        const fallback =
-          element.dataset.i18nFallback ??
-          element.textContent ??
-          key;
-
-
         const translated =
           translate(
             key,
             getElementTranslationVariables(
               element
             ),
-            fallback
+            getElementFallback(
+              element
+            )
           );
 
-
         /*
-         * textContent is intentionally used rather than innerHTML.
-         * Translation data must not become executable HTML.
+         * Translation data is inserted as text rather than HTML.
          */
         element.textContent =
           String(
@@ -1123,7 +1184,7 @@ function updateTranslatedElements() {
       '[data-i18n-placeholder]'
     )
     .forEach(
-      (element) => {
+      element => {
         const key =
           element.dataset.i18nPlaceholder;
 
@@ -1133,12 +1194,11 @@ function updateTranslatedElements() {
           return;
         }
 
-
         const fallback =
-          element.getAttribute(
+          getAttributeFallback(
+            element,
             'placeholder'
-          ) || key;
-
+          );
 
         element.setAttribute(
           'placeholder',
@@ -1161,7 +1221,7 @@ function updateTranslatedElements() {
       '[data-i18n-aria-label]'
     )
     .forEach(
-      (element) => {
+      element => {
         const key =
           element.dataset.i18nAriaLabel;
 
@@ -1171,12 +1231,11 @@ function updateTranslatedElements() {
           return;
         }
 
-
         const fallback =
-          element.getAttribute(
+          getAttributeFallback(
+            element,
             'aria-label'
-          ) || key;
-
+          );
 
         element.setAttribute(
           'aria-label',
@@ -1199,7 +1258,7 @@ function updateTranslatedElements() {
       '[data-i18n-title]'
     )
     .forEach(
-      (element) => {
+      element => {
         const key =
           element.dataset.i18nTitle;
 
@@ -1209,12 +1268,11 @@ function updateTranslatedElements() {
           return;
         }
 
-
         const fallback =
-          element.getAttribute(
+          getAttributeFallback(
+            element,
             'title'
-          ) || key;
-
+          );
 
         element.setAttribute(
           'title',
@@ -1233,135 +1291,147 @@ function updateTranslatedElements() {
 }
 
 
-/**
- * Optional per-element interpolation variables.
- *
- * Example:
- *
- * <span
- *   data-i18n="welcome.user"
- *   data-i18n-vars='{"name":"Abhijit"}'
- * ></span>
- *
- * Invalid JSON is ignored safely.
- */
-function getElementTranslationVariables(
-  element
+function getAttributeFallback(
+  element,
+  attribute
 ) {
-  const raw =
-    element?.dataset
-      ?.i18nVars;
+  const datasetKey =
+    `i18nFallback${toDatasetSuffix(
+      attribute
+    )}`;
 
+  const existing =
+    element.dataset[
+      datasetKey
+    ];
 
   if (
-    !raw
+    existing !==
+      undefined
   ) {
-    return {};
+    return existing;
   }
 
+  const fallback =
+    element.getAttribute(
+      attribute
+    ) || '';
 
-  try {
-    const parsed =
-      JSON.parse(
-        raw
-      );
+  element.dataset[
+    datasetKey
+  ] =
+    fallback;
 
-    return (
-      parsed &&
-      typeof parsed ===
-        'object'
-        ? parsed
-        : {}
-    );
-  } catch {
-    return {};
-  }
+  return fallback;
 }
 
 
-/* --------------------------------------------------------------------------
- * Document language/direction
- * -------------------------------------------------------------------------- */
+function toDatasetSuffix(
+  attribute
+) {
+  return String(
+    attribute
+  )
+    .split('-')
+    .map(
+      (part, index) =>
+        index === 0
+          ? part
+          : part
+              .charAt(0)
+              .toUpperCase() +
+            part.slice(1)
+    )
+    .join('');
+}
+
+
+/* ============================================================
+ * DOCUMENT LANGUAGE / DIRECTION
+ * ============================================================ */
 
 function updateDocumentLocale(
   language
 ) {
   if (
     typeof document ===
-    'undefined'
+      'undefined'
   ) {
     return;
   }
-
 
   const normalized =
     normalizeLanguageCode(
       language
     );
 
-
   const metadata =
     getLanguageMetadata(
       normalized
     );
 
+  const direction =
+    metadata.direction;
 
   document.documentElement.lang =
     normalized;
 
-
   document.documentElement.dir =
-    metadata.direction;
+    direction;
 
+  document.documentElement.setAttribute(
+    LANGUAGE_ATTRIBUTE,
+    normalized
+  );
+
+  document.documentElement.setAttribute(
+    DIRECTION_ATTRIBUTE,
+    direction
+  );
 
   /*
-   * Useful for CSS/layout systems that want a language-specific hook without
-   * hard-coding language assumptions into individual components.
+   * Dataset mirrors are intentionally kept because they are convenient for
+   * CSS, diagnostics and components that already use data attributes.
    */
   document.documentElement.dataset.language =
     normalized;
 
-
   document.documentElement.dataset.direction =
-    metadata.direction;
+    direction;
 }
 
 
-/* --------------------------------------------------------------------------
- * Language controls
- * -------------------------------------------------------------------------- */
+/* ============================================================
+ * LANGUAGE CONTROL STATE
+ * ============================================================ */
 
 function updateLanguageControls() {
   if (
     typeof document ===
-    'undefined'
+      'undefined'
   ) {
     return;
   }
-
 
   document
     .querySelectorAll(
       '[data-language-value]'
     )
     .forEach(
-      (control) => {
+      control => {
         const controlLanguage =
           normalizeLanguageCode(
             control.dataset.languageValue
           );
 
-
         const active =
           controlLanguage ===
           activeLanguage;
-
 
         control.classList.toggle(
           'is-active',
           active
         );
-
 
         if (
           control.matches(
@@ -1376,11 +1446,6 @@ function updateLanguageControls() {
           );
         }
 
-
-        /*
-         * Keep a canonical language marker available for styling/accessibility
-         * while preserving existing data attributes.
-         */
         control.toggleAttribute(
           'data-language-active',
           active
@@ -1394,67 +1459,73 @@ function updateLanguageControls() {
       '[data-language-select]'
     )
     .forEach(
-      (select) => {
-        select.value =
-          activeLanguage;
+      select => {
+        if (
+          select.value !==
+          activeLanguage
+        ) {
+          select.value =
+            activeLanguage;
+        }
       }
     );
 }
 
 
-/* --------------------------------------------------------------------------
- * Language change events
- * -------------------------------------------------------------------------- */
+/* ============================================================
+ * EVENTS
+ * ============================================================ */
 
+/**
+ * Emit one consistent detail object for both event namespaces.
+ *
+ * Canonical:
+ *   gcc:languagechange
+ *
+ * Compatibility:
+ *   govcareer:languagechange
+ */
 function emitLanguageChange(
-  language
+  language,
+  previousLanguage =
+    null
 ) {
   if (
     typeof document ===
-    'undefined'
+      'undefined'
   ) {
     return;
   }
-
 
   const metadata =
     getLanguageMetadata(
       language
     );
 
-
   const detail = {
     language,
+
+    previousLanguage,
+
     direction:
       metadata.direction,
+
     fallbackLanguage:
       activeFallbackLanguage
   };
 
-
-  /*
-   * REQUIRED compatibility event.
-   *
-   * Compass AI and other global components depend on exactly:
-   * gcc:languagechange
-   */
   document.dispatchEvent(
     new CustomEvent(
-      'gcc:languagechange',
+      ACTIVE_LANGUAGE_EVENT,
       {
         detail
       }
     )
   );
 
-
-  /*
-   * Existing application event is retained for compatibility with components
-   * already listening to the previous namespace.
-   */
   document.dispatchEvent(
     new CustomEvent(
-      'govcareer:languagechange',
+      COMPATIBILITY_LANGUAGE_EVENT,
       {
         detail
       }
@@ -1463,16 +1534,74 @@ function emitLanguageChange(
 }
 
 
-/* --------------------------------------------------------------------------
- * Set language
- * -------------------------------------------------------------------------- */
+function emitLanguageReady() {
+  if (
+    typeof document ===
+      'undefined'
+  ) {
+    return;
+  }
+
+  const metadata =
+    getLanguageMetadata(
+      activeLanguage
+    );
+
+  document.dispatchEvent(
+    new CustomEvent(
+      READY_EVENT,
+      {
+        detail: {
+          language:
+            activeLanguage,
+
+          direction:
+            metadata.direction,
+
+          fallbackLanguage:
+            activeFallbackLanguage
+        }
+      }
+    )
+  );
+}
+
+
+function emitLanguageError(
+  language,
+  error
+) {
+  if (
+    typeof document ===
+      'undefined'
+  ) {
+    return;
+  }
+
+  document.dispatchEvent(
+    new CustomEvent(
+      LANGUAGE_ERROR_EVENT,
+      {
+        detail: {
+          language,
+          error
+        }
+      }
+    )
+  );
+}
+
+
+/* ============================================================
+ * SET LANGUAGE
+ * ============================================================ */
 
 /**
- * Activate a language.
+ * Activate a language only after its dictionary is available.
  *
- * The active locale is only changed after the requested dictionary loads
- * successfully. This prevents a failed network request from leaving the
- * application claiming to be in a locale whose dictionary was not loaded.
+ * The configured fallback dictionary is also loaded before the language
+ * state is committed. This makes synchronous translate() deterministic
+ * following initialization or an explicit language switch.
  */
 async function setLanguage(
   language,
@@ -1486,51 +1615,37 @@ async function setLanguage(
       language
     );
 
+  const previousLanguage =
+    activeLanguage;
 
   /*
-   * Load active dictionary first.
+   * Load requested language first. A failed requested locale must not replace
+   * a currently working locale.
    */
   const dictionary =
     await ensureLanguageDictionary(
       normalized
     );
 
-
-  /*
-   * Ensure the configured fallback dictionary is available whenever it is
-   * different from the active locale. This makes synchronous translate()
-   * fallback deterministic after initialization/switching.
-   */
-  const fallbackLanguage =
+  const configuredFallback =
     resolveConfiguredFallbackLanguage();
 
-
+  /*
+   * The fallback may equal the active language. In that case the active
+   * dictionary already fulfills both roles.
+   */
   if (
-    fallbackLanguage &&
-    fallbackLanguage !==
+    configuredFallback &&
+    configuredFallback !==
       normalized
   ) {
-    try {
-      await ensureLanguageDictionary(
-        fallbackLanguage
-      );
-    } catch (
-      error
-    ) {
-      /*
-       * Active language remains usable. Missing keys will fall back to the
-       * explicit caller fallback or the key itself.
-       */
-      console.warn(
-        `Unable to preload fallback language "${fallbackLanguage}".`,
-        error
-      );
-    }
+    await ensureLanguageDictionary(
+      configuredFallback
+    );
   }
 
-
   /*
-   * Commit state only after the requested dictionary is available.
+   * Commit state after successful loading.
    */
   translations =
     dictionary;
@@ -1539,8 +1654,7 @@ async function setLanguage(
     normalized;
 
   activeFallbackLanguage =
-    fallbackLanguage;
-
+    configuredFallback;
 
   updateDocumentLocale(
     normalized
@@ -1549,7 +1663,6 @@ async function setLanguage(
   updateTranslatedElements();
 
   updateLanguageControls();
-
 
   if (
     persist
@@ -1560,47 +1673,22 @@ async function setLanguage(
     );
   }
 
-
   if (
     announce
   ) {
     emitLanguageChange(
-      normalized
+      normalized,
+      previousLanguage
     );
-
-
-    if (
-      typeof document !==
-      'undefined'
-    ) {
-      document.dispatchEvent(
-        new CustomEvent(
-          'govcareer:i18n-ready',
-          {
-            detail: {
-              language:
-                normalized,
-              direction:
-                getLanguageMetadata(
-                  normalized
-                ).direction,
-              fallbackLanguage:
-                activeFallbackLanguage
-            }
-          }
-        )
-      );
-    }
   }
-
 
   return normalized;
 }
 
 
-/* --------------------------------------------------------------------------
- * Language controls binding
- * -------------------------------------------------------------------------- */
+/* ============================================================
+ * LANGUAGE CONTROLS
+ * ============================================================ */
 
 function bindLanguageControls() {
   if (
@@ -1611,16 +1699,13 @@ function bindLanguageControls() {
     return;
   }
 
-
   controlsBound =
     true;
-
 
   document.addEventListener(
     'click',
     handleLanguageControlClick
   );
-
 
   document.addEventListener(
     'change',
@@ -1637,17 +1722,14 @@ function handleLanguageControlClick(
       '[data-language-value]'
     );
 
-
   if (
     !control
   ) {
     return;
   }
 
-
   const language =
     control.dataset.languageValue;
-
 
   if (
     !language
@@ -1655,15 +1737,17 @@ function handleLanguageControlClick(
     return;
   }
 
-
   void setLanguage(
     language
   ).catch(
-    (
-      error
-    ) => {
+    error => {
       console.error(
         'Language change failed:',
+        error
+      );
+
+      emitLanguageError(
+        language,
         error
       );
     }
@@ -1679,22 +1763,47 @@ function handleLanguageControlChange(
       '[data-language-select]'
     );
 
-
   if (
     !select
   ) {
     return;
   }
 
+  /*
+   * language-selector.js also owns generated selector controls.
+   *
+   * It listens for the same change event and calls setLanguage() itself.
+   * Avoid handling those generated selectors twice while retaining support
+   * for data-language-select controls outside the component.
+   */
+  if (
+    select.closest?.(
+      '[data-language-selector]'
+    )
+  ) {
+    return;
+  }
+
+  const language =
+    select.value;
+
+  if (
+    !language
+  ) {
+    return;
+  }
 
   void setLanguage(
-    select.value
+    language
   ).catch(
-    (
-      error
-    ) => {
+    error => {
       console.error(
         'Language change failed:',
+        error
+      );
+
+      emitLanguageError(
+        language,
         error
       );
     }
@@ -1702,101 +1811,68 @@ function handleLanguageControlChange(
 }
 
 
-/* --------------------------------------------------------------------------
- * Initialization
- * -------------------------------------------------------------------------- */
+/* ============================================================
+ * INITIALIZATION
+ * ============================================================ */
 
 async function initializeLanguage() {
   bindLanguageControls();
 
-
   const preferred =
     getStoredLanguage();
-
 
   const fallback =
     resolveConfiguredFallbackLanguage();
 
-
   try {
     /*
-     * Load preferred language and fallback together before exposing the
-     * application as initialized.
+     * Load preferred locale first.
      */
     await ensureLanguageDictionary(
       preferred
     );
 
-
+    /*
+     * Load fallback before synchronous translation calls become active.
+     */
     if (
       fallback &&
       fallback !==
         preferred
     ) {
-      try {
-        await ensureLanguageDictionary(
-          fallback
-        );
-      } catch (
-        error
-      ) {
-        console.warn(
-          `Unable to load fallback language "${fallback}".`,
-          error
-        );
-      }
-    }
-
-
-    await setLanguage(
-      preferred,
-      {
-        persist: false,
-        announce: false
-      }
-    );
-
-
-    /*
-     * Emit ready separately from language-change because initialization is
-     * not a user-requested language switch.
-     */
-    if (
-      typeof document !==
-      'undefined'
-    ) {
-      document.dispatchEvent(
-        new CustomEvent(
-          'govcareer:i18n-ready',
-          {
-            detail: {
-              language:
-                activeLanguage,
-              direction:
-                getLanguageMetadata(
-                  activeLanguage
-                ).direction,
-              fallbackLanguage:
-                activeFallbackLanguage
-            }
-          }
-        )
+      await ensureLanguageDictionary(
+        fallback
       );
     }
 
+    /*
+     * setLanguage() will reuse both already-resolved dictionary entries.
+     * It does not announce a user language change during bootstrap.
+     */
+    await setLanguage(
+      preferred,
+      {
+        persist:
+          false,
+
+        announce:
+          false
+      }
+    );
+
+    emitLanguageReady();
 
     return activeLanguage;
   } catch (
     preferredError
   ) {
     /*
-     * Preferred locale failed. Try configured fallback/default locale before
-     * giving up.
+     * The preferred stored locale may be temporarily unavailable. Attempt
+     * the configured fallback before failing application initialization.
      */
     const rescue =
       fallback ||
       resolveConfiguredDefaultLanguage();
-
 
     if (
       rescue ===
@@ -1805,40 +1881,19 @@ async function initializeLanguage() {
       throw preferredError;
     }
 
-
     try {
       await setLanguage(
         rescue,
         {
-          persist: false,
-          announce: false
+          persist:
+            false,
+
+          announce:
+            false
         }
       );
 
-
-      if (
-        typeof document !==
-        'undefined'
-      ) {
-        document.dispatchEvent(
-          new CustomEvent(
-            'govcareer:i18n-ready',
-            {
-              detail: {
-                language:
-                  activeLanguage,
-                direction:
-                  getLanguageMetadata(
-                    activeLanguage
-                  ).direction,
-                fallbackLanguage:
-                  activeFallbackLanguage
-              }
-            }
-          )
-        );
-      }
-
+      emitLanguageReady();
 
       return activeLanguage;
     } catch (
@@ -1856,9 +1911,9 @@ async function initializeLanguage() {
 }
 
 
-/* --------------------------------------------------------------------------
- * Public state/config APIs
- * -------------------------------------------------------------------------- */
+/* ============================================================
+ * PUBLIC STATE / CONFIG APIs
+ * ============================================================ */
 
 function getCurrentLanguage() {
   return activeLanguage;
@@ -1892,15 +1947,19 @@ function getTranslations() {
 
 
 /**
- * Clear locale caches.
+ * Clear one or all locale dictionary caches.
  *
- * Useful for tests or explicit data refresh workflows.
+ * This does not change the active language or persisted locale.
+ * Intended for tests and explicit refresh workflows.
  */
 function clearLanguageCache(
   language = null
 ) {
   if (
-    language
+    language !==
+      null &&
+    language !==
+      undefined
   ) {
     loadedLanguages.delete(
       normalizeLanguageCode(
@@ -1915,9 +1974,9 @@ function clearLanguageCache(
 }
 
 
-/* --------------------------------------------------------------------------
- * Exports
- * -------------------------------------------------------------------------- */
+/* ============================================================
+ * EXPORTS
+ * ============================================================ */
 
 export {
   loadLanguage,
@@ -1932,6 +1991,7 @@ export {
   getCurrentLanguage,
   getFallbackLanguage,
   getSupportedLanguages,
+  getLanguageMetadata,
   getLanguageDirection,
   getTranslations,
 
@@ -1949,11 +2009,13 @@ export {
 export default {
   translate,
   translateAsync,
+
   setLanguage,
 
   getCurrentLanguage,
   getFallbackLanguage,
   getSupportedLanguages,
+  getLanguageMetadata,
   getLanguageDirection,
 
   initializeLanguage
