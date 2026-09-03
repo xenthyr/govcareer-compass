@@ -4,39 +4,129 @@
  * CAREER RANKING ENGINE
  * ============================================================
  *
- * Takes scored careers and produces deterministic rankings.
+ * Purpose
+ * -------
+ * Consumes finalized eligibility + scoring results and produces
+ * deterministic ordered recommendation results.
  *
- * Ranking order:
+ * Canonical pipeline
+ * ------------------
  *
- *   1. Eligibility status
- *   2. Preference-filter pass
+ *   Candidate Profile
+ *          │
+ *          ▼
+ *   Eligibility Engine
+ *          │
+ *          ├── NOT_ELIGIBLE
+ *          ├── REVIEW_REQUIRED / UNKNOWN
+ *          ├── CONDITIONAL
+ *          └── DIRECT
+ *                    │
+ *                    ▼
+ *             Preference Engine
+ *                    │
+ *                    ▼
+ *              Scoring Engine
+ *                    │
+ *                    ▼
+ *              Ranking Engine
+ *
+ * This module only performs ORDERING.
+ *
+ * It must NOT:
+ * - determine legal eligibility;
+ * - infer eligibility;
+ * - calculate preference fit;
+ * - calculate career scores;
+ * - inspect raw career facts to invent scores;
+ * - modify score breakdowns;
+ * - replace missing information with assumptions;
+ * - override hard ineligibility.
+ *
+ * Ranking responsibility
+ * ----------------------
+ * The Ranking Engine:
+ *
+ *   1. receives already-scored records;
+ *   2. classifies eligibility state;
+ *   3. excludes unsafe states by policy;
+ *   4. orders remaining records deterministically;
+ *   5. preserves all upstream score/explanation/evidence data;
+ *   6. applies only configured ranking policy;
+ *   7. assigns stable ranks.
+ *
+ * Deterministic ordering
+ * ----------------------
+ * Default order:
+ *
+ *   1. Eligibility priority
+ *   2. Preference-filter status
  *   3. Overall score
  *   4. Preference score
- *   5. Data confidence
- *   6. Stable career ID
+ *   5. Score confidence
+ *   6. Career confidence
+ *   7. Stable career ID
  *
- * A stable ID is used as the final tie-breaker so the same data
- * produces deterministic ordering.
+ * No raw career metric is recalculated here.
+ *
+ * Unknown eligibility
+ * -------------------
+ * UNKNOWN and REVIEW_REQUIRED are never silently treated as
+ * eligible.
+ *
+ * They may be returned separately when requested, but they are
+ * never allowed into the normal recommendation ranking unless
+ * explicitly enabled by the caller.
  */
 
 import {
   ELIGIBILITY_RESULT
 } from './eligibility-engine.js';
 
+/* ============================================================
+ * CANONICAL ELIGIBILITY PRIORITY
+ * ============================================================
+ *
+ * DIRECT is the strongest recommendation state.
+ *
+ * CONDITIONAL remains potentially recommendable but ranks below
+ * DIRECT.
+ *
+ * REVIEW_REQUIRED and UNKNOWN are not safe automatic
+ * recommendations.
+ *
+ * NOT_ELIGIBLE is always last and is excluded by default.
+ */
+
 const ELIGIBILITY_PRIORITY =
   Object.freeze({
     [ELIGIBILITY_RESULT.DIRECT]:
-      3,
+      4,
 
     [ELIGIBILITY_RESULT.CONDITIONAL]:
-      2,
+      3,
 
-    [ELIGIBILITY_RESULT.MANUAL_VERIFICATION]:
+    [ELIGIBILITY_RESULT.REVIEW_REQUIRED]:
       1,
 
+    [ELIGIBILITY_RESULT.UNKNOWN]:
+      0,
+
     [ELIGIBILITY_RESULT.NOT_ELIGIBLE]:
-      0
+      -1,
+
+    /*
+     * Compatibility with older callers that still submit the literal
+     * string MANUAL_VERIFICATION rather than the canonical
+     * REVIEW_REQUIRED value.
+     */
+    MANUAL_VERIFICATION:
+      1
   });
+
+/* ============================================================
+ * CONFIDENCE PRIORITY
+ * ============================================================ */
 
 const CONFIDENCE_PRIORITY =
   Object.freeze({
@@ -49,12 +139,18 @@ const CONFIDENCE_PRIORITY =
     UNKNOWN: 0
   });
 
+/* ============================================================
+ * BASIC HELPERS
+ * ========================================================== */
+
 function numeric(
   value,
   fallback = 0
 ) {
   const number =
-    Number(value);
+    Number(
+      value
+    );
 
   return Number.isFinite(
     number
@@ -63,14 +159,78 @@ function numeric(
     : fallback;
 }
 
+function normalizeStatus(
+  status
+) {
+  const normalized =
+    String(
+      status ??
+        ''
+    )
+      .trim()
+      .toUpperCase();
+
+  if (
+    normalized ===
+    'MANUAL_VERIFICATION'
+  ) {
+    return (
+      ELIGIBILITY_RESULT.REVIEW_REQUIRED ||
+      'REVIEW_REQUIRED'
+    );
+  }
+
+  if (
+    normalized ===
+    'REVIEW_REQUIRED'
+  ) {
+    return 'REVIEW_REQUIRED';
+  }
+
+  if (
+    normalized ===
+    'UNKNOWN'
+  ) {
+    return 'UNKNOWN';
+  }
+
+  if (
+    normalized ===
+    'CONDITIONAL'
+  ) {
+    return 'CONDITIONAL';
+  }
+
+  if (
+    normalized ===
+    'DIRECT'
+  ) {
+    return 'DIRECT';
+  }
+
+  if (
+    normalized ===
+    'NOT_ELIGIBLE'
+  ) {
+    return 'NOT_ELIGIBLE';
+  }
+
+  return 'UNKNOWN';
+}
+
 function getEligibilityPriority(
   status
 ) {
+  const normalized =
+    normalizeStatus(
+      status
+    );
+
   return (
     ELIGIBILITY_PRIORITY[
-      status
+      normalized
     ] ??
-    0
+    ELIGIBILITY_PRIORITY.UNKNOWN
   );
 }
 
@@ -79,133 +239,254 @@ function getConfidencePriority(
 ) {
   const key =
     String(
-      confidence ||
+      confidence ??
         'UNKNOWN'
-    ).toUpperCase();
+    )
+      .trim()
+      .toUpperCase();
 
   return (
     CONFIDENCE_PRIORITY[
       key
     ] ??
+    CONFIDENCE_PRIORITY.UNKNOWN
+  );
+}
+
+function getCareerId(
+  item
+) {
+  return String(
+    item?.career?.id ??
+      item?.careerId ??
+      item?.jobId ??
+      item?.examId ??
+      item?.serviceCadreId ??
+      ''
+  );
+}
+
+function getScore(
+  item
+) {
+  return numeric(
+    item?.score,
     0
   );
 }
 
-function compareValues(
-  a,
-  b
+function getPreferenceScore(
+  item
 ) {
+  /*
+   * The preferred canonical location is `preferenceScore`.
+   *
+   * A small compatibility fallback is retained for scoring
+   * implementations that nest the value in `scoreBreakdown`.
+   *
+   * This does not calculate the value.
+   */
   return numeric(
-    b
-  ) -
-    numeric(
-      a
-    );
+    item?.preferenceScore ??
+      item?.scoreBreakdown
+        ?.preferenceScore ??
+      item?.breakdown
+        ?.preferenceScore,
+    0
+  );
 }
 
-function compareCareers(
+function getScoreConfidence(
+  item
+) {
+  return (
+    item?.scoreConfidence ??
+    item?.scoreBreakdown
+      ?.confidence ??
+    item?.scoring?.confidence ??
+    'UNKNOWN'
+  );
+}
+
+function getCareerConfidence(
+  item
+) {
+  return (
+    item?.career?.confidence ??
+    item?.confidence ??
+    'UNKNOWN'
+  );
+}
+
+function hasPreferenceFilterResult(
+  item
+) {
+  /*
+   * An explicitly supplied boolean is authoritative.
+   *
+   * Missing filter information is treated as "not supplied",
+   * not automatically as a failed or passed preference match.
+   */
+  if (
+    typeof item?.passesPreferenceFilters ===
+    'boolean'
+  ) {
+    return item
+      .passesPreferenceFilters;
+  }
+
+  if (
+    typeof item?.preferenceFilterPass ===
+    'boolean'
+  ) {
+    return item.preferenceFilterPass;
+  }
+
+  return null;
+}
+
+function getPreferenceFilterPriority(
+  item
+) {
+  const value =
+    hasPreferenceFilterResult(
+      item
+    );
+
+  if (
+    value === true
+  ) {
+    return 2;
+  }
+
+  if (
+    value === false
+  ) {
+    return 1;
+  }
+
+  return 0;
+}
+
+function compareStrings(
   a,
   b
 ) {
-  const aEligibility =
-    getEligibilityPriority(
-      a.eligibilityStatus
-    );
-
-  const bEligibility =
-    getEligibilityPriority(
-      b.eligibilityStatus
-    );
-
-  if (
-    aEligibility !==
-    bEligibility
-  ) {
-    return (
-      bEligibility -
-      aEligibility
-    );
-  }
-
-  const aPreferencePass =
-    a.passesPreferenceFilters
-      ? 1
-      : 0;
-
-  const bPreferencePass =
-    b.passesPreferenceFilters
-      ? 1
-      : 0;
-
-  if (
-    aPreferencePass !==
-    bPreferencePass
-  ) {
-    return (
-      bPreferencePass -
-      aPreferencePass
-    );
-  }
-
-  const scoreComparison =
-    compareValues(
-      a.score,
-      b.score
-    );
-
-  if (
-    scoreComparison !== 0
-  ) {
-    return scoreComparison;
-  }
-
-  const preferenceComparison =
-    compareValues(
-      a.preferenceScore,
-      b.preferenceScore
-    );
-
-  if (
-    preferenceComparison !==
-    0
-  ) {
-    return preferenceComparison;
-  }
-
-  const confidenceComparison =
-    getConfidencePriority(
-      a.career?.confidence
-    ) -
-    getConfidencePriority(
-      b.career?.confidence
-    );
-
-  if (
-    confidenceComparison !==
-    0
-  ) {
-    return confidenceComparison;
-  }
-
   return String(
-    a.career?.id ??
-      a.careerId ??
+    a ??
       ''
   ).localeCompare(
     String(
-      b.career?.id ??
-        b.careerId ??
+      b ??
         ''
     )
   );
 }
 
-function rankCareers(
+/* ============================================================
+ * ELIGIBILITY CLASSIFICATION
+ * ========================================================== */
+
+function classifyEligibility(
+  item
+) {
+  const status =
+    normalizeStatus(
+      item?.eligibilityStatus
+    );
+
+  return {
+    status,
+
+    priority:
+      getEligibilityPriority(
+        status
+      ),
+
+    directlyEligible:
+      status ===
+      'DIRECT',
+
+    conditionallyEligible:
+      status ===
+      'CONDITIONAL',
+
+    reviewRequired:
+      status ===
+        'REVIEW_REQUIRED' ||
+      status ===
+        'UNKNOWN',
+
+    unknown:
+      status ===
+      'UNKNOWN',
+
+    notEligible:
+      status ===
+      'NOT_ELIGIBLE'
+  };
+}
+
+/* ============================================================
+ * RECOMMENDABILITY POLICY
+ * ============================================================
+ *
+ * These functions do not alter eligibility.
+ *
+ * They determine whether an already-computed result may participate
+ * in a particular ranking view.
+ */
+
+function isAutomaticallyEligibleStatus(
+  status
+) {
+  const normalized =
+    normalizeStatus(
+      status
+    );
+
+  return (
+    normalized ===
+      'DIRECT' ||
+    normalized ===
+      'CONDITIONAL'
+  );
+}
+
+function isHardIneligibleStatus(
+  status
+) {
+  return (
+    normalizeStatus(
+      status
+    ) ===
+    'NOT_ELIGIBLE'
+  );
+}
+
+function isReviewStatus(
+  status
+) {
+  const normalized =
+    normalizeStatus(
+      status
+    );
+
+  return (
+    normalized ===
+      'REVIEW_REQUIRED' ||
+    normalized ===
+      'UNKNOWN'
+  );
+}
+
+function filterRankableCareers(
   scoredCareers,
   {
-    limit = null,
-    includeIneligible = false,
-    includeManualVerification = true,
+    includeConditional = true,
+    includeReviewRequired = false,
+    includeUnknown = false,
+    includeNotEligible = false,
     onlyPreferenceMatches = false
   } = {}
 ) {
@@ -217,121 +498,581 @@ function rankCareers(
     return [];
   }
 
-  let results =
-    scoredCareers
-      .filter(
-        (item) => {
-          if (
-            !includeIneligible &&
-            item.eligibilityStatus ===
-              ELIGIBILITY_RESULT.NOT_ELIGIBLE
-          ) {
-            return false;
-          }
+  return scoredCareers.filter(
+    (item) => {
+      const status =
+        normalizeStatus(
+          item?.eligibilityStatus
+        );
 
-          if (
-            !includeManualVerification &&
-            item.eligibilityStatus ===
-              ELIGIBILITY_RESULT.MANUAL_VERIFICATION
-          ) {
-            return false;
-          }
+      if (
+        status ===
+        'NOT_ELIGIBLE'
+      ) {
+        return (
+          includeNotEligible
+        );
+      }
 
-          if (
-            onlyPreferenceMatches &&
-            !item.passesPreferenceFilters
-          ) {
-            return false;
-          }
-
-          return true;
+      if (
+        status ===
+        'CONDITIONAL'
+      ) {
+        if (
+          !includeConditional
+        ) {
+          return false;
         }
+      }
+
+      if (
+        status ===
+        'REVIEW_REQUIRED'
+      ) {
+        if (
+          !includeReviewRequired
+        ) {
+          return false;
+        }
+      }
+
+      if (
+        status ===
+        'UNKNOWN'
+      ) {
+        if (
+          !includeUnknown
+        ) {
+          return false;
+        }
+      }
+
+      if (
+        onlyPreferenceMatches
+      ) {
+        return (
+          item?.passesPreferenceFilters ===
+          true
+        );
+      }
+
+      return true;
+    }
+  );
+}
+
+/* ============================================================
+ * DETERMINISTIC COMPARISON
+ * ============================================================
+ *
+ * IMPORTANT:
+ * No raw career metric is accessed here.
+ *
+ * All numerical values must already have been produced by the
+ * eligibility/scoring pipeline.
+ */
+
+function compareEligibility(
+  a,
+  b
+) {
+  return (
+    getEligibilityPriority(
+      b?.eligibilityStatus
+    ) -
+    getEligibilityPriority(
+      a?.eligibilityStatus
+    )
+  );
+}
+
+function comparePreferenceFilter(
+  a,
+  b
+) {
+  return (
+    getPreferenceFilterPriority(
+      b
+    ) -
+    getPreferenceFilterPriority(
+      a
+    )
+  );
+}
+
+function compareOverallScore(
+  a,
+  b
+) {
+  return (
+    getScore(
+      b
+    ) -
+    getScore(
+      a
+    )
+  );
+}
+
+function comparePreferenceScore(
+  a,
+  b
+) {
+  return (
+    getPreferenceScore(
+      b
+    ) -
+    getPreferenceScore(
+      a
+    )
+  );
+}
+
+function compareScoreConfidence(
+  a,
+  b
+) {
+  return (
+    getConfidencePriority(
+      getScoreConfidence(
+        b
       )
-      .map(
-        (item) => ({
-          ...item
-        })
+    ) -
+    getConfidencePriority(
+      getScoreConfidence(
+        a
       )
+    )
+  );
+}
+
+function compareCareerConfidence(
+  a,
+  b
+) {
+  return (
+    getConfidencePriority(
+      getCareerConfidence(
+        b
+      )
+    ) -
+    getConfidencePriority(
+      getCareerConfidence(
+        a
+      )
+    )
+  );
+}
+
+function compareStableId(
+  a,
+  b
+) {
+  return compareStrings(
+    getCareerId(
+      a
+    ),
+    getCareerId(
+      b
+    )
+  );
+}
+
+/**
+ * Canonical ranking comparator.
+ *
+ * Every upstream dimension is already finalized before reaching
+ * this function.
+ */
+function compareCareers(
+  a,
+  b
+) {
+  const eligibilityComparison =
+    compareEligibility(
+      a,
+      b
+    );
+
+  if (
+    eligibilityComparison !==
+    0
+  ) {
+    return eligibilityComparison;
+  }
+
+  const preferenceFilterComparison =
+    comparePreferenceFilter(
+      a,
+      b
+    );
+
+  if (
+    preferenceFilterComparison !==
+    0
+  ) {
+    return preferenceFilterComparison;
+  }
+
+  const scoreComparison =
+    compareOverallScore(
+      a,
+      b
+    );
+
+  if (
+    scoreComparison !==
+    0
+  ) {
+    return scoreComparison;
+  }
+
+  const preferenceComparison =
+    comparePreferenceScore(
+      a,
+      b
+    );
+
+  if (
+    preferenceComparison !==
+    0
+  ) {
+    return preferenceComparison;
+  }
+
+  const scoreConfidenceComparison =
+    compareScoreConfidence(
+      a,
+      b
+    );
+
+  if (
+    scoreConfidenceComparison !==
+    0
+  ) {
+    return scoreConfidenceComparison;
+  }
+
+  const careerConfidenceComparison =
+    compareCareerConfidence(
+      a,
+      b
+    );
+
+  if (
+    careerConfidenceComparison !==
+    0
+  ) {
+    return careerConfidenceComparison;
+  }
+
+  return compareStableId(
+    a,
+    b
+  );
+}
+
+/* ============================================================
+ * RANK PRESERVATION
+ * ============================================================
+ *
+ * Ranking must not strip information produced upstream.
+ *
+ * The result is therefore a shallow copy only, with rank metadata
+ * added. Nested:
+ *
+ *   career
+ *   scoreBreakdown
+ *   explanation
+ *   eligibilityResult
+ *   source metadata
+ *   confidence metadata
+ *
+ * remains untouched.
+ */
+
+function attachRank(
+  item,
+  rank,
+  position
+) {
+  return {
+    ...item,
+
+    rank,
+
+    ranking: {
+      position,
+      rank
+    }
+  };
+}
+
+/* ============================================================
+ * MAIN RANKING FUNCTION
+ * ========================================================== */
+
+function rankCareers(
+  scoredCareers,
+  {
+    limit = null,
+
+    /*
+     * Normal recommendation mode:
+     * include DIRECT and CONDITIONAL results.
+     */
+    includeConditional = true,
+
+    /*
+     * REVIEW_REQUIRED and UNKNOWN are excluded by default.
+     *
+     * This is intentional: absence of confirmed eligibility cannot
+     * be silently converted into an eligible recommendation.
+     */
+    includeReviewRequired = false,
+    includeUnknown = false,
+
+    /*
+     * Hard ineligible careers remain excluded by default.
+     *
+     * They can only be included explicitly for audit/debug views.
+     */
+    includeNotEligible = false,
+
+    onlyPreferenceMatches = false
+  } = {}
+) {
+  if (
+    !Array.isArray(
+      scoredCareers
+    )
+  ) {
+    return [];
+  }
+
+  const rankable =
+    filterRankableCareers(
+      scoredCareers,
+      {
+        includeConditional,
+        includeReviewRequired,
+        includeUnknown,
+        includeNotEligible,
+        onlyPreferenceMatches
+      }
+    );
+
+  const sorted =
+    [...rankable]
       .sort(
         compareCareers
       );
 
-  if (
-    Number.isInteger(
-      Number(limit)
-    ) &&
-    Number(limit) >
-      0
-  ) {
-    results =
-      results.slice(
-        0,
-        Number(limit)
-      );
-  }
+  const normalizedLimit =
+    Number(
+      limit
+    );
 
-  return results.map(
-    (item, index) => ({
-      ...item,
-      rank:
-        index + 1
-    })
+  const limited =
+    Number.isInteger(
+      normalizedLimit
+    ) &&
+    normalizedLimit > 0
+      ? sorted.slice(
+          0,
+          normalizedLimit
+        )
+      : sorted;
+
+  return limited.map(
+    (
+      item,
+      index
+    ) =>
+      attachRank(
+        item,
+        index + 1,
+        index
+      )
   );
 }
+
+/* ============================================================
+ * CLASSIFIED RANKING VIEW
+ * ============================================================
+ *
+ * Useful for UI screens that need:
+ *
+ *   Recommended
+ *   Conditional
+ *   Needs verification
+ *   Not eligible
+ *
+ * without changing the underlying eligibility results.
+ */
 
 function groupRankedCareers(
   rankedCareers
 ) {
   const groups = {
-    direct:
-      [],
-    conditional:
-      [],
-    manualVerification:
-      [],
-    notEligible:
-      []
+    direct: [],
+    conditional: [],
+    reviewRequired: [],
+    unknown: [],
+    notEligible: []
   };
+
+  if (
+    !Array.isArray(
+      rankedCareers
+    )
+  ) {
+    return groups;
+  }
 
   rankedCareers.forEach(
     (career) => {
+      const status =
+        normalizeStatus(
+          career?.eligibilityStatus
+        );
+
       switch (
-        career.eligibilityStatus
+        status
       ) {
-        case ELIGIBILITY_RESULT.DIRECT:
+        case 'DIRECT':
           groups.direct.push(
             career
           );
           break;
 
-        case ELIGIBILITY_RESULT.CONDITIONAL:
+        case 'CONDITIONAL':
           groups.conditional.push(
             career
           );
           break;
 
-        case ELIGIBILITY_RESULT.MANUAL_VERIFICATION:
-          groups.manualVerification.push(
+        case 'REVIEW_REQUIRED':
+          groups.reviewRequired.push(
             career
           );
           break;
 
-        case ELIGIBILITY_RESULT.NOT_ELIGIBLE:
+        case 'UNKNOWN':
+          groups.unknown.push(
+            career
+          );
+          break;
+
+        case 'NOT_ELIGIBLE':
           groups.notEligible.push(
             career
           );
           break;
 
         default:
-          groups.manualVerification.push(
+          groups.unknown.push(
             career
           );
+          break;
       }
     }
   );
 
   return groups;
 }
+
+/* ============================================================
+ * ALL-STATE CLASSIFICATION
+ * ============================================================
+ *
+ * This preserves every scored record but makes the recommendation
+ * boundary explicit.
+ *
+ * It is useful when the UI needs a full audit rather than only the
+ * automatically recommendable list.
+ */
+
+function classifyRankedCareers(
+  scoredCareers
+) {
+  if (
+    !Array.isArray(
+      scoredCareers
+    )
+  ) {
+    return {
+      recommendable: [],
+      conditional: [],
+      reviewRequired: [],
+      unknown: [],
+      notEligible: []
+    };
+  }
+
+  const result = {
+    recommendable: [],
+    conditional: [],
+    reviewRequired: [],
+    unknown: [],
+    notEligible: []
+  };
+
+  scoredCareers.forEach(
+    (item) => {
+      const status =
+        normalizeStatus(
+          item?.eligibilityStatus
+        );
+
+      switch (
+        status
+      ) {
+        case 'DIRECT':
+          result.recommendable.push(
+            item
+          );
+          break;
+
+        case 'CONDITIONAL':
+          result.conditional.push(
+            item
+          );
+          break;
+
+        case 'REVIEW_REQUIRED':
+          result.reviewRequired.push(
+            item
+          );
+          break;
+
+        case 'UNKNOWN':
+          result.unknown.push(
+            item
+          );
+          break;
+
+        case 'NOT_ELIGIBLE':
+          result.notEligible.push(
+            item
+          );
+          break;
+
+        default:
+          result.unknown.push(
+            item
+          );
+          break;
+      }
+    }
+  );
+
+  return result;
+}
+
+/* ============================================================
+ * TOP CAREER
+ * ========================================================== */
 
 function getTopCareer(
   rankedCareers
@@ -349,6 +1090,10 @@ function getTopCareer(
   return rankedCareers[0];
 }
 
+/* ============================================================
+ * RANKING SUMMARY
+ * ========================================================== */
+
 function getRankingSummary(
   rankedCareers
 ) {
@@ -362,7 +1107,10 @@ function getRankingSummary(
     conditional:
       0,
 
-    manualVerification:
+    reviewRequired:
+      0,
+
+    unknown:
       0,
 
     notEligible:
@@ -372,7 +1120,10 @@ function getRankingSummary(
       0,
 
     topScore:
-      0
+      0,
+
+    topCareerId:
+      null
   };
 
   if (
@@ -394,34 +1145,43 @@ function getRankingSummary(
         1;
 
       scoreTotal +=
-        numeric(
-          career.score
+        getScore(
+          career
         );
 
       switch (
-        career.eligibilityStatus
+        normalizeStatus(
+          career?.eligibilityStatus
+        )
       ) {
-        case ELIGIBILITY_RESULT.DIRECT:
+        case 'DIRECT':
           summary.direct +=
             1;
           break;
 
-        case ELIGIBILITY_RESULT.CONDITIONAL:
+        case 'CONDITIONAL':
           summary.conditional +=
             1;
           break;
 
-        case ELIGIBILITY_RESULT.MANUAL_VERIFICATION:
-          summary.manualVerification +=
+        case 'REVIEW_REQUIRED':
+          summary.reviewRequired +=
             1;
           break;
 
-        case ELIGIBILITY_RESULT.NOT_ELIGIBLE:
+        case 'UNKNOWN':
+          summary.unknown +=
+            1;
+          break;
+
+        case 'NOT_ELIGIBLE':
           summary.notEligible +=
             1;
           break;
 
         default:
+          summary.unknown +=
+            1;
           break;
       }
     }
@@ -438,208 +1198,282 @@ function getRankingSummary(
     );
 
   summary.topScore =
-    numeric(
+    getScore(
       rankedCareers[0]
-        ?.score
     );
+
+  summary.topCareerId =
+    getCareerId(
+      rankedCareers[0]
+    ) ||
+    null;
 
   return summary;
 }
 
-/**
- * Generate alternative "best for X" rankings.
+/* ============================================================
+ * SCORE-BASED ALTERNATIVE RANKING
+ * ============================================================
  *
- * This does not invent scores. It sorts using actual fields
- * already present in the canonical career records.
+ * The old implementation contained raw career-data objective
+ * sorters such as:
+ *
+ *   salary → career.startingBasic
+ *   authority → career.authority
+ *   family → career.familyCompatibility
+ *   stress → career.stress
+ *
+ * Those are deliberately removed.
+ *
+ * Alternative rankings must be created by the Scoring Engine,
+ * which produces an appropriate score for the requested objective.
+ *
+ * This helper therefore accepts an ALREADY-COMPUTED scoring field
+ * from the scoring pipeline.
  */
-const OBJECTIVE_SORTERS =
-  Object.freeze({
-    salary: (
-      a,
-      b
-    ) =>
-      compareValues(
-        a.career?.startingBasic,
-        b.career?.startingBasic
-      ),
 
-    authority: (
-      a,
-      b
-    ) =>
-      compareValues(
-        a.career?.authority,
-        b.career?.authority
-      ),
-
-    family: (
-      a,
-      b
-    ) =>
-      compareValues(
-        a.career
-          ?.familyCompatibility,
-        b.career
-          ?.familyCompatibility
-      ),
-
-    parentCare: (
-      a,
-      b
-    ) =>
-      compareValues(
-        a.career
-          ?.parentCareCompatibility,
-        b.career
-          ?.parentCareCompatibility
-      ),
-
-    kolkata: (
-      a,
-      b
-    ) =>
-      compareValues(
-        a.career
-          ?.kolkataStability,
-        b.career
-          ?.kolkataStability
-      ),
-
-    workLife: (
-      a,
-      b
-    ) =>
-      compareValues(
-        a.career?.workLife,
-        b.career?.workLife
-      ),
-
-    safety: (
-      a,
-      b
-    ) =>
-      compareValues(
-        10 -
-          numeric(
-            a.career
-              ?.physicalRisk
-          ),
-        10 -
-          numeric(
-            b.career
-              ?.physicalRisk
-          )
-      ),
-
-    lowStress: (
-      a,
-      b
-    ) =>
-      compareValues(
-        10 -
-          numeric(
-            a.career
-              ?.stress
-          ),
-        10 -
-          numeric(
-            b.career
-              ?.stress
-          )
-      ),
-
-    careerGrowth: (
-      a,
-      b
-    ) =>
-      compareValues(
-        a.career
-          ?.careerGrowth,
-        b.career
-          ?.careerGrowth
-      )
-  });
-
-function rankByObjective(
+function rankByScoredMetric(
   scoredCareers,
-  objective,
+  metric,
   {
-    limit = null
+    direction = 'DESC',
+    limit = null,
+    includeConditional = true,
+    includeReviewRequired = false,
+    includeUnknown = false,
+    includeNotEligible = false
   } = {}
 ) {
-  const sorter =
-    OBJECTIVE_SORTERS[
-      objective
-    ];
-
   if (
-    typeof sorter !==
-    'function'
+    !Array.isArray(
+      scoredCareers
+    )
   ) {
     return [];
   }
 
-  const eligible =
-    Array.isArray(
-      scoredCareers
+  const normalizedMetric =
+    String(
+      metric ??
+        ''
+    ).trim();
+
+  if (
+    !normalizedMetric
+  ) {
+    return [];
+  }
+
+  const normalizedDirection =
+    String(
+      direction ??
+        'DESC'
     )
-      ? scoredCareers.filter(
-          (item) =>
-            item.eligibilityStatus !==
-              ELIGIBILITY_RESULT.NOT_ELIGIBLE
-        )
-      : [];
+      .trim()
+      .toUpperCase();
+
+  if (
+    normalizedDirection !==
+      'ASC' &&
+    normalizedDirection !==
+      'DESC'
+  ) {
+    return [];
+  }
+
+  const rankable =
+    filterRankableCareers(
+      scoredCareers,
+      {
+        includeConditional,
+        includeReviewRequired,
+        includeUnknown,
+        includeNotEligible
+      }
+    );
 
   const sorted =
-    [...eligible]
+    [...rankable]
       .sort(
-        sorter
-      )
-      .sort(
-        (a, b) =>
-          compareCareers(
+        (
+          a,
+          b
+        ) => {
+          const aValue =
+            numeric(
+              a?.scoreBreakdown?.[
+                normalizedMetric
+              ] ??
+              a?.breakdown?.[
+                normalizedMetric
+              ] ??
+              a?.scores?.[
+                normalizedMetric
+              ],
+              0
+            );
+
+          const bValue =
+            numeric(
+              b?.scoreBreakdown?.[
+                normalizedMetric
+              ] ??
+              b?.breakdown?.[
+                normalizedMetric
+              ] ??
+              b?.scores?.[
+                normalizedMetric
+              ],
+              0
+            );
+
+          const difference =
+            normalizedDirection ===
+            'ASC'
+              ? aValue -
+                bValue
+              : bValue -
+                aValue;
+
+          if (
+            difference !==
+            0
+          ) {
+            return difference;
+          }
+
+          return compareCareers(
             a,
             b
-          )
+          );
+        }
       );
+
+  const normalizedLimit =
+    Number(
+      limit
+    );
 
   const limited =
     Number.isInteger(
-      Number(limit)
+      normalizedLimit
     ) &&
-    Number(limit) > 0
+    normalizedLimit > 0
       ? sorted.slice(
           0,
-          Number(limit)
+          normalizedLimit
         )
       : sorted;
 
   return limited.map(
-    (item, index) => ({
-      ...item,
-      objective,
-      objectiveRank:
-        index + 1
-    })
+    (
+      item,
+      index
+    ) =>
+      attachRank(
+        item,
+        index + 1,
+        index
+      )
   );
 }
+
+/* ============================================================
+ * DETERMINISTIC TIE CHECK
+ * ============================================================ */
+
+function areRankingTies(
+  a,
+  b
+) {
+  return (
+    compareEligibility(
+      a,
+      b
+    ) === 0 &&
+    comparePreferenceFilter(
+      a,
+      b
+    ) === 0 &&
+    compareOverallScore(
+      a,
+      b
+    ) === 0 &&
+    comparePreferenceScore(
+      a,
+      b
+    ) === 0 &&
+    compareScoreConfidence(
+      a,
+      b
+    ) === 0 &&
+    compareCareerConfidence(
+      a,
+      b
+    ) === 0
+  );
+}
+
+/* ============================================================
+ * EXPORTS
+ * ========================================================== */
 
 export {
   ELIGIBILITY_PRIORITY,
   CONFIDENCE_PRIORITY,
+
+  normalizeStatus,
+
+  getEligibilityPriority,
+  getConfidencePriority,
+
+  classifyEligibility,
+
+  isAutomaticallyEligibleStatus,
+  isHardIneligibleStatus,
+  isReviewStatus,
+
+  filterRankableCareers,
+
+  compareEligibility,
+  comparePreferenceFilter,
+  compareOverallScore,
+  comparePreferenceScore,
+  compareScoreConfidence,
+  compareCareerConfidence,
+  compareStableId,
   compareCareers,
+
   rankCareers,
   groupRankedCareers,
+  classifyRankedCareers,
+
   getTopCareer,
   getRankingSummary,
-  rankByObjective
+
+  rankByScoredMetric,
+
+  areRankingTies
 };
 
 export default {
+  normalizeStatus,
+
+  classifyEligibility,
+
+  filterRankableCareers,
+
   compareCareers,
+
   rankCareers,
+
   groupRankedCareers,
+  classifyRankedCareers,
+
   getTopCareer,
   getRankingSummary,
-  rankByObjective
+
+  rankByScoredMetric,
+
+  areRankingTies
 };
