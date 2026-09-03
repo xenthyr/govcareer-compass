@@ -404,6 +404,217 @@ jobs:
           console.log('Local JavaScript import checks passed.');
           NODE
 
+      - name: Check mapped page-controller modules
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node --input-type=module <<'NODE'
+          import { access, readFile } from 'node:fs/promises';
+          import {
+            dirname,
+            relative,
+            resolve
+          } from 'node:path';
+
+          const APP_FILE =
+            'js/app.js';
+
+          const source =
+            await readFile(
+              APP_FILE,
+              'utf8'
+            );
+
+          /*
+           * app.js intentionally performs dynamic imports through
+           * PAGE_CONTROLLER_MAP[pageName]. The normal literal-import
+           * validator cannot resolve those variable-based paths.
+           *
+           * This check therefore validates only the controller paths
+           * explicitly declared by PAGE_CONTROLLER_MAP.
+           */
+          const mapMatch =
+            source.match(
+              /const\s+PAGE_CONTROLLER_MAP\s*=\s*Object\.freeze\(\s*\{([\s\S]*?)\}\s*\);/
+            );
+
+          if (!mapMatch) {
+            console.error(
+              `Unable to locate PAGE_CONTROLLER_MAP in ${APP_FILE}.`
+            );
+            process.exit(1);
+          }
+
+          const mapBody =
+            mapMatch[1];
+
+          /*
+           * Supported PAGE_CONTROLLER_MAP entry forms in the canonical
+           * app.js contract include:
+           *
+           *   home:
+           *     './pages/home.js',
+           *
+           * and:
+           *
+           *   'career-results':
+           *     './pages/results.js',
+           *
+           * The parser deliberately operates only on the isolated map
+           * body, preventing unrelated object literals from becoming
+           * speculative controller dependencies.
+           */
+          const entryPattern =
+            /^\s*(?:(['"])([^'"]+)\1|([A-Za-z0-9_-]+))\s*:\s*(['"])([^'"]+)\4\s*,?\s*$/gm;
+
+          const entries = [];
+
+          for (
+            const match of
+            mapBody.matchAll(
+              entryPattern
+            )
+          ) {
+            const page =
+              match[2] ||
+              match[3];
+
+            const modulePath =
+              match[5];
+
+            entries.push({
+              page,
+              modulePath
+            });
+          }
+
+          if (
+            entries.length === 0
+          ) {
+            console.error(
+              'PAGE_CONTROLLER_MAP was found, but no controller entries could be parsed.'
+            );
+            process.exit(1);
+          }
+
+          const failures = [];
+          const seenPages = new Set();
+          const seenPaths = new Set();
+
+          const appDirectory =
+            dirname(
+              resolve(
+                APP_FILE
+              )
+            );
+
+          for (
+            const {
+              page,
+              modulePath
+            } of entries
+          ) {
+            if (
+              seenPages.has(page)
+            ) {
+              failures.push(
+                `Duplicate page-controller key "${page}" in PAGE_CONTROLLER_MAP.`
+              );
+            }
+
+            if (
+              seenPaths.has(modulePath)
+            ) {
+              failures.push(
+                `Duplicate page-controller path "${modulePath}" in PAGE_CONTROLLER_MAP.`
+              );
+            }
+
+            seenPages.add(page);
+            seenPaths.add(modulePath);
+
+            /*
+             * Page-controller paths are repository-local module paths.
+             * Absolute URLs or bare package specifiers are invalid for
+             * this specific application contract.
+             */
+            if (
+              !(
+                modulePath.startsWith('./') ||
+                modulePath.startsWith('../')
+              )
+            ) {
+              failures.push(
+                `Page "${page}" has an invalid controller path "${modulePath}". Expected a relative repository path.`
+              );
+
+              continue;
+            }
+
+            const controllerFile =
+              resolve(
+                appDirectory,
+                modulePath
+              );
+
+            try {
+              await access(
+                controllerFile
+              );
+            } catch {
+              failures.push(
+                `Page "${page}" maps to missing controller module: ${modulePath}`
+              );
+            }
+
+            /*
+             * The controller must remain inside the repository tree.
+             * This prevents a malformed declaration from resolving
+             * outside the project directory.
+             */
+            const repositoryRoot =
+              resolve('.');
+
+            const relativeTarget =
+              relative(
+                repositoryRoot,
+                controllerFile
+              );
+
+            if (
+              relativeTarget.startsWith('..') ||
+              relativeTarget.includes('..' + '/')
+            ) {
+              failures.push(
+                `Page "${page}" controller path escapes the repository: ${modulePath}`
+              );
+            }
+          }
+
+          if (
+            failures.length
+          ) {
+            console.error(
+              'PAGE_CONTROLLER_MAP validation failed:'
+            );
+
+            console.error(
+              [
+                ...new Set(
+                  failures
+                )
+              ].join('\n')
+            );
+
+            process.exit(1);
+          }
+
+          console.log(
+            `PAGE_CONTROLLER_MAP validation passed: ${entries.length} declared controller module(s) verified.`
+          );
+          NODE
+
       - name: Check repository-local references
         shell: bash
         run: |
