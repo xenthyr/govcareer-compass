@@ -23,6 +23,26 @@
  * IMPORTANT:
  *   This file coordinates systems.
  *   It does not contain government-job business rules.
+ *
+ * BOOTSTRAP OWNERSHIP:
+ *
+ *   app.js is the single canonical application startup owner.
+ *
+ *   init.js is a compatibility bridge only and must not create
+ *   a competing startup lifecycle.
+ *
+ * GLOBAL AI:
+ *
+ *   CompassAI is initialized through the canonical shared-component
+ *   layer using initializeCompassAI().
+ *
+ * PAGE CONTROLLERS:
+ *
+ *   PAGE_CONTROLLER_MAP and PAGE_CONTROLLER_CONTRACT together define
+ *   the explicit application-level controller dependency surface.
+ *
+ *   The physical controller modules represented here are expected to
+ *   be verified by repository CI / Batch-1 implementation checks.
  */
 
 import config from './config.js';
@@ -134,6 +154,18 @@ import {
   initializePagination
 } from './components/pagination.js';
 
+/*
+ * Canonical global CompassAI component.
+ *
+ * This is the application-shell integration point for the shared AI
+ * interface. The component itself owns its internal state, rendering,
+ * context orchestration, safety, response parsing and API interaction.
+ */
+import {
+  initializeCompassAI
+} from './components/ai-assistant.js';
+
+
 /* ============================================================
  * APPLICATION CONSTANTS
  * ============================================================
@@ -150,6 +182,17 @@ const APP_PAGE_READY_EVENT =
 
 const APP_PAGE_ERROR_EVENT =
   'govcareer:page-error';
+
+
+/*
+ * Explicit application-controller contract version.
+ *
+ * This is intentionally small. Its purpose is to make the declared
+ * controller surface obvious to CI, documentation and future tooling.
+ */
+const PAGE_CONTROLLER_CONTRACT_VERSION =
+  '1.0';
+
 
 /* ============================================================
  * APPLICATION STATE
@@ -188,6 +231,7 @@ const appState = {
     null
 };
 
+
 /* ============================================================
  * UTILITIES
  * ============================================================
@@ -217,6 +261,7 @@ function safeString(
   );
 }
 
+
 function dispatchAppEvent(
   name,
   detail = {}
@@ -237,6 +282,7 @@ function dispatchAppEvent(
   }
 }
 
+
 function recordStep(
   name,
   status =
@@ -252,6 +298,7 @@ function recordStep(
       new Date().toISOString()
   });
 }
+
 
 function normalizeError(
   error
@@ -271,6 +318,7 @@ function normalizeError(
       )
   );
 }
+
 
 function reportError(
   error,
@@ -331,6 +379,7 @@ function reportError(
   return entry;
 }
 
+
 /* ============================================================
  * PAGE IDENTIFICATION
  * ============================================================
@@ -380,6 +429,7 @@ function getPageName() {
     );
 }
 
+
 function getCurrentRoute() {
   return {
     href:
@@ -395,6 +445,7 @@ function getCurrentRoute() {
       window.location.hash
   };
 }
+
 
 /* ============================================================
  * ACCESSIBILITY FOUNDATION
@@ -462,6 +513,7 @@ function initializeAccessibility() {
   );
 }
 
+
 /* ============================================================
  * GLOBAL ERROR HANDLING
  * ============================================================
@@ -496,6 +548,7 @@ function initializeGlobalErrorHandling() {
     'global-error-handling'
   );
 }
+
 
 /* ============================================================
  * APPLICATION METADATA
@@ -538,8 +591,9 @@ function initializeMetadata() {
   );
 }
 
+
 /* ============================================================
- * COMPONENT INITIALIZATION
+ * SHARED COMPONENT INITIALIZATION
  * ============================================================
  */
 
@@ -547,7 +601,17 @@ function initializeSharedComponents() {
   /*
    * The order intentionally follows dependency direction:
    *
-   *   shell → controls → data presentation → interaction UI
+   *   shell
+   *      ↓
+   *   shared controls
+   *      ↓
+   *   data presentation
+   *      ↓
+   *   interaction UI
+   *
+   * CompassAI is initialized after the shared header has been
+   * created so the canonical component can bind to shell-level
+   * AI triggers without introducing a page-specific startup path.
    */
 
   initializeHeader();
@@ -560,6 +624,20 @@ function initializeSharedComponents() {
 
   recordStep(
     'component-footer'
+  );
+
+  /*
+   * Initialize the global AI component once through the canonical
+   * application bootstrap.
+   *
+   * initializeCompassAI() is expected to be idempotent at the
+   * component layer, so repeated calls cannot create a second
+   * assistant instance during the same page lifecycle.
+   */
+  initializeCompassAI();
+
+  recordStep(
+    'component-ai-assistant'
   );
 
   initializeDrawers();
@@ -650,9 +728,30 @@ function initializeSharedComponents() {
   );
 }
 
+
 /* ============================================================
- * PAGE CONTROLLERS
+ * PAGE CONTROLLER DEPENDENCY CONTRACT
  * ============================================================
+ *
+ * PAGE_CONTROLLER_MAP:
+ *   Runtime lookup table used by the canonical bootstrap.
+ *
+ * PAGE_CONTROLLER_CONTRACT:
+ *   Explicit dependency declaration for verification tooling,
+ *   Batch-1 implementation and architectural documentation.
+ *
+ * Every declared module is expected to:
+ *   1. exist at the exact path below;
+ *   2. be an ES module;
+ *   3. export initialize(), init(), or a default function;
+ *   4. tolerate receiving the standard controller context.
+ *
+ * The controller files themselves are NOT implemented here.
+ * app.js only declares and orchestrates them.
+ *
+ * AI, About and Privacy are intentionally not included because
+ * they are currently static/page-surface concerns rather than
+ * registered page-controller dependencies.
  */
 
 const PAGE_CONTROLLER_MAP =
@@ -721,6 +820,166 @@ const PAGE_CONTROLLER_MAP =
       './pages/methodology.js'
   });
 
+
+/*
+ * Machine-readable dependency contract.
+ *
+ * Keeping this alongside the map avoids maintaining a second
+ * source for module paths while still making the contract explicit
+ * to repository validation / CI tooling.
+ */
+const PAGE_CONTROLLER_CONTRACT =
+  Object.freeze(
+    Object.entries(
+      PAGE_CONTROLLER_MAP
+    ).map(
+      (
+        [
+          page,
+          modulePath
+        ]
+      ) =>
+        Object.freeze({
+          page,
+          modulePath,
+          required:
+            true,
+          initializerExports:
+            Object.freeze([
+              'initialize',
+              'init',
+              'default'
+            ])
+        })
+    )
+  );
+
+
+/*
+ * Validate the declaration itself before attempting a runtime
+ * page-controller import.
+ *
+ * This does NOT pretend to verify filesystem existence in the browser.
+ * Physical file existence remains a CI / repository-contract concern.
+ */
+function validatePageControllerContract() {
+  const errors = [];
+
+  const seenPages =
+    new Set();
+
+  const seenModules =
+    new Set();
+
+  for (
+    const entry of
+      PAGE_CONTROLLER_CONTRACT
+  ) {
+    const page =
+      safeString(
+        entry?.page
+      );
+
+    const modulePath =
+      safeString(
+        entry?.modulePath
+      );
+
+    if (
+      !page
+    ) {
+      errors.push(
+        'A page-controller contract entry has no page name.'
+      );
+
+      continue;
+    }
+
+    if (
+      !modulePath
+    ) {
+      errors.push(
+        `Page-controller "${page}" has no module path.`
+      );
+
+      continue;
+    }
+
+    if (
+      seenPages.has(
+        page
+      )
+    ) {
+      errors.push(
+        `Duplicate page-controller declaration: "${page}".`
+      );
+    }
+
+    if (
+      seenModules.has(
+        modulePath
+      )
+    ) {
+      errors.push(
+        `Duplicate page-controller module path: "${modulePath}".`
+      );
+    }
+
+    seenPages.add(
+      page
+    );
+
+    seenModules.add(
+      modulePath
+    );
+
+    if (
+      PAGE_CONTROLLER_MAP[
+        page
+      ] !== modulePath
+    ) {
+      errors.push(
+        `Page-controller contract mismatch for "${page}".`
+      );
+    }
+
+    if (
+      entry.required !==
+      true
+    ) {
+      errors.push(
+        `Page-controller "${page}" must be marked required.`
+      );
+    }
+
+    if (
+      !Array.isArray(
+        entry.initializerExports
+      ) ||
+      entry.initializerExports.length ===
+        0
+    ) {
+      errors.push(
+        `Page-controller "${page}" has no supported initializer contract.`
+      );
+    }
+  }
+
+  return {
+    valid:
+      errors.length ===
+      0,
+
+    errors
+  };
+}
+
+
+/* ============================================================
+ * PAGE CONTROLLERS
+ * ============================================================
+ */
+
 async function initializePageController(
   pageName
 ) {
@@ -737,6 +996,9 @@ async function initializePageController(
   /*
    * Pages such as AI, About and Privacy may initially be
    * static content pages without a JavaScript controller.
+   *
+   * This is an explicit architectural state, not a failed
+   * dynamic import.
    */
   if (
     !modulePath
@@ -795,7 +1057,8 @@ async function initializePageController(
       );
 
     appState.pageController =
-      result ?? null;
+      result ??
+      null;
 
     dispatchAppEvent(
       APP_PAGE_READY_EVENT,
@@ -804,7 +1067,8 @@ async function initializePageController(
           normalized,
 
         controller:
-          result ?? null
+          result ??
+          null
       }
     );
 
@@ -816,6 +1080,20 @@ async function initializePageController(
   } catch (
     error
   ) {
+    /*
+     * This is intentionally not swallowed.
+     *
+     * The failure is:
+     * - normalized;
+     * - recorded in application state;
+     * - surfaced through govcareer:error;
+     * - surfaced through govcareer:page-error;
+     * - recorded in initializationSteps.
+     *
+     * The existing mature behavior is preserved: a page-controller
+     * failure does not automatically create a second application
+     * lifecycle or throw outside the canonical bootstrap boundary.
+     */
     const recorded =
       reportError(
         error,
@@ -842,6 +1120,7 @@ async function initializePageController(
     return null;
   }
 }
+
 
 /* ============================================================
  * MAIN BOOTSTRAP
@@ -871,6 +1150,42 @@ async function initializeApplication() {
     initializeMetadata();
 
     initializeGlobalErrorHandling();
+
+    /*
+     * Validate the declared controller dependency surface before
+     * page-specific loading begins.
+     *
+     * This checks the application's declaration itself.
+     * CI remains responsible for verifying physical module presence.
+     */
+    const pageControllerContract =
+      validatePageControllerContract();
+
+    if (
+      !pageControllerContract.valid
+    ) {
+      const contractError =
+        new Error(
+          `Invalid page-controller dependency contract: ${pageControllerContract.errors.join(
+            ' '
+          )}`
+        );
+
+      reportError(
+        contractError,
+        'Page controller contract'
+      );
+
+      recordStep(
+        'page-controller-contract',
+        'failed',
+        pageControllerContract.errors
+      );
+    } else {
+      recordStep(
+        'page-controller-contract'
+      );
+    }
 
     /*
      * Persistent state must exist before controls that consume
@@ -1086,6 +1401,9 @@ async function initializeApplication() {
 
     /*
      * Shared component layer.
+     *
+     * The canonical CompassAI component is initialized inside this
+     * shared layer rather than through a page-specific controller.
      */
     try {
       initializeSharedComponents();
@@ -1175,6 +1493,11 @@ async function initializeApplication() {
       'error'
     );
 
+    document.documentElement
+      .dataset
+      .appReady =
+      'error';
+
     const recorded =
       reportError(
         error,
@@ -1195,6 +1518,7 @@ async function initializeApplication() {
     return getAppState();
   }
 }
+
 
 /* ============================================================
  * PUBLIC STATE
@@ -1251,6 +1575,7 @@ function getAppState() {
   };
 }
 
+
 function isApplicationReady() {
   return (
     appState.ready ===
@@ -1258,9 +1583,11 @@ function isApplicationReady() {
   );
 }
 
+
 function getCurrentPage() {
   return appState.page;
 }
+
 
 /* ============================================================
  * AUTO START
@@ -1278,6 +1605,7 @@ function bootstrap() {
   void initializeApplication();
 }
 
+
 if (
   document.readyState ===
   'loading'
@@ -1286,12 +1614,14 @@ if (
     'DOMContentLoaded',
     bootstrap,
     {
-      once: true
+      once:
+        true
     }
   );
 } else {
   bootstrap();
 }
+
 
 /* ============================================================
  * EXPORTS
@@ -1303,6 +1633,10 @@ export {
   APP_ERROR_EVENT,
   APP_PAGE_READY_EVENT,
   APP_PAGE_ERROR_EVENT,
+
+  PAGE_CONTROLLER_CONTRACT_VERSION,
+  PAGE_CONTROLLER_MAP,
+  PAGE_CONTROLLER_CONTRACT,
 
   initializeApplication,
   initializePageController,
@@ -1316,6 +1650,7 @@ export {
 
   reportError
 };
+
 
 export default {
   initializeApplication,
