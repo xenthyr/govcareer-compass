@@ -1,0 +1,612 @@
+name: Static project checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: static-check-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-check:
+    name: JavaScript, HTML and architecture checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.14.0
+
+      - name: Verify required architectural files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          required_files=(
+            "index.html"
+
+            "js/app.js"
+            "js/init.js"
+            "js/config.js"
+            "js/router.js"
+            "js/navigation.js"
+            "js/theme.js"
+            "js/language.js"
+            "js/search.js"
+            "js/filters.js"
+            "js/storage.js"
+
+            "js/database/loader.js"
+            "js/database/registry.js"
+            "js/database/normalizer.js"
+            "js/database/validators.js"
+            "js/database/indexes.js"
+            "js/database/cache.js"
+
+            "js/recommendation/eligibility-engine.js"
+            "js/recommendation/preference-engine.js"
+            "js/recommendation/scoring-engine.js"
+            "js/recommendation/ranking-engine.js"
+            "js/recommendation/explanation-engine.js"
+
+            "js/components/header.js"
+            "js/components/footer.js"
+            "js/components/ai-assistant.js"
+            "js/components/search-bar.js"
+            "js/components/state-selector.js"
+            "js/components/language-selector.js"
+            "js/components/theme-selector.js"
+
+            "js/ai/client.js"
+            "js/ai/context-builder.js"
+            "js/ai/prompt-builder.js"
+            "js/ai/response-parser.js"
+            "js/ai/safety.js"
+            "js/ai/intent-router.js"
+
+            "api/chat.mjs"
+            "api/health.mjs"
+            "api/_lib/config.mjs"
+            "api/_lib/security.mjs"
+            "api/_lib/compass-prompt.mjs"
+
+            "data/schemas/job.schema.json"
+            "data/schemas/eligibility-rule.schema.json"
+            "data/schemas/service-cadre.schema.json"
+
+            "data/central/exams.json"
+            "data/central/jobs.json"
+            "data/central/departments.json"
+            "data/central/organisations.json"
+            "data/central/service-cadres.json"
+            "data/central/eligibility-rules.json"
+
+            "data/states/west-bengal/service-cadres.json"
+            "data/states/west-bengal/eligibility-rules.json"
+
+            "data/indexes/job-index.json"
+            "data/indexes/exam-index.json"
+            "data/indexes/department-index.json"
+            "data/indexes/source-index.json"
+            "data/indexes/service-cadre-index.json"
+            "data/indexes/eligibility-rule-index.json"
+            "data/indexes/qualification-index.json"
+            "data/indexes/search-index.json"
+          )
+
+          missing=()
+
+          for path in "${required_files[@]}"; do
+            if [[ ! -f "$path" ]]; then
+              missing+=("$path")
+            fi
+          done
+
+          if (( ${#missing[@]} > 0 )); then
+            echo "Missing required architectural files:" >&2
+            printf ' - %s\n' "${missing[@]}" >&2
+            exit 1
+          fi
+
+          echo "All required architectural files are present."
+
+      - name: Check JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          files=()
+
+          while IFS= read -r -d '' file; do
+            files+=("$file")
+          done < <(
+            find . \
+              -path './.git' -prune -o \
+              -path './node_modules' -prune -o \
+              -type f -name '*.js' -print0
+          )
+
+          while IFS= read -r -d '' file; do
+            files+=("$file")
+          done < <(
+            find . \
+              -path './.git' -prune -o \
+              -path './node_modules' -prune -o \
+              -type f -name '*.mjs' -print0
+          )
+
+          if (( ${#files[@]} == 0 )); then
+            echo "No JavaScript modules found."
+            exit 1
+          fi
+
+          failed=0
+
+          for file in "${files[@]}"; do
+            if ! node --check "$file"; then
+              echo "JavaScript syntax error: $file" >&2
+              failed=1
+            fi
+          done
+
+          if (( failed != 0 )); then
+            exit 1
+          fi
+
+          echo "All JavaScript modules passed syntax checks."
+
+      - name: Check HTML structure
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node --input-type=module <<'NODE'
+          import { readdir, readFile } from 'node:fs/promises';
+          import { extname, join, relative } from 'node:path';
+
+          const failures = [];
+
+          async function walk(directory) {
+            const entries = await readdir(directory, { withFileTypes: true });
+
+            for (const entry of entries) {
+              if (entry.name === '.git' || entry.name === 'node_modules') {
+                continue;
+              }
+
+              const fullPath = join(directory, entry.name);
+
+              if (entry.isDirectory()) {
+                await walk(fullPath);
+                continue;
+              }
+
+              if (extname(entry.name).toLowerCase() !== '.html') {
+                continue;
+              }
+
+              const text = await readFile(fullPath, 'utf8');
+              const path = relative('.', fullPath);
+              const lower = text.toLowerCase();
+
+              if (!/^\s*(<!doctype html>|<html\b)/i.test(text)) {
+                failures.push(`${path}: missing HTML5 doctype at the beginning of the document.`);
+              }
+
+              if (!/<html\b[^>]*>/i.test(text)) {
+                failures.push(`${path}: missing <html> root element.`);
+              }
+
+              if (!/<head\b[^>]*>/i.test(text) || !/<\/head>/i.test(text)) {
+                failures.push(`${path}: missing or malformed <head> section.`);
+              }
+
+              if (!/<body\b[^>]*>/i.test(text) || !/<\/body>/i.test(text)) {
+                failures.push(`${path}: missing or malformed <body> section.`);
+              }
+
+              if (!/<title\b[^>]*>[^<]+<\/title>/i.test(text)) {
+                failures.push(`${path}: missing non-empty <title>.`);
+              }
+
+              if (/<script\b[^>]*src=["'][^"']+\.js(?:\?[^"']*)?["'][^>]*>/i.test(text)) {
+                const scriptTags = [...text.matchAll(/<script\b[^>]*src=["']([^"']+)["'][^>]*>/gi)];
+
+                for (const match of scriptTags) {
+                  const src = match[1];
+
+                  if (/^(?:https?:)?\/\//i.test(src)) {
+                    continue;
+                  }
+
+                  if (/^\/api\//i.test(src)) {
+                    continue;
+                  }
+
+                  const queryless = src.split(/[?#]/, 1)[0];
+                  const target = join('.', queryless.replace(/^\//, ''));
+
+                  try {
+                    await readFile(target);
+                  } catch {
+                    failures.push(`${path}: script source does not exist: ${src}`);
+                  }
+                }
+              }
+
+              if (/<link\b[^>]*href=["'][^"']+["'][^>]*>/i.test(text)) {
+                const linkTags = [...text.matchAll(/<link\b[^>]*href=["']([^"']+)["'][^>]*>/gi)];
+
+                for (const match of linkTags) {
+                  const href = match[1];
+
+                  if (
+                    /^(?:https?:)?\/\//i.test(href) ||
+                    href.startsWith('data:') ||
+                    href.startsWith('#') ||
+                    href.startsWith('mailto:') ||
+                    href.startsWith('tel:')
+                  ) {
+                    continue;
+                  }
+
+                  const queryless = href.split(/[?#]/, 1)[0];
+                  const target = join('.', queryless.replace(/^\//, ''));
+
+                  try {
+                    await readFile(target);
+                  } catch {
+                    failures.push(`${path}: linked local resource does not exist: ${href}`);
+                  }
+                }
+              }
+
+              const opening = (text.match(/<script\b/gi) || []).length;
+              const closing = (text.match(/<\/script>/gi) || []).length;
+
+              if (opening !== closing) {
+                failures.push(`${path}: unbalanced <script> tags (${opening} opening, ${closing} closing).`);
+              }
+
+              if (lower.includes('<button') && !/<button\b[^>]*type=["']/i.test(text)) {
+                failures.push(`${path}: contains <button> without an explicit type attribute.`);
+              }
+            }
+          }
+
+          await walk('.');
+
+          if (failures.length) {
+            console.error('HTML structural/static checks failed:');
+            console.error(failures.join('\n'));
+            process.exit(1);
+          }
+
+          console.log('HTML structural checks passed.');
+          NODE
+
+      - name: Check local JavaScript imports
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node --input-type=module <<'NODE'
+          import { access, readdir, readFile } from 'node:fs/promises';
+          import { dirname, extname, join, normalize, resolve, relative } from 'node:path';
+
+          const importPattern = /(?:^|[\n;])\s*(?:import\s+(?:[^'";]+?\s+from\s+)?|export\s+(?:[^'";]+?\s+from\s+))['"]([^'"]+)['"]/g;
+          const dynamicPattern = /import\(\s*['"]([^'"]+)['"]\s*\)/g;
+          const failures = [];
+          const checked = new Set();
+
+          async function exists(file) {
+            try {
+              await access(file);
+              return true;
+            } catch {
+              return false;
+            }
+          }
+
+          function isLocalSpecifier(specifier) {
+            return specifier.startsWith('./') || specifier.startsWith('../') || specifier.startsWith('/');
+          }
+
+          async function resolveImport(fromFile, specifier) {
+            if (!isLocalSpecifier(specifier)) {
+              return null;
+            }
+
+            const base = specifier.startsWith('/')
+              ? resolve('.', specifier.slice(1))
+              : resolve(dirname(fromFile), specifier);
+
+            const candidates = [
+              base,
+              `${base}.js`,
+              `${base}.mjs`,
+              `${base}.json`,
+              join(base, 'index.js'),
+              join(base, 'index.mjs')
+            ];
+
+            for (const candidate of candidates) {
+              if (await exists(candidate)) {
+                return candidate;
+              }
+            }
+
+            return null;
+          }
+
+          async function walk(directory) {
+            const entries = await readdir(directory, { withFileTypes: true });
+
+            for (const entry of entries) {
+              if (entry.name === '.git' || entry.name === 'node_modules') {
+                continue;
+              }
+
+              const file = join(directory, entry.name);
+
+              if (entry.isDirectory()) {
+                await walk(file);
+                continue;
+              }
+
+              const extension = extname(entry.name).toLowerCase();
+              if (extension !== '.js' && extension !== '.mjs') {
+                continue;
+              }
+
+              const source = await readFile(file, 'utf8');
+
+              const specifiers = [];
+
+              for (const match of source.matchAll(importPattern)) {
+                specifiers.push(match[1]);
+              }
+
+              for (const match of source.matchAll(dynamicPattern)) {
+                specifiers.push(match[1]);
+              }
+
+              for (const specifier of specifiers) {
+                const target = await resolveImport(file, specifier);
+
+                if (!target) {
+                  failures.push(`${relative('.', file)}: missing local import target: ${specifier}`);
+                }
+              }
+            }
+          }
+
+          await walk('.');
+
+          if (failures.length) {
+            console.error('Missing local imports/references:');
+            console.error(failures.join('\n'));
+            process.exit(1);
+          }
+
+          console.log('Local JavaScript import checks passed.');
+          NODE
+
+      - name: Check repository-local references
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node --input-type=module <<'NODE'
+          import { access, readdir, readFile } from 'node:fs/promises';
+          import { dirname, extname, join, relative, resolve } from 'node:path';
+
+          const failures = [];
+
+          async function exists(path) {
+            try {
+              await access(path);
+              return true;
+            } catch {
+              return false;
+            }
+          }
+
+          function shouldCheck(value) {
+            if (!value || value.startsWith('#')) return false;
+            if (/^(?:https?:|mailto:|tel:|data:|javascript:)/i.test(value)) return false;
+            if (/^\/\//.test(value)) return false;
+            return true;
+          }
+
+          async function walk(directory) {
+            const entries = await readdir(directory, { withFileTypes: true });
+
+            for (const entry of entries) {
+              if (entry.name === '.git' || entry.name === 'node_modules') continue;
+
+              const file = join(directory, entry.name);
+
+              if (entry.isDirectory()) {
+                await walk(file);
+                continue;
+              }
+
+              if (extname(entry.name).toLowerCase() !== '.html') continue;
+
+              const source = await readFile(file, 'utf8');
+              const localPath = relative('.', file);
+
+              const attributes = [
+                ...source.matchAll(/(?:href|src|action|data-src)=["']([^"']+)["']/gi)
+              ].map((match) => match[1]);
+
+              for (const target of attributes) {
+                if (!shouldCheck(target)) continue;
+
+                const clean = target.split(/[?#]/, 1)[0];
+                if (!clean) continue;
+
+                /* Route strings and fragment-less absolute site paths are checked
+                   only when they resolve to a real repository file. */
+                const candidates = clean.startsWith('/')
+                  ? [resolve('.', clean.slice(1))]
+                  : [resolve(dirname(file), clean), resolve('.', clean)];
+
+                let found = false;
+
+                for (const candidate of candidates) {
+                  if (await exists(candidate)) {
+                    found = true;
+                    break;
+                  }
+                }
+
+                if (!found) {
+                  /* Ignore ordinary in-app route placeholders unless the value
+                     clearly looks like a repository file. */
+                  const looksLikeFile = /\.(?:html?|css|js|mjs|json|svg|png|jpe?g|webp|ico|woff2?|ttf)$/i.test(clean);
+
+                  if (looksLikeFile) {
+                    failures.push(`${localPath}: broken local repository reference: ${target}`);
+                  }
+                }
+              }
+            }
+          }
+
+          await walk('.');
+
+          if (failures.length) {
+            console.error('Broken repository-path checks failed:');
+            console.error(failures.join('\n'));
+            process.exit(1);
+          }
+
+          console.log('Repository-local path checks passed.');
+          NODE
+
+      - name: Check prohibited secret patterns
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node --input-type=module <<'NODE'
+          import { readdir, readFile } from 'node:fs/promises';
+          import { extname, join, relative } from 'node:path';
+
+          const failures = [];
+
+          const allowedFiles = new Set([
+            '.github/workflows/static-check.yml',
+            '.github/workflows/data-validation.yml'
+          ]);
+
+          const textExtensions = new Set([
+            '.js', '.mjs', '.cjs', '.json', '.html', '.css', '.scss',
+            '.md', '.yml', '.yaml', '.txt', '.env', '.example'
+          ]);
+
+          const patterns = [
+            {
+              name: 'OpenAI-style API key',
+              regex: /\bsk-[A-Za-z0-9_-]{20,}\b/g
+            },
+            {
+              name: 'OpenRouter-style API key',
+              regex: /\bsk-or-v1-[A-Za-z0-9]{20,}\b/g
+            },
+            {
+              name: 'GitHub personal access token',
+              regex: /\bghp_[A-Za-z0-9]{30,}\b/g
+            },
+            {
+              name: 'GitHub fine-grained token',
+              regex: /\bgithub_pat_[A-Za-z0-9_]{30,}\b/g
+            },
+            {
+              name: 'AWS access key ID',
+              regex: /\bAKIA[0-9A-Z]{16}\b/g
+            },
+            {
+              name: 'Private key material',
+              regex: /-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----/g
+            },
+            {
+              name: 'Hard-coded bearer token',
+              regex: /\bAuthorization\s*:\s*Bearer\s+[A-Za-z0-9._-]{24,}\b/gi
+            },
+            {
+              name: 'Hard-coded secret assignment',
+              regex: /\b(?:api[_-]?key|secret|client[_-]?secret|access[_-]?token|refresh[_-]?token)\s*[:=]\s*["'][^"']{20,}["']/gi
+            }
+          ];
+
+          async function walk(directory) {
+            const entries = await readdir(directory, { withFileTypes: true });
+
+            for (const entry of entries) {
+              if (entry.name === '.git' || entry.name === 'node_modules') continue;
+
+              const file = join(directory, entry.name);
+
+              if (entry.isDirectory()) {
+                await walk(file);
+                continue;
+              }
+
+              const path = relative('.', file);
+
+              if (allowedFiles.has(path)) continue;
+
+              if (!textExtensions.has(extname(entry.name).toLowerCase())) continue;
+
+              const source = await readFile(file, 'utf8');
+
+              for (const pattern of patterns) {
+                pattern.regex.lastIndex = 0;
+
+                if (pattern.regex.test(source)) {
+                  failures.push(`${path}: prohibited ${pattern.name} pattern detected.`);
+                }
+              }
+            }
+          }
+
+          await walk('.');
+
+          if (failures.length) {
+            console.error('Potential secret patterns detected:');
+            console.error([...new Set(failures)].join('\n'));
+            process.exit(1);
+          }
+
+          console.log('No prohibited secret patterns were detected.');
+          NODE
+
+      - name: Check required workflow hygiene
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -f .github/workflows/data-validation.yml
+          test -f .github/workflows/static-check.yml
+
+          grep -q '^permissions:' .github/workflows/static-check.yml
+          grep -q 'contents: read' .github/workflows/static-check.yml
+          grep -q '^concurrency:' .github/workflows/static-check.yml
+          grep -q 'cancel-in-progress: true' .github/workflows/static-check.yml
+
+          echo "CI workflow hygiene checks passed."
