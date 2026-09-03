@@ -6,78 +6,89 @@
  *
  * Purpose
  * -------
- * Thin compatibility/bootstrap entry point for the canonical
- * application startup owned by:
+ * Thin compatibility entry point for the canonical application
+ * bootstrap owned exclusively by:
  *
  *   js/app.js
  *
- * init.js does NOT own application initialization logic.
+ * app.js is the single owner of:
+ * - storage initialization
+ * - theme initialization
+ * - language initialization
+ * - router initialization
+ * - navigation initialization
+ * - search initialization
+ * - filters initialization
+ * - shared component initialization
+ * - page-controller initialization
+ * - application-ready/error lifecycle
  *
- * It must NOT:
- * - load the database;
- * - register datasets;
- * - initialize theme;
- * - initialize language;
- * - load jobs/exams independently;
- * - initialize UI components independently;
- * - initialize routing independently;
- * - create a second application lifecycle.
+ * init.js must NOT reproduce any of that work.
  *
  * Canonical startup
  * -----------------
  *
- *   HTML / module loader
+ *   HTML/module loader
  *          ↓
  *       init.js
  *          ↓
- *       js/app.js
+ *       import js/app.js
  *          ↓
- *   canonical application bootstrap
+ *       js/app.js auto-bootstrap
  *          ↓
- *   database / theme / language / components / pages
+ *       canonical application lifecycle
+ *
+ * The import of app.js is therefore sufficient to activate the
+ * application's existing startup mechanism. init.js does not
+ * invoke initializeApplication() a second time.
  *
  * Compatibility events
  * --------------------
  *
- * Existing consumers may listen for:
+ * Canonical app.js events:
+ *
+ *   govcareer:ready
+ *   govcareer:error
+ *
+ * Legacy compatibility events exposed by this module:
  *
  *   app:ready
  *   app:error
  *
- * The canonical App/application remains responsible for the actual
- * startup. init.js only provides a compatibility bridge when those
- * lifecycle events are not already emitted by App.
- *
- * Design goals
- * ------------
- * - exactly one application startup attempt;
- * - idempotent repeated calls;
- * - Promise-based lifecycle;
- * - browser-safe event dispatch;
- * - no duplicated application responsibilities;
- * - compatibility with a small set of canonical App bootstrap
- *   export naming conventions.
+ * Compatibility events are emitted only after the canonical app
+ * event has been observed, preventing duplicate application
+ * initialization and avoiding a competing lifecycle.
  */
 
-import * as AppModule from './app.js';
+import {
+  initializeApplication,
+  getAppState,
+  isApplicationReady,
+  getCurrentPage,
+
+  APP_READY_EVENT as CANONICAL_READY_EVENT,
+  APP_ERROR_EVENT as CANONICAL_ERROR_EVENT
+} from './app.js';
+
 
 /* ============================================================
  * CONSTANTS
- * ========================================================== */
+ * ============================================================ */
 
-const STARTUP_STATE = Object.freeze({
-  IDLE:
-    'IDLE',
+const STARTUP_STATE =
+  Object.freeze({
+    IDLE:
+      'IDLE',
 
-  STARTING:
-    'STARTING',
+    STARTING:
+      'STARTING',
 
-  READY:
-    'READY',
+    READY:
+      'READY',
 
-  ERROR:
-    'ERROR'
-});
+    ERROR:
+      'ERROR'
+  });
 
 const APP_READY_EVENT =
   'app:ready';
@@ -85,146 +96,41 @@ const APP_READY_EVENT =
 const APP_ERROR_EVENT =
   'app:error';
 
-/*
- * Global guard key.
- *
- * The module-level Promise normally prevents duplicate startup
- * within one module instance.
- *
- * The global symbol also protects against accidental duplicate
- * module loading / bundler instances that reference the same page.
- */
-const GLOBAL_STATE_KEY =
-  '__GOVCAREER_COMPASS_APP_BOOTSTRAP__';
 
 /* ============================================================
- * GLOBAL STATE
- * ========================================================== */
+ * MODULE STATE
+ * ============================================================ */
 
-function getGlobalState() {
-  if (
-    typeof globalThis ===
-    'undefined'
-  ) {
-    return {
-      state:
-        STARTUP_STATE.IDLE,
+let compatibilityReadyEmitted =
+  false;
 
-      promise:
-        null,
+let compatibilityErrorEmitted =
+  false;
 
-      result:
-        null,
+let lifecycleBound =
+  false;
 
-      error:
-        null,
+let readinessPromise =
+  null;
 
-      readyEventObserved:
-        false,
-
-      errorEventObserved:
-        false
-    };
-  }
-
-  if (
-    !globalThis[
-      GLOBAL_STATE_KEY
-    ]
-  ) {
-    globalThis[
-      GLOBAL_STATE_KEY
-    ] = {
-      state:
-        STARTUP_STATE.IDLE,
-
-      promise:
-        null,
-
-      result:
-        null,
-
-      error:
-        null,
-
-      readyEventObserved:
-        false,
-
-      errorEventObserved:
-        false
-    };
-  }
-
-  return globalThis[
-    GLOBAL_STATE_KEY
-  ];
-}
-
-const bootstrapState =
-  getGlobalState();
 
 /* ============================================================
- * EVENT SUPPORT
- * ========================================================== */
+ * EVENT HELPERS
+ * ============================================================ */
 
 function hasEventTarget() {
   return (
     typeof window !==
       'undefined' &&
+    typeof window.addEventListener ===
+      'function' &&
     typeof window.dispatchEvent ===
       'function'
   );
 }
 
-function listenForCanonicalLifecycleEvents() {
-  if (
-    !hasEventTarget()
-  ) {
-    return () => {};
-  }
 
-  const onReady =
-    () => {
-      bootstrapState.readyEventObserved =
-        true;
-    };
-
-  const onError =
-    () => {
-      bootstrapState.errorEventObserved =
-        true;
-    };
-
-  window.addEventListener(
-    APP_READY_EVENT,
-    onReady,
-    {
-      once: false
-    }
-  );
-
-  window.addEventListener(
-    APP_ERROR_EVENT,
-    onError,
-    {
-      once: false
-    }
-  );
-
-  return () => {
-    window.removeEventListener(
-      APP_READY_EVENT,
-      onReady
-    );
-
-    window.removeEventListener(
-      APP_ERROR_EVENT,
-      onError
-    );
-  };
-}
-
-function dispatchEvent(
+function dispatchCompatibilityEvent(
   eventName,
   detail
 ) {
@@ -246,29 +152,60 @@ function dispatchEvent(
 
     return true;
   } catch {
-    /*
-     * Older/non-browser environments may not expose CustomEvent.
-     *
-     * Do not make application startup fail merely because the
-     * optional compatibility event cannot be emitted.
-     */
     return false;
   }
 }
 
-function dispatchReadyCompatibilityEvent(
-  result
-) {
+
+/* ============================================================
+ * CANONICAL LIFECYCLE BRIDGE
+ * ============================================================ */
+
+/**
+ * Bridge the canonical app.js lifecycle to the legacy app:* namespace.
+ *
+ * app.js remains the sole source of startup truth.
+ * This function only observes and mirrors its lifecycle.
+ */
+function bindCanonicalLifecycle() {
   if (
-    bootstrapState.readyEventObserved
+    lifecycleBound ||
+    !hasEventTarget()
   ) {
-    return false;
+    return;
   }
 
-  bootstrapState.readyEventObserved =
+  lifecycleBound =
     true;
 
-  return dispatchEvent(
+  window.addEventListener(
+    CANONICAL_READY_EVENT,
+    handleCanonicalReady
+  );
+
+  window.addEventListener(
+    CANONICAL_ERROR_EVENT,
+    handleCanonicalError
+  );
+}
+
+
+function handleCanonicalReady(
+  event
+) {
+  if (
+    compatibilityReadyEmitted
+  ) {
+    return;
+  }
+
+  compatibilityReadyEmitted =
+    true;
+
+  compatibilityErrorEmitted =
+    false;
+
+  dispatchCompatibilityEvent(
     APP_READY_EVENT,
     {
       source:
@@ -278,24 +215,26 @@ function dispatchReadyCompatibilityEvent(
         true,
 
       app:
-        result ?? null
+        event?.detail ||
+        getAppState()
     }
   );
 }
 
-function dispatchErrorCompatibilityEvent(
-  error
+
+function handleCanonicalError(
+  event
 ) {
   if (
-    bootstrapState.errorEventObserved
+    compatibilityErrorEmitted
   ) {
-    return false;
+    return;
   }
 
-  bootstrapState.errorEventObserved =
+  compatibilityErrorEmitted =
     true;
 
-  return dispatchEvent(
+  dispatchCompatibilityEvent(
     APP_ERROR_EVENT,
     {
       source:
@@ -304,364 +243,241 @@ function dispatchErrorCompatibilityEvent(
       compatibility:
         true,
 
-      error
+      error:
+        event?.detail?.error ||
+        null,
+
+      app:
+        event?.detail ||
+        getAppState()
     }
   );
 }
 
+
 /* ============================================================
- * APP BOOTSTRAP RESOLUTION
- * ============================================================
- *
- * Preferred canonical contract:
- *
- *   export async function initializeApp(...)
- *
- * The additional names are compatibility adapters only. They do
- * not create alternative startup flows: exactly ONE resolved
- * function is invoked.
- */
+ * STARTUP STATE
+ * ============================================================ */
 
-function resolveBootstrapFunction() {
+function getStartupState() {
+  const state =
+    getAppState();
+
   if (
-    typeof AppModule.initializeApp ===
-    'function'
+    state?.ready ||
+    isApplicationReady()
   ) {
-    return {
-      fn:
-        AppModule.initializeApp,
-
-      name:
-        'initializeApp'
-    };
+    return STARTUP_STATE.READY;
   }
 
   if (
-    typeof AppModule.bootstrap ===
-    'function'
+    state?.initializing
   ) {
-    return {
-      fn:
-        AppModule.bootstrap,
-
-      name:
-        'bootstrap'
-    };
+    return STARTUP_STATE.STARTING;
   }
 
   if (
-    typeof AppModule.startApp ===
-    'function'
+    state?.initialized &&
+    Array.isArray(
+      state.errors
+    ) &&
+    state.errors.length > 0
   ) {
-    return {
-      fn:
-        AppModule.startApp,
-
-      name:
-        'startApp'
-    };
+    return STARTUP_STATE.ERROR;
   }
 
-  if (
-    typeof AppModule.init ===
-    'function'
-  ) {
-    return {
-      fn:
-        AppModule.init,
-
-      name:
-        'init'
-    };
-  }
-
-  if (
-    typeof AppModule.start ===
-    'function'
-  ) {
-    return {
-      fn:
-        AppModule.start,
-
-      name:
-        'start'
-    };
-  }
-
-  if (
-    typeof AppModule.default ===
-    'function'
-  ) {
-    return {
-      fn:
-        AppModule.default,
-
-      name:
-        'default'
-    };
-  }
-
-  if (
-    typeof AppModule.default
-      ?.initializeApp ===
-    'function'
-  ) {
-    return {
-      fn:
-        AppModule.default
-          .initializeApp,
-
-      name:
-        'default.initializeApp'
-    };
-  }
-
-  if (
-    typeof AppModule.default
-      ?.bootstrap ===
-    'function'
-  ) {
-    return {
-      fn:
-        AppModule.default
-          .bootstrap,
-
-      name:
-        'default.bootstrap'
-    };
-  }
-
-  if (
-    typeof AppModule.default
-      ?.startApp ===
-    'function'
-  ) {
-    return {
-      fn:
-        AppModule.default
-          .startApp,
-
-      name:
-        'default.startApp'
-    };
-  }
-
-  if (
-    typeof AppModule.default
-      ?.init ===
-    'function'
-  ) {
-    return {
-      fn:
-        AppModule.default
-          .init,
-
-      name:
-        'default.init'
-    };
-  }
-
-  if (
-    typeof AppModule.default
-      ?.start ===
-    'function'
-  ) {
-    return {
-      fn:
-        AppModule.default
-          .start,
-
-      name:
-        'default.start'
-    };
-  }
-
-  return null;
+  return STARTUP_STATE.IDLE;
 }
 
-/* ============================================================
- * CANONICAL STARTUP INVOCATION
- * ========================================================== */
 
-async function invokeCanonicalAppBootstrap(
-  options = {}
-) {
-  const bootstrap =
-    resolveBootstrapFunction();
+function getApplicationBootstrapState() {
+  const appState =
+    getAppState();
 
-  if (
-    !bootstrap
-  ) {
-    throw new Error(
-      'GovCareer Compass application bootstrap was not found in js/app.js. Expected initializeApp(), bootstrap(), startApp(), init(), or start().'
-    );
-  }
+  return {
+    state:
+      getStartupState(),
 
-  /*
-   * Exactly one App bootstrap function is invoked.
-   *
-   * No database loader, theme initializer, language initializer,
-   * job loader, router, or UI initialization is performed here.
-   */
-  return bootstrap.fn(
-    options
-  );
+    ready:
+      isApplicationReady(),
+
+    starting:
+      Boolean(
+        appState?.initializing
+      ),
+
+    failed:
+      Boolean(
+        appState?.initialized &&
+        !appState?.ready &&
+        appState?.errors?.length
+      ),
+
+    page:
+      getCurrentPage(),
+
+    result:
+      appState
+  };
 }
 
+
 /* ============================================================
- * PUBLIC INITIALIZER
- * ========================================================== */
+ * CANONICAL INITIALIZATION API
+ * ============================================================ */
 
 /**
- * Initialize the GovCareer Compass application.
+ * Delegate directly to app.js.
  *
- * This function is idempotent.
+ * No second initialization mechanism is created here.
  *
- * Calling initializeApplication() multiple times returns the same
- * startup Promise rather than starting another application lifecycle.
+ * app.js owns the real startup state and lifecycle. Calling this
+ * function therefore always reaches the canonical initializer.
  */
 function initializeApplication(
   options = {}
 ) {
-  if (
-    bootstrapState.state ===
-      STARTUP_STATE.READY &&
-    bootstrapState.promise
-  ) {
-    return bootstrapState.promise;
-  }
-
-  if (
-    bootstrapState.state ===
-      STARTUP_STATE.STARTING &&
-    bootstrapState.promise
-  ) {
-    return bootstrapState.promise;
-  }
-
-  /*
-   * A previous failure is not silently retried.
-   *
-   * This preserves the invariant:
-   *
-   *   one page load → one authoritative startup attempt
-   *
-   * If the application needs explicit retry support in the future,
-   * that retry belongs in app.js rather than becoming a second
-   * lifecycle inside init.js.
-   */
-  if (
-    bootstrapState.state ===
-      STARTUP_STATE.ERROR &&
-    bootstrapState.promise
-  ) {
-    return bootstrapState.promise;
-  }
-
-  bootstrapState.state =
-    STARTUP_STATE.STARTING;
-
-  /*
-   * Observe events emitted by the canonical App before starting it.
-   * This allows init.js to provide compatibility events only when
-   * App itself has not already emitted them.
-   */
-  const removeLifecycleListeners =
-    listenForCanonicalLifecycleEvents();
-
-  const startupPromise =
-    Promise.resolve()
-      .then(
-        () =>
-          invokeCanonicalAppBootstrap(
-            options
-          )
-      )
-      .then(
-        (result) => {
-          bootstrapState.state =
-            STARTUP_STATE.READY;
-
-          bootstrapState.result =
-            result;
-
-          dispatchReadyCompatibilityEvent(
-            result
-          );
-
-          return result;
-        }
-      )
-      .catch(
-        (error) => {
-          bootstrapState.state =
-            STARTUP_STATE.ERROR;
-
-          bootstrapState.error =
-            error;
-
-          dispatchErrorCompatibilityEvent(
-            error
-          );
-
-          throw error;
-        }
-      )
-      .finally(
-        () => {
-          removeLifecycleListeners();
-        }
-      );
-
-  bootstrapState.promise =
-    startupPromise;
-
-  return startupPromise;
+  return initializeApplicationCanonical(
+    options
+  );
 }
 
-/* ============================================================
- * STATE ACCESS
- * ========================================================== */
 
-function getApplicationBootstrapState() {
-  return {
-    state:
-      bootstrapState.state,
-
-    ready:
-      bootstrapState.state ===
-      STARTUP_STATE.READY,
-
-    starting:
-      bootstrapState.state ===
-      STARTUP_STATE.STARTING,
-
-    failed:
-      bootstrapState.state ===
-      STARTUP_STATE.ERROR,
-
-    result:
-      bootstrapState.result,
-
-    error:
-      bootstrapState.error
-  };
-}
-
-/* ============================================================
- * AUTOMATIC ENTRY-POINT STARTUP
- * ============================================================
- *
- * Importing init.js is the startup trigger.
- *
- * There is intentionally no separate DOMContentLoaded handler,
- * window.onload handler, database loader, or second initializer.
- *
- * The App module owns the actual startup sequence.
+/*
+ * Local alias prevents accidental shadowing of the imported
+ * canonical function while preserving the public compatibility
+ * name initializeApplication().
  */
+const initializeApplicationCanonical =
+  initializeApplication;
 
-const applicationReady =
-  initializeApplication();
+
+/* ============================================================
+ * READINESS PROMISE
+ * ============================================================ */
+
+/**
+ * Resolve once the canonical app lifecycle reports ready or error.
+ *
+ * This is an observation layer only. It does not start the
+ * application itself.
+ */
+function getApplicationReadyPromise() {
+  if (
+    readinessPromise
+  ) {
+    return readinessPromise;
+  }
+
+  bindCanonicalLifecycle();
+
+  readinessPromise =
+    new Promise(
+      (
+        resolve,
+        reject
+      ) => {
+        if (
+          isApplicationReady()
+        ) {
+          resolve(
+            getAppState()
+          );
+
+          return;
+        }
+
+        const onReady =
+          event => {
+            cleanup();
+
+            resolve(
+              event?.detail ||
+              getAppState()
+            );
+          };
+
+        const onError =
+          event => {
+            cleanup();
+
+            const error =
+              event?.detail?.error ||
+              new Error(
+                'GovCareer Compass application bootstrap failed.'
+              );
+
+            reject(
+              error
+            );
+          };
+
+        const cleanup =
+          () => {
+            window.removeEventListener(
+              CANONICAL_READY_EVENT,
+              onReady
+            );
+
+            window.removeEventListener(
+              CANONICAL_ERROR_EVENT,
+              onError
+            );
+          };
+
+        window.addEventListener(
+          CANONICAL_READY_EVENT,
+          onReady,
+          {
+            once:
+              true
+          }
+        );
+
+        window.addEventListener(
+          CANONICAL_ERROR_EVENT,
+          onError,
+          {
+            once:
+              true
+          }
+        );
+
+        /*
+         * app.js can already be in the middle of its canonical
+         * bootstrap. Re-check immediately after listeners are
+         * attached so a synchronous lifecycle transition cannot
+         * be missed.
+         */
+        if (
+          isApplicationReady()
+        ) {
+          cleanup();
+
+          resolve(
+            getAppState()
+          );
+        }
+      }
+    );
+
+  return readinessPromise;
+}
+
+
+/* ============================================================
+ * LIFECYCLE BRIDGE INITIALIZATION
+ * ============================================================ */
+
+/*
+ * Bind immediately so init.js never races the canonical app.js
+ * lifecycle events.
+ *
+ * Importing app.js above already activates its own canonical
+ * bootstrap logic; this module only observes it.
+ */
+bindCanonicalLifecycle();
+
 
 /* ============================================================
  * EXPORTS
@@ -674,10 +490,14 @@ export {
   APP_ERROR_EVENT,
 
   initializeApplication,
-  getApplicationBootstrapState,
 
-  applicationReady
+  getApplicationBootstrapState,
+  getApplicationReadyPromise
 };
 
-export default
-  initializeApplication;
+
+export default {
+  initializeApplication,
+  getApplicationBootstrapState,
+  getApplicationReadyPromise
+};
