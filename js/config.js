@@ -1,69 +1,48 @@
 /**
+ * GovCareer Compass
+ *
+ * ============================================================
+ * Application Configuration
+ * ============================================================
+ *
+ * PUBLIC / BROWSER-SAFE CONFIGURATION ONLY
+ *
+ * Never place secrets in this file.
+ *
+ * Secrets such as:
+ * - OpenRouter API keys
+ * - authentication tokens
+ * - private credentials
+ * - database passwords
+ * - server-only environment variables
+ *
+ * belong exclusively in the server-side environment.
+ *
+ * Architectural role
+ * ------------------
+ *
+ * This module is the single public configuration source for:
+ *
+ * config
+ * ├── application identity / locale / theme
+ * ├── routes / deployment base path
+ * ├── data dataset locations
+ * ├── derived-index locations
+ * ├── schema locations
+ * ├── public AI client contract
+ * ├── search defaults
+ * ├── UI defaults
+ * └── browser storage keys
+ *
+ * This file contains configuration only.
+ *
+ * It does not contain recommendation, eligibility, ranking,
+ * validation, database, or AI business logic.
+ */
 
-GovCareer Compass
-
-============================================================
-
-Application Configuration
-
-============================================================
-
-PUBLIC / BROWSER-SAFE CONFIGURATION ONLY
-
-Never place secrets in this file.
-
-Secrets such as:
-
-OpenRouter API keys
-
-
-authentication tokens
-
-
-private credentials
-
-
-database passwords
-
-
-server-only environment variables
-
-
-belong exclusively in the server-side environment.
-
-Architectural role
-
-
----
-
-This module is the single public configuration source for:
-
-config
-
-├── application identity / locale / theme
-
-├── routes / deployment base path
-
-├── data dataset locations
-
-├── derived-index locations
-
-├── schema locations
-
-├── public AI client contract
-
-├── search defaults
-
-├── UI defaults
-
-└── browser storage keys
-
-This file contains configuration only.
-
-It does not contain recommendation, eligibility, ranking,
-
-validation, database, or AI business logic. */
-
+/* ============================================================
+ * APPLICATION IDENTITY / GLOBAL DEFAULTS
+ * ============================================================ */
 
 const APP_VERSION = '0.1.0';
 
@@ -73,13 +52,35 @@ const DEFAULT_LANGUAGE = 'en';
 
 const FALLBACK_LANGUAGE = 'en';
 
-const SUPPORTED_LANGUAGES = Object.freeze([ 'en', 'bn' ]);
+const SUPPORTED_LANGUAGES = Object.freeze([
+  'en',
+  'bn'
+]);
 
 const DEFAULT_THEME = 'system';
 
-const SUPPORTED_THEMES = Object.freeze([ 'system', 'light', 'dark' ]);
+const SUPPORTED_THEMES = Object.freeze([
+  'system',
+  'light',
+  'dark'
+]);
 
-const DEFAULT_STATE = 'IN-WB';
+/*
+ * Canonical state ID.
+ *
+ * IMPORTANT:
+ * This is the state identifier from:
+ *
+ * data/common/states.json
+ *
+ * West Bengal:
+ *   state.id = "west-bengal"
+ *
+ * This is intentionally distinct from the government identifier:
+ *
+ *   west-bengal-government
+ */
+const DEFAULT_STATE = 'west-bengal';
 
 const DEFAULT_GOVERNMENT = 'CENTRAL';
 
@@ -90,424 +91,379 @@ const DEFAULT_SEARCH_LIMIT = 20;
 const DEFAULT_PAGE_SIZE = 20;
 
 /* ============================================================
-
-APPLICATION DEPLOYMENT
-
-============================================================
-
-basePath is intentionally public and static.
-
-Empty string:
-
-root-domain deployment
-
-Example future GitHub Pages deployment:
-
-'/govcareer-compass'
-
-The router uses this value when resolving named routes. */
-
+ * APPLICATION DEPLOYMENT
+ * ============================================================
+ *
+ * basePath is intentionally public and static.
+ *
+ * Empty string:
+ *   root-domain deployment
+ *
+ * Example future GitHub Pages deployment:
+ *   '/govcareer-compass'
+ *
+ * The router uses this value when resolving named routes.
+ */
 
 const BASE_PATH = '';
 
 const STORAGE_NAMESPACE = 'govcareer-compass';
 
 /* ============================================================
+ * APPLICATION LANGUAGE METADATA
+ * ============================================================
+ *
+ * These are language properties, not UI translation strings.
+ *
+ * Translation content belongs in:
+ *   data/i18n/en.json
+ *   data/i18n/bn.json
+ *
+ * direction is kept explicit so the language service can update
+ * <html dir=""> without hard-coding locale behavior elsewhere.
+ */
 
-APPLICATION LANGUAGE METADATA
-
-============================================================
-
-These are language properties, not UI translation strings.
-
-Translation content belongs in:
-
-data/i18n/en.json
-
-data/i18n/bn.json
-
-direction is kept explicit so the language service can update
-
-<html dir=""> without hard-coding locale behavior elsewhere.
-*/
-
-const LANGUAGE_METADATA = Object.freeze({ en: Object.freeze({ code: 'en',
-
-name:
-      'English',
-
-    nativeName:
-      'English',
-
-    direction:
-      'ltr'
+const LANGUAGE_METADATA = Object.freeze({
+  en: Object.freeze({
+    code: 'en',
+    name: 'English',
+    nativeName: 'English',
+    direction: 'ltr'
   }),
 
-bn:
-  Object.freeze({
-    code:
-      'bn',
-
-    name:
-      'Bengali',
-
-    nativeName:
-      'বাংলা',
-
-    direction:
-      'ltr'
+  bn: Object.freeze({
+    code: 'bn',
+    name: 'Bengali',
+    nativeName: 'বাংলা',
+    direction: 'ltr'
   })
-
 });
 
 /* ============================================================
+ * ROUTES
+ * ============================================================
+ *
+ * Named routes are aligned with the existing router contract:
+ *
+ * home
+ * careerFinder
+ * careerResults
+ * exams
+ * examDetails
+ * jobs
+ * jobDetails
+ * compare
+ * rankings
+ * salary
+ * eligibility
+ * family
+ * parents
+ * location
+ * housing
+ * preparation
+ * confusionCenter
+ * states
+ * ai
+ * sources
+ * glossary
+ * methodology
+ * about
+ * privacy
+ * notFound
+ *
+ * Existing physical page filenames are preserved.
+ *
+ * No additional route names are introduced.
+ */
 
-ROUTES
+const ROUTES = Object.freeze({
+  home: 'index.html',
 
-============================================================
+  careerFinder:
+    'pages/career-finder.html',
 
-Named routes are aligned with the existing router contract:
+  careerResults:
+    'pages/career-results.html',
 
-home
+  exams:
+    'pages/exams.html',
 
-careerFinder
+  examDetails:
+    'pages/exam-details.html',
 
-careerResults
+  jobs:
+    'pages/jobs.html',
 
-exams
+  jobDetails:
+    'pages/job-details.html',
 
-examDetails
+  compare:
+    'pages/compare.html',
 
-jobs
+  rankings:
+    'pages/rankings.html',
 
-jobDetails
+  salary:
+    'pages/salary.html',
 
-compare
+  eligibility:
+    'pages/eligibility.html',
 
-rankings
+  family:
+    'pages/family.html',
 
-salary
+  parents:
+    'pages/parents.html',
 
-eligibility
+  location:
+    'pages/location.html',
 
-family
+  housing:
+    'pages/housing.html',
 
-parents
+  preparation:
+    'pages/preparation.html',
 
-location
+  confusionCenter:
+    'pages/confusion-center.html',
 
-housing
+  states:
+    'pages/states.html',
 
-preparation
+  ai:
+    'pages/ai.html',
 
-confusionCenter
+  sources:
+    'pages/sources.html',
 
-states
+  glossary:
+    'pages/glossary.html',
 
-ai
+  methodology:
+    'pages/methodology.html',
 
-sources
+  about:
+    'pages/about.html',
 
-glossary
+  privacy:
+    'pages/privacy.html',
 
-methodology
-
-about
-
-privacy
-
-notFound
-
-Existing physical page filenames are preserved.
-
-No additional route names are introduced. */
-
-
-const ROUTES = Object.freeze({ home: 'index.html',
-
-careerFinder:
-  'pages/career-finder.html',
-
-careerResults:
-  'pages/career-results.html',
-
-exams:
-  'pages/exams.html',
-
-examDetails:
-  'pages/exam-details.html',
-
-jobs:
-  'pages/jobs.html',
-
-jobDetails:
-  'pages/job-details.html',
-
-compare:
-  'pages/compare.html',
-
-rankings:
-  'pages/rankings.html',
-
-salary:
-  'pages/salary.html',
-
-eligibility:
-  'pages/eligibility.html',
-
-family:
-  'pages/family.html',
-
-parents:
-  'pages/parents.html',
-
-location:
-  'pages/location.html',
-
-housing:
-  'pages/housing.html',
-
-preparation:
-  'pages/preparation.html',
-
-confusionCenter:
-  'pages/confusion-center.html',
-
-states:
-  'pages/states.html',
-
-ai:
-  'pages/ai.html',
-
-sources:
-  'pages/sources.html',
-
-glossary:
-  'pages/glossary.html',
-
-methodology:
-  'pages/methodology.html',
-
-about:
-  'pages/about.html',
-
-privacy:
-  'pages/privacy.html',
-
-notFound:
-  'pages/404.html'
-
+  notFound:
+    'pages/404.html'
 });
 
 /* ============================================================
-
-DATA ROOT
-
-============================================================ */
-
+ * DATA ROOT
+ * ============================================================ */
 
 const DATA_ROOT = './data';
 
 /* ============================================================
+ * COMMON DATA
+ * ============================================================ */
 
-COMMON DATA
+const COMMON_DATA_PATHS = Object.freeze({
+  qualifications:
+    `${DATA_ROOT}/common/qualifications.json`,
 
-============================================================ */
+  categories:
+    `${DATA_ROOT}/common/categories.json`,
 
+  glossary:
+    `${DATA_ROOT}/common/glossary.json`,
 
-const COMMON_DATA_PATHS = Object.freeze({ qualifications: ${DATA_ROOT}/common/qualifications.json,
+  scoringRules:
+    `${DATA_ROOT}/common/scoring-rules.json`,
 
-categories:
-  `${DATA_ROOT}/common/categories.json`,
+  governments:
+    `${DATA_ROOT}/common/governments.json`,
 
-glossary:
-  `${DATA_ROOT}/common/glossary.json`,
+  states:
+    `${DATA_ROOT}/common/states.json`,
 
-scoringRules:
-  `${DATA_ROOT}/common/scoring-rules.json`,
+  locations:
+    `${DATA_ROOT}/common/locations.json`,
 
-governments:
-  `${DATA_ROOT}/common/governments.json`,
+  statuses:
+    `${DATA_ROOT}/common/statuses.json`,
 
-states:
-  `${DATA_ROOT}/common/states.json`,
+  confidenceLevels:
+    `${DATA_ROOT}/common/confidence-levels.json`,
 
-locations:
-  `${DATA_ROOT}/common/locations.json`,
-
-statuses:
-  `${DATA_ROOT}/common/statuses.json`,
-
-confidenceLevels:
-  `${DATA_ROOT}/common/confidence-levels.json`,
-
-sourceTypes:
-  `${DATA_ROOT}/common/source-types.json`
-
+  sourceTypes:
+    `${DATA_ROOT}/common/source-types.json`
 });
 
 /* ============================================================
+ * ASSESSMENT DATA
+ * ============================================================ */
 
-ASSESSMENT DATA
+const ASSESSMENT_DATA_PATHS = Object.freeze({
+  questions:
+    `${DATA_ROOT}/assessment/questions.json`,
 
-============================================================ */
+  options:
+    `${DATA_ROOT}/assessment/options.json`,
 
+  branching:
+    `${DATA_ROOT}/assessment/branching.json`,
 
-const ASSESSMENT_DATA_PATHS = Object.freeze({ questions: ${DATA_ROOT}/assessment/questions.json,
+  profileFields:
+    `${DATA_ROOT}/assessment/profile-fields.json`,
 
-options:
-  `${DATA_ROOT}/assessment/options.json`,
-
-branching:
-  `${DATA_ROOT}/assessment/branching.json`,
-
-profileFields:
-  `${DATA_ROOT}/assessment/profile-fields.json`,
-
-responseScoring:
-  `${DATA_ROOT}/assessment/response-scoring.json`
-
+  responseScoring:
+    `${DATA_ROOT}/assessment/response-scoring.json`
 });
 
 /* ============================================================
+ * INTERNATIONALIZATION DATA
+ * ============================================================ */
 
-INTERNATIONALIZATION DATA
+const I18N_DATA_PATHS = Object.freeze({
+  en:
+    `${DATA_ROOT}/i18n/en.json`,
 
-============================================================ */
-
-
-const I18N_DATA_PATHS = Object.freeze({ en: ${DATA_ROOT}/i18n/en.json,
-
-bn:
-  `${DATA_ROOT}/i18n/bn.json`
-
+  bn:
+    `${DATA_ROOT}/i18n/bn.json`
 });
 
 /* ============================================================
+ * CENTRAL GOVERNMENT DATA
+ * ============================================================ */
 
-CENTRAL GOVERNMENT DATA
+const CENTRAL_DATA_PATHS = Object.freeze({
+  exams:
+    `${DATA_ROOT}/central/exams.json`,
 
-============================================================ */
+  jobs:
+    `${DATA_ROOT}/central/jobs.json`,
 
+  departments:
+    `${DATA_ROOT}/central/departments.json`,
 
-const CENTRAL_DATA_PATHS = Object.freeze({ exams: ${DATA_ROOT}/central/exams.json,
+  organisations:
+    `${DATA_ROOT}/central/organisations.json`,
 
-jobs:
-  `${DATA_ROOT}/central/jobs.json`,
+  recruitment:
+    `${DATA_ROOT}/central/recruitment.json`,
 
-departments:
-  `${DATA_ROOT}/central/departments.json`,
+  pay:
+    `${DATA_ROOT}/central/pay.json`,
 
-organisations:
-  `${DATA_ROOT}/central/organisations.json`,
+  locations:
+    `${DATA_ROOT}/central/locations.json`,
 
-recruitment:
-  `${DATA_ROOT}/central/recruitment.json`,
+  housing:
+    `${DATA_ROOT}/central/housing.json`,
 
-pay:
-  `${DATA_ROOT}/central/pay.json`,
+  promotion:
+    `${DATA_ROOT}/central/promotion.json`,
 
-locations:
-  `${DATA_ROOT}/central/locations.json`,
+  benefits:
+    `${DATA_ROOT}/central/benefits.json`,
 
-housing:
-  `${DATA_ROOT}/central/housing.json`,
+  sources:
+    `${DATA_ROOT}/central/sources.json`,
 
-promotion:
-  `${DATA_ROOT}/central/promotion.json`,
+  serviceCadres:
+    `${DATA_ROOT}/central/service-cadres.json`,
 
-benefits:
-  `${DATA_ROOT}/central/benefits.json`,
-
-sources:
-  `${DATA_ROOT}/central/sources.json`,
-
-serviceCadres:
-  `${DATA_ROOT}/central/service-cadres.json`,
-
-eligibilityRules:
-  `${DATA_ROOT}/central/eligibility-rules.json`
-
+  eligibilityRules:
+    `${DATA_ROOT}/central/eligibility-rules.json`
 });
 
 /* ============================================================
+ * WEST BENGAL DATA
+ * ============================================================ */
 
-WEST BENGAL DATA
+const WEST_BENGAL_DATA_PATHS = Object.freeze({
+  exams:
+    `${DATA_ROOT}/states/west-bengal/exams.json`,
 
-============================================================ */
+  jobs:
+    `${DATA_ROOT}/states/west-bengal/jobs.json`,
 
+  departments:
+    `${DATA_ROOT}/states/west-bengal/departments.json`,
 
-const WEST_BENGAL_DATA_PATHS = Object.freeze({ exams: ${DATA_ROOT}/states/west-bengal/exams.json,
+  organisations:
+    `${DATA_ROOT}/states/west-bengal/organisations.json`,
 
-jobs:
-  `${DATA_ROOT}/states/west-bengal/jobs.json`,
+  recruitment:
+    `${DATA_ROOT}/states/west-bengal/recruitment.json`,
 
-departments:
-  `${DATA_ROOT}/states/west-bengal/departments.json`,
+  pay:
+    `${DATA_ROOT}/states/west-bengal/pay.json`,
 
-organisations:
-  `${DATA_ROOT}/states/west-bengal/organisations.json`,
+  locations:
+    `${DATA_ROOT}/states/west-bengal/locations.json`,
 
-recruitment:
-  `${DATA_ROOT}/states/west-bengal/recruitment.json`,
+  housing:
+    `${DATA_ROOT}/states/west-bengal/housing.json`,
 
-pay:
-  `${DATA_ROOT}/states/west-bengal/pay.json`,
+  promotion:
+    `${DATA_ROOT}/states/west-bengal/promotion.json`,
 
-locations:
-  `${DATA_ROOT}/states/west-bengal/locations.json`,
+  benefits:
+    `${DATA_ROOT}/states/west-bengal/benefits.json`,
 
-housing:
-  `${DATA_ROOT}/states/west-bengal/housing.json`,
+  sources:
+    `${DATA_ROOT}/states/west-bengal/sources.json`,
 
-promotion:
-  `${DATA_ROOT}/states/west-bengal/promotion.json`,
+  serviceCadres:
+    `${DATA_ROOT}/states/west-bengal/service-cadres.json`,
 
-benefits:
-  `${DATA_ROOT}/states/west-bengal/benefits.json`,
-
-sources:
-  `${DATA_ROOT}/states/west-bengal/sources.json`,
-
-serviceCadres:
-  `${DATA_ROOT}/states/west-bengal/service-cadres.json`,
-
-eligibilityRules:
-  `${DATA_ROOT}/states/west-bengal/eligibility-rules.json`
-
+  eligibilityRules:
+    `${DATA_ROOT}/states/west-bengal/eligibility-rules.json`
 });
 
 /* ============================================================
+ * ACTIVE STATE DATASET REGISTRY
+ * ============================================================
+ *
+ * loader.js consumes:
+ *
+ *   config.activeStateIds
+ *   config.data.states
+ *
+ * The state identifier here MUST match the canonical state
+ * registry in:
+ *
+ *   data/common/states.json
+ *
+ * Therefore:
+ *
+ *   west-bengal
+ *
+ * is the canonical state ID.
+ *
+ * The separate government identity remains:
+ *
+ *   west-bengal-government
+ *
+ * This distinction must not be collapsed.
+ */
 
-ACTIVE STATE DATASET REGISTRY
+const ACTIVE_STATE_IDS = Object.freeze([
+  DEFAULT_STATE
+]);
 
-============================================================
+const STATE_DATASETS = Object.freeze({
+  'west-bengal': Object.freeze({
+    id:
+      'west-bengal',
 
-loader.js consumes:
-
-config.activeStateIds
-
-config.data.states
-
-The legacy data.westBengal entry is retained as a compatibility
-
-alias because the loader explicitly supports it while the
-
-canonical runtime contract uses the state map below. */
-
-
-const ACTIVE_STATE_IDS = Object.freeze([ DEFAULT_STATE ]);
-
-const STATE_DATASETS = Object.freeze({ 'IN-WB': Object.freeze({ id: 'IN-WB',
-
-label:
+    label:
       'West Bengal Government',
 
     type:
       'STATE',
 
     stateId:
-      'IN-WB',
+      'west-bengal',
+
+    governmentId:
+      'west-bengal-government',
 
     root:
       'states/west-bengal',
@@ -554,23 +510,30 @@ label:
     eligibilityRules:
       WEST_BENGAL_DATA_PATHS.eligibilityRules
   })
-
 });
 
 /* ============================================================
+ * GOVERNMENT JURISDICTIONS
+ * ============================================================
+ *
+ * This map exposes dataset definitions for government-level
+ * runtime consumers.
+ *
+ * Central Government keeps its existing public/runtime identity
+ * because no concrete downstream contract requires changing it.
+ *
+ * West Bengal remains represented by the canonical state ID
+ * while its actual government identity is:
+ *
+ *   west-bengal-government
+ */
 
-GOVERNMENT JURISDICTIONS
+const GOVERNMENT_DATASETS = Object.freeze({
+  CENTRAL: Object.freeze({
+    id:
+      'CENTRAL',
 
-============================================================
-
-Both the legacy jurisdiction map and the canonical state map
-
-intentionally point at the same immutable path definitions. */
-
-
-const GOVERNMENT_DATASETS = Object.freeze({ CENTRAL: Object.freeze({ id: 'CENTRAL',
-
-label:
+    label:
       'Central Government',
 
     type:
@@ -622,683 +585,760 @@ label:
       CENTRAL_DATA_PATHS.eligibilityRules
   }),
 
-'IN-WB':
-  STATE_DATASETS['IN-WB']
-
+  'west-bengal':
+    STATE_DATASETS['west-bengal']
 });
 
 /* ============================================================
+ * INDEX DATA
+ * ============================================================ */
 
-INDEX DATA
+const INDEX_DATA_PATHS = Object.freeze({
+  jobs:
+    `${DATA_ROOT}/indexes/job-index.json`,
 
-============================================================ */
+  exams:
+    `${DATA_ROOT}/indexes/exam-index.json`,
 
+  departments:
+    `${DATA_ROOT}/indexes/department-index.json`,
 
-const INDEX_DATA_PATHS = Object.freeze({ jobs: ${DATA_ROOT}/indexes/job-index.json,
+  sources:
+    `${DATA_ROOT}/indexes/source-index.json`,
 
-exams:
-  `${DATA_ROOT}/indexes/exam-index.json`,
+  search:
+    `${DATA_ROOT}/indexes/search-index.json`,
 
-departments:
-  `${DATA_ROOT}/indexes/department-index.json`,
+  serviceCadres:
+    `${DATA_ROOT}/indexes/service-cadre-index.json`,
 
-sources:
-  `${DATA_ROOT}/indexes/source-index.json`,
+  eligibilityRules:
+    `${DATA_ROOT}/indexes/eligibility-rule-index.json`,
 
-search:
-  `${DATA_ROOT}/indexes/search-index.json`,
-
-serviceCadres:
-  `${DATA_ROOT}/indexes/service-cadre-index.json`,
-
-eligibilityRules:
-  `${DATA_ROOT}/indexes/eligibility-rule-index.json`,
-
-qualifications:
-  `${DATA_ROOT}/indexes/qualification-index.json`
-
+  qualifications:
+    `${DATA_ROOT}/indexes/qualification-index.json`
 });
 
 /* ============================================================
+ * SCHEMA PATHS
+ * ============================================================
+ *
+ * Used by validation tooling and documentation.
+ *
+ * Browser runtime normally does not fetch schemas directly.
+ */
 
-SCHEMA PATHS
+const SCHEMA_PATHS = Object.freeze({
+  shared:
+    `${DATA_ROOT}/schemas/shared.schema.json`,
 
-============================================================
+  government:
+    `${DATA_ROOT}/schemas/government.schema.json`,
 
-Used by validation tooling and documentation.
+  state:
+    `${DATA_ROOT}/schemas/state.schema.json`,
 
-Browser runtime normally does not fetch schemas directly. */
+  department:
+    `${DATA_ROOT}/schemas/department.schema.json`,
 
+  organisation:
+    `${DATA_ROOT}/schemas/organisation.schema.json`,
 
-const SCHEMA_PATHS = Object.freeze({ shared: ${DATA_ROOT}/schemas/shared.schema.json,
+  serviceCadre:
+    `${DATA_ROOT}/schemas/service-cadre.schema.json`,
 
-government:
-  `${DATA_ROOT}/schemas/government.schema.json`,
+  qualification:
+    `${DATA_ROOT}/schemas/qualification.schema.json`,
 
-state:
-  `${DATA_ROOT}/schemas/state.schema.json`,
+  eligibilityRule:
+    `${DATA_ROOT}/schemas/eligibility-rule.schema.json`,
 
-department:
-  `${DATA_ROOT}/schemas/department.schema.json`,
+  job:
+    `${DATA_ROOT}/schemas/job.schema.json`,
 
-organisation:
-  `${DATA_ROOT}/schemas/organisation.schema.json`,
+  exam:
+    `${DATA_ROOT}/schemas/exam.schema.json`,
 
-serviceCadre:
-  `${DATA_ROOT}/schemas/service-cadre.schema.json`,
+  recruitment:
+    `${DATA_ROOT}/schemas/recruitment.schema.json`,
 
-qualification:
-  `${DATA_ROOT}/schemas/qualification.schema.json`,
+  pay:
+    `${DATA_ROOT}/schemas/pay.schema.json`,
 
-eligibilityRule:
-  `${DATA_ROOT}/schemas/eligibility-rule.schema.json`,
+  location:
+    `${DATA_ROOT}/schemas/location.schema.json`,
 
-job:
-  `${DATA_ROOT}/schemas/job.schema.json`,
+  housing:
+    `${DATA_ROOT}/schemas/housing.schema.json`,
 
-exam:
-  `${DATA_ROOT}/schemas/exam.schema.json`,
+  promotion:
+    `${DATA_ROOT}/schemas/promotion.schema.json`,
 
-recruitment:
-  `${DATA_ROOT}/schemas/recruitment.schema.json`,
+  benefits:
+    `${DATA_ROOT}/schemas/benefits.schema.json`,
 
-pay:
-  `${DATA_ROOT}/schemas/pay.schema.json`,
+  source:
+    `${DATA_ROOT}/schemas/source.schema.json`,
 
-location:
-  `${DATA_ROOT}/schemas/location.schema.json`,
+  assessmentQuestion:
+    `${DATA_ROOT}/schemas/assessment-question.schema.json`,
 
-housing:
-  `${DATA_ROOT}/schemas/housing.schema.json`,
+  assessmentOption:
+    `${DATA_ROOT}/schemas/assessment-option.schema.json`,
 
-promotion:
-  `${DATA_ROOT}/schemas/promotion.schema.json`,
+  assessmentBranching:
+    `${DATA_ROOT}/schemas/assessment-branching.schema.json`,
 
-benefits:
-  `${DATA_ROOT}/schemas/benefits.schema.json`,
+  assessmentProfileField:
+    `${DATA_ROOT}/schemas/assessment-profile-field.schema.json`,
 
-source:
-  `${DATA_ROOT}/schemas/source.schema.json`,
+  assessmentResponseScoring:
+    `${DATA_ROOT}/schemas/assessment-response-scoring.schema.json`,
 
-assessmentQuestion:
-  `${DATA_ROOT}/schemas/assessment-question.schema.json`,
-
-assessmentOption:
-  `${DATA_ROOT}/schemas/assessment-option.schema.json`,
-
-assessmentBranching:
-  `${DATA_ROOT}/schemas/assessment-branching.schema.json`,
-
-assessmentProfileField:
-  `${DATA_ROOT}/schemas/assessment-profile-field.schema.json`,
-
-assessmentResponseScoring:
-  `${DATA_ROOT}/schemas/assessment-response-scoring.schema.json`,
-
-candidateProfile:
-  `${DATA_ROOT}/schemas/candidate-profile.schema.json`
-
+  candidateProfile:
+    `${DATA_ROOT}/schemas/candidate-profile.schema.json`
 });
 
 /* ============================================================
-
-AI CONFIGURATION
-
-============================================================
-
-PUBLIC FRONTEND CONTRACT ONLY.
-
-The browser sends:
-
-POST /api/chat
-
-Request:
-
-{
-
-messages,
-
-context,
-
-language
-
-}
-
-The server-side endpoint is responsible for secrets,
-
-OpenRouter configuration, system prompts, request validation,
-
-and upstream communication. */
-
+ * AI CONFIGURATION
+ * ============================================================
+ *
+ * PUBLIC FRONTEND CONTRACT ONLY.
+ *
+ * The browser sends:
+ *
+ * POST /api/chat
+ *
+ * Request:
+ *
+ * {
+ *   messages,
+ *   context,
+ *   language
+ * }
+ *
+ * The server-side endpoint is responsible for:
+ * - secrets;
+ * - OpenRouter configuration;
+ * - system prompts;
+ * - request validation;
+ * - upstream communication.
+ */
 
 const AI_ENDPOINT = '/api/chat';
 
-const AI_CONFIG = Object.freeze({ enabled: true,
+const AI_CONFIG = Object.freeze({
+  enabled:
+    true,
 
-assistantName:
-  'Compass AI',
+  assistantName:
+    'Compass AI',
 
-serverAssistantName:
-  'CompassAI',
+  serverAssistantName:
+    'CompassAI',
 
-mode:
-  'career-research-only',
+  mode:
+    'career-research-only',
 
-endpoint:
-  AI_ENDPOINT,
+  endpoint:
+    AI_ENDPOINT,
 
-method:
-  'POST',
+  method:
+    'POST',
 
-contentType:
-  'application/json',
+  contentType:
+    'application/json',
 
-timeoutMs:
-  30000,
+  timeoutMs:
+    30000,
 
-maxConversationMessages:
-  20,
+  maxConversationMessages:
+    20,
 
-maxInputCharacters:
-  8000,
+  maxInputCharacters:
+    8000,
 
-maxOutputCharacters:
-  12000,
+  maxOutputCharacters:
+    12000,
 
-supportedLanguages:
-  Object.freeze([
-    ...SUPPORTED_LANGUAGES
-  ]),
+  supportedLanguages:
+    Object.freeze([
+      ...SUPPORTED_LANGUAGES
+    ]),
 
-scope:
-  Object.freeze({
-    governmentCareers:
-      true,
+  scope:
+    Object.freeze({
+      governmentCareers:
+        true,
 
-    eligibility:
-      true,
+      eligibility:
+        true,
 
-    exams:
-      true,
+      exams:
+        true,
 
-    jobs:
-      true,
+      jobs:
+        true,
 
-    salary:
-      true,
+      salary:
+        true,
 
-    familyCompatibility:
-      true,
+      familyCompatibility:
+        true,
 
-    location:
-      true,
+      location:
+        true,
 
-    housing:
-      true,
+      housing:
+        true,
 
-    promotion:
-      true,
+      promotion:
+        true,
 
-    preparation:
-      true,
+      preparation:
+        true,
 
-    sources:
-      true,
+      sources:
+        true,
 
-    unrelatedGeneralChat:
-      false
-  }),
+      unrelatedGeneralChat:
+        false
+    }),
 
-response:
-  Object.freeze({
-    format:
-      'json',
+  response:
+    Object.freeze({
+      format:
+        'json',
 
-    requiredAnswerField:
-      'answer',
+      requiredAnswerField:
+        'answer',
 
-    successField:
-      'ok'
-  })
-
+      successField:
+        'ok'
+    })
 });
 
 /* ============================================================
+ * SEARCH CONFIGURATION
+ * ============================================================
+ *
+ * The search module owns tokenization, normalization, indexing,
+ * ranking and candidate resolution.
+ *
+ * config only supplies public defaults and searchable field
+ * declarations.
+ */
 
-SEARCH CONFIGURATION
+const SEARCH_CONFIG = Object.freeze({
+  defaultLimit:
+    DEFAULT_SEARCH_LIMIT,
 
-============================================================
+  minimumQueryLength:
+    1,
 
-The search module owns tokenization, normalization, indexing,
+  debounceMs:
+    160,
 
-ranking and candidate resolution. config only supplies public
-
-defaults and searchable field declarations. */
-
-
-const SEARCH_CONFIG = Object.freeze({ defaultLimit: DEFAULT_SEARCH_LIMIT,
-
-minimumQueryLength:
-  1,
-
-debounceMs:
-  160,
-
-searchFields:
-  Object.freeze([
-    'id',
-    'name',
-    'title',
-    'post',
-    'postName',
-    'fullForm',
-    'abbreviation',
-    'aliases',
-    'historicalNames',
-    'keywords',
-    'searchText',
-    'department',
-    'departmentName',
-    'organisation',
-    'organisationName',
-    'exam',
-    'examName',
-    'qualification',
-    'category',
-    'jobProfile',
-    'conditions',
-    'location',
-    'posting',
-    'housing',
-    'promotion',
-    'notes'
-  ])
-
+  searchFields:
+    Object.freeze([
+      'id',
+      'name',
+      'title',
+      'post',
+      'postName',
+      'fullForm',
+      'abbreviation',
+      'aliases',
+      'historicalNames',
+      'keywords',
+      'searchText',
+      'department',
+      'departmentName',
+      'organisation',
+      'organisationName',
+      'exam',
+      'examName',
+      'qualification',
+      'category',
+      'jobProfile',
+      'conditions',
+      'location',
+      'posting',
+      'housing',
+      'promotion',
+      'notes'
+    ])
 });
 
 /* ============================================================
+ * DATABASE / RUNTIME CONFIGURATION
+ * ============================================================
+ *
+ * This section contains only runtime configuration contracts.
+ *
+ * The registry owns canonical entities.
+ *
+ * indexes.js owns derived runtime indexes.
+ *
+ * loader.js owns loading.
+ *
+ * normalizer.js owns structural normalization.
+ *
+ * validators.js owns validation.
+ *
+ * No business logic is placed here.
+ */
 
-DATABASE / RUNTIME CONFIGURATION
+const DATABASE_CONFIG = Object.freeze({
+  defaultGovernment:
+    DEFAULT_GOVERNMENT,
 
-============================================================
+  defaultState:
+    DEFAULT_STATE,
 
-This section contains only runtime configuration contracts.
+  activeStateIds:
+    ACTIVE_STATE_IDS,
 
-The registry owns canonical entities.
+  canonicalEntityCollections:
+    Object.freeze([
+      'governments',
+      'states',
+      'qualifications',
+      'categories',
+      'glossary',
+      'scoringRules',
+      'statuses',
+      'confidenceLevels',
+      'sourceTypes',
+      'jobs',
+      'exams',
+      'departments',
+      'organisations',
+      'recruitment',
+      'pay',
+      'locations',
+      'housing',
+      'promotion',
+      'benefits',
+      'sources',
+      'serviceCadres',
+      'eligibilityRules',
+      'assessmentQuestions',
+      'assessmentOptions',
+      'assessmentBranching',
+      'assessmentProfileFields',
+      'assessmentResponseScoring'
+    ]),
 
-indexes.js owns derived runtime indexes.
+  derivedIndexCollections:
+    Object.freeze([
+      'jobIndex',
+      'examIndex',
+      'departmentIndex',
+      'sourceIndex',
+      'searchIndex',
+      'serviceCadreIndex',
+      'eligibilityRuleIndex',
+      'qualificationIndex'
+    ]),
 
-loader.js owns loading.
+  indexPaths:
+    INDEX_DATA_PATHS
+});
 
-normalizer.js owns structural normalization.
+/* ============================================================
+ * UI CONFIGURATION
+ * ============================================================ */
 
-validators.js owns validation.
+const UI_CONFIG = Object.freeze({
+  comparison:
+    Object.freeze({
+      minimum:
+        2,
 
-No business logic is placed here. */
+      maximum:
+        MAX_COMPARISON_ITEMS
+    }),
 
+  pagination:
+    Object.freeze({
+      defaultPageSize:
+        DEFAULT_PAGE_SIZE,
 
-const DATABASE_CONFIG = Object.freeze({ defaultGovernment: DEFAULT_GOVERNMENT,
+      allowedPageSizes:
+        Object.freeze([
+          10,
+          20,
+          50,
+          100
+        ])
+    }),
 
-defaultState:
+  toast:
+    Object.freeze({
+      durationMs:
+        4500,
+
+      maximumVisible:
+        4
+    }),
+
+  modal:
+    Object.freeze({
+      closeOnBackdrop:
+        true,
+
+      closeOnEscape:
+        true
+    })
+});
+
+/* ============================================================
+ * STORAGE KEYS
+ * ============================================================
+ *
+ * These values are logical application keys.
+ *
+ * storage.js adds:
+ *
+ *   <storageNamespace>:
+ *
+ * before persisting them, so all application-managed storage
+ * remains inside one namespace.
+ */
+
+const STORAGE_KEYS = Object.freeze({
+  theme:
+    'gcc_theme',
+
+  language:
+    'gcc_language',
+
+  state:
+    'gcc_state',
+
+  government:
+    'gcc_government',
+
+  bookmarks:
+    'gcc_bookmarks',
+
+  comparison:
+    'gcc_comparison',
+
+  preferences:
+    'gcc_preferences',
+
+  recentViews:
+    'gcc_recent_views',
+
+  assessment:
+    'gcc_assessment',
+
+  filters:
+    'gcc_filters',
+
+  aiConversation:
+    'gcc_ai_conversation'
+});
+
+/* ============================================================
+ * APPLICATION CONFIG
+ * ============================================================ */
+
+const config = Object.freeze({
+  app:
+    Object.freeze({
+      name:
+        'GovCareer Compass',
+
+      version:
+        APP_VERSION,
+
+      environment:
+        'production',
+
+      researchBaseline:
+        RESEARCH_BASELINE,
+
+      basePath:
+        BASE_PATH,
+
+      storageNamespace:
+        STORAGE_NAMESPACE,
+
+      defaultLanguage:
+        DEFAULT_LANGUAGE,
+
+      fallbackLanguage:
+        FALLBACK_LANGUAGE,
+
+      supportedLanguages:
+        Object.freeze([
+          ...SUPPORTED_LANGUAGES
+        ]),
+
+      languages:
+        LANGUAGE_METADATA,
+
+      languageMeta:
+        LANGUAGE_METADATA,
+
+      languageMetadata:
+        LANGUAGE_METADATA,
+
+      languageDirections:
+        Object.freeze({
+          en:
+            'ltr',
+
+          bn:
+            'ltr'
+        }),
+
+      defaultTheme:
+        DEFAULT_THEME,
+
+      supportedThemes:
+        Object.freeze([
+          ...SUPPORTED_THEMES
+        ]),
+
+      defaultGovernment:
+        DEFAULT_GOVERNMENT,
+
+      defaultState:
+        DEFAULT_STATE
+    }),
+
+  routes:
+    ROUTES,
+
+  data:
+    Object.freeze({
+      root:
+        DATA_ROOT,
+
+      common:
+        COMMON_DATA_PATHS,
+
+      assessment:
+        ASSESSMENT_DATA_PATHS,
+
+      i18n:
+        I18N_DATA_PATHS,
+
+      governments:
+        GOVERNMENT_DATASETS,
+
+      central:
+        CENTRAL_DATA_PATHS,
+
+      westBengal:
+        WEST_BENGAL_DATA_PATHS,
+
+      states:
+        STATE_DATASETS,
+
+      activeStateIds:
+        ACTIVE_STATE_IDS,
+
+      indexes:
+        INDEX_DATA_PATHS,
+
+      schemas:
+        SCHEMA_PATHS
+    }),
+
+  activeStateIds:
+    ACTIVE_STATE_IDS,
+
+  ai:
+    AI_CONFIG,
+
+  database:
+    DATABASE_CONFIG,
+
+  search:
+    SEARCH_CONFIG,
+
+  ui:
+    UI_CONFIG,
+
+  storage:
+    STORAGE_KEYS
+});
+
+/* ============================================================
+ * ROUTE HELPERS
+ * ============================================================
+ *
+ * These helpers are intentionally small configuration adapters.
+ *
+ * They do not implement routing behavior;
+ * router.js remains the owner of navigation.
+ */
+
+function normalizeBasePath(value) {
+  return String(
+    value ?? ''
+  )
+    .trim()
+    .replace(
+      /\/+/g,
+      '/'
+    )
+    .replace(
+      /^\/+/,
+      ''
+    )
+    .replace(
+      /\/+$/g,
+      ''
+    );
+}
+
+function withBasePath(routeOrPath) {
+  const value = String(
+    routeOrPath ?? ''
+  )
+    .trim()
+    .replace(
+      /^\/+/,
+      ''
+    );
+
+  const base = normalizeBasePath(
+    BASE_PATH
+  );
+
+  if (!value) {
+    return base
+      ? `/${base}/`
+      : '';
+  }
+
+  if (!base) {
+    return value;
+  }
+
+  if (value === base) {
+    return `/${base}`;
+  }
+
+  if (
+    value.startsWith(
+      `${base}/`
+    )
+  ) {
+    return `/${value}`;
+  }
+
+  return `/${base}/${value}`;
+}
+
+function getRoute(routeName) {
+  const key = String(
+    routeName ?? ''
+  ).trim();
+
+  const route = ROUTES[key];
+
+  if (
+    typeof route !==
+    'string'
+  ) {
+    return null;
+  }
+
+  return withBasePath(
+    route
+  );
+}
+
+/* ============================================================
+ * GOVERNMENT / STATE DATASET HELPERS
+ * ============================================================ */
+
+function getGovernmentDataset(
+  governmentId
+) {
+  return (
+    GOVERNMENT_DATASETS[
+      governmentId
+    ] ||
+    null
+  );
+}
+
+function getStateDataset(
+  stateId
+) {
+  if (!stateId) {
+    return null;
+  }
+
+  return (
+    STATE_DATASETS[
+      stateId
+    ] ||
+    null
+  );
+}
+
+/* ============================================================
+ * PUBLIC EXPORTS
+ * ============================================================ */
+
+export {
+  APP_VERSION,
+  RESEARCH_BASELINE,
+
+  DEFAULT_LANGUAGE,
+  FALLBACK_LANGUAGE,
+  SUPPORTED_LANGUAGES,
+
+  DEFAULT_THEME,
+  SUPPORTED_THEMES,
+
   DEFAULT_STATE,
+  DEFAULT_GOVERNMENT,
 
-activeStateIds:
-  ACTIVE_STATE_IDS,
+  MAX_COMPARISON_ITEMS,
+  DEFAULT_SEARCH_LIMIT,
+  DEFAULT_PAGE_SIZE,
 
-canonicalEntityCollections:
-  Object.freeze([
-    'governments',
-    'states',
-    'qualifications',
-    'categories',
-    'glossary',
-    'scoringRules',
-    'statuses',
-    'confidenceLevels',
-    'sourceTypes',
-    'jobs',
-    'exams',
-    'departments',
-    'organisations',
-    'recruitment',
-    'pay',
-    'locations',
-    'housing',
-    'promotion',
-    'benefits',
-    'sources',
-    'serviceCadres',
-    'eligibilityRules',
-    'assessmentQuestions',
-    'assessmentOptions',
-    'assessmentBranching',
-    'assessmentProfileFields',
-    'assessmentResponseScoring'
-  ]),
+  BASE_PATH,
+  STORAGE_NAMESPACE,
 
-derivedIndexCollections:
-  Object.freeze([
-    'jobIndex',
-    'examIndex',
-    'departmentIndex',
-    'sourceIndex',
-    'searchIndex',
-    'serviceCadreIndex',
-    'eligibilityRuleIndex',
-    'qualificationIndex'
-  ]),
-
-indexPaths:
-  INDEX_DATA_PATHS
-
-});
-
-/* ============================================================
-
-UI CONFIGURATION
-
-============================================================ */
-
-
-const UI_CONFIG = Object.freeze({ comparison: Object.freeze({ minimum: 2,
-
-maximum:
-      MAX_COMPARISON_ITEMS
-  }),
-
-pagination:
-  Object.freeze({
-    defaultPageSize:
-      DEFAULT_PAGE_SIZE,
-
-    allowedPageSizes:
-      Object.freeze([
-        10,
-        20,
-        50,
-        100
-      ])
-  }),
-
-toast:
-  Object.freeze({
-    durationMs:
-      4500,
-
-    maximumVisible:
-      4
-  }),
-
-modal:
-  Object.freeze({
-    closeOnBackdrop:
-      true,
-
-    closeOnEscape:
-      true
-  })
-
-});
-
-/* ============================================================
-
-STORAGE KEYS
-
-============================================================
-
-These values are logical application keys.
-
-storage.js adds:
-
-<storageNamespace>:
-
-before persisting them, so all application-managed storage
-
-remains inside one namespace. */
-
-
-const STORAGE_KEYS = Object.freeze({ theme: 'gcc_theme',
-
-language:
-  'gcc_language',
-
-state:
-  'gcc_state',
-
-government:
-  'gcc_government',
-
-bookmarks:
-  'gcc_bookmarks',
-
-comparison:
-  'gcc_comparison',
-
-preferences:
-  'gcc_preferences',
-
-recentViews:
-  'gcc_recent_views',
-
-assessment:
-  'gcc_assessment',
-
-filters:
-  'gcc_filters',
-
-aiConversation:
-  'gcc_ai_conversation'
-
-});
-
-/* ============================================================
-
-APPLICATION CONFIG
-
-============================================================ */
-
-
-const config = Object.freeze({ app: Object.freeze({ name: 'GovCareer Compass',
-
-version:
-      APP_VERSION,
-
-    environment:
-      'production',
-
-    researchBaseline:
-      RESEARCH_BASELINE,
-
-    basePath:
-      BASE_PATH,
-
-    storageNamespace:
-      STORAGE_NAMESPACE,
-
-    defaultLanguage:
-      DEFAULT_LANGUAGE,
-
-    fallbackLanguage:
-      FALLBACK_LANGUAGE,
-
-    supportedLanguages:
-      Object.freeze([
-        ...SUPPORTED_LANGUAGES
-      ]),
-
-    languages:
-      LANGUAGE_METADATA,
-
-    languageMeta:
-      LANGUAGE_METADATA,
-
-    languageMetadata:
-      LANGUAGE_METADATA,
-
-    languageDirections:
-      Object.freeze({
-        en:
-          'ltr',
-
-        bn:
-          'ltr'
-      }),
-
-    defaultTheme:
-      DEFAULT_THEME,
-
-    supportedThemes:
-      Object.freeze([
-        ...SUPPORTED_THEMES
-      ]),
-
-    defaultGovernment:
-      DEFAULT_GOVERNMENT,
-
-    defaultState:
-      DEFAULT_STATE
-  }),
-
-routes:
+  LANGUAGE_METADATA,
   ROUTES,
 
-data:
-  Object.freeze({
-    root:
-      DATA_ROOT,
+  DATA_ROOT,
 
-    common:
-      COMMON_DATA_PATHS,
+  COMMON_DATA_PATHS,
+  ASSESSMENT_DATA_PATHS,
+  I18N_DATA_PATHS,
+  CENTRAL_DATA_PATHS,
+  WEST_BENGAL_DATA_PATHS,
+  INDEX_DATA_PATHS,
+  SCHEMA_PATHS,
 
-    assessment:
-      ASSESSMENT_DATA_PATHS,
-
-    i18n:
-      I18N_DATA_PATHS,
-
-    governments:
-      GOVERNMENT_DATASETS,
-
-    central:
-      CENTRAL_DATA_PATHS,
-
-    westBengal:
-      WEST_BENGAL_DATA_PATHS,
-
-    states:
-      STATE_DATASETS,
-
-    activeStateIds:
-      ACTIVE_STATE_IDS,
-
-    indexes:
-      INDEX_DATA_PATHS,
-
-    schemas:
-      SCHEMA_PATHS
-  }),
-
-activeStateIds:
   ACTIVE_STATE_IDS,
+  STATE_DATASETS,
+  GOVERNMENT_DATASETS,
 
-ai:
   AI_CONFIG,
-
-database:
   DATABASE_CONFIG,
-
-search:
   SEARCH_CONFIG,
-
-ui:
   UI_CONFIG,
+  STORAGE_KEYS,
 
-storage:
-  STORAGE_KEYS
+  getRoute,
+  withBasePath,
 
-});
-
-/* ============================================================
-
-ROUTE HELPERS
-
-============================================================
-
-These helpers are intentionally small configuration adapters.
-
-They do not implement routing behavior; router.js remains the
-
-owner of navigation. */
-
-
-function normalizeBasePath( value ) { return String( value ?? '' ) .trim() .replace( //+/g, '/' ) .replace( /^/+/, '' ) .replace( //+$/g, ''); }
-
-function withBasePath( routeOrPath ) { const value = String( routeOrPath ?? '' ) .trim() .replace( /^/+/, '' );
-
-if (!value) { return ( normalizeBasePath( BASE_PATH ) ? /${normalizeBasePath(BASE_PATH)}/ : '' ); }
-
-const base = normalizeBasePath( BASE_PATH );
-
-if (!base) { return value; }
-
-if ( value === base ) { return /${base}; }
-
-if ( value.startsWith( ${base}/ ) ) { return /${value}; }
-
-return /${base}/${value}; }
-
-function getRoute( routeName ) { const key = String( routeName ?? '' ).trim();
-
-const route = ROUTES[ key ];
-
-if ( typeof route !== 'string' ) { return null; }
-
-return withBasePath( route ); }
-
-/* ============================================================
-
-GOVERNMENT / STATE DATASET HELPERS
-
-============================================================ */
-
-
-function getGovernmentDataset( governmentId ) { return ( GOVERNMENT_DATASETS[ governmentId ] || null ); }
-
-function getStateDataset( stateId ) { if ( !stateId ) { return null; }
-
-return ( STATE_DATASETS[ stateId ] || null ); }
-
-/* ============================================================
-
-PUBLIC EXPORTS
-
-============================================================ */
-
-
-export { APP_VERSION, RESEARCH_BASELINE,
-
-DEFAULT_LANGUAGE, FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES,
-
-DEFAULT_THEME, SUPPORTED_THEMES,
-
-DEFAULT_STATE, DEFAULT_GOVERNMENT,
-
-MAX_COMPARISON_ITEMS, DEFAULT_SEARCH_LIMIT, DEFAULT_PAGE_SIZE,
-
-BASE_PATH, STORAGE_NAMESPACE,
-
-LANGUAGE_METADATA, ROUTES,
-
-DATA_ROOT,
-
-COMMON_DATA_PATHS, ASSESSMENT_DATA_PATHS, I18N_DATA_PATHS, CENTRAL_DATA_PATHS, WEST_BENGAL_DATA_PATHS, INDEX_DATA_PATHS, SCHEMA_PATHS,
-
-ACTIVE_STATE_IDS, STATE_DATASETS, GOVERNMENT_DATASETS,
-
-AI_CONFIG, DATABASE_CONFIG, SEARCH_CONFIG, UI_CONFIG, STORAGE_KEYS,
-
-getRoute, withBasePath,
-
-getGovernmentDataset, getStateDataset };
+  getGovernmentDataset,
+  getStateDataset
+};
 
 export default config;
