@@ -1,1 +1,179 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
 
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+      name="description"
+      content="GovCareer Compass helps aspirants research, compare and understand government careers across West Bengal and the Central Government."
+    >
+
+    <title>GovCareer Compass</title>
+
+    <!--
+      Existing repository branding assets.
+    -->
+    <link
+      rel="icon"
+      href="./assets/logos/favicon.svg"
+      type="image/svg+xml"
+    >
+
+    <link
+      rel="icon"
+      href="./assets/logos/favicon-32.png"
+      type="image/png"
+      sizes="32x32"
+    >
+
+    <link
+      rel="apple-touch-icon"
+      href="./assets/logos/apple-touch-icon.png"
+    >
+
+
+    <!--
+      Canonical application stylesheet order.
+
+      Dependency direction:
+        reset
+          ↓
+        tokens
+          ↓
+        themes
+          ↓
+        base
+          ↓
+        layout
+          ↓
+        components
+          ↓
+        forms / tables / charts
+          ↓
+        responsive
+          ↓
+        print
+    -->
+
+    <link
+      rel="stylesheet"
+      href="./css/reset.css"
+    >
+
+    <link
+      rel="stylesheet"
+      href="./css/tokens.css"
+    >
+
+    <link
+      rel="stylesheet"
+      href="./css/themes.css"
+    >
+
+    <link
+      rel="stylesheet"
+      href="./css/base.css"
+    >
+
+    <link
+      rel="stylesheet"
+      href="./css/layout.css"
+    >
+
+    <link
+      rel="stylesheet"
+      href="./css/components.css"
+    >
+
+    <link
+      rel="stylesheet"
+      href="./css/forms.css"
+    >
+
+    <link
+      rel="stylesheet"
+      href="./css/tables.css"
+    >
+
+    <link
+      rel="stylesheet"
+      href="./css/charts.css"
+    >
+
+    <link
+      rel="stylesheet"
+      href="./css/responsive.css"
+    >
+
+    <link
+      rel="stylesheet"
+      href="./css/print.css"
+      media="print"
+    >
+  </head>
+
+  <body data-page="home">
+
+    <!--
+      Keyboard-accessible skip navigation.
+
+      reset.css already provides the visually-hidden-focusable behavior.
+      The application shell remains responsible for the actual navigation
+      and page content.
+    -->
+    <a
+      class="visually-hidden-focusable"
+      href="#app"
+    >
+      Skip to main content
+    </a>
+
+
+    <!--
+      Application content outlet.
+
+      This is intentionally minimal.
+
+      app.js is the sole bootstrap/orchestration owner and the shared
+      components mount the global header, footer, search, AI and selectors.
+      No header/footer/AI markup is duplicated here.
+    -->
+    <main
+      id="app"
+      class="gc-app"
+      tabindex="-1"
+      aria-label="GovCareer Compass"
+    >
+      <noscript>
+        <section class="empty-state">
+          <h1 class="empty-state__title">
+            JavaScript is required
+          </h1>
+
+          <p>
+            GovCareer Compass requires JavaScript to load its interactive
+            application shell and career research tools.
+          </p>
+        </section>
+      </noscript>
+    </main>
+
+
+    <!--
+      Canonical application bootstrap.
+
+      Do not load init.js here.
+      app.js is the single application startup owner.
+    -->
+    <script
+      type="module"
+      src="./js/app.js"
+    ></script>
+
+  </body>
+</html>
