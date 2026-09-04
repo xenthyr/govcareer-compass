@@ -116,6 +116,18 @@ const DEFAULT_BRAND_NAME =
 const DEFAULT_AI_NAME =
   'Compass AI';
 
+const FULL_LOGO_PATH =
+  '../assets/logos/govcareer-compass-logo.svg';
+
+const DARK_LOGO_PATH =
+  '../assets/logos/govcareer-compass-logo-dark.svg';
+
+const MARK_PATH =
+  '../assets/logos/govcareer-compass-mark.svg';
+
+const DARK_MARK_PATH =
+  '../assets/logos/govcareer-compass-mark-dark.svg';
+
 const HEADER_SELECTOR =
   '[data-component="header"]';
 
@@ -400,12 +412,18 @@ function getHeaderRoutes() {
 /**
  * Create the permanent site-header DOM structure.
  *
- * Translation hooks remain on shell text so language.js remains the sole
- * dictionary/translation authority.
+ * Translation hooks intentionally use the existing canonical locale
+ * namespaces:
+ *
+ *   common.*
+ *   header.*
+ *
+ * The header does not create a parallel translation vocabulary.
  */
 function createHeaderMarkup({
   brandName =
     DEFAULT_BRAND_NAME,
+
   aiName =
     DEFAULT_AI_NAME
 } = {}) {
@@ -429,20 +447,56 @@ function createHeaderMarkup({
           )}"
           data-route="home"
           data-header-brand
-          data-i18n-aria-label="header.homeAriaLabel"
+          data-i18n-aria-label="header.home"
           aria-label="${escapeHtml(
             `${brandName} — Home`
           )}"
         >
+          <!--
+            Full wordmark for desktop / spacious layouts.
+            The companion compact mark is retained as a responsive hook.
+            Visibility/sizing remains a CSS responsibility.
+          -->
           <span
-            class="site-brand__mark"
+            class="site-brand__logo-wrap"
             aria-hidden="true"
           >
-            <span
-              class="site-brand__mark-inner"
+            <img
+              class="site-brand__logo site-brand__logo--full"
+              src="${FULL_LOGO_PATH}"
+              alt=""
+              width="160"
+              height="40"
+              decoding="async"
+              fetchpriority="high"
             >
-              GC
-            </span>
+
+            <img
+              class="site-brand__logo site-brand__logo--full-dark"
+              src="${DARK_LOGO_PATH}"
+              alt=""
+              width="160"
+              height="40"
+              decoding="async"
+            >
+
+            <img
+              class="site-brand__mark site-brand__mark--compact"
+              src="${MARK_PATH}"
+              alt=""
+              width="40"
+              height="40"
+              decoding="async"
+            >
+
+            <img
+              class="site-brand__mark site-brand__mark--compact-dark"
+              src="${DARK_MARK_PATH}"
+              alt=""
+              width="40"
+              height="40"
+              decoding="async"
+            >
           </span>
 
           <span
@@ -450,7 +504,7 @@ function createHeaderMarkup({
           >
             <span
               class="site-brand__name"
-              data-i18n="brand.name"
+              data-i18n="common.appName"
             >
               ${escapeHtml(
                 brandName
@@ -459,9 +513,9 @@ function createHeaderMarkup({
 
             <span
               class="site-brand__tagline"
-              data-i18n="brand.tagline"
+              data-i18n="common.tagline"
             >
-              Government Career Intelligence
+              Find the government career that fits you.
             </span>
           </span>
         </a>
@@ -473,7 +527,7 @@ function createHeaderMarkup({
           class="site-navigation"
           data-header-navigation
           aria-label="Primary navigation"
-          data-i18n-aria-label="header.primaryNavigation"
+          data-i18n-aria-label="header.home"
         >
           <a
             class="site-navigation__link"
@@ -481,7 +535,7 @@ function createHeaderMarkup({
               routes.careerFinder
             )}"
             data-route="careerFinder"
-            data-i18n="navigation.careerFinder"
+            data-i18n="header.careerFinder"
           >
             Career Finder
           </a>
@@ -492,7 +546,7 @@ function createHeaderMarkup({
               routes.jobs
             )}"
             data-route="jobs"
-            data-i18n="navigation.jobs"
+            data-i18n="header.jobs"
           >
             Jobs
           </a>
@@ -503,7 +557,7 @@ function createHeaderMarkup({
               routes.exams
             )}"
             data-route="exams"
-            data-i18n="navigation.exams"
+            data-i18n="header.exams"
           >
             Exams
           </a>
@@ -514,7 +568,7 @@ function createHeaderMarkup({
               routes.rankings
             )}"
             data-route="rankings"
-            data-i18n="navigation.rankings"
+            data-i18n="header.rankings"
           >
             Rankings
           </a>
@@ -525,7 +579,7 @@ function createHeaderMarkup({
               routes.compare
             )}"
             data-route="compare"
-            data-i18n="navigation.compare"
+            data-i18n="header.compare"
           >
             Compare
           </a>
@@ -538,7 +592,7 @@ function createHeaderMarkup({
           class="site-header__actions"
           data-header-actions
           aria-label="Site tools"
-          data-i18n-aria-label="header.siteTools"
+          data-i18n-aria-label="common.settings"
         >
 
           <!-- Global Search -->
@@ -549,9 +603,9 @@ function createHeaderMarkup({
             data-header-search-trigger
             aria-expanded="false"
             aria-controls="global-header-search"
-            data-i18n-aria-label="header.search"
-            data-i18n-title="header.search"
-            aria-label="Search government careers"
+            data-i18n-aria-label="common.search"
+            data-i18n-title="common.search"
+            aria-label="Search"
             title="Search"
           >
             <svg
@@ -585,7 +639,7 @@ function createHeaderMarkup({
             class="header-ai-button"
             data-ai-trigger
             data-header-ai-trigger
-            data-i18n-aria-label="header.compassAI"
+            data-i18n-aria-label="header.aiAssistant"
             aria-label="${escapeHtml(
               aiName
             )}"
@@ -603,7 +657,7 @@ function createHeaderMarkup({
             <span
               class="header-ai-button__label"
               data-ai-trigger-label
-              data-i18n="brand.aiName"
+              data-i18n="header.aiAssistant"
             >
               ${escapeHtml(
                 aiName
@@ -646,8 +700,8 @@ function createHeaderMarkup({
             class="icon-button mobile-menu-button"
             data-drawer-open="${GLOBAL_NAVIGATION_DRAWER_ID}"
             data-header-menu-trigger
-            data-i18n-aria-label="header.openNavigation"
-            data-i18n-title="header.openNavigation"
+            data-i18n-aria-label="header.openMenu"
+            data-i18n-title="header.openMenu"
             aria-label="Open navigation menu"
             title="Open navigation menu"
             aria-controls="${GLOBAL_NAVIGATION_DRAWER_ID}"
@@ -695,9 +749,9 @@ function createHeaderMarkup({
         >
           <div
             class="site-header__search-heading"
-            data-i18n="search.globalTitle"
+            data-i18n="common.search"
           >
-            Search GovCareer Compass
+            Search
           </div>
 
           <div
@@ -726,14 +780,14 @@ function createHeaderMarkup({
           role="dialog"
           aria-modal="true"
           aria-label="Navigation menu"
-          data-i18n-aria-label="header.navigationMenu"
+          data-i18n-aria-label="header.openMenu"
         >
           <div
             class="navigation-drawer__header"
           >
             <strong
               class="navigation-drawer__title"
-              data-i18n="header.navigationMenu"
+              data-i18n="header.openMenu"
             >
               Navigation
             </strong>
@@ -742,8 +796,8 @@ function createHeaderMarkup({
               type="button"
               class="icon-button navigation-drawer__close"
               data-drawer-close
-              data-i18n-aria-label="header.closeNavigation"
-              data-i18n-title="header.closeNavigation"
+              data-i18n-aria-label="header.closeMenu"
+              data-i18n-title="header.closeMenu"
               aria-label="Close navigation menu"
               title="Close navigation menu"
             >
@@ -753,8 +807,8 @@ function createHeaderMarkup({
 
           <nav
             class="navigation-drawer__navigation"
-            aria-label="Mobile navigation"
-            data-i18n-aria-label="header.mobileNavigation"
+            aria-label="Primary navigation"
+            data-i18n-aria-label="header.openMenu"
           >
             <a
               class="navigation-drawer__link"
@@ -762,7 +816,7 @@ function createHeaderMarkup({
                 routes.careerFinder
               )}"
               data-route="careerFinder"
-              data-i18n="navigation.careerFinder"
+              data-i18n="header.careerFinder"
             >
               Career Finder
             </a>
@@ -773,7 +827,7 @@ function createHeaderMarkup({
                 routes.jobs
               )}"
               data-route="jobs"
-              data-i18n="navigation.jobs"
+              data-i18n="header.jobs"
             >
               Jobs
             </a>
@@ -784,7 +838,7 @@ function createHeaderMarkup({
                 routes.exams
               )}"
               data-route="exams"
-              data-i18n="navigation.exams"
+              data-i18n="header.exams"
             >
               Exams
             </a>
@@ -795,7 +849,7 @@ function createHeaderMarkup({
                 routes.rankings
               )}"
               data-route="rankings"
-              data-i18n="navigation.rankings"
+              data-i18n="header.rankings"
             >
               Rankings
             </a>
@@ -806,7 +860,7 @@ function createHeaderMarkup({
                 routes.compare
               )}"
               data-route="compare"
-              data-i18n="navigation.compare"
+              data-i18n="header.compare"
             >
               Compare
             </a>
@@ -1382,14 +1436,6 @@ function bindHeaderInteractions(
 
   /* Language lifecycle ---------------------------------------------------- */
 
-  /*
-   * gcc:languagechange is the canonical language event.
-   *
-   * govcareer:languagechange is retained as a compatibility listener because
-   * the existing ecosystem still emits it and selector components consume it.
-   *
-   * The actual event handlers are intentionally lightweight and idempotent.
-   */
   addManagedListener(
     mount,
     document,
@@ -1488,15 +1534,23 @@ function updateHeaderAccessibleState(
     );
 
   if (
-    aiTrigger &&
-    !aiTrigger.getAttribute(
-      'aria-controls'
-    )
+    aiTrigger
   ) {
     aiTrigger.setAttribute(
       'aria-controls',
       'compass-ai-panel'
     );
+
+    if (
+      !aiTrigger.hasAttribute(
+        'aria-expanded'
+      )
+    ) {
+      aiTrigger.setAttribute(
+        'aria-expanded',
+        'false'
+      );
+    }
   }
 
   const menuTrigger =
@@ -1979,6 +2033,11 @@ function openCompassAI() {
 export {
   DEFAULT_BRAND_NAME,
   DEFAULT_AI_NAME,
+
+  FULL_LOGO_PATH,
+  DARK_LOGO_PATH,
+  MARK_PATH,
+  DARK_MARK_PATH,
 
   HEADER_SELECTOR,
   HEADER_READY_EVENT,
