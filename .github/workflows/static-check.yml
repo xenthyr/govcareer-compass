@@ -36,6 +36,7 @@ jobs:
 
           required_files=(
             "index.html"
+            "pages/ai.html"
 
             "js/app.js"
             "js/init.js"
@@ -86,6 +87,17 @@ jobs:
             "data/schemas/eligibility-rule.schema.json"
             "data/schemas/service-cadre.schema.json"
 
+            "data/common/categories.json"
+            "data/common/confidence-levels.json"
+            "data/common/glossary.json"
+            "data/common/governments.json"
+            "data/common/locations.json"
+            "data/common/qualifications.json"
+            "data/common/scoring-rules.json"
+            "data/common/source-types.json"
+            "data/common/states.json"
+            "data/common/statuses.json"
+
             "data/central/exams.json"
             "data/central/jobs.json"
             "data/central/departments.json"
@@ -93,6 +105,10 @@ jobs:
             "data/central/service-cadres.json"
             "data/central/eligibility-rules.json"
 
+            "data/states/west-bengal/exams.json"
+            "data/states/west-bengal/jobs.json"
+            "data/states/west-bengal/departments.json"
+            "data/states/west-bengal/organisations.json"
             "data/states/west-bengal/service-cadres.json"
             "data/states/west-bengal/eligibility-rules.json"
 
@@ -115,7 +131,7 @@ jobs:
           done
 
           if (( ${#missing[@]} > 0 )); then
-            echo "Missing required architectural files:" >&2
+            echo "Required architectural file check failed:" >&2
             printf ' - %s\n' "${missing[@]}" >&2
             exit 1
           fi
@@ -135,7 +151,8 @@ jobs:
             find . \
               -path './.git' -prune -o \
               -path './node_modules' -prune -o \
-              -type f -name '*.js' -print0
+              -type f -name '*.js' -print0 |
+              sort -z
           )
 
           while IFS= read -r -d '' file; do
@@ -144,11 +161,12 @@ jobs:
             find . \
               -path './.git' -prune -o \
               -path './node_modules' -prune -o \
-              -type f -name '*.mjs' -print0
+              -type f -name '*.mjs' -print0 |
+              sort -z
           )
 
           if (( ${#files[@]} == 0 )); then
-            echo "No JavaScript modules found."
+            echo "No JavaScript modules found." >&2
             exit 1
           fi
 
@@ -162,139 +180,292 @@ jobs:
           done
 
           if (( failed != 0 )); then
+            echo "JavaScript syntax validation failed." >&2
             exit 1
           fi
 
-          echo "All JavaScript modules passed syntax checks."
+          echo "All JavaScript and .mjs modules passed syntax checks."
 
-      - name: Check HTML structure
+      - name: Check HTML structure and local resources
         shell: bash
         run: |
           set -euo pipefail
 
           node --input-type=module <<'NODE'
           import { readdir, readFile } from 'node:fs/promises';
-          import { extname, join, relative } from 'node:path';
+          import {
+            dirname,
+            extname,
+            join,
+            relative,
+            resolve
+          } from 'node:path';
 
+          const repositoryRoot = resolve('.');
           const failures = [];
 
+          function resolveLocalHtmlResource(
+            htmlFile,
+            resource
+          ) {
+            if (resource.startsWith('/')) {
+              return resolve(
+                repositoryRoot,
+                resource.slice(1)
+              );
+            }
+
+            return resolve(
+              dirname(htmlFile),
+              resource
+            );
+          }
+
+          function stripUrlSuffix(value) {
+            return value.split(/[?#]/, 1)[0];
+          }
+
+          function isExternalResource(value) {
+            return (
+              /^(?:https?:)?\/\//i.test(value) ||
+              /^data:/i.test(value) ||
+              /^mailto:/i.test(value) ||
+              /^tel:/i.test(value) ||
+              /^javascript:/i.test(value) ||
+              value.startsWith('#')
+            );
+          }
+
           async function walk(directory) {
-            const entries = await readdir(directory, { withFileTypes: true });
+            const entries =
+              await readdir(
+                directory,
+                {
+                  withFileTypes: true
+                }
+              );
 
             for (const entry of entries) {
-              if (entry.name === '.git' || entry.name === 'node_modules') {
+              if (
+                entry.name === '.git' ||
+                entry.name === 'node_modules'
+              ) {
                 continue;
               }
 
-              const fullPath = join(directory, entry.name);
+              const fullPath =
+                join(
+                  directory,
+                  entry.name
+                );
 
               if (entry.isDirectory()) {
                 await walk(fullPath);
                 continue;
               }
 
-              if (extname(entry.name).toLowerCase() !== '.html') {
+              if (
+                extname(entry.name).toLowerCase() !==
+                '.html'
+              ) {
                 continue;
               }
 
-              const text = await readFile(fullPath, 'utf8');
-              const path = relative('.', fullPath);
-              const lower = text.toLowerCase();
+              const text =
+                await readFile(
+                  fullPath,
+                  'utf8'
+                );
 
-              if (!/^\s*(<!doctype html>|<html\b)/i.test(text)) {
-                failures.push(`${path}: missing HTML5 doctype at the beginning of the document.`);
+              const path =
+                relative(
+                  repositoryRoot,
+                  resolve(fullPath)
+                );
+
+              if (
+                !/^\s*<!doctype\s+html\s*>/i.test(
+                  text
+                )
+              ) {
+                failures.push(
+                  `${path}: missing HTML5 doctype at the beginning of the document.`
+                );
               }
 
-              if (!/<html\b[^>]*>/i.test(text)) {
-                failures.push(`${path}: missing <html> root element.`);
+              if (
+                !/<html\b[^>]*>/i.test(text)
+              ) {
+                failures.push(
+                  `${path}: missing <html> root element.`
+                );
               }
 
-              if (!/<head\b[^>]*>/i.test(text) || !/<\/head>/i.test(text)) {
-                failures.push(`${path}: missing or malformed <head> section.`);
+              if (
+                !/<head\b[^>]*>/i.test(text) ||
+                !/<\/head>/i.test(text)
+              ) {
+                failures.push(
+                  `${path}: missing or malformed <head> section.`
+                );
               }
 
-              if (!/<body\b[^>]*>/i.test(text) || !/<\/body>/i.test(text)) {
-                failures.push(`${path}: missing or malformed <body> section.`);
+              if (
+                !/<body\b[^>]*>/i.test(text) ||
+                !/<\/body>/i.test(text)
+              ) {
+                failures.push(
+                  `${path}: missing or malformed <body> section.`
+                );
               }
 
-              if (!/<title\b[^>]*>[^<]+<\/title>/i.test(text)) {
-                failures.push(`${path}: missing non-empty <title>.`);
+              if (
+                !/<title\b[^>]*>[^<]+<\/title>/i.test(
+                  text
+                )
+              ) {
+                failures.push(
+                  `${path}: missing non-empty <title>.`
+                );
               }
 
-              if (/<script\b[^>]*src=["'][^"']+\.js(?:\?[^"']*)?["'][^>]*>/i.test(text)) {
-                const scriptTags = [...text.matchAll(/<script\b[^>]*src=["']([^"']+)["'][^>]*>/gi)];
+              const scriptTags =
+                [
+                  ...text.matchAll(
+                    /<script\b[^>]*src=["']([^"']+)["'][^>]*>/gi
+                  )
+                ];
 
-                for (const match of scriptTags) {
-                  const src = match[1];
+              for (const match of scriptTags) {
+                const src = match[1];
 
-                  if (/^(?:https?:)?\/\//i.test(src)) {
-                    continue;
-                  }
+                if (
+                  isExternalResource(src) ||
+                  /^\/api\//i.test(src)
+                ) {
+                  continue;
+                }
 
-                  if (/^\/api\//i.test(src)) {
-                    continue;
-                  }
+                const queryless =
+                  stripUrlSuffix(src);
 
-                  const queryless = src.split(/[?#]/, 1)[0];
-                  const target = join('.', queryless.replace(/^\//, ''));
+                if (!queryless) {
+                  failures.push(
+                    `${path}: empty local script source.`
+                  );
+                  continue;
+                }
 
-                  try {
-                    await readFile(target);
-                  } catch {
-                    failures.push(`${path}: script source does not exist: ${src}`);
-                  }
+                const target =
+                  resolveLocalHtmlResource(
+                    resolve(fullPath),
+                    queryless
+                  );
+
+                try {
+                  await readFile(target);
+                } catch {
+                  failures.push(
+                    `${path}: script source does not exist: ${src} (resolved to ${relative(repositoryRoot, target) || '.'})`
+                  );
                 }
               }
 
-              if (/<link\b[^>]*href=["'][^"']+["'][^>]*>/i.test(text)) {
-                const linkTags = [...text.matchAll(/<link\b[^>]*href=["']([^"']+)["'][^>]*>/gi)];
+              const linkTags =
+                [
+                  ...text.matchAll(
+                    /<link\b[^>]*href=["']([^"']+)["'][^>]*>/gi
+                  )
+                ];
 
-                for (const match of linkTags) {
-                  const href = match[1];
+              for (const match of linkTags) {
+                const href = match[1];
 
-                  if (
-                    /^(?:https?:)?\/\//i.test(href) ||
-                    href.startsWith('data:') ||
-                    href.startsWith('#') ||
-                    href.startsWith('mailto:') ||
-                    href.startsWith('tel:')
-                  ) {
-                    continue;
-                  }
+                if (
+                  isExternalResource(href)
+                ) {
+                  continue;
+                }
 
-                  const queryless = href.split(/[?#]/, 1)[0];
-                  const target = join('.', queryless.replace(/^\//, ''));
+                const queryless =
+                  stripUrlSuffix(href);
 
-                  try {
-                    await readFile(target);
-                  } catch {
-                    failures.push(`${path}: linked local resource does not exist: ${href}`);
-                  }
+                if (!queryless) {
+                  failures.push(
+                    `${path}: empty local link href.`
+                  );
+                  continue;
+                }
+
+                const target =
+                  resolveLocalHtmlResource(
+                    resolve(fullPath),
+                    queryless
+                  );
+
+                try {
+                  await readFile(target);
+                } catch {
+                  failures.push(
+                    `${path}: linked local resource does not exist: ${href} (resolved to ${relative(repositoryRoot, target) || '.'})`
+                  );
                 }
               }
 
-              const opening = (text.match(/<script\b/gi) || []).length;
-              const closing = (text.match(/<\/script>/gi) || []).length;
+              const opening =
+                (
+                  text.match(
+                    /<script\b/gi
+                  ) || []
+                ).length;
 
-              if (opening !== closing) {
-                failures.push(`${path}: unbalanced <script> tags (${opening} opening, ${closing} closing).`);
+              const closing =
+                (
+                  text.match(
+                    /<\/script>/gi
+                  ) || []
+                ).length;
+
+              if (
+                opening !== closing
+              ) {
+                failures.push(
+                  `${path}: unbalanced <script> tags (${opening} opening, ${closing} closing).`
+                );
               }
 
-              if (lower.includes('<button') && !/<button\b[^>]*type=["']/i.test(text)) {
-                failures.push(`${path}: contains <button> without an explicit type attribute.`);
+              if (
+                /<button\b/i.test(text) &&
+                !/<button\b[^>]*type=["'][^"']+["']/i.test(
+                  text
+                )
+              ) {
+                failures.push(
+                  `${path}: contains <button> without an explicit type attribute.`
+                );
               }
             }
           }
 
-          await walk('.');
+          await walk(repositoryRoot);
 
           if (failures.length) {
-            console.error('HTML structural/static checks failed:');
-            console.error(failures.join('\n'));
+            console.error(
+              'HTML structural/static validation failed:'
+            );
+            console.error(
+              [
+                ...new Set(
+                  failures
+                )
+              ].join('\n')
+            );
             process.exit(1);
           }
 
-          console.log('HTML structural checks passed.');
+          console.log(
+            'HTML structural and local-resource checks passed.'
+          );
           NODE
 
       - name: Check local JavaScript imports
@@ -304,12 +475,22 @@ jobs:
 
           node --input-type=module <<'NODE'
           import { access, readdir, readFile } from 'node:fs/promises';
-          import { dirname, extname, join, normalize, resolve, relative } from 'node:path';
+          import {
+            dirname,
+            extname,
+            join,
+            relative,
+            resolve
+          } from 'node:path';
 
-          const importPattern = /(?:^|[\n;])\s*(?:import\s+(?:[^'";]+?\s+from\s+)?|export\s+(?:[^'";]+?\s+from\s+))['"]([^'"]+)['"]/g;
-          const dynamicPattern = /import\(\s*['"]([^'"]+)['"]\s*\)/g;
+          const repositoryRoot = resolve('.');
           const failures = [];
-          const checked = new Set();
+
+          const staticImportPattern =
+            /(?:^|[\n;])\s*(?:import\s+(?:[^'";]+?\s+from\s+)?|export\s+(?:[^'";]+?\s+from\s+))['"]([^'"]+)['"]/g;
+
+          const dynamicImportPattern =
+            /import\(\s*['"]([^'"]+)['"]\s*\)/g;
 
           async function exists(file) {
             try {
@@ -320,7 +501,9 @@ jobs:
             }
           }
 
-          function isLocalSpecifier(specifier) {
+          function isLocalSpecifier(
+            specifier
+          ) {
             return (
               specifier.startsWith('./') ||
               specifier.startsWith('../') ||
@@ -328,14 +511,42 @@ jobs:
             );
           }
 
-          async function resolveImport(fromFile, specifier) {
-            if (!isLocalSpecifier(specifier)) {
+          function resolveImportBase(
+            fromFile,
+            specifier
+          ) {
+            if (
+              specifier.startsWith('/')
+            ) {
+              return resolve(
+                repositoryRoot,
+                specifier.slice(1)
+              );
+            }
+
+            return resolve(
+              dirname(fromFile),
+              specifier
+            );
+          }
+
+          async function resolveImport(
+            fromFile,
+            specifier
+          ) {
+            if (
+              !isLocalSpecifier(
+                specifier
+              )
+            ) {
               return null;
             }
 
-            const base = specifier.startsWith('/')
-              ? resolve('.', specifier.slice(1))
-              : resolve(dirname(fromFile), specifier);
+            const base =
+              resolveImportBase(
+                fromFile,
+                specifier
+              );
 
             const candidates = [
               base,
@@ -347,7 +558,11 @@ jobs:
             ];
 
             for (const candidate of candidates) {
-              if (await exists(candidate)) {
+              if (
+                await exists(
+                  candidate
+                )
+              ) {
                 return candidate;
               }
             }
@@ -355,22 +570,40 @@ jobs:
             return null;
           }
 
-          async function walk(directory) {
-            const entries = await readdir(directory, { withFileTypes: true });
+          async function walk(
+            directory
+          ) {
+            const entries =
+              await readdir(
+                directory,
+                {
+                  withFileTypes: true
+                }
+              );
 
             for (const entry of entries) {
-              if (entry.name === '.git' || entry.name === 'node_modules') {
+              if (
+                entry.name === '.git' ||
+                entry.name === 'node_modules'
+              ) {
                 continue;
               }
 
-              const file = join(directory, entry.name);
+              const file =
+                join(
+                  directory,
+                  entry.name
+                );
 
               if (entry.isDirectory()) {
                 await walk(file);
                 continue;
               }
 
-              const extension = extname(entry.name).toLowerCase();
+              const extension =
+                extname(
+                  entry.name
+                ).toLowerCase();
 
               if (
                 extension !== '.js' &&
@@ -379,41 +612,78 @@ jobs:
                 continue;
               }
 
-              const source = await readFile(file, 'utf8');
-              const specifiers = [];
+              const source =
+                await readFile(
+                  file,
+                  'utf8'
+                );
 
-              for (const match of source.matchAll(importPattern)) {
-                specifiers.push(match[1]);
+              const specifiers =
+                [];
+
+              for (
+                const match of
+                source.matchAll(
+                  staticImportPattern
+                )
+              ) {
+                specifiers.push(
+                  match[1]
+                );
               }
 
-              for (const match of source.matchAll(dynamicPattern)) {
-                specifiers.push(match[1]);
+              for (
+                const match of
+                source.matchAll(
+                  dynamicImportPattern
+                )
+              ) {
+                specifiers.push(
+                  match[1]
+                );
               }
 
-              for (const specifier of specifiers) {
-                const target = await resolveImport(file, specifier);
+              for (
+                const specifier of
+                specifiers
+              ) {
+                const target =
+                  await resolveImport(
+                    resolve(file),
+                    specifier
+                  );
 
                 if (!target) {
                   failures.push(
-                    `${relative('.', file)}: missing local import target: ${specifier}`
+                    `${relative(repositoryRoot, resolve(file))}: missing local import target: ${specifier}`
                   );
                 }
               }
             }
           }
 
-          await walk('.');
+          await walk(repositoryRoot);
 
           if (failures.length) {
-            console.error('Missing local imports/references:');
-            console.error(failures.join('\n'));
+            console.error(
+              'Local JavaScript import validation failed:'
+            );
+            console.error(
+              [
+                ...new Set(
+                  failures
+                )
+              ].join('\n')
+            );
             process.exit(1);
           }
 
-          console.log('Local JavaScript import checks passed.');
+          console.log(
+            'Local JavaScript import checks passed.'
+          );
           NODE
 
-      - name: Check mapped page-controller modules
+      - name: Check page-controller mappings
         shell: bash
         run: |
           set -euo pipefail
@@ -426,31 +696,28 @@ jobs:
             resolve
           } from 'node:path';
 
-          const APP_FILE =
-            'js/app.js';
+          const repositoryRoot =
+            resolve('.');
+
+          const appFile =
+            resolve(
+              'js/app.js'
+            );
 
           const source =
             await readFile(
-              APP_FILE,
+              appFile,
               'utf8'
             );
 
-          /*
-           * app.js intentionally performs dynamic imports through
-           * PAGE_CONTROLLER_MAP[pageName]. The normal literal-import
-           * validator cannot resolve those variable-based paths.
-           *
-           * This check therefore validates only the controller paths
-           * explicitly declared by PAGE_CONTROLLER_MAP.
-           */
           const mapMatch =
             source.match(
-              /const\s+PAGE_CONTROLLER_MAP\s*=\s*Object\.freeze\(\s*\{([\s\S]*?)\}\s*\);/
+              /const\s+PAGE_CONTROLLER_MAP\s*=\s*Object\.freeze\(\s*\{([\s\S]*?)\}\s*\)\s*;/
             );
 
           if (!mapMatch) {
             console.error(
-              `Unable to locate PAGE_CONTROLLER_MAP in ${APP_FILE}.`
+              'PAGE_CONTROLLER_MAP validation failed: canonical PAGE_CONTROLLER_MAP declaration was not found in js/app.js.'
             );
             process.exit(1);
           }
@@ -458,26 +725,11 @@ jobs:
           const mapBody =
             mapMatch[1];
 
-          /*
-           * Supported PAGE_CONTROLLER_MAP entry forms in the canonical
-           * app.js contract include:
-           *
-           *   home:
-           *     './pages/home.js',
-           *
-           * and:
-           *
-           *   'career-results':
-           *     './pages/results.js',
-           *
-           * The parser deliberately operates only on the isolated map
-           * body, preventing unrelated object literals from becoming
-           * speculative controller dependencies.
-           */
           const entryPattern =
-            /^\s*(?:(['"])([^'"]+)\1|([A-Za-z0-9_-]+))\s*:\s*(['"])([^'"]+)\4\s*,?\s*$/gm;
+            /(?:^|,)\s*(?:(['"])([^'"]+)\1|([A-Za-z0-9_-]+))\s*:\s*(["'])([^"']+)\4\s*(?=,|$)/g;
 
-          const entries = [];
+          const entries =
+            [];
 
           for (
             const match of
@@ -485,33 +737,24 @@ jobs:
               entryPattern
             )
           ) {
-            const page =
-              match[2] ||
-              match[3];
-
-            const modulePath =
-              match[5];
-
             entries.push({
-              page,
-              modulePath
+              page:
+                match[2] ||
+                match[3],
+              modulePath:
+                match[5]
             });
           }
 
           /*
-           * An empty PAGE_CONTROLLER_MAP is intentionally valid during
-           * Batch 1. app.js remains the owner of the registry, but future
-           * page controllers do not need to exist until they are actually
-           * registered.
-           *
-           * This is deliberately different from a missing PAGE_CONTROLLER_MAP,
-           * which remains a structural error above.
+           * Batch 1 may legitimately keep the map empty.
+           * A missing declaration is an error; an empty declaration is not.
            */
           if (
             entries.length === 0
           ) {
             console.log(
-              'PAGE_CONTROLLER_MAP contains no registered page controllers yet; controller module validation is skipped.'
+              'PAGE_CONTROLLER_MAP contains no registered page controllers; controller module validation is skipped.'
             );
             process.exit(0);
           }
@@ -519,13 +762,6 @@ jobs:
           const failures = [];
           const seenPages = new Set();
           const seenPaths = new Set();
-
-          const appDirectory =
-            dirname(
-              resolve(
-                APP_FILE
-              )
-            );
 
           for (
             const {
@@ -552,11 +788,6 @@ jobs:
             seenPages.add(page);
             seenPaths.add(modulePath);
 
-            /*
-             * Page-controller paths are repository-local module paths.
-             * Absolute URLs or bare package specifiers are invalid for
-             * this specific application contract.
-             */
             if (
               !(
                 modulePath.startsWith('./') ||
@@ -564,17 +795,35 @@ jobs:
               )
             ) {
               failures.push(
-                `Page "${page}" has an invalid controller path "${modulePath}". Expected a relative repository path.`
+                `Page "${page}" has invalid controller path "${modulePath}". Expected a repository-relative path.`
               );
-
               continue;
             }
 
             const controllerFile =
               resolve(
-                appDirectory,
+                dirname(
+                  appFile
+                ),
                 modulePath
               );
+
+            const relativeTarget =
+              relative(
+                repositoryRoot,
+                controllerFile
+              );
+
+            if (
+              relativeTarget === '..' ||
+              relativeTarget.startsWith('../') ||
+              relativeTarget.includes('/../')
+            ) {
+              failures.push(
+                `Page "${page}" controller path escapes the repository: ${modulePath}`
+              );
+              continue;
+            }
 
             try {
               await access(
@@ -585,38 +834,12 @@ jobs:
                 `Page "${page}" maps to missing controller module: ${modulePath}`
               );
             }
-
-            /*
-             * The controller must remain inside the repository tree.
-             * This prevents a malformed declaration from resolving
-             * outside the project directory.
-             */
-            const repositoryRoot =
-              resolve('.');
-
-            const relativeTarget =
-              relative(
-                repositoryRoot,
-                controllerFile
-              );
-
-            if (
-              relativeTarget.startsWith('..') ||
-              relativeTarget.includes('..' + '/')
-            ) {
-              failures.push(
-                `Page "${page}" controller path escapes the repository: ${modulePath}`
-              );
-            }
           }
 
-          if (
-            failures.length
-          ) {
+          if (failures.length) {
             console.error(
               'PAGE_CONTROLLER_MAP validation failed:'
             );
-
             console.error(
               [
                 ...new Set(
@@ -624,7 +847,6 @@ jobs:
                 )
               ].join('\n')
             );
-
             process.exit(1);
           }
 
@@ -640,199 +862,65 @@ jobs:
 
           node --input-type=module <<'NODE'
           import { access, readdir, readFile } from 'node:fs/promises';
-          import { dirname, extname, join, relative, resolve } from 'node:path';
+          import {
+            dirname,
+            extname,
+            join,
+            relative,
+            resolve
+          } from 'node:path';
 
-          const failures = [];
+          const repositoryRoot =
+            resolve('.');
 
-          async function exists(path) {
+          const failures =
+            [];
+
+          async function exists(
+            path
+          ) {
             try {
-              await access(path);
+              await access(
+                path
+              );
               return true;
             } catch {
               return false;
             }
           }
 
-          function shouldCheck(value) {
-            if (!value || value.startsWith('#')) return false;
-            if (/^(?:https?:|mailto:|tel:|data:|javascript:)/i.test(value)) return false;
-            if (/^\/\//.test(value)) return false;
+          function shouldCheck(
+            value
+          ) {
+            if (
+              !value ||
+              value.startsWith('#')
+            ) {
+              return false;
+            }
+
+            if (
+              /^(?:https?:|mailto:|tel:|data:|javascript:)/i.test(
+                value
+              )
+            ) {
+              return false;
+            }
+
+            if (
+              /^\/\//.test(
+                value
+              )
+            ) {
+              return false;
+            }
+
             return true;
           }
 
-          async function walk(directory) {
-            const entries = await readdir(directory, { withFileTypes: true });
-
-            for (const entry of entries) {
-              if (entry.name === '.git' || entry.name === 'node_modules') {
-                continue;
-              }
-
-              const file = join(directory, entry.name);
-
-              if (entry.isDirectory()) {
-                await walk(file);
-                continue;
-              }
-
-              if (extname(entry.name).toLowerCase() !== '.html') {
-                continue;
-              }
-
-              const source = await readFile(file, 'utf8');
-              const localPath = relative('.', file);
-
-              const attributes = [
-                ...source.matchAll(
-                  /(?:href|src|action|data-src)=["']([^"']+)["']/gi
-                )
-              ].map(
-                match => match[1]
-              );
-
-              for (const target of attributes) {
-                if (!shouldCheck(target)) {
-                  continue;
-                }
-
-                const clean =
-                  target.split(
-                    /[?#]/,
-                    1
-                  )[0];
-
-                if (!clean) {
-                  continue;
-                }
-
-                /*
-                 * Route strings and fragment-less absolute site paths
-                 * are checked only when they resolve to a real repository file.
-                 */
-                const candidates =
-                  clean.startsWith('/')
-                    ? [
-                        resolve(
-                          '.',
-                          clean.slice(1)
-                        )
-                      ]
-                    : [
-                        resolve(
-                          dirname(file),
-                          clean
-                        ),
-                        resolve(
-                          '.',
-                          clean
-                        )
-                      ];
-
-                let found = false;
-
-                for (const candidate of candidates) {
-                  if (await exists(candidate)) {
-                    found = true;
-                    break;
-                  }
-                }
-
-                if (!found) {
-                  /*
-                   * Ignore ordinary in-app route placeholders unless the
-                   * value clearly looks like a repository file.
-                   */
-                  const looksLikeFile =
-                    /\.(?:html?|css|js|mjs|json|svg|png|jpe?g|webp|ico|woff2?|ttf)$/i.test(
-                      clean
-                    );
-
-                  if (looksLikeFile) {
-                    failures.push(
-                      `${localPath}: broken local repository reference: ${target}`
-                    );
-                  }
-                }
-              }
-            }
-          }
-
-          await walk('.');
-
-          if (failures.length) {
-            console.error(
-              'Broken repository-path checks failed:'
-            );
-
-            console.error(
-              failures.join('\n')
-            );
-
-            process.exit(1);
-          }
-
-          console.log(
-            'Repository-local path checks passed.'
-          );
-          NODE
-
-      - name: Check prohibited secret patterns
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          node --input-type=module <<'NODE'
-          import { readdir, readFile } from 'node:fs/promises';
-          import { extname, join, relative } from 'node:path';
-
-          const failures = [];
-
-          const allowedFiles = new Set([
-            '.github/workflows/static-check.yml',
-            '.github/workflows/data-validation.yml'
-          ]);
-
-          const textExtensions = new Set([
-            '.js', '.mjs', '.cjs', '.json', '.html', '.css', '.scss',
-            '.md', '.yml', '.yaml', '.txt', '.env', '.example'
-          ]);
-
-          const patterns = [
-            {
-              name: 'OpenAI-style API key',
-              regex: /\bsk-[A-Za-z0-9_-]{20,}\b/g
-            },
-            {
-              name: 'OpenRouter-style API key',
-              regex: /\bsk-or-v1-[A-Za-z0-9]{20,}\b/g
-            },
-            {
-              name: 'GitHub personal access token',
-              regex: /\bghp_[A-Za-z0-9]{30,}\b/g
-            },
-            {
-              name: 'GitHub fine-grained token',
-              regex: /\bgithub_pat_[A-Za-z0-9_]{30,}\b/g
-            },
-            {
-              name: 'AWS access key ID',
-              regex: /\bAKIA[0-9A-Z]{16}\b/g
-            },
-            {
-              name: 'Private key material',
-              regex: /-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----/g
-            },
-            {
-              name: 'Hard-coded bearer token',
-              regex: /\bAuthorization\s*:\s*Bearer\s+[A-Za-z0-9._-]{24,}\b/gi
-            },
-            {
-              name: 'Hard-coded secret assignment',
-              regex: /\b(?:api[_-]?key|secret|client[_-]?secret|access[_-]?token|refresh[_-]?token)\s*[:=]\s*["'][^"']{20,}["']/gi
-            }
-          ];
-
-          async function walk(directory) {
+          async function walk(
+            directory
+          ) {
             const entries =
               await readdir(
                 directory,
@@ -855,9 +943,254 @@ jobs:
                   entry.name
                 );
 
+              if (entry.isDirectory()) {
+                await walk(file);
+                continue;
+              }
+
               if (
-                entry.isDirectory()
+                extname(entry.name).toLowerCase() !==
+                '.html'
               ) {
+                continue;
+              }
+
+              const source =
+                await readFile(
+                  file,
+                  'utf8'
+                );
+
+              const localPath =
+                relative(
+                  repositoryRoot,
+                  resolve(file)
+                );
+
+              const attributes =
+                [
+                  ...source.matchAll(
+                    /(?:href|src|action|data-src)=["']([^"']+)["']/gi
+                  )
+                ].map(
+                  match => match[1]
+                );
+
+              for (
+                const target of
+                attributes
+              ) {
+                if (
+                  !shouldCheck(
+                    target
+                  )
+                ) {
+                  continue;
+                }
+
+                const clean =
+                  target.split(
+                    /[?#]/,
+                    1
+                  )[0];
+
+                if (!clean) {
+                  continue;
+                }
+
+                const candidates =
+                  clean.startsWith('/')
+                    ? [
+                        resolve(
+                          repositoryRoot,
+                          clean.slice(1)
+                        )
+                      ]
+                    : [
+                        resolve(
+                          dirname(
+                            resolve(file)
+                          ),
+                          clean
+                        ),
+                        resolve(
+                          repositoryRoot,
+                          clean
+                        )
+                      ];
+
+                let found =
+                  false;
+
+                for (
+                  const candidate of
+                  candidates
+                ) {
+                  if (
+                    await exists(
+                      candidate
+                    )
+                  ) {
+                    found = true;
+                    break;
+                  }
+                }
+
+                if (!found) {
+                  const looksLikeFile =
+                    /\.(?:html?|css|js|mjs|json|svg|png|jpe?g|webp|ico|woff2?|ttf)$/i.test(
+                      clean
+                    );
+
+                  if (
+                    looksLikeFile
+                  ) {
+                    failures.push(
+                      `${localPath}: broken local repository reference: ${target}`
+                    );
+                  }
+                }
+              }
+            }
+          }
+
+          await walk(repositoryRoot);
+
+          if (failures.length) {
+            console.error(
+              'Repository-local reference validation failed:'
+            );
+            console.error(
+              [
+                ...new Set(
+                  failures
+                )
+              ].join('\n')
+            );
+            process.exit(1);
+          }
+
+          console.log(
+            'Repository-local reference checks passed.'
+          );
+          NODE
+
+      - name: Check prohibited secret patterns
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node --input-type=module <<'NODE'
+          import { readdir, readFile } from 'node:fs/promises';
+          import {
+            extname,
+            join,
+            relative
+          } from 'node:path';
+
+          const failures =
+            [];
+
+          const allowedFiles =
+            new Set([
+              '.github/workflows/static-check.yml',
+              '.github/workflows/data-validation.yml'
+            ]);
+
+          const textExtensions =
+            new Set([
+              '.js',
+              '.mjs',
+              '.cjs',
+              '.json',
+              '.html',
+              '.css',
+              '.scss',
+              '.md',
+              '.yml',
+              '.yaml',
+              '.txt',
+              '.env',
+              '.example'
+            ]);
+
+          const patterns = [
+            {
+              name:
+                'OpenAI-style API key',
+              regex:
+                /\bsk-[A-Za-z0-9_-]{20,}\b/g
+            },
+            {
+              name:
+                'OpenRouter-style API key',
+              regex:
+                /\bsk-or-v1-[A-Za-z0-9]{20,}\b/g
+            },
+            {
+              name:
+                'GitHub personal access token',
+              regex:
+                /\bghp_[A-Za-z0-9]{30,}\b/g
+            },
+            {
+              name:
+                'GitHub fine-grained token',
+              regex:
+                /\bgithub_pat_[A-Za-z0-9_]{30,}\b/g
+            },
+            {
+              name:
+                'AWS access key ID',
+              regex:
+                /\bAKIA[0-9A-Z]{16}\b/g
+            },
+            {
+              name:
+                'Private key material',
+              regex:
+                /-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----/g
+            },
+            {
+              name:
+                'Hard-coded bearer token',
+              regex:
+                /\bAuthorization\s*:\s*Bearer\s+[A-Za-z0-9._-]{24,}\b/gi
+            },
+            {
+              name:
+                'Hard-coded secret assignment',
+              regex:
+                /\b(?:api[_-]?key|secret|client[_-]?secret|access[_-]?token|refresh[_-]?token)\s*[:=]\s*["'][^"']{20,}["']/gi
+            }
+          ];
+
+          async function walk(
+            directory
+          ) {
+            const entries =
+              await readdir(
+                directory,
+                {
+                  withFileTypes: true
+                }
+              );
+
+            for (const entry of entries) {
+              if (
+                entry.name === '.git' ||
+                entry.name === 'node_modules'
+              ) {
+                continue;
+              }
+
+              const file =
+                join(
+                  directory,
+                  entry.name
+                );
+
+              if (entry.isDirectory()) {
                 await walk(file);
                 continue;
               }
@@ -869,7 +1202,9 @@ jobs:
                 );
 
               if (
-                allowedFiles.has(path)
+                allowedFiles.has(
+                  path
+                )
               ) {
                 continue;
               }
@@ -890,8 +1225,12 @@ jobs:
                   'utf8'
                 );
 
-              for (const pattern of patterns) {
-                pattern.regex.lastIndex = 0;
+              for (
+                const pattern of
+                patterns
+              ) {
+                pattern.regex.lastIndex =
+                  0;
 
                 if (
                   pattern.regex.test(
@@ -912,7 +1251,6 @@ jobs:
             console.error(
               'Potential secret patterns detected:'
             );
-
             console.error(
               [
                 ...new Set(
@@ -920,7 +1258,6 @@ jobs:
                 )
               ].join('\n')
             );
-
             process.exit(1);
           }
 
@@ -943,3 +1280,446 @@ jobs:
           grep -q 'cancel-in-progress: true' .github/workflows/static-check.yml
 
           echo "CI workflow hygiene checks passed."
+
+      - name: Validate JSON syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node --input-type=module <<'NODE'
+          import { readdir, readFile } from 'node:fs/promises';
+          import {
+            extname,
+            join,
+            relative
+          } from 'node:path';
+
+          const failures =
+            [];
+
+          async function walk(
+            directory
+          ) {
+            const entries =
+              await readdir(
+                directory,
+                {
+                  withFileTypes: true
+                }
+              );
+
+            for (const entry of entries) {
+              if (
+                entry.name === '.git' ||
+                entry.name === 'node_modules'
+              ) {
+                continue;
+              }
+
+              const fullPath =
+                join(
+                  directory,
+                  entry.name
+                );
+
+              if (entry.isDirectory()) {
+                await walk(fullPath);
+                continue;
+              }
+
+              if (
+                extname(entry.name).toLowerCase() !==
+                '.json'
+              ) {
+                continue;
+              }
+
+              try {
+                const source =
+                  await readFile(
+                    fullPath,
+                    'utf8'
+                  );
+
+                JSON.parse(
+                  source
+                );
+              } catch (error) {
+                failures.push(
+                  `${relative('.', fullPath)}: ${error.message}`
+                );
+              }
+            }
+          }
+
+          await walk('.');
+
+          if (failures.length) {
+            console.error(
+              'JSON syntax validation failed:'
+            );
+            console.error(
+              [
+                ...new Set(
+                  failures
+                )
+              ].join('\n')
+            );
+            process.exit(1);
+          }
+
+          console.log(
+            'All repository JSON files passed syntax validation.'
+          );
+          NODE
+
+      - name: Run canonical database validation
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node --input-type=module <<'NODE'
+          import { readFile } from 'node:fs/promises';
+          import { resolve } from 'node:path';
+          import { pathToFileURL } from 'node:url';
+
+          const repositoryRoot =
+            resolve('.');
+
+          const nativeFetch =
+            globalThis.fetch;
+
+          globalThis.fetch =
+            async (
+              input,
+              init = {}
+            ) => {
+              const value =
+                typeof input === 'string'
+                  ? input
+                  : input?.url;
+
+              if (!value) {
+                throw new Error(
+                  'CI fetch adapter received an empty URL.'
+                );
+              }
+
+              const raw =
+                String(value);
+
+              /*
+               * Canonical database validation is intentionally repository-local.
+               * External HTTP(S) access is never permitted in this gate.
+               */
+              if (
+                /^[a-z][a-z0-9+.-]*:\/\//i.test(raw) &&
+                !raw.startsWith('file://')
+              ) {
+                throw new Error(
+                  `External URL is not permitted during canonical database validation: ${raw}`
+                );
+              }
+
+              let filePath;
+
+              if (
+                raw.startsWith(
+                  'file://'
+                )
+              ) {
+                filePath =
+                  new URL(
+                    raw
+                  );
+              } else {
+                const normalized =
+                  raw.replace(
+                    /^\/+/,
+                    ''
+                  );
+
+                filePath =
+                  resolve(
+                    repositoryRoot,
+                    normalized
+                  );
+              }
+
+              try {
+                const body =
+                  await readFile(
+                    filePath
+                  );
+
+                return new Response(
+                  body,
+                  {
+                    status: 200,
+                    headers: {
+                      'Content-Type':
+                        'application/json'
+                    }
+                  }
+                );
+              } catch (error) {
+                return new Response(
+                  JSON.stringify({
+                    error:
+                      error.message,
+                    path:
+                      String(
+                        filePath
+                      )
+                  }),
+                  {
+                    status: 404,
+                    headers: {
+                      'Content-Type':
+                        'application/json'
+                    }
+                  }
+                );
+              }
+            };
+
+          let exitCode =
+            0;
+
+          try {
+            const loader =
+              await import(
+                pathToFileURL(
+                  resolve(
+                    'js/database/loader.js'
+                  )
+                ).href
+              );
+
+            if (
+              typeof loader.loadDatabase !==
+              'function'
+            ) {
+              throw new Error(
+                'js/database/loader.js does not export loadDatabase(). The canonical validation gate must use the project loader.'
+              );
+            }
+
+            let result;
+
+            try {
+              result =
+                await loader.loadDatabase({
+                  includeAssessment:
+                    true,
+                  includeCentral:
+                    true,
+                  includeWestBengal:
+                    true,
+                  includeIndexes:
+                    true,
+                  includeI18n:
+                    true,
+                  validate:
+                    true,
+                  strict:
+                    true
+                });
+            } catch (error) {
+              exitCode =
+                1;
+
+              console.error(
+                'DATABASE_VALIDATION_FAILED: canonical database validation threw an error.'
+              );
+
+              if (
+                error?.stack
+              ) {
+                console.error(
+                  error.stack
+                );
+              } else {
+                console.error(
+                  String(
+                    error
+                  )
+                );
+              }
+
+              if (
+                error?.details
+              ) {
+                console.error(
+                  'Canonical validator details:'
+                );
+                console.error(
+                  JSON.stringify(
+                    error.details,
+                    null,
+                    2
+                  )
+                );
+              }
+            }
+
+            if (
+              result
+            ) {
+              const validation =
+                result?.validation ??
+                result ??
+                {};
+
+              const errors =
+                Array.isArray(
+                  validation.errors
+                )
+                  ? validation.errors
+                  : [];
+
+              const fatalErrors =
+                Array.isArray(
+                  validation.fatalErrors
+                )
+                  ? validation.fatalErrors
+                  : [];
+
+              const warnings =
+                Array.isArray(
+                  validation.warnings
+                )
+                  ? validation.warnings
+                  : [];
+
+              const validFlag =
+                validation.valid;
+
+              if (
+                fatalErrors.length ||
+                errors.length ||
+                validFlag === false
+              ) {
+                exitCode =
+                  1;
+
+                console.error(
+                  'DATABASE_VALIDATION_FAILED: canonical validator reported errors.'
+                );
+
+                if (
+                  fatalErrors.length
+                ) {
+                  console.error(
+                    'Fatal canonical database errors:'
+                  );
+                  console.error(
+                    JSON.stringify(
+                      fatalErrors,
+                      null,
+                      2
+                    )
+                  );
+                }
+
+                if (
+                  errors.length
+                ) {
+                  console.error(
+                    'Canonical database errors:'
+                  );
+                  console.error(
+                    JSON.stringify(
+                      errors,
+                      null,
+                      2
+                    )
+                  );
+                }
+
+                if (
+                  validFlag === false &&
+                  !errors.length &&
+                  !fatalErrors.length
+                ) {
+                  console.error(
+                    'The canonical validator reported valid=false without returning an error array.'
+                  );
+                }
+              }
+
+              console.log(
+                JSON.stringify(
+                  {
+                    valid:
+                      validFlag ??
+                      true,
+                    warnings:
+                      warnings.length,
+                    engineVersion:
+                      validation.engineVersion ??
+                      null
+                  },
+                  null,
+                  2
+                )
+              );
+
+              if (
+                warnings.length
+              ) {
+                console.log(
+                  'Canonical validation warnings:'
+                );
+                console.log(
+                  JSON.stringify(
+                    warnings,
+                    null,
+                    2
+                  )
+                );
+              }
+
+              if (
+                exitCode === 0
+              ) {
+                console.log(
+                  'Canonical database validation passed.'
+                );
+              }
+            }
+          } catch (error) {
+            exitCode =
+              1;
+
+            console.error(
+              'DATABASE_VALIDATION_FAILED: canonical database gate could not be executed.'
+            );
+
+            console.error(
+              error?.stack ||
+              String(error)
+            );
+
+            if (
+              error?.details
+            ) {
+              console.error(
+                'Canonical validator details:'
+              );
+              console.error(
+                JSON.stringify(
+                  error.details,
+                  null,
+                  2
+                )
+              );
+            }
+          } finally {
+            globalThis.fetch =
+              nativeFetch;
+          }
+
+          process.exitCode =
+            exitCode;
+          NODE
