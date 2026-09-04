@@ -3,9 +3,20 @@
  * Canonical Database Normalizer
  *
  * Pure transformation layer between source JSON and canonical runtime records.
- * It preserves explicit facts, translates only established legacy aliases, and
- * never fabricates foreign keys or factual defaults.
+ *
+ * Design rules:
+ * - normalize structure aggressively;
+ * - normalize facts conservatively;
+ * - preserve explicit source relationships;
+ * - translate only established aliases;
+ * - never fabricate IDs, facts, dates, status, booleans or foreign keys;
+ * - keep strict canonical builders isolated from compatibility helpers;
+ * - never perform lookup, fuzzy matching, network access or filesystem access.
  */
+
+/* -------------------------------------------------------------------------- */
+/* Constants                                                                  */
+/* -------------------------------------------------------------------------- */
 
 const UNKNOWN = 'UNKNOWN';
 
@@ -37,13 +48,24 @@ const ENTITY_TYPES = Object.freeze({
   ASSESSMENT_OPTION: 'ASSESSMENT_OPTION',
   ASSESSMENT_BRANCHING: 'ASSESSMENT_BRANCHING',
   ASSESSMENT_PROFILE_FIELD: 'ASSESSMENT_PROFILE_FIELD',
-  ASSESSMENT_RESPONSE_SCORING: 'ASSESSMENT_RESPONSE_SCORING'
+  ASSESSMENT_RESPONSE_SCORING:
+    'ASSESSMENT_RESPONSE_SCORING'
 });
 
 const COLLECTION_WRAPPERS = Object.freeze({
-  JOB: ['jobs', 'records', 'data', 'items'],
+  JOB: [
+    'jobs',
+    'records',
+    'data',
+    'items'
+  ],
 
-  EXAM: ['exams', 'records', 'data', 'items'],
+  EXAM: [
+    'exams',
+    'records',
+    'data',
+    'items'
+  ],
 
   DEPARTMENT: [
     'departments',
@@ -145,8 +167,9 @@ const COLLECTION_WRAPPERS = Object.freeze({
   ],
 
   /*
-   * Qualification is deliberately entity-aware. Generic vocabularies such as
-   * educationLevels, qualificationTypes and itiTrades are not included here.
+   * Qualification data is intentionally vocabulary-aware.
+   * Generic metadata arrays such as educationLevels and qualificationTypes
+   * are catalogues, not Qualification entity records.
    */
   QUALIFICATION: [
     'academicQualifications',
@@ -174,8 +197,7 @@ const COLLECTION_WRAPPERS = Object.freeze({
   ],
 
   /*
-   * Statuses are intentionally kept namespace-aware instead of selecting the
-   * first array in statuses.json.
+   * Status vocabularies intentionally remain separate.
    */
   STATUS: [
     'careerStatuses',
@@ -279,6 +301,19 @@ const JOB_EDUCATION_LEVELS = Object.freeze([
   'OTHER'
 ]);
 
+const RULE_EDUCATION_LEVELS = Object.freeze([
+  'CLASS_8',
+  'CLASS_10',
+  'CLASS_12',
+  'DIPLOMA',
+  'UNDERGRADUATE',
+  'GRADUATE',
+  'POSTGRADUATE',
+  'DOCTORAL',
+  'PROFESSIONAL',
+  'OTHER'
+]);
+
 const JOB_RECRUITMENT_MODES = Object.freeze([
   'DIRECT_RECRUITMENT',
   'PROMOTION',
@@ -294,6 +329,18 @@ const JOB_RECRUITMENT_MODES = Object.freeze([
   'OTHER'
 ]);
 
+const RECRUITMENT_MODES = Object.freeze([
+  'DIRECT_RECRUITMENT',
+  'PROMOTION',
+  'DEPUTATION',
+  'TRANSFER',
+  'CONTRACT',
+  'TEMPORARY',
+  'SCHEME_PROJECT',
+  'OUTSOURCED',
+  'OTHER'
+]);
+
 const JOB_CAREER_STATUSES = Object.freeze([
   'ACTIVE_CAREER',
   'HISTORICAL',
@@ -302,6 +349,29 @@ const JOB_CAREER_STATUSES = Object.freeze([
   'SUPERSEDED',
   'NOT_VERIFIED',
   'UNKNOWN'
+]);
+
+const JOB_CURRENT_RECRUITMENT_STATUSES =
+  Object.freeze([
+    'OPEN',
+    'NOTIFIED',
+    'RECURRING_ROUTE',
+    'CLOSED',
+    'NOT_CURRENTLY_NOTIFIED',
+    'HISTORICAL',
+    'UNKNOWN'
+  ]);
+
+const RECRUITMENT_STATUS_VALUES = Object.freeze([
+  'OPEN',
+  'CLOSED',
+  'UNDER_PROCESS',
+  'RECENTLY_COMPLETED',
+  'EXPECTED_PERIODIC',
+  'IRREGULAR',
+  'HISTORICAL',
+  'CANCELLED',
+  'NOT_VERIFIED'
 ]);
 
 const CONFIDENCE_VALUES = Object.freeze([
@@ -313,11 +383,16 @@ const CONFIDENCE_VALUES = Object.freeze([
   'NOT_VERIFIED'
 ]);
 
+/*
+ * The shared schema currently references a `currentness` definition.
+ * This vocabulary mirrors the repository validator/data contract without
+ * manufacturing values when source data does not provide them.
+ */
 const CURRENTNESS_VALUES = Object.freeze([
   'CURRENT',
   'HISTORICAL',
-  'CURRENT_WITH_HISTORICAL_SUPPORT',
   'CURRENTNESS_UNCLEAR',
+  'CURRENT_WITH_HISTORICAL_SUPPORT',
   'REPLACED',
   'ABOLISHED',
   'NOT_VERIFIED'
@@ -425,6 +500,75 @@ const SERVICE_TYPES = Object.freeze([
   'OTHER'
 ]);
 
+const DEPARTMENT_TYPES = Object.freeze([
+  'MINISTRY',
+  'DEPARTMENT',
+  'SECRETARIAT',
+  'DIRECTORATE',
+  'ATTACHED_DEPARTMENT',
+  'SUBORDINATE_DEPARTMENT',
+  'OTHER'
+]);
+
+const ORGANISATION_TYPES = Object.freeze([
+  'COMMISSION',
+  'BOARD',
+  'DIRECTORATE',
+  'POLICE_ORGANISATION',
+  'POLICE_FORCE',
+  'CENTRAL_ARMED_FORCE',
+  'RAILWAY_ORGANISATION',
+  'AUTHORITY',
+  'ATTACHED_OFFICE',
+  'SUBORDINATE_OFFICE',
+  'STATUTORY_BODY',
+  'AUTONOMOUS_BODY',
+  'PUBLIC_BODY',
+  'OTHER'
+]);
+
+const QUALIFICATION_TYPES = Object.freeze([
+  'ACADEMIC',
+  'PROFESSIONAL',
+  'TECHNICAL',
+  'TEACHER_EDUCATION',
+  'MEDICAL',
+  'NURSING',
+  'PHARMACY',
+  'LAW',
+  'COMPUTER_IT',
+  'ENGINEERING',
+  'AGRICULTURE',
+  'PARAMEDICAL',
+  'TRADE',
+  'LICENCE',
+  'REGISTRATION',
+  'CERTIFICATION',
+  'OTHER'
+]);
+
+const QUALIFICATION_STATUSES = Object.freeze([
+  'COMPLETED',
+  'FINAL_YEAR',
+  'PURSUING',
+  'NOT_HELD'
+]);
+
+const STATE_TYPES = Object.freeze([
+  'STATE',
+  'UNION_TERRITORY'
+]);
+
+const GOVERNMENT_TYPES = Object.freeze([
+  'CENTRAL',
+  'STATE',
+  'LOCAL',
+  'PSU',
+  'STATUTORY_BODY',
+  'AUTONOMOUS_BODY',
+  'OTHER'
+]);
+
 const SERVICE_TYPE_BY_NATURE = Object.freeze({
   ADMINISTRATIVE:
     'ADMINISTRATIVE_SERVICE',
@@ -475,40 +619,183 @@ const SERVICE_TYPE_BY_NATURE = Object.freeze({
     'SECURITY_SERVICE'
 });
 
-const QUALIFICATION_TYPE_BY_COLLECTION = Object.freeze({
-  academicQualifications:
-    'ACADEMIC',
+const QUALIFICATION_TYPE_BY_COLLECTION =
+  Object.freeze({
+    academicQualifications:
+      'ACADEMIC',
 
-  teacherEducationQualifications:
-    'TEACHER_EDUCATION',
+    teacherEducationQualifications:
+      'TEACHER_EDUCATION',
 
-  technicalQualifications:
-    'TECHNICAL',
+    technicalQualifications:
+      'TECHNICAL',
 
-  computerQualifications:
-    'COMPUTER_IT',
+    computerQualifications:
+      'COMPUTER_IT',
 
-  lawQualifications:
-    'LAW',
+    lawQualifications:
+      'LAW',
 
-  medicalQualifications:
-    'MEDICAL',
+    medicalQualifications:
+      'MEDICAL',
 
-  nursingQualifications:
-    'NURSING',
+    nursingQualifications:
+      'NURSING',
 
-  pharmacyQualifications:
-    'PHARMACY',
+    pharmacyQualifications:
+      'PHARMACY',
 
-  engineeringQualifications:
-    'ENGINEERING',
+    engineeringQualifications:
+      'ENGINEERING',
 
-  agricultureQualifications:
-    'AGRICULTURE',
+    agricultureQualifications:
+      'AGRICULTURE',
 
-  paramedicalQualifications:
-    'PARAMEDICAL'
-});
+    paramedicalQualifications:
+      'PARAMEDICAL'
+  });
+
+const SOURCE_DOCUMENT_TYPE_VALUES = Object.freeze([
+  'RECRUITMENT_NOTIFICATION',
+  'RECRUITMENT_RULE',
+  'SERVICE_RULE',
+  'GAZETTE',
+  'PAY_RULE',
+  'FINANCE_ORDER',
+  'GOVERNMENT_ORDER',
+  'DEPARTMENT_PAGE',
+  'DIRECTORATE_PAGE',
+  'CADRE_STRENGTH_DOCUMENT',
+  'ORGANISATIONAL_DOCUMENT',
+  'ANNUAL_REPORT',
+  'OFFICIAL_PORTAL',
+  'OFFICIAL_FAQ',
+  'OFFICIAL_CIRCULAR',
+  'OFFICIAL_CORRIGENDUM',
+  'OFFICIAL_RESULT',
+  'OFFICIAL_ANSWER_KEY',
+  'SECONDARY_SOURCE',
+  'OTHER'
+]);
+
+const SOURCE_DOCUMENT_TYPE_ALIASES =
+  Object.freeze({
+    EXAMINATION_PAGE_AND_NOTIFICATION:
+      'OFFICIAL_PORTAL',
+
+    EXAMINATION_NOTIFICATION_ARCHIVE:
+      'RECRUITMENT_NOTIFICATION',
+
+    OFFICIAL_EXAMINATION_INDEX:
+      'OFFICIAL_PORTAL',
+
+    FINAL_VACANCY_STATEMENT:
+      'OTHER',
+
+    EXAMINATION_CALENDAR:
+      'OFFICIAL_PORTAL',
+
+    SELECTION_POST_NOTIFICATION:
+      'RECRUITMENT_NOTIFICATION',
+
+    RECRUITMENT_NOTIFICATION_AND_VACANCY:
+      'RECRUITMENT_NOTIFICATION',
+
+    RECRUITMENT_PORTAL_INDEX:
+      'OFFICIAL_PORTAL',
+
+    CENTRALISED_EMPLOYMENT_NOTICE:
+      'RECRUITMENT_NOTIFICATION',
+
+    EXAMINATION_SCHEDULE:
+      'OFFICIAL_PORTAL',
+
+    RECRUITMENT_RULES_INDEX:
+      'RECRUITMENT_RULE',
+
+    RECRUITMENT_NOTIFICATION_CORRIGENDUM:
+      'OFFICIAL_CORRIGENDUM',
+
+    RECRUITMENT_RULES:
+      'RECRUITMENT_RULE',
+
+    FINANCE_ORDER:
+      'FINANCE_ORDER',
+
+    GOVERNMENT_ORDER:
+      'GOVERNMENT_ORDER',
+
+    GAZETTE:
+      'GAZETTE',
+
+    SERVICE_RULE:
+      'SERVICE_RULE',
+
+    DEPARTMENT_PAGE:
+      'DEPARTMENT_PAGE',
+
+    DIRECTORATE_PAGE:
+      'DIRECTORATE_PAGE',
+
+    OFFICIAL_RESULT:
+      'OFFICIAL_RESULT',
+
+    OFFICIAL_ANSWER_KEY:
+      'OFFICIAL_ANSWER_KEY',
+
+    OFFICIAL_FAQ:
+      'OFFICIAL_FAQ',
+
+    OFFICIAL_CIRCULAR:
+      'OFFICIAL_CIRCULAR',
+
+    OFFICIAL_CORRIGENDUM:
+      'OFFICIAL_CORRIGENDUM',
+
+    OFFICIAL_PORTAL:
+      'OFFICIAL_PORTAL',
+
+    ORGANISATIONAL_DOCUMENT:
+      'ORGANISATIONAL_DOCUMENT',
+
+    ANNUAL_REPORT:
+      'ANNUAL_REPORT',
+
+    PAY_RULE:
+      'PAY_RULE',
+
+    CADRE_STRENGTH_DOCUMENT:
+      'CADRE_STRENGTH_DOCUMENT',
+
+    RECRUITMENT_NOTIFICATION:
+      'RECRUITMENT_NOTIFICATION',
+
+    RECRUITMENT_RULE:
+      'RECRUITMENT_RULE',
+
+    SECONDARY_SOURCE:
+      'SECONDARY_SOURCE',
+
+    OTHER:
+      'OTHER'
+  });
+
+const SOURCE_PRIORITY_VALUES = Object.freeze([
+  'PRIMARY_CURRENT',
+  'PRIMARY_HISTORICAL',
+  'OFFICIAL_GENERAL',
+  'SECONDARY'
+]);
+
+const SOURCE_CURRENTNESS_VALUES =
+  Object.freeze([
+    'CURRENT',
+    'HISTORICAL',
+    'CURRENTNESS_UNCLEAR',
+    'REPLACED',
+    'ABOLISHED',
+    'NOT_VERIFIED'
+  ]);
 
 /* -------------------------------------------------------------------------- */
 /* Primitive helpers                                                          */
@@ -543,10 +830,8 @@ function cleanString(
   fallback = ''
 ) {
   if (
-    value ===
-      undefined ||
-    value ===
-      null
+    value === undefined ||
+    value === null
   ) {
     return fallback;
   }
@@ -602,10 +887,8 @@ function cleanArray(
   value
 ) {
   if (
-    value ===
-      undefined ||
-    value ===
-      null
+    value === undefined ||
+    value === null
   ) {
     return [];
   }
@@ -721,6 +1004,50 @@ function normalizeIdArray(
   );
 }
 
+function normalizeStringArray(
+  value
+) {
+  return uniqueArray(
+    cleanArray(
+      value
+    )
+      .map(
+        item =>
+          cleanString(
+            item,
+            ''
+          )
+      )
+      .filter(Boolean)
+  );
+}
+
+function normalizeNonEmptyStringArray(
+  value
+) {
+  const result =
+    normalizeStringArray(
+      value
+    );
+
+  return result.length
+    ? result
+    : undefined;
+}
+
+function normalizeNonEmptyIdArray(
+  value
+) {
+  const result =
+    normalizeIdArray(
+      value
+    );
+
+  return result.length
+    ? result
+    : undefined;
+}
+
 function cloneValue(
   value
 ) {
@@ -764,19 +1091,25 @@ function cloneValue(
   return value;
 }
 
-function cleanLocalizedText(
+function normalizeLocalizedText(
   value
 ) {
   if (
     typeof value ===
     'string'
   ) {
-    return {
-      en:
-        cleanString(
-          value
-        )
-    };
+    const text =
+      cleanString(
+        value,
+        ''
+      );
+
+    return text
+      ? {
+          en:
+            text
+        }
+      : {};
   }
 
   if (
@@ -784,10 +1117,7 @@ function cleanLocalizedText(
       value
     )
   ) {
-    return {
-      en:
-        ''
-    };
+    return {};
   }
 
   const result =
@@ -820,30 +1150,21 @@ function cleanLocalizedText(
   return result;
 }
 
-function normalizeLocalizedText(
+function normalizePlainString(
   value
 ) {
-  return cleanLocalizedText(
+  return cleanNullableString(
     value
   );
 }
 
-/*
- * Deterministic date normalization.
- *
- * Only the date portion of an explicit YYYY-MM-DD/ISO-style value is accepted.
- * No locale parsing, current date or current time is introduced.
- */
 function normalizeDate(
   value
 ) {
   if (
-    value ===
-      undefined ||
-    value ===
-      null ||
-    value ===
-      ''
+    value === undefined ||
+    value === null ||
+    value === ''
   ) {
     return null;
   }
@@ -854,9 +1175,13 @@ function normalizeDate(
       ''
     );
 
+  /*
+   * Canonical dates are YYYY-MM-DD. Do not parse ambiguous natural-language
+   * values and do not derive dates from year-only strings.
+   */
   const match =
     text.match(
-      /^(\d{4})-(\d{2})-(\d{2})/
+      /^(\d{4})-(\d{2})-(\d{2})(?:$|T)/
     );
 
   if (
@@ -912,19 +1237,15 @@ function normalizeNumber(
   } = {}
 ) {
   if (
-    value ===
-      undefined ||
-    value ===
-      null ||
-    value ===
-      ''
+    value === undefined ||
+    value === null ||
+    value === ''
   ) {
     return null;
   }
 
   /*
-   * Boolean -> number coercion is not a safe factual transformation:
-   * Number(false) === 0 and Number(true) === 1.
+   * Never treat boolean values as 0/1 numeric facts.
    */
   if (
     typeof value ===
@@ -935,7 +1256,12 @@ function normalizeNumber(
 
   const number =
     Number(
-      value
+      typeof value ===
+        'string'
+        ? cleanString(
+            value
+          )
+        : value
     );
 
   if (
@@ -946,6 +1272,10 @@ function normalizeNumber(
     return null;
   }
 
+  /*
+   * Truncation is used only for schema properties whose canonical type is
+   * explicitly integer.
+   */
   const result =
     integer
       ? Math.trunc(
@@ -982,27 +1312,19 @@ function normalizeBoolean(
   }
 
   if (
-    value ===
-      1 ||
-    value ===
-      '1' ||
-    value ===
-      'true' ||
-    value ===
-      'TRUE'
+    value === 1 ||
+    value === '1' ||
+    value === 'true' ||
+    value === 'TRUE'
   ) {
     return true;
   }
 
   if (
-    value ===
-      0 ||
-    value ===
-      '0' ||
-    value ===
-      'false' ||
-    value ===
-      'FALSE'
+    value === 0 ||
+    value === '0' ||
+    value === 'false' ||
+    value === 'FALSE'
   ) {
     return false;
   }
@@ -1059,7 +1381,7 @@ function normalizeEnum(
 }
 
 /* -------------------------------------------------------------------------- */
-/* Object-path helpers                                                        */
+/* Object helpers                                                             */
 /* -------------------------------------------------------------------------- */
 
 function getPathValue(
@@ -1084,10 +1406,8 @@ function getPathValue(
       .filter(Boolean)
   ) {
     if (
-      current ===
-        null ||
-      current ===
-        undefined ||
+      current === null ||
+      current === undefined ||
       typeof current !==
         'object'
     ) {
@@ -1124,18 +1444,165 @@ function getFirstValue(
       );
 
     if (
-      value !==
-        undefined &&
-      value !==
-        null &&
-      value !==
-        ''
+      value !== undefined &&
+      value !== null &&
+      value !== ''
     ) {
       return value;
     }
   }
 
   return undefined;
+}
+
+/*
+ * Remove only null/undefined object properties.
+ *
+ * This helper intentionally DOES NOT delete empty arrays because ordinary
+ * arrays and idArray fields may legally be empty in the canonical schema.
+ */
+function removeNullish(
+  value
+) {
+  if (
+    !isPlainObject(
+      value
+    )
+  ) {
+    return value;
+  }
+
+  const result =
+    {};
+
+  Object.entries(
+    value
+  ).forEach(
+    ([
+      key,
+      child
+    ]) => {
+      if (
+        child === undefined ||
+        child === null
+      ) {
+        return;
+      }
+
+      if (
+        isPlainObject(
+          child
+        )
+      ) {
+        const nested =
+          removeNullish(
+            child
+          );
+
+        if (
+          Object.keys(
+            nested
+          ).length
+        ) {
+          result[
+            key
+          ] =
+            nested;
+        }
+
+        return;
+      }
+
+      if (
+        Array.isArray(
+          child
+        )
+      ) {
+        result[
+          key
+        ] =
+          child
+            .filter(
+              item =>
+                item !==
+                  undefined &&
+                item !==
+                  null
+            )
+            .map(
+              item =>
+                isPlainObject(
+                  item
+                )
+                  ? removeNullish(
+                      item
+                    )
+                  : item
+            );
+
+        return;
+      }
+
+      result[
+        key
+      ] =
+        child;
+    }
+  );
+
+  return result;
+}
+
+/*
+ * Historical compatibility name retained for callers. It performs nullish
+ * cleanup only; it deliberately does not perform global empty-array removal.
+ */
+function removeNullishDeepArrays(
+  value
+) {
+  return removeNullish(
+    value
+  );
+}
+
+function omitEmptyArrays(
+  object,
+  keys
+) {
+  if (
+    !isPlainObject(
+      object
+    )
+  ) {
+    return object;
+  }
+
+  const result =
+    {
+      ...object
+    };
+
+  keys.forEach(
+    key => {
+      if (
+        Array.isArray(
+          result[
+            key
+          ]
+        ) &&
+        result[
+          key
+        ].length ===
+          0
+      ) {
+        delete result[
+          key
+        ];
+      }
+    }
+  );
+
+  return result;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -1181,21 +1648,10 @@ function normalizeSourceReference(
     return null;
   }
 
-  const result = {
-    sourceId
-  };
-
-  const note =
-    cleanNullableString(
-      value.note
-    );
-
-  if (
-    note
-  ) {
-    result.note =
-      note;
-  }
+  const result =
+    {
+      sourceId
+    };
 
   const claim =
     cleanNullableString(
@@ -1207,6 +1663,18 @@ function normalizeSourceReference(
   ) {
     result.claim =
       claim;
+  }
+
+  const note =
+    cleanNullableString(
+      value.note
+    );
+
+  if (
+    note
+  ) {
+    result.note =
+      note;
   }
 
   return result;
@@ -1272,8 +1740,9 @@ function normalizeRequirement(
       ),
 
     value:
-      value.value ??
-      null,
+      cloneValue(
+        value.value
+      ),
 
     hard:
       normalizeOptionalBoolean(
@@ -1300,7 +1769,7 @@ function normalizeRequirements(
 }
 
 /* -------------------------------------------------------------------------- */
-/* Entity/context helpers                                                     */
+/* Context / collection extraction                                            */
 /* -------------------------------------------------------------------------- */
 
 function normalizeEntityType(
@@ -1479,16 +1948,13 @@ function getDatasetMetadata(
       if (
         data[
           key
-        ] !==
-          undefined &&
+        ] !== undefined &&
         data[
           key
-        ] !==
-          null &&
+        ] !== null &&
         data[
           key
-        ] !==
-          ''
+        ] !== ''
       ) {
         metadata[
           key
@@ -1553,9 +2019,6 @@ function getCollectionEntries(
       entityType
     );
 
-  /*
-   * States and union territories are separate source namespaces.
-   */
   if (
     type ===
       ENTITY_TYPES.STATE
@@ -1584,10 +2047,6 @@ function getCollectionEntries(
       );
   }
 
-  /*
-   * Qualifications and statuses may contain several intentionally separate
-   * vocabularies. Every matching entity collection is retained.
-   */
   if (
     type ===
       ENTITY_TYPES.QUALIFICATION ||
@@ -1679,10 +2138,16 @@ function extractCollection(
   };
 }
 
+/* -------------------------------------------------------------------------- */
+/* Compatibility normalizer                                                  */
+/* -------------------------------------------------------------------------- */
+
 /*
- * Generic source-normalized representation retained for backwards
- * compatibility. Canonical builders intentionally do not spread this object
- * into strict schema records.
+ * This function intentionally preserves arbitrary source properties because
+ * it is a compatibility representation rather than a canonical builder.
+ *
+ * Canonical entity builders below NEVER spread this result into strict schema
+ * entities.
  */
 function normalizeRecord(
   record,
@@ -1751,70 +2216,29 @@ function normalizeRecord(
     );
 
   result.aliases =
-    uniqueArray(
-      cleanArray(
-        record.aliases
-      )
-        .map(
-          item =>
-            cleanString(
-              item,
-              ''
-            )
-        )
-        .filter(Boolean)
+    normalizeStringArray(
+      record.aliases
     );
 
   result.keywords =
-    uniqueArray(
-      cleanArray(
-        record.keywords
-      )
-        .map(
-          item =>
-            cleanString(
-              item,
-              ''
-            )
-        )
-        .filter(Boolean)
+    normalizeStringArray(
+      record.keywords
+    );
+
+  result.lastVerified =
+    normalizeDate(
+      record.lastVerified ??
+      metadata.lastVerified
+    );
+
+  result.dataVersion =
+    cleanNullableString(
+      record.dataVersion ??
+      metadata.dataVersion
     );
 
   if (
-    result.lastVerified ===
-      undefined
-  ) {
-    result.lastVerified =
-      normalizeDate(
-        record.lastVerified ??
-        metadata.lastVerified
-      );
-  } else {
-    result.lastVerified =
-      normalizeDate(
-        result.lastVerified
-      );
-  }
-
-  if (
-    result.dataVersion ===
-      undefined
-  ) {
-    result.dataVersion =
-      cleanNullableString(
-        record.dataVersion ??
-        metadata.dataVersion
-      );
-  } else {
-    result.dataVersion =
-      cleanNullableString(
-        result.dataVersion
-      );
-  }
-
-  if (
-    result.version !==
-      undefined
+    result.version !== undefined
   ) {
     result.version =
       cleanNullableString(
@@ -1823,8 +2247,7 @@ function normalizeRecord(
   }
 
   if (
-    record.name !==
-      undefined
+    record.name !== undefined
   ) {
     result.name =
       normalizeLocalizedText(
@@ -1833,8 +2256,7 @@ function normalizeRecord(
   }
 
   if (
-    record.title !==
-      undefined
+    record.title !== undefined
   ) {
     result.title =
       normalizeLocalizedText(
@@ -1843,8 +2265,7 @@ function normalizeRecord(
   }
 
   if (
-    record.description !==
-      undefined
+    record.description !== undefined
   ) {
     result.description =
       normalizeLocalizedText(
@@ -1899,35 +2320,57 @@ function normalizeEducationLevel(
   );
 }
 
-function normalizeStringArray(
+function normalizeRuleEducationLevel(
   value
 ) {
-  return uniqueArray(
-    cleanArray(
-      value
-    )
-      .map(
-        item =>
-          cleanString(
-            item,
-            ''
-          )
-      )
-      .filter(Boolean)
-  );
-}
+  const direct =
+    normalizeEnumIgnoreCase(
+      value,
+      RULE_EDUCATION_LEVELS,
+      null
+    );
 
-function normalizeRecruitmentMode(
-  value
-) {
-  return normalizeEnumIgnoreCase(
-    value,
-    JOB_RECRUITMENT_MODES,
+  if (
+    direct
+  ) {
+    return direct;
+  }
+
+  const aliases = {
+    UNDERGRAD:
+      'UNDERGRADUATE',
+
+    UNDER_GRADUATE:
+      'UNDERGRADUATE',
+
+    POST_GRADUATE:
+      'POSTGRADUATE',
+
+    DOCTORATE:
+      'DOCTORAL'
+  };
+
+  return (
+    aliases[
+      cleanString(
+        value,
+        ''
+      )
+        .toUpperCase()
+        .replace(
+          /[-\s]+/g,
+          '_'
+        )
+    ] ||
     null
   );
 }
 
-const RECRUITMENT_ROUTE_TO_MODE =
+/* -------------------------------------------------------------------------- */
+/* Recruitment mappings                                                       */
+/* -------------------------------------------------------------------------- */
+
+const JOB_RECRUITMENT_ROUTE_ALIASES =
   Object.freeze({
     DIRECT_EXAMINATION:
       'DIRECT_RECRUITMENT',
@@ -1938,6 +2381,16 @@ const RECRUITMENT_ROUTE_TO_MODE =
     WBPSC_WBCS:
       'DIRECT_RECRUITMENT'
   });
+
+function normalizeRecruitmentMode(
+  value
+) {
+  return normalizeEnumIgnoreCase(
+    value,
+    JOB_RECRUITMENT_MODES,
+    null
+  );
+}
 
 function normalizeRecruitmentModeFromJob(
   job,
@@ -1997,7 +2450,7 @@ function normalizeRecruitmentModeFromJob(
     ).toUpperCase();
 
   return (
-    RECRUITMENT_ROUTE_TO_MODE[
+    JOB_RECRUITMENT_ROUTE_ALIASES[
       key
     ] ||
     null
@@ -2020,10 +2473,6 @@ function normalizeCareerStatus(
     return direct;
   }
 
-  /*
-   * The source explicitly uses RECURRING_CAREER for an ongoing career route.
-   * This is the one source-specific legacy mapping retained here.
-   */
   if (
     cleanString(
       value,
@@ -2032,6 +2481,76 @@ function normalizeCareerStatus(
       'RECURRING_CAREER'
   ) {
     return 'ACTIVE_CAREER';
+  }
+
+  return null;
+}
+
+function normalizeBaEnglishAssessment(
+  value
+) {
+  const normalized =
+    cleanString(
+      value,
+      ''
+    ).toUpperCase();
+
+  if (
+    !normalized
+  ) {
+    return null;
+  }
+
+  const direct =
+    normalizeEnumIgnoreCase(
+      normalized,
+      [
+        'DIRECT',
+        'CONDITIONAL',
+        'NOT_ELIGIBLE',
+        'CURRENT_NOTIFICATION_REQUIRED',
+        'NOT_VERIFIED',
+        'NOT_APPLICABLE'
+      ],
+      null
+    );
+
+  if (
+    direct
+  ) {
+    return direct;
+  }
+
+  /*
+   * Source uses explicit variants such as DIRECT_ACADEMIC and
+   * DIRECT_WITH_LANGUAGE. These are normalized only to the canonical
+   * research/display assessment vocabulary.
+   */
+  if (
+    normalized.startsWith(
+      'DIRECT_WITH_'
+    ) ||
+    normalized.startsWith(
+      'DIRECT_ACADEMIC_'
+    )
+  ) {
+    return 'DIRECT';
+  }
+
+  if (
+    normalized.startsWith(
+      'CONDITIONAL'
+    )
+  ) {
+    return 'CONDITIONAL';
+  }
+
+  if (
+    normalized.startsWith(
+      'NOT_ELIGIBLE'
+    )
+  ) {
+    return 'NOT_ELIGIBLE';
   }
 
   return null;
@@ -2064,7 +2583,7 @@ function normalizeJobPost(
 
 function normalizeJobIdentity(
   job,
-  context
+  context = {}
 ) {
   const identitySource =
     isPlainObject(
@@ -2141,10 +2660,8 @@ function normalizeJobIdentity(
     job.designation;
 
   if (
-    post !==
-      undefined &&
-    post !==
-      null
+    post !== undefined &&
+    post !== null
   ) {
     identity.post =
       normalizeJobPost(
@@ -2246,16 +2763,13 @@ function normalizeJobRecruitment(
   const recruitment =
     {};
 
-  const rawRoute =
-    source.routeIds ??
-    source.route ??
-    source.recruitmentRoute ??
-    job.routeIds ??
-    job.recruitmentRoute;
-
   const routeIds =
     normalizeIdArray(
-      rawRoute
+      source.routeIds ??
+      source.route ??
+      source.recruitmentRoute ??
+      job.routeIds ??
+      job.recruitmentRoute
     );
 
   if (
@@ -2321,37 +2835,27 @@ function normalizeJobRecruitment(
   }
 
   /*
-   * Fresh-entry eligibility is a factual Boolean. A recruitment route does
-   * not establish it. Only an explicit Boolean-equivalent source value is
-   * accepted.
+   * Important: a route is NOT evidence that fresh-entry eligibility is true.
    */
-  const freshEntry =
+  const freshEntryEligible =
     normalizeOptionalBoolean(
       source.freshEntryEligible ??
       job.freshEntryEligible
     );
 
   if (
-    freshEntry !==
+    freshEntryEligible !==
       null
   ) {
     recruitment.freshEntryEligible =
-      freshEntry;
+      freshEntryEligible;
   }
 
   const currentRecruitmentStatus =
     normalizeEnumIgnoreCase(
       source.currentRecruitmentStatus ??
       job.currentRecruitmentStatus,
-      [
-        'OPEN',
-        'NOTIFIED',
-        'RECURRING_ROUTE',
-        'CLOSED',
-        'NOT_CURRENTLY_NOTIFIED',
-        'HISTORICAL',
-        'UNKNOWN'
-      ],
+      JOB_CURRENT_RECRUITMENT_STATUSES,
       null
     );
 
@@ -2379,76 +2883,6 @@ function normalizeJobRecruitment(
   return recruitment;
 }
 
-function normalizeBaEnglishAssessment(
-  value
-) {
-  const normalized =
-    cleanString(
-      value,
-      ''
-    ).toUpperCase();
-
-  if (
-    !normalized
-  ) {
-    return null;
-  }
-
-  const direct =
-    normalizeEnumIgnoreCase(
-      normalized,
-      [
-        'DIRECT',
-        'CONDITIONAL',
-        'NOT_ELIGIBLE',
-        'CURRENT_NOTIFICATION_REQUIRED',
-        'NOT_VERIFIED',
-        'NOT_APPLICABLE'
-      ],
-      null
-    );
-
-  if (
-    direct
-  ) {
-    return direct;
-  }
-
-  /*
-   * These are explicit values from the source BA-English assessment field.
-   * They are reduced to the canonical assessment vocabulary only; they do
-   * not become candidate eligibility results.
-   */
-  if (
-    normalized.startsWith(
-      'DIRECT_WITH_'
-    ) ||
-    normalized.startsWith(
-      'DIRECT_ACADEMIC_'
-    )
-  ) {
-    return 'DIRECT';
-  }
-
-  if (
-    normalized.startsWith(
-      'CONDITIONAL'
-    )
-  ) {
-    return 'CONDITIONAL';
-  }
-
-  if (
-    normalized.startsWith(
-      'NOT_ELIGIBLE'
-    )
-  ) {
-    return 'NOT_ELIGIBLE';
-  }
-
-  return null;
-}
-
 function normalizeQualificationReferenceIds(
   source,
   job,
@@ -2471,18 +2905,17 @@ function normalizeQualificationReferenceIds(
   }
 
   /*
-   * Established Central-data compatibility contract:
+   * Repository-established Central legacy contract:
    *
-   * Central jobs use `qualificationRuleIds` for actual qualification IDs,
-   * while `eligibilityRuleIds` separately stores eligibility-rule IDs.
+   * Central jobs use qualificationRuleIds for actual qualification IDs,
+   * while eligibilityRuleIds independently contain eligibility-rule IDs.
    *
-   * West Bengal uses the same legacy field name for eligibility-rule IDs.
-   * Therefore this mapping is explicitly restricted to the Central government
-   * identity and is never performed by ID prefix or name matching.
+   * This interpretation is deliberately jurisdiction-restricted. It is NOT
+   * applied to West Bengal or other governments.
    */
   if (
     governmentId ===
-    'central-government'
+      'central-government'
   ) {
     return normalizeIdArray(
       job.qualificationRuleIds ??
@@ -2494,7 +2927,8 @@ function normalizeQualificationReferenceIds(
 }
 
 function normalizeJobEligibility(
-  job
+  job,
+  context = {}
 ) {
   const source =
     isPlainObject(
@@ -2521,9 +2955,7 @@ function normalizeJobEligibility(
   }
 
   /*
-   * entryLevel is an education level, not the required human-readable
-   * qualification statement. It therefore must not populate
-   * minimumQualification.
+   * minimumQualification is a plain canonical string, NOT localizedText.
    */
   const minimum =
     getFirstValue(
@@ -2549,36 +2981,57 @@ function normalizeJobEligibility(
 
   if (
     typeof minimum ===
-    'string' &&
-    cleanNullableString(
-      minimum
-    )
+      'string'
   ) {
-    eligibility.minimumQualification =
-      cleanString(
+    const text =
+      cleanNullableString(
         minimum
       );
+
+    if (
+      text
+    ) {
+      eligibility.minimumQualification =
+        text;
+    }
   } else if (
     isPlainObject(
       minimum
     )
   ) {
+    /*
+     * A localized source qualification object is flattened only because the
+     * canonical Job schema explicitly defines minimumQualification as string.
+     *
+     * English is the canonical fallback when available; otherwise the first
+     * non-empty localized value is used deterministically.
+     */
     const localized =
       normalizeLocalizedText(
         minimum
       );
 
+    const text =
+      cleanNullableString(
+        localized.en ??
+        Object.values(
+          localized
+        )[0]
+      );
+
     if (
-      localized.en
+      text
     ) {
       eligibility.minimumQualification =
-        localized;
+        text;
     }
   }
 
   const governmentId =
     cleanId(
-      job.governmentId
+      job.governmentId ??
+      context.governmentId ??
+      context.metadata?.governmentId
     );
 
   const qualificationIds =
@@ -2665,8 +3118,7 @@ function normalizeJobEligibility(
     job.eligibilitySummary;
 
   if (
-    summary !==
-      undefined
+    summary !== undefined
   ) {
     eligibility.eligibilitySummary =
       normalizeLocalizedText(
@@ -2679,8 +3131,7 @@ function normalizeJobEligibility(
     job.eligibilityNotes;
 
   if (
-    notes !==
-      undefined
+    notes !== undefined
   ) {
     eligibility.notes =
       normalizeLocalizedText(
@@ -2851,43 +3302,42 @@ function normalizeLifestyle(
     ]
   };
 
-  for (
-    const field of
-    LIFESTYLE_FIELDS
-  ) {
-    const raw =
-      mappings[
-        field
-      ].find(
-        value =>
-          value !==
-            undefined &&
-          value !==
-            null
-      );
+  LIFESTYLE_FIELDS.forEach(
+    field => {
+      const raw =
+        mappings[
+          field
+        ].find(
+          value =>
+            value !==
+              undefined &&
+            value !==
+              null
+        );
 
-    const value =
-      normalizeNumber(
-        raw,
-        {
-          min:
-            0,
+      const value =
+        normalizeNumber(
+          raw,
+          {
+            min:
+              0,
 
-          max:
-            10
-        }
-      );
+            max:
+              10
+          }
+        );
 
-    if (
-      value !==
-      null
-    ) {
-      lifestyle[
-        field
-      ] =
-        value;
+      if (
+        value !==
+        null
+      ) {
+        lifestyle[
+          field
+        ] =
+          value;
+      }
     }
-  }
+  );
 
   const statusMappings = {
     uniformStatus: [
@@ -2920,57 +3370,58 @@ function normalizeLifestyle(
     ]
   };
 
-  const allowed = {
-    uniformStatus: [
-      'REQUIRED',
-      'NOT_REQUIRED',
-      'POST_DEPENDENT',
-      'OPERATIONAL',
-      'UNKNOWN',
-      'NOT_APPLICABLE'
-    ],
+  const allowed =
+    {
+      uniformStatus: [
+        'REQUIRED',
+        'NOT_REQUIRED',
+        'POST_DEPENDENT',
+        'OPERATIONAL',
+        'UNKNOWN',
+        'NOT_APPLICABLE'
+      ],
 
-    nightDutyStatus: [
-      'NONE',
-      'RARE',
-      'OCCASIONAL',
-      'REGULAR',
-      'SHIFT_BASED',
-      'EMERGENCY_ONLY',
-      'POST_DEPENDENT',
-      'UNKNOWN'
-    ],
+      nightDutyStatus: [
+        'NONE',
+        'RARE',
+        'OCCASIONAL',
+        'REGULAR',
+        'SHIFT_BASED',
+        'EMERGENCY_ONLY',
+        'POST_DEPENDENT',
+        'UNKNOWN'
+      ],
 
-    shiftDutyStatus: [
-      'NONE',
-      'RARE',
-      'OCCASIONAL',
-      'REGULAR',
-      'SHIFT_BASED',
-      'POST_DEPENDENT',
-      'UNKNOWN'
-    ],
+      shiftDutyStatus: [
+        'NONE',
+        'RARE',
+        'OCCASIONAL',
+        'REGULAR',
+        'SHIFT_BASED',
+        'POST_DEPENDENT',
+        'UNKNOWN'
+      ],
 
-    holidayDutyStatus: [
-      'NONE',
-      'RARE',
-      'OCCASIONAL',
-      'REGULAR',
-      'EMERGENCY_ONLY',
-      'POST_DEPENDENT',
-      'UNKNOWN'
-    ],
+      holidayDutyStatus: [
+        'NONE',
+        'RARE',
+        'OCCASIONAL',
+        'REGULAR',
+        'EMERGENCY_ONLY',
+        'POST_DEPENDENT',
+        'UNKNOWN'
+      ],
 
-    emergencyDutyStatus: [
-      'NONE',
-      'RARE',
-      'OCCASIONAL',
-      'REGULAR',
-      'EMERGENCY_ONLY',
-      'POST_DEPENDENT',
-      'UNKNOWN'
-    ]
-  };
+      emergencyDutyStatus: [
+        'NONE',
+        'RARE',
+        'OCCASIONAL',
+        'REGULAR',
+        'EMERGENCY_ONLY',
+        'POST_DEPENDENT',
+        'UNKNOWN'
+      ]
+    };
 
   Object.entries(
     statusMappings
@@ -3106,8 +3557,7 @@ function normalizeAnalysis(
     job.analyticalNotes;
 
   if (
-    notes !==
-      undefined
+    notes !== undefined
   ) {
     analysis.analyticalNotes =
       normalizeLocalizedText(
@@ -3130,163 +3580,108 @@ function normalizeJob(
     return null;
   }
 
-  const identity =
-    normalizeJobIdentity(
-      job,
-      context
-    );
+  const result =
+    {
+      id:
+        cleanId(
+          job.id
+        ),
 
-  const recruitment =
-    normalizeJobRecruitment(
-      job
-    );
+      identity:
+        normalizeJobIdentity(
+          job,
+          context
+        ),
 
-  const eligibility =
-    normalizeJobEligibility(
-      job
-    );
+      recruitment:
+        normalizeJobRecruitment(
+          job
+        ),
 
-  const result = {
-    id:
-      cleanId(
-        job.id
-      ),
+      eligibility:
+        normalizeJobEligibility(
+          job,
+          context
+        ),
 
-    identity,
+      payProfileId:
+        cleanId(
+          job.payProfileId ??
+          job.pay?.payProfileId ??
+          job.pay?.payId
+        ),
 
-    recruitment,
+      locationProfileId:
+        cleanId(
+          job.locationProfileId ??
+          job.posting?.locationProfileId ??
+          job.posting?.profileId
+        ),
 
-    eligibility,
+      housingProfileId:
+        cleanId(
+          job.housingProfileId ??
+          job.housing?.housingProfileId
+        ),
 
-    payProfileId:
-      cleanId(
-        job.payProfileId ??
-        job.pay?.payProfileId ??
-        job.pay?.payId
-      ),
+      promotionProfileId:
+        cleanId(
+          job.promotionProfileId ??
+          job.promotion?.promotionProfileId ??
+          job.promotion?.profileId
+        ),
 
-    locationProfileId:
-      cleanId(
-        job.locationProfileId ??
-        job.posting?.locationProfileId ??
-        job.posting?.profileId
-      ),
+      benefitProfileId:
+        cleanId(
+          job.benefitProfileId ??
+          job.benefits?.benefitProfileId ??
+          job.benefits?.benefitsProfileId ??
+          job.benefits?.profileId
+        ),
 
-    housingProfileId:
-      cleanId(
-        job.housingProfileId ??
-        job.housing?.housingProfileId
-      ),
+      lifestyle:
+        normalizeLifestyle(
+          job
+        ),
 
-    promotionProfileId:
-      cleanId(
-        job.promotionProfileId ??
-        job.promotion?.promotionProfileId ??
-        job.promotion?.profileId
-      ),
+      analysis:
+        normalizeAnalysis(
+          job
+        ),
 
-    benefitProfileId:
-      cleanId(
-        job.benefitProfileId ??
-        job.benefits?.benefitProfileId ??
-        job.benefits?.benefitsProfileId ??
-        job.benefits?.profileId
-      ),
+      sourceIds:
+        normalizeIdArray(
+          job.sourceIds
+        ),
 
-    lifestyle:
-      normalizeLifestyle(
-        job
-      ),
+      confidence:
+        normalizeConfidence(
+          job.confidence
+        ),
 
-    analysis:
-      normalizeAnalysis(
-        job
-      ),
+      currentness:
+        normalizeCurrentness(
+          job.currentness ??
+          job.sourceCurrentness
+        ),
 
-    sourceIds:
-      normalizeIdArray(
-        job.sourceIds
-      )
-  };
+      lastVerified:
+        normalizeDate(
+          job.lastVerified ??
+          context.metadata?.lastVerified
+        ),
 
-  const confidence =
-    normalizeConfidence(
-      job.confidence
-    );
-
-  if (
-    confidence
-  ) {
-    result.confidence =
-      confidence;
-  }
-
-  const currentness =
-    normalizeCurrentness(
-      job.currentness ??
-      job.sourceCurrentness
-    );
-
-  if (
-    currentness
-  ) {
-    result.currentness =
-      currentness;
-  }
-
-  const lastVerified =
-    normalizeDate(
-      job.lastVerified
-    );
-
-  if (
-    lastVerified
-  ) {
-    result.lastVerified =
-      lastVerified;
-  }
-
-  const dataVersion =
-    cleanNullableString(
-      job.dataVersion
-    );
-
-  if (
-    dataVersion
-  ) {
-    result.dataVersion =
-      dataVersion;
-  }
-
-  if (
-    !result.lastVerified &&
-    context.metadata?.lastVerified
-  ) {
-    result.lastVerified =
-      normalizeDate(
-        context.metadata.lastVerified
-      );
-  }
-
-  if (
-    !result.dataVersion &&
-    context.metadata?.dataVersion
-  ) {
-    result.dataVersion =
-      cleanString(
-        context.metadata.dataVersion
-      );
-  }
+      dataVersion:
+        cleanNullableString(
+          job.dataVersion ??
+          context.metadata?.dataVersion
+        )
+    };
 
   /*
-   * Strict canonical Job output:
-   *
-   * No entityType field, no synthetic jobId, no searchText, and no raw
-   * source-only compatibility properties are injected into the schema object.
-   *
-   * The legacy BA assessment is represented by eligibility.baEnglishAssessment
-   * only when the source explicitly supplies it; it does not become the
-   * candidate eligibility authority.
+   * This is a strict canonical builder. No source-only properties are spread.
+   * Required-property omissions remain visible to validation when source facts
+   * are genuinely absent.
    */
   return removeNullish(
     result
@@ -3296,6 +3691,169 @@ function normalizeJob(
 /* -------------------------------------------------------------------------- */
 /* Exam normalization                                                         */
 /* -------------------------------------------------------------------------- */
+
+const EXAM_STAGE_TYPES = Object.freeze([
+  'PRELIMINARY',
+  'MAIN',
+  'DESCRIPTIVE',
+  'INTERVIEW',
+  'PERSONALITY_TEST',
+  'PHYSICAL',
+  'MEDICAL',
+  'SKILL_TEST',
+  'TYPING_TEST',
+  'DOCUMENT_VERIFICATION',
+  'OTHER'
+]);
+
+const EXAM_STAGE_ALIASES = Object.freeze({
+  PRELIMINARY:
+    'PRELIMINARY',
+
+  PRELIMS:
+    'PRELIMINARY',
+
+  MAIN:
+    'MAIN',
+
+  MAINS:
+    'MAIN',
+
+  DESCRIPTIVE:
+    'DESCRIPTIVE',
+
+  INTERVIEW:
+    'INTERVIEW',
+
+  PERSONALITY_TEST:
+    'PERSONALITY_TEST',
+
+  SSB_INTERVIEW:
+    'PERSONALITY_TEST',
+
+  INTERVIEW_PERSONALITY_TEST:
+    'PERSONALITY_TEST',
+
+  PHYSICAL:
+    'PHYSICAL',
+
+  MEDICAL:
+    'MEDICAL',
+
+  SKILL_TEST:
+    'SKILL_TEST',
+
+  SKILL_OR_TYPING_TEST_WHERE_APPLICABLE:
+    'SKILL_TEST',
+
+  TYPING_TEST:
+    'TYPING_TEST',
+
+  DOCUMENT_VERIFICATION:
+    'DOCUMENT_VERIFICATION'
+});
+
+function normalizeExamStageType(
+  value
+) {
+  const direct =
+    normalizeEnumIgnoreCase(
+      value,
+      EXAM_STAGE_TYPES,
+      null
+    );
+
+  if (
+    direct
+  ) {
+    return direct;
+  }
+
+  return (
+    EXAM_STAGE_ALIASES[
+      cleanString(
+        value,
+        ''
+      )
+        .toUpperCase()
+        .replace(
+          /[-\s]+/g,
+          '_'
+        )
+    ] ||
+    'OTHER'
+  );
+}
+
+function normalizeExamStage(
+  stage,
+  order
+) {
+  if (
+    isPlainObject(
+      stage
+    )
+  ) {
+    return removeNullish({
+      order:
+        normalizeNumber(
+          stage.order ??
+          order,
+          {
+            integer:
+              true,
+
+            min:
+              1
+          }
+        ),
+
+      type:
+        normalizeExamStageType(
+          stage.type
+        ),
+
+      name:
+        cleanNullableString(
+          stage.name
+        ),
+
+      description:
+        cleanNullableString(
+          stage.description
+        ),
+
+      mandatory:
+        normalizeOptionalBoolean(
+          stage.mandatory
+        )
+    });
+  }
+
+  const sourceName =
+    cleanString(
+      stage,
+      ''
+    );
+
+  if (
+    !sourceName
+  ) {
+    return null;
+  }
+
+  return {
+    order,
+
+    type:
+      normalizeExamStageType(
+        sourceName
+      ),
+
+    name:
+      sourceName
+  };
+}
 
 function normalizeExam(
   exam,
@@ -3309,61 +3867,7 @@ function normalizeExam(
     return null;
   }
 
-  /*
-   * The source examination model uses selectionStages while the canonical
-   * schema requires an ordered array of stage objects.
-   *
-   * Known source labels are mapped explicitly. Unknown stage labels retain
-   * their original source wording under canonical type OTHER.
-   */
-  const stageTypeMap = {
-    PRELIMINARY:
-      'PRELIMINARY',
-
-    PRELIMS:
-      'PRELIMINARY',
-
-    MAIN:
-      'MAIN',
-
-    MAINS:
-      'MAIN',
-
-    DESCRIPTIVE:
-      'DESCRIPTIVE',
-
-    INTERVIEW:
-      'INTERVIEW',
-
-    PERSONALITY_TEST:
-      'PERSONALITY_TEST',
-
-    SSB_INTERVIEW:
-      'PERSONALITY_TEST',
-
-    INTERVIEW_PERSONALITY_TEST:
-      'PERSONALITY_TEST',
-
-    PHYSICAL:
-      'PHYSICAL',
-
-    MEDICAL:
-      'MEDICAL',
-
-    SKILL_TEST:
-      'SKILL_TEST',
-
-    SKILL_OR_TYPING_TEST_WHERE_APPLICABLE:
-      'SKILL_TEST',
-
-    TYPING_TEST:
-      'TYPING_TEST',
-
-    DOCUMENT_VERIFICATION:
-      'DOCUMENT_VERIFICATION'
-  };
-
-  const stages =
+  const rawStages =
     Array.isArray(
       exam.stages
     )
@@ -3376,124 +3880,19 @@ function normalizeExam(
             : []
         );
 
-  const normalizedStages =
-    stages
+  const stages =
+    rawStages
       .map(
         (
           stage,
           index
-        ) => {
-          if (
-            isPlainObject(
-              stage
-            )
-          ) {
-            return removeNullish({
-              order:
-                normalizeNumber(
-                  stage.order ??
-                  (
-                    index +
-                    1
-                  ),
-                  {
-                    integer:
-                      true,
-
-                    min:
-                      1
-                  }
-                ),
-
-              type:
-                normalizeEnumIgnoreCase(
-                  stage.type,
-                  [
-                    'PRELIMINARY',
-                    'MAIN',
-                    'DESCRIPTIVE',
-                    'INTERVIEW',
-                    'PERSONALITY_TEST',
-                    'PHYSICAL',
-                    'MEDICAL',
-                    'SKILL_TEST',
-                    'TYPING_TEST',
-                    'DOCUMENT_VERIFICATION',
-                    'OTHER'
-                  ],
-                  null
-                ),
-
-              name:
-                cleanNullableString(
-                  stage.name
-                ),
-
-              description:
-                cleanNullableString(
-                  stage.description
-                ),
-
-              mandatory:
-                normalizeOptionalBoolean(
-                  stage.mandatory
-                )
-            });
-          }
-
-          const sourceName =
-            cleanString(
-              stage,
-              ''
-            );
-
-          if (
-            !sourceName
-          ) {
-            return null;
-          }
-
-          const key =
-            sourceName
-              .toUpperCase()
-              .replace(
-                /[^A-Z0-9]+/g,
-                '_'
-              );
-
-          const type =
-            stageTypeMap[
-              key
-            ] ||
-            'OTHER';
-
-          return {
-            order:
-              index +
-              1,
-
-            type,
-
-            name:
-              sourceName
-          };
-        }
+        ) =>
+          normalizeExamStage(
+            stage,
+            index + 1
+          )
       )
       .filter(Boolean);
-
-  const status =
-    normalizeEnumIgnoreCase(
-      exam.status,
-      [
-        'ACTIVE',
-        'CURRENT_RECRUITMENT',
-        'RECENTLY_COMPLETED',
-        'HISTORICAL',
-        'DISCONTINUED',
-        'NOT_VERIFIED'
-      ],
-      null
-    );
 
   const frequencyRaw =
     cleanString(
@@ -3502,7 +3901,7 @@ function normalizeExam(
       ''
     ).toUpperCase();
 
-  const frequency =
+  const recruitmentFrequency =
     {
       ANNUAL:
         'ANNUAL',
@@ -3561,22 +3960,24 @@ function normalizeExam(
           required:
             explicit
         };
-    } else if (
-      cleanNullableString(
-        exam.physicalRequirement
-      )
-    ) {
-      physicalRequirements =
-        {
-          status:
-            cleanString(
-              exam.physicalRequirement
-            )
-        };
+    } else {
+      const status =
+        cleanNullableString(
+          exam.physicalRequirement
+        );
+
+      if (
+        status
+      ) {
+        physicalRequirements =
+          {
+            status
+          };
+      }
     }
   }
 
-  const result = {
+  return removeNullish({
     id:
       cleanId(
         exam.id
@@ -3635,8 +4036,7 @@ function normalizeExam(
         exam.qualificationRuleIds
       ),
 
-    stages:
-      normalizedStages,
+    stages,
 
     skillTests:
       cloneValue(
@@ -3688,8 +4088,7 @@ function normalizeExam(
         null
       ),
 
-    recruitmentFrequency:
-      frequency,
+    recruitmentFrequency,
 
     mainPostIds:
       normalizeIdArray(
@@ -3703,7 +4102,19 @@ function normalizeExam(
         exam.recruitmentIds
       ),
 
-    status,
+    status:
+      normalizeEnumIgnoreCase(
+        exam.status,
+        [
+          'ACTIVE',
+          'CURRENT_RECRUITMENT',
+          'RECENTLY_COMPLETED',
+          'HISTORICAL',
+          'DISCONTINUED',
+          'NOT_VERIFIED'
+        ],
+        null
+      ),
 
     sourceIds:
       normalizeIdArray(
@@ -3726,15 +4137,11 @@ function normalizeExam(
         exam.dataVersion ??
         context.metadata?.dataVersion
       )
-  };
-
-  return removeNullish(
-    result
-  );
+  });
 }
 
 /* -------------------------------------------------------------------------- */
-/* Organisation structure                                                     */
+/* Department / organisation normalization                                    */
 /* -------------------------------------------------------------------------- */
 
 function normalizeDepartment(
@@ -3783,15 +4190,7 @@ function normalizeDepartment(
     type:
       normalizeEnumIgnoreCase(
         department.type,
-        [
-          'MINISTRY',
-          'DEPARTMENT',
-          'SECRETARIAT',
-          'DIRECTORATE',
-          'ATTACHED_DEPARTMENT',
-          'SUBORDINATE_DEPARTMENT',
-          'OTHER'
-        ],
+        DEPARTMENT_TYPES,
         null
       ),
 
@@ -3911,22 +4310,7 @@ function normalizeOrganisation(
     type:
       normalizeEnumIgnoreCase(
         organisation.type,
-        [
-          'COMMISSION',
-          'BOARD',
-          'DIRECTORATE',
-          'POLICE_ORGANISATION',
-          'POLICE_FORCE',
-          'CENTRAL_ARMED_FORCE',
-          'RAILWAY_ORGANISATION',
-          'AUTHORITY',
-          'ATTACHED_OFFICE',
-          'SUBORDINATE_OFFICE',
-          'STATUTORY_BODY',
-          'AUTONOMOUS_BODY',
-          'PUBLIC_BODY',
-          'OTHER'
-        ],
+        ORGANISATION_TYPES,
         null
       ),
 
@@ -3984,6 +4368,59 @@ function normalizeOrganisation(
 /* Service-cadre normalization                                                */
 /* -------------------------------------------------------------------------- */
 
+function normalizeCadreAuthority(
+  value
+) {
+  if (
+    !isPlainObject(
+      value
+    )
+  ) {
+    return null;
+  }
+
+  return removeNullish({
+    authorityType:
+      normalizeEnumIgnoreCase(
+        value.authorityType,
+        [
+          'MINISTRY',
+          'DEPARTMENT',
+          'ORGANISATION',
+          'STATE_GOVERNMENT',
+          'CENTRAL_GOVERNMENT',
+          'COMMISSION',
+          'BOARD',
+          'STATUTORY_AUTHORITY',
+          'OTHER',
+          'UNKNOWN'
+        ],
+        null
+      ),
+
+    authorityId:
+      cleanId(
+        value.authorityId
+      ),
+
+    authorityName:
+      value.authorityName ===
+        undefined
+        ? undefined
+        : normalizeLocalizedText(
+            value.authorityName
+          ),
+
+    description:
+      value.description ===
+        undefined
+        ? undefined
+        : normalizeLocalizedText(
+            value.description
+          )
+  });
+}
+
 function normalizeCadreScope(
   value
 ) {
@@ -4020,12 +4457,12 @@ function normalizeCadreScope(
       ),
 
     regionNames:
-      normalizeStringArray(
+      normalizeNonEmptyStringArray(
         value.regionNames
       ),
 
     districtNames:
-      normalizeStringArray(
+      normalizeNonEmptyStringArray(
         value.districtNames
       ),
 
@@ -4046,7 +4483,7 @@ function normalizePostingScope(
     typeof value ===
     'string'
   ) {
-    const mappings = {
+    const aliases = {
       STATEWIDE:
         'STATE_WIDE',
 
@@ -4082,7 +4519,7 @@ function normalizePostingScope(
     };
 
     const scopeType =
-      mappings[
+      aliases[
         cleanString(
           value,
           ''
@@ -4143,35 +4580,149 @@ function normalizePostingScope(
   });
 }
 
-function normalizeServiceType(
-  type,
-  serviceNature
+function normalizeTransferControl(
+  value
 ) {
-  const direct =
-    normalizeEnumIgnoreCase(
-      type,
-      SERVICE_TYPES,
-      null
-    );
-
   if (
-    direct
+    !isPlainObject(
+      value
+    )
   ) {
-    return direct;
+    return null;
   }
 
-  /*
-   * Explicit source semantic field only. No service-name inference.
-   */
-  return (
-    SERVICE_TYPE_BY_NATURE[
-      cleanString(
-        serviceNature,
-        ''
-      ).toUpperCase()
-    ] ||
-    null
-  );
+  return removeNullish({
+    controlType:
+      normalizeEnumIgnoreCase(
+        value.controlType,
+        [
+          'STATE_CADRE',
+          'CENTRAL_CADRE',
+          'JOINT_CADRE',
+          'DEPARTMENT_CONTROLLED',
+          'ORGANISATION_CONTROLLED',
+          'ZONE_CONTROLLED',
+          'REGION_CONTROLLED',
+          'DISTRICT_CONTROLLED',
+          'OTHER',
+          'UNKNOWN'
+        ],
+        null
+      ),
+
+    transferAuthorityId:
+      cleanId(
+        value.transferAuthorityId
+      ),
+
+    transferAuthorityName:
+      value.transferAuthorityName ===
+        undefined
+        ? undefined
+        : normalizeLocalizedText(
+            value.transferAuthorityName
+          ),
+
+    transferScope:
+      normalizeEnumIgnoreCase(
+        value.transferScope,
+        [
+          'WITHIN_CADRE',
+          'WITHIN_STATE',
+          'INTER_STATE',
+          'ALL_INDIA',
+          'REGIONAL',
+          'DEPARTMENTAL',
+          'ORGANISATION',
+          'UNKNOWN'
+        ],
+        null
+      ),
+
+    description:
+      value.description ===
+        undefined
+        ? undefined
+        : normalizeLocalizedText(
+            value.description
+          )
+  });
+}
+
+function normalizeServiceRuleReferences(
+  value
+) {
+  if (
+    !Array.isArray(
+      value
+    )
+  ) {
+    return [];
+  }
+
+  return value
+    .map(
+      reference => {
+        if (
+          !isPlainObject(
+            reference
+          )
+        ) {
+          return null;
+        }
+
+        return removeNullish({
+          title:
+            normalizeLocalizedText(
+              reference.title
+            ),
+
+          ruleType:
+            normalizeEnumIgnoreCase(
+              reference.ruleType,
+              [
+                'SERVICE_RULE',
+                'CADRE_RULE',
+                'RECRUITMENT_RULE',
+                'CONDUCT_RULE',
+                'PROMOTION_RULE',
+                'TRANSFER_RULE',
+                'OTHER'
+              ],
+              null
+            ),
+
+          reference:
+            cleanNullableString(
+              reference.reference
+            ),
+
+          section:
+            cleanNullableString(
+              reference.section
+            ),
+
+          sourceIds:
+            normalizeIdArray(
+              reference.sourceIds
+            ),
+
+          sourceReferences:
+            normalizeSources(
+              reference.sourceReferences
+            ),
+
+          description:
+            reference.description ===
+              undefined
+              ? undefined
+              : normalizeLocalizedText(
+                  reference.description
+                )
+        });
+      }
+    )
+    .filter(Boolean);
 }
 
 function normalizeEntryRoutes(
@@ -4235,7 +4786,11 @@ function normalizeEntryRoutes(
         });
       }
     )
-    .filter(Boolean);
+    .filter(
+      route =>
+        route &&
+        route.routeType
+    );
 }
 
 function normalizeServiceCadre(
@@ -4249,6 +4804,55 @@ function normalizeServiceCadre(
   ) {
     return null;
   }
+
+  const status =
+    normalizeEnumIgnoreCase(
+      serviceCadre.status,
+      [
+        'ACTIVE',
+        'HISTORICAL',
+        'RENAMED',
+        'MERGED',
+        'REORGANISED',
+        'ABOLISHED',
+        'UNKNOWN'
+      ],
+      null
+    );
+
+  /*
+   * Explicit source `type` is preferred.
+   * Source `serviceNature` is used only through the repository's explicit
+   * controlled mapping.
+   */
+  const type =
+    normalizeServiceType(
+      serviceCadre.type,
+      serviceCadre.serviceNature
+    );
+
+  let classification =
+    normalizeEnumIgnoreCase(
+      serviceCadre.classification,
+      [
+        'STATE_GOVERNMENT_SERVICE',
+        'CENTRAL_GOVERNMENT_SERVICE',
+        'LOCAL_GOVERNMENT_SERVICE',
+        'STATUTORY_BODY_SERVICE',
+        'CORPORATION_SERVICE',
+        'PSU_SERVICE',
+        'AUTONOMOUS_BODY_SERVICE',
+        'OTHER',
+        'UNKNOWN'
+      ],
+      null
+    );
+
+  /*
+   * Do not infer classification from filenames, names or type. The source
+   * may explicitly provide it during canonicalization; otherwise validation
+   * is allowed to report its absence.
+   */
 
   return removeNullish({
     id:
@@ -4308,11 +4912,7 @@ function normalizeServiceCadre(
         serviceCadre.parentServiceCadreId
       ),
 
-    type:
-      normalizeServiceType(
-        serviceCadre.type,
-        serviceCadre.serviceNature
-      ),
+    type,
 
     serviceGroup:
       normalizeEnumIgnoreCase(
@@ -4342,25 +4942,10 @@ function normalizeServiceCadre(
         null
       ),
 
-    classification:
-      normalizeEnumIgnoreCase(
-        serviceCadre.classification,
-        [
-          'STATE_GOVERNMENT_SERVICE',
-          'CENTRAL_GOVERNMENT_SERVICE',
-          'LOCAL_GOVERNMENT_SERVICE',
-          'STATUTORY_BODY_SERVICE',
-          'CORPORATION_SERVICE',
-          'PSU_SERVICE',
-          'AUTONOMOUS_BODY_SERVICE',
-          'OTHER',
-          'UNKNOWN'
-        ],
-        null
-      ),
+    classification,
 
     cadreAuthority:
-      cloneValue(
+      normalizeCadreAuthority(
         serviceCadre.cadreAuthority
       ),
 
@@ -4425,17 +5010,17 @@ function normalizeServiceCadre(
       ),
 
     transferControl:
-      cloneValue(
+      normalizeTransferControl(
         serviceCadre.transferControl
       ),
 
     serviceRuleReferences:
-      cloneValue(
+      normalizeServiceRuleReferences(
         serviceCadre.serviceRuleReferences
       ),
 
     keywords:
-      normalizeStringArray(
+      normalizeNonEmptyStringArray(
         serviceCadre.keywords
       ),
 
@@ -4447,20 +5032,7 @@ function normalizeServiceCadre(
             serviceCadre.description
           ),
 
-    status:
-      normalizeEnumIgnoreCase(
-        serviceCadre.status,
-        [
-          'ACTIVE',
-          'HISTORICAL',
-          'RENAMED',
-          'MERGED',
-          'REORGANISED',
-          'ABOLISHED',
-          'UNKNOWN'
-        ],
-        null
-      ),
+    status,
 
     effectiveFrom:
       normalizeDate(
@@ -4473,7 +5045,7 @@ function normalizeServiceCadre(
       ),
 
     historicalNames:
-      normalizeStringArray(
+      normalizeNonEmptyStringArray(
         serviceCadre.historicalNames
       ),
 
@@ -4497,19 +5069,795 @@ function normalizeServiceCadre(
 
     version:
       cleanNullableString(
-        serviceCadre.version
+        serviceCadre.version ??
+        context.metadata?.version
       )
   });
 }
 
+function normalizeServiceType(
+  type,
+  serviceNature
+) {
+  const direct =
+    normalizeEnumIgnoreCase(
+      type,
+      SERVICE_TYPES,
+      null
+    );
+
+  if (
+    direct
+  ) {
+    return direct;
+  }
+
+  return (
+    SERVICE_TYPE_BY_NATURE[
+      cleanString(
+        serviceNature,
+        ''
+      ).toUpperCase()
+    ] ||
+    null
+  );
+}
+
 /* -------------------------------------------------------------------------- */
-/* Eligibility-rule normalization                                             */
+/* Eligibility-rule nested structures                                         */
+/* -------------------------------------------------------------------------- */
+
+function normalizeRuleLogic(
+  value
+) {
+  if (
+    isPlainObject(
+      value
+    )
+  ) {
+    const normalized =
+      removeNullish({
+        mode:
+          normalizeEnumIgnoreCase(
+            value.mode,
+            [
+              'ALL_OF',
+              'ANY_OF',
+              'NONE_OF'
+            ],
+            null
+          ),
+
+        ruleIds:
+          normalizeNonEmptyIdArray(
+            value.ruleIds
+          )
+      });
+
+    return Object.keys(
+      normalized
+    ).length
+      ? normalized
+      : null;
+  }
+
+  const mode =
+    {
+      ALL:
+        'ALL_OF',
+
+      ANY:
+        'ANY_OF',
+
+      NONE:
+        'NONE_OF',
+
+      ALL_OF:
+        'ALL_OF',
+
+      ANY_OF:
+        'ANY_OF',
+
+      NONE_OF:
+        'NONE_OF'
+    }[
+      cleanString(
+        value,
+        ''
+      ).toUpperCase()
+    ];
+
+  return mode
+    ? {
+        mode
+      }
+    : null;
+}
+
+function normalizeVerificationRequirement(
+  rule
+) {
+  if (
+    isPlainObject(
+      rule.verificationRequirement
+    )
+  ) {
+    const explicit =
+      removeNullish({
+        required:
+          normalizeOptionalBoolean(
+            rule.verificationRequirement.required
+          ),
+
+        type:
+          cleanNullableString(
+            rule.verificationRequirement.type
+          ),
+
+        reason:
+          rule.verificationRequirement.reason ===
+            undefined
+            ? undefined
+            : normalizeLocalizedText(
+                rule.verificationRequirement.reason
+              )
+      });
+
+    return Object.keys(
+      explicit
+    ).length
+      ? explicit
+      : null;
+  }
+
+  const unknownStatus =
+    cleanString(
+      rule.unknownStatus,
+      ''
+    ).toUpperCase();
+
+  const type =
+    {
+      REQUIRES_MANUAL_VERIFICATION:
+        'MANUAL',
+
+      REQUIRES_VERIFICATION:
+        'VERIFICATION',
+
+      REVIEW_REQUIRED:
+        'REVIEW'
+    }[
+      unknownStatus
+    ] || null;
+
+  if (
+    !type
+  ) {
+    return null;
+  }
+
+  return removeNullish({
+    required:
+      true,
+
+    type,
+
+    reason:
+      rule.explanation ===
+        undefined
+        ? undefined
+        : normalizeLocalizedText(
+            rule.explanation
+          )
+  });
+}
+
+function normalizeTypingRequirement(
+  value
+) {
+  if (
+    !isPlainObject(
+      value
+    )
+  ) {
+    return null;
+  }
+
+  return removeNullish({
+    minimumWordsPerMinute:
+      normalizeNumber(
+        value.minimumWordsPerMinute,
+        {
+          min:
+            0
+        }
+      ),
+
+    language:
+      cleanNullableString(
+        value.language
+      ),
+
+    script:
+      cleanNullableString(
+        value.script
+      ),
+
+    mode:
+      normalizeEnumIgnoreCase(
+        value.mode,
+        [
+          'TYPING',
+          'TRANSCRIPTION',
+          'DATA_ENTRY',
+          'OTHER'
+        ],
+        null
+      )
+  });
+}
+
+function normalizeShorthandRequirement(
+  value
+) {
+  if (
+    !isPlainObject(
+      value
+    )
+  ) {
+    return null;
+  }
+
+  return removeNullish({
+    minimumWordsPerMinute:
+      normalizeNumber(
+        value.minimumWordsPerMinute,
+        {
+          min:
+            0
+        }
+      ),
+
+    language:
+      cleanNullableString(
+        value.language
+      )
+  });
+}
+
+function normalizeLicenceRequirements(
+  value
+) {
+  if (
+    !isPlainObject(
+      value
+    )
+  ) {
+    return null;
+  }
+
+  return removeNullish({
+    licenceTypes:
+      normalizeNonEmptyStringArray(
+        value.licenceTypes
+      ),
+
+    minimumValidityMonths:
+      normalizeNumber(
+        value.minimumValidityMonths,
+        {
+          min:
+            0
+        }
+      ),
+
+    commercialRequired:
+      normalizeOptionalBoolean(
+        value.commercialRequired
+      )
+  });
+}
+
+function normalizeRequiredExperience(
+  value
+) {
+  if (
+    !isPlainObject(
+      value
+    )
+  ) {
+    return null;
+  }
+
+  return removeNullish({
+    minimumYears:
+      normalizeNumber(
+        value.minimumYears,
+        {
+          min:
+            0
+        }
+      ),
+
+    maximumYears:
+      normalizeNumber(
+        value.maximumYears,
+        {
+          min:
+            0
+        }
+      ),
+
+    experienceType:
+      cleanNullableString(
+        value.experienceType
+      ),
+
+    specificExperience:
+      value.specificExperience ===
+        undefined
+        ? undefined
+        : normalizeLocalizedText(
+            value.specificExperience
+          ),
+
+    organisationTypes:
+      normalizeNonEmptyStringArray(
+        value.organisationTypes
+      ),
+
+    experienceDomains:
+      normalizeNonEmptyStringArray(
+        value.experienceDomains
+      )
+  });
+}
+
+function normalizeAgeRelaxations(
+  value
+) {
+  if (
+    !Array.isArray(
+      value
+    )
+  ) {
+    return [];
+  }
+
+  return value
+    .map(
+      relaxation => {
+        if (
+          !isPlainObject(
+            relaxation
+          )
+        ) {
+          return null;
+        }
+
+        return removeNullish({
+          category:
+            cleanNullableString(
+              relaxation.category
+            ),
+
+          maximumRelaxationYears:
+            normalizeNumber(
+              relaxation.maximumRelaxationYears,
+              {
+                integer:
+                  true,
+
+                min:
+                  0
+              }
+            ),
+
+          description:
+            relaxation.description ===
+              undefined
+              ? undefined
+              : normalizeLocalizedText(
+                  relaxation.description
+                )
+        });
+      }
+    )
+    .filter(
+      relaxation =>
+        relaxation &&
+        relaxation.category
+    );
+}
+
+function normalizeCitizenship(
+  value
+) {
+  if (
+    !isPlainObject(
+      value
+    )
+  ) {
+    return null;
+  }
+
+  return removeNullish({
+    required:
+      normalizeOptionalBoolean(
+        value.required
+      ),
+
+    allowedStatuses:
+      normalizeNonEmptyStringArray(
+        value.allowedStatuses
+      )
+  });
+}
+
+function normalizeDomicileRequirement(
+  value
+) {
+  if (
+    !isPlainObject(
+      value
+    )
+  ) {
+    return null;
+  }
+
+  return removeNullish({
+    required:
+      normalizeOptionalBoolean(
+        value.required
+      ),
+
+    stateIds:
+      normalizeIdArray(
+        value.stateIds
+      ),
+
+    districtNames:
+      normalizeNonEmptyStringArray(
+        value.districtNames
+      ),
+
+    localAreaNames:
+      normalizeNonEmptyStringArray(
+        value.localAreaNames
+      ),
+
+    description:
+      value.description ===
+        undefined
+        ? undefined
+        : normalizeLocalizedText(
+            value.description
+          )
+  });
+}
+
+function normalizeReservationRequirement(
+  value
+) {
+  if (
+    !isPlainObject(
+      value
+    )
+  ) {
+    return null;
+  }
+
+  return removeNullish({
+    categories:
+      normalizeNonEmptyStringArray(
+        value.categories
+      ),
+
+    requiresCertificate:
+      normalizeOptionalBoolean(
+        value.requiresCertificate
+      ),
+
+    certificateTypes:
+      normalizeNonEmptyStringArray(
+        value.certificateTypes
+      ),
+
+    conditions:
+      normalizeNonEmptyStringArray(
+        value.conditions
+      )
+  });
+}
+
+function normalizePhysicalStandard(
+  value
+) {
+  if (
+    !isPlainObject(
+      value
+    )
+  ) {
+    return null;
+  }
+
+  return removeNullish({
+    gender:
+      normalizeEnumIgnoreCase(
+        value.gender,
+        [
+          'ANY',
+          'MALE',
+          'FEMALE',
+          'OTHER'
+        ],
+        null
+      ),
+
+    minimumHeightCm:
+      normalizeNumber(
+        value.minimumHeightCm,
+        {
+          min:
+            0
+        }
+      ),
+
+    maximumHeightCm:
+      normalizeNumber(
+        value.maximumHeightCm,
+        {
+          min:
+            0
+        }
+      ),
+
+    minimumWeightKg:
+      normalizeNumber(
+        value.minimumWeightKg,
+        {
+          min:
+            0
+        }
+      ),
+
+    maximumWeightKg:
+      normalizeNumber(
+        value.maximumWeightKg,
+        {
+          min:
+            0
+        }
+      ),
+
+    minimumChestCm:
+      normalizeNumber(
+        value.minimumChestCm,
+        {
+          min:
+            0
+        }
+      ),
+
+    maximumChestCm:
+      normalizeNumber(
+        value.maximumChestCm,
+        {
+          min:
+            0
+        }
+      ),
+
+    minimumExpandedChestCm:
+      normalizeNumber(
+        value.minimumExpandedChestCm,
+        {
+          min:
+            0
+        }
+      ),
+
+    maximumExpandedChestCm:
+      normalizeNumber(
+        value.maximumExpandedChestCm,
+        {
+          min:
+            0
+        }
+      )
+  });
+}
+
+function normalizePhysicalEfficiencyTest(
+  value
+) {
+  if (
+    !isPlainObject(
+      value
+    )
+  ) {
+    return null;
+  }
+
+  return removeNullish({
+    testType:
+      cleanNullableString(
+        value.testType
+      ),
+
+    minimumDistanceMetres:
+      normalizeNumber(
+        value.minimumDistanceMetres,
+        {
+          min:
+            0
+        }
+      ),
+
+    maximumTimeSeconds:
+      normalizeNumber(
+        value.maximumTimeSeconds,
+        {
+          min:
+            0
+        }
+      ),
+
+    minimumTimeSeconds:
+      normalizeNumber(
+        value.minimumTimeSeconds,
+        {
+          min:
+            0
+        }
+      ),
+
+    description:
+      value.description ===
+        undefined
+        ? undefined
+        : normalizeLocalizedText(
+            value.description
+          )
+  });
+}
+
+function normalizeMedicalStandard(
+  value
+) {
+  if (
+    !isPlainObject(
+      value
+    )
+  ) {
+    return null;
+  }
+
+  return removeNullish(
+    normalizeKnownObjectFields(
+      value,
+      {
+        id: value.id,
+        standardId: value.standardId,
+        category: value.category,
+        class: value.class,
+        description:
+          value.description ===
+            undefined
+            ? undefined
+            : normalizeLocalizedText(
+                value.description
+              )
+      }
+    )
+  );
+}
+
+function normalizeEyesight(
+  value
+) {
+  if (
+    !isPlainObject(
+      value
+    )
+  ) {
+    return null;
+  }
+
+  return removeNullish(
+    normalizeKnownObjectFields(
+      value,
+      {
+        betterEye:
+          value.betterEye,
+        worseEye:
+          value.worseEye,
+        correctedVisionAllowed:
+          normalizeOptionalBoolean(
+            value.correctedVisionAllowed
+          ),
+        colourVision:
+          value.colourVision,
+        binocularVision:
+          value.binocularVision,
+        description:
+          value.description ===
+            undefined
+            ? undefined
+            : normalizeLocalizedText(
+                value.description
+              )
+      }
+    )
+  );
+}
+
+function normalizeDocumentRequirements(
+  value
+) {
+  if (
+    !Array.isArray(
+      value
+    )
+  ) {
+    return [];
+  }
+
+  return value
+    .map(
+      requirement => {
+        if (
+          !isPlainObject(
+            requirement
+          )
+        ) {
+          return null;
+        }
+
+        return removeNullish(
+          normalizeKnownObjectFields(
+            requirement,
+            {
+              documentType:
+                requirement.documentType,
+              required:
+                normalizeOptionalBoolean(
+                  requirement.required
+                ),
+              description:
+                requirement.description ===
+                  undefined
+                  ? undefined
+                  : normalizeLocalizedText(
+                      requirement.description
+                    )
+            }
+          )
+        );
+      }
+    )
+    .filter(Boolean);
+}
+
+function normalizeKnownObjectFields(
+  source,
+  output
+) {
+  /*
+   * `output` is already an explicit allowlist supplied by a dedicated caller.
+   * This helper exists only to avoid repeating null filtering.
+   */
+  return output;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Eligibility-rule target/classification                                     */
 /* -------------------------------------------------------------------------- */
 
 function mapEligibilityRuleTarget(
   rule
 ) {
-  const targetType =
+  const directType =
     normalizeEnumIgnoreCase(
       rule.targetType,
       [
@@ -4521,29 +5869,29 @@ function mapEligibilityRuleTarget(
       null
     );
 
-  const targetId =
+  const directId =
     cleanId(
       rule.targetId
     );
 
   if (
-    targetType &&
-    targetId
+    directType &&
+    directId
   ) {
     return {
-      targetType,
+      targetType:
+        directType,
 
-      targetId
+      targetId:
+        directId
     };
   }
 
   /*
-   * These are explicit relationship fields only.
-   *
-   * No name matching, prefix inference, rule-description matching or
-   * organisation/title similarity is performed.
+   * These are explicit relationships only. No fuzzy/entity lookup is ever
+   * performed here.
    */
-  const explicit = [
+  const explicitRelationships = [
     [
       'JOB',
       rule.jobId
@@ -4582,24 +5930,21 @@ function mapEligibilityRuleTarget(
 
   for (
     const [
-      type,
-      idValue
-    ] of explicit
+      targetType,
+      candidateId
+    ] of explicitRelationships
   ) {
-    const id =
+    const targetId =
       cleanId(
-        idValue
+        candidateId
       );
 
     if (
-      id
+      targetId
     ) {
       return {
-        targetType:
-          type,
-
-        targetId:
-          id
+        targetType,
+        targetId
       };
     }
   }
@@ -4624,15 +5969,10 @@ function normalizeRuleClass(
   }
 
   /*
-   * These mappings are based on the repository's actual ruleType values.
-   * They are explicit controlled mappings, not free-text inference.
+   * Explicit repository ruleType vocabulary.
+   *
+   * These are classification mappings, not descriptions guessed from names.
    */
-  const type =
-    cleanString(
-      rule.ruleType,
-      ''
-    ).toUpperCase();
-
   const mappings = {
     HARD_ELIGIBILITY:
       'HARD',
@@ -4661,7 +6001,10 @@ function normalizeRuleClass(
 
   return (
     mappings[
-      type
+      cleanString(
+        rule.ruleType,
+        ''
+      ).toUpperCase()
     ] ||
     null
   );
@@ -4687,9 +6030,14 @@ function normalizeConditionType(
     cleanString(
       rule.subject?.field,
       ''
-    ).toLowerCase();
+    )
+      .toLowerCase()
+      .replace(
+        /[\s_-]+/g,
+        ''
+      );
 
-  const subjectMappings = {
+  const mappings = {
     qualifications:
       'QUALIFICATION',
 
@@ -4711,8 +6059,53 @@ function normalizeConditionType(
     medicalstandard:
       'MEDICAL_STANDARD',
 
-    age:
-      'AGE',
+    physicalefficiency:
+      'PHYSICAL_EFFICIENCY_TEST',
+
+    physicalefficiencytest:
+      'PHYSICAL_EFFICIENCY_TEST',
+
+    eyesight:
+      'EYESIGHT',
+
+    height:
+      'HEIGHT',
+
+    weight:
+      'WEIGHT',
+
+    chest:
+      'CHEST',
+
+    running:
+      'RUNNING',
+
+    walking:
+      'WALKING',
+
+    cycling:
+      'CYCLING',
+
+    fitness:
+      'FITNESS',
+
+    medicaltest:
+      'MEDICAL_TEST',
+
+    typing:
+      'TYPING',
+
+    typingskill:
+      'TYPING',
+
+    shorthand:
+      'SHORTHAND',
+
+    computerknowledge:
+      'COMPUTER_KNOWLEDGE',
+
+    computercertificate:
+      'COMPUTER_CERTIFICATE',
 
     language:
       'LANGUAGE',
@@ -4722,6 +6115,9 @@ function normalizeConditionType(
 
     citizenship:
       'CITIZENSHIP',
+
+    nationality:
+      'NATIONALITY',
 
     domicile:
       'DOMICILE',
@@ -4738,32 +6134,94 @@ function normalizeConditionType(
     experience:
       'EXPERIENCE',
 
-    typing:
-      'TYPING',
+    age:
+      'AGE',
 
-    typingskill:
-      'TYPING',
+    drivinglicence:
+      'DRIVING_LICENCE',
 
-    shorthand:
-      'SHORTHAND',
+    otherlicence:
+      'OTHER_LICENCE',
 
-    computerknowledge:
-      'COMPUTER_KNOWLEDGE',
+    tet:
+      'TET',
 
-    computercertificate:
-      'COMPUTER_CERTIFICATE'
+    b_ed:
+      'BED',
+
+    bed:
+      'BED',
+
+    d_el_ed:
+      'DELED',
+
+    deled:
+      'DELED',
+
+    b_el_ed:
+      'BELED',
+
+    beled:
+      'BELED',
+
+    iti:
+      'ITI',
+
+    diploma:
+      'DIPLOMA',
+
+    mathematics:
+      'MATHEMATICS',
+
+    statistics:
+      'STATISTICS',
+
+    economics:
+      'ECONOMICS',
+
+    commerce:
+      'COMMERCE',
+
+    science:
+      'SCIENCE',
+
+    arts:
+      'ARTS',
+
+    degree:
+      'DEGREE',
+
+    subject:
+      'SUBJECT',
+
+    subjectcombination:
+      'SUBJECT_COMBINATION',
+
+    marks:
+      'MARKS',
+
+    percentage:
+      'PERCENTAGE',
+
+    professionalqualification:
+      'PROFESSIONAL_QUALIFICATION',
+
+    documentverification:
+      'DOCUMENT_VERIFICATION'
   };
 
   /*
-   * Composite source subjects such as physicalAndMedicalProfile and
-   * postSpecificRequirements intentionally do not map to an unrelated
-   * single condition type.
+   * Composite source subjects are deliberately represented by OTHER instead
+   * of pretending that one narrower canonical type captures the whole fact.
+   *
+   * Their explicit supporting structures remain preserved through the rule's
+   * canonical fields where those source structures have direct equivalents.
    */
   return (
-    subjectMappings[
+    mappings[
       subjectField
     ] ||
-    null
+    'OTHER'
   );
 }
 
@@ -4790,7 +6248,7 @@ function normalizeRuleEffect(
 
   if (
     conditional ===
-    true
+      true
   ) {
     return 'CONDITIONAL';
   }
@@ -4808,14 +6266,17 @@ function normalizeRuleEffect(
     ).toUpperCase();
 
   /*
-   * Canonical engine semantics:
+   * The canonical effect describes the effect when the rule condition is
+   * satisfied.
    *
-   * A positive eligibility requirement uses ALLOW. The rule is satisfied when
-   * the condition evaluates true; failureStatus describes the outcome when it
-   * does not. Using DENY here would invert that meaning in the evaluator.
+   * For repository source rules, failureStatus describes the opposite case.
+   * Therefore:
    *
-   * The source currently uses both NOT_ELIGIBLE and CONDITION_NOT_MET for this
-   * class of positive requirement.
+   *   condition true  -> ALLOW
+   *   condition false -> source failureStatus
+   *
+   * This prevents an inversion where every positive eligibility requirement
+   * would incorrectly become DENY.
    */
   if (
     (
@@ -4841,102 +6302,9 @@ function normalizeRuleEffect(
   return null;
 }
 
-function normalizeRuleLogic(
-  value
-) {
-  if (
-    isPlainObject(
-      value
-    )
-  ) {
-    return removeNullish({
-      mode:
-        normalizeEnumIgnoreCase(
-          value.mode,
-          [
-            'ALL_OF',
-            'ANY_OF',
-            'NONE_OF'
-          ],
-          null
-        ),
-
-      ruleIds:
-        normalizeIdArray(
-          value.ruleIds
-        )
-    });
-  }
-
-  const modeMappings = {
-    ALL:
-      'ALL_OF',
-
-    ANY:
-      'ANY_OF',
-
-    NONE:
-      'NONE_OF',
-
-    ALL_OF:
-      'ALL_OF',
-
-    ANY_OF:
-      'ANY_OF',
-
-    NONE_OF:
-      'NONE_OF'
-  };
-
-  const mode =
-    modeMappings[
-      cleanString(
-        value,
-        ''
-      ).toUpperCase()
-    ];
-
-  return mode
-    ? {
-        mode
-      }
-    : null;
-}
-
-function normalizeVerificationRequirement(
-  rule
-) {
-  const unknownStatus =
-    cleanString(
-      rule.unknownStatus,
-      ''
-    ).toUpperCase();
-
-  if (
-    ![
-      'REQUIRES_MANUAL_VERIFICATION',
-      'REQUIRES_VERIFICATION',
-      'REVIEW_REQUIRED'
-    ].includes(
-      unknownStatus
-    )
-  ) {
-    return null;
-  }
-
-  return removeNullish({
-    required:
-      true,
-
-    reason:
-      rule.explanation ===
-        undefined
-        ? undefined
-        : normalizeLocalizedText(
-            rule.explanation
-          )
-  });
-}
+/* -------------------------------------------------------------------------- */
+/* Eligibility-rule normalization                                             */
+/* -------------------------------------------------------------------------- */
 
 function normalizeEligibilityRule(
   rule,
@@ -4955,411 +6323,604 @@ function normalizeEligibilityRule(
       rule
     );
 
-  const result = {
-    id:
-      cleanId(
-        rule.id
-      ),
+  const result =
+    {
+      id:
+        cleanId(
+          rule.id
+        ),
 
-    name:
-      normalizeLocalizedText(
-        rule.name
-      ),
+      name:
+        normalizeLocalizedText(
+          rule.name
+        ),
 
-    description:
-      rule.description !==
-        undefined
-        ? normalizeLocalizedText(
-            rule.description
-          )
-        : (
-            rule.explanation !==
-              undefined
-              ? normalizeLocalizedText(
-                  rule.explanation
-                )
-              : undefined
+      description:
+        rule.description !==
+          undefined
+          ? normalizeLocalizedText(
+              rule.description
+            )
+          : (
+              rule.explanation !==
+                undefined
+                ? normalizeLocalizedText(
+                    rule.explanation
+                  )
+                : undefined
+            ),
+
+      targetType:
+        target.targetType,
+
+      targetId:
+        target.targetId,
+
+      ruleClass:
+        normalizeRuleClass(
+          rule
+        ),
+
+      conditionType:
+        normalizeConditionType(
+          rule
+        ),
+
+      operator:
+        normalizeEnumIgnoreCase(
+          rule.operator,
+          RULE_OPERATORS,
+          null
+        ),
+
+      value:
+        cloneValue(
+          rule.value
+        ),
+
+      logic:
+        normalizeRuleLogic(
+          rule.logic
+        ),
+
+      effect:
+        normalizeRuleEffect(
+          rule
+        ),
+
+      verificationRequirement:
+        normalizeVerificationRequirement(
+          rule
+        ),
+
+      qualificationIds:
+        normalizeNonEmptyIdArray(
+          rule.qualificationIds
+        ),
+
+      requiredQualificationIds:
+        normalizeNonEmptyIdArray(
+          rule.requiredQualificationIds ??
+          rule.requiredQualifications
+        ),
+
+      subjectIds:
+        normalizeNonEmptyIdArray(
+          rule.subjectIds
+        ),
+
+      requiredSubjectIds:
+        normalizeNonEmptyIdArray(
+          rule.requiredSubjectIds
+        ),
+
+      educationLevel:
+        normalizeRuleEducationLevel(
+          rule.educationLevel
+        ),
+
+      minimumEducationLevel:
+        normalizeEnumIgnoreCase(
+          rule.minimumEducationLevel,
+          RULE_EDUCATION_LEVELS.filter(
+            level =>
+              level !==
+              'OTHER'
           ),
-
-    targetType:
-      target.targetType,
-
-    targetId:
-      target.targetId,
-
-    ruleClass:
-      normalizeRuleClass(
-        rule
-      ),
-
-    conditionType:
-      normalizeConditionType(
-        rule
-      ),
-
-    operator:
-      normalizeEnumIgnoreCase(
-        rule.operator,
-        RULE_OPERATORS,
-        null
-      ),
-
-    value:
-      rule.value,
-
-    logic:
-      normalizeRuleLogic(
-        rule.logic
-      ),
-
-    effect:
-      normalizeRuleEffect(
-        rule
-      ),
-
-    verificationRequirement:
-      normalizeVerificationRequirement(
-        rule
-      ),
-
-    qualificationIds:
-      normalizeIdArray(
-        rule.qualificationIds
-      ),
-
-    requiredQualificationIds:
-      normalizeIdArray(
-        rule.requiredQualificationIds ??
-        rule.requiredQualifications
-      ),
-
-    subjectIds:
-      normalizeIdArray(
-        rule.subjectIds
-      ),
-
-    requiredSubjectIds:
-      normalizeIdArray(
-        rule.requiredSubjectIds
-      ),
-
-    educationLevel:
-      normalizeEnumIgnoreCase(
-        rule.educationLevel,
-        JOB_EDUCATION_LEVELS,
-        null
-      ),
-
-    minimumEducationLevel:
-      normalizeEnumIgnoreCase(
-        rule.minimumEducationLevel,
-        [
-          'CLASS_8',
-          'CLASS_10',
-          'CLASS_12',
-          'DIPLOMA',
-          'GRADUATE',
-          'POSTGRADUATE',
-          'PROFESSIONAL',
-          'UNDERGRADUATE',
-          'DOCTORAL'
-        ],
-        null
-      ),
-
-    degreeNames:
-      normalizeStringArray(
-        rule.degreeNames
-      ),
-
-    subjectNames:
-      normalizeStringArray(
-        rule.subjectNames
-      ),
-
-    minimumMarks:
-      normalizeNumber(
-        rule.minimumMarks,
-        {
-          min:
-            0
-        }
-      ),
-
-    maximumMarks:
-      normalizeNumber(
-        rule.maximumMarks,
-        {
-          min:
-            0
-        }
-      ),
-
-    minimumPercentage:
-      normalizeNumber(
-        rule.minimumPercentage,
-        {
-          min:
-            0,
-
-          max:
-            100
-        }
-      ),
-
-    maximumPercentage:
-      normalizeNumber(
-        rule.maximumPercentage,
-        {
-          min:
-            0,
-
-          max:
-            100
-        }
-      ),
-
-    requiredLanguages:
-      normalizeStringArray(
-        rule.requiredLanguages
-      ),
-
-    requiredSkills:
-      normalizeStringArray(
-        rule.requiredSkills
-      ),
-
-    requiredComputerKnowledge:
-      normalizeStringArray(
-        rule.requiredComputerKnowledge
-      ),
-
-    typingRequirement:
-      cloneValue(
-        rule.typingRequirement
-      ),
-
-    shorthandRequirement:
-      cloneValue(
-        rule.shorthandRequirement
-      ),
-
-    licenceRequirements:
-      cloneValue(
-        rule.licenceRequirements
-      ),
-
-    requiredExperience:
-      cloneValue(
-        rule.requiredExperience
-      ),
-
-    minimumExperienceYears:
-      normalizeNumber(
-        rule.minimumExperienceYears,
-        {
-          min:
-            0
-        }
-      ),
-
-    maximumExperienceYears:
-      normalizeNumber(
-        rule.maximumExperienceYears,
-        {
-          min:
-            0
-        }
-      ),
-
-    minimumAge:
-      normalizeNumber(
-        rule.minimumAge,
-        {
-          integer:
-            true,
-
-          min:
-            0
-        }
-      ),
-
-    maximumAge:
-      normalizeNumber(
-        rule.maximumAge,
-        {
-          integer:
-            true,
-
-          min:
-            0
-        }
-      ),
-
-    ageReferenceDate:
-      normalizeDate(
-        rule.ageReferenceDate
-      ),
-
-    ageRelaxations:
-      cloneValue(
-        rule.ageRelaxations
-      ),
-
-    citizenship:
-      cloneValue(
-        rule.citizenship
-      ),
-
-    requiredNationality:
-      normalizeStringArray(
-        rule.requiredNationality
-      ),
-
-    domicileRequirement:
-      cloneValue(
-        rule.domicileRequirement
-      ),
-
-    reservationRequirement:
-      cloneValue(
-        rule.reservationRequirement
-      ),
-
-    categoryRequirement:
-      normalizeStringArray(
-        rule.categoryRequirement
-      ),
-
-    genderRequirement:
-      normalizeEnumIgnoreCase(
-        rule.genderRequirement,
-        [
-          'ANY',
-          'MALE',
-          'FEMALE',
-          'OTHER'
-        ],
-        null
-      ),
-
-    recruitmentRouteTypes:
-      normalizeStringArray(
-        rule.recruitmentRouteTypes
-      ),
-
-    recruitmentIds:
-      normalizeIdArray(
-        rule.recruitmentIds
-      ),
-
-    physicalStandard:
-      cloneValue(
-        rule.physicalStandard
-      ),
-
-    medicalStandard:
-      cloneValue(
-        rule.medicalStandard
-      ),
-
-    eyesightRequirement:
-      cloneValue(
-        rule.eyesightRequirement
-      ),
-
-    documentRequirements:
-      cloneValue(
-        rule.documentRequirements
-      ),
-
-    exceptions:
-      cloneValue(
-        rule.exceptions
-      ),
-
-    dependsOnRuleIds:
-      normalizeIdArray(
-        rule.dependsOnRuleIds
-      ),
-
-    sourceIds:
-      normalizeIdArray(
-        rule.sourceIds
-      ),
-
-    sourceReferences:
-      normalizeSources(
-        rule.sourceReferences
-      ),
-
-    status:
-      normalizeEnumIgnoreCase(
-        rule.status,
-        [
-          'ACTIVE',
-          'DRAFT',
-          'DEPRECATED',
-          'HISTORICAL',
-          'SUPERSEDED',
-          'UNKNOWN'
-        ],
-        null
-      ),
-
-    effectiveFrom:
-      normalizeDate(
-        rule.effectiveFrom
-      ),
-
-    effectiveTo:
-      normalizeDate(
-        rule.effectiveTo
-      ),
-
-    mandatory:
-      normalizeOptionalBoolean(
-        rule.mandatory
-      ),
-
-    conditional:
-      normalizeOptionalBoolean(
-        rule.conditional
-      ),
-
-    reviewRequired:
-      normalizeOptionalBoolean(
-        rule.reviewRequired
-      ),
-
-    notes:
-      rule.notes ===
-        undefined
-        ? undefined
-        : normalizeLocalizedText(
-            rule.notes
-          ),
-
-    confidence:
-      normalizeConfidence(
-        rule.confidence
-      ),
-
-    version:
-      cleanNullableString(
-        rule.version ??
-        context.metadata?.version
-      )
-  };
-
-  return removeNullishDeepArrays(
-    result
+          null
+        ),
+
+      degreeNames:
+        normalizeNonEmptyStringArray(
+          rule.degreeNames
+        ),
+
+      subjectNames:
+        normalizeNonEmptyStringArray(
+          rule.subjectNames
+        ),
+
+      minimumMarks:
+        normalizeNumber(
+          rule.minimumMarks,
+          {
+            min:
+              0
+          }
+        ),
+
+      maximumMarks:
+        normalizeNumber(
+          rule.maximumMarks,
+          {
+            min:
+              0
+          }
+        ),
+
+      minimumPercentage:
+        normalizeNumber(
+          rule.minimumPercentage,
+          {
+            min:
+              0,
+
+            max:
+              100
+          }
+        ),
+
+      maximumPercentage:
+        normalizeNumber(
+          rule.maximumPercentage,
+          {
+            min:
+              0,
+
+            max:
+              100
+          }
+        ),
+
+      requiredLanguages:
+        normalizeNonEmptyStringArray(
+          rule.requiredLanguages
+        ),
+
+      requiredSkills:
+        normalizeNonEmptyStringArray(
+          rule.requiredSkills
+        ),
+
+      requiredComputerKnowledge:
+        normalizeNonEmptyStringArray(
+          rule.requiredComputerKnowledge
+        ),
+
+      typingRequirement:
+        normalizeTypingRequirement(
+          rule.typingRequirement
+        ),
+
+      shorthandRequirement:
+        normalizeShorthandRequirement(
+          rule.shorthandRequirement
+        ),
+
+      licenceRequirements:
+        normalizeLicenceRequirements(
+          rule.licenceRequirements
+        ),
+
+      requiredExperience:
+        normalizeRequiredExperience(
+          rule.requiredExperience
+        ),
+
+      minimumExperienceYears:
+        normalizeNumber(
+          rule.minimumExperienceYears,
+          {
+            min:
+              0
+          }
+        ),
+
+      maximumExperienceYears:
+        normalizeNumber(
+          rule.maximumExperienceYears,
+          {
+            min:
+              0
+          }
+        ),
+
+      minimumAge:
+        normalizeNumber(
+          rule.minimumAge,
+          {
+            integer:
+              true,
+
+            min:
+              0
+          }
+        ),
+
+      maximumAge:
+        normalizeNumber(
+          rule.maximumAge,
+          {
+            integer:
+              true,
+
+            min:
+              0
+          }
+        ),
+
+      ageReferenceDate:
+        normalizeDate(
+          rule.ageReferenceDate
+        ),
+
+      ageRelaxations:
+        normalizeAgeRelaxations(
+          rule.ageRelaxations
+        ),
+
+      citizenship:
+        normalizeCitizenship(
+          rule.citizenship
+        ),
+
+      requiredNationality:
+        normalizeNonEmptyStringArray(
+          rule.requiredNationality
+        ),
+
+      domicileRequirement:
+        normalizeDomicileRequirement(
+          rule.domicileRequirement
+        ),
+
+      reservationRequirement:
+        normalizeReservationRequirement(
+          rule.reservationRequirement
+        ),
+
+      categoryRequirement:
+        normalizeNonEmptyStringArray(
+          rule.categoryRequirement
+        ),
+
+      genderRequirement:
+        normalizeEnumIgnoreCase(
+          rule.genderRequirement,
+          [
+            'ANY',
+            'MALE',
+            'FEMALE',
+            'OTHER'
+          ],
+          null
+        ),
+
+      recruitmentRouteTypes:
+        normalizeStringArray(
+          rule.recruitmentRouteTypes
+        ),
+
+      recruitmentIds:
+        normalizeIdArray(
+          rule.recruitmentIds
+        ),
+
+      physicalStandard:
+        normalizePhysicalStandard(
+          rule.physicalStandard
+        ),
+
+      physicalEfficiencyTest:
+        normalizePhysicalEfficiencyTest(
+          rule.physicalEfficiencyTest
+        ),
+
+      medicalStandard:
+        normalizeMedicalStandard(
+          rule.medicalStandard
+        ),
+
+      eyesightRequirement:
+        normalizeEyesight(
+          rule.eyesightRequirement ??
+          rule.eyesight
+        ),
+
+      documentRequirements:
+        normalizeDocumentRequirements(
+          rule.documentRequirements
+        ),
+
+      exceptions:
+        cloneValue(
+          rule.exceptions
+        ),
+
+      dependsOnRuleIds:
+        normalizeIdArray(
+          rule.dependsOnRuleIds
+        ),
+
+      sourceIds:
+        normalizeIdArray(
+          rule.sourceIds
+        ),
+
+      sourceReferences:
+        normalizeSources(
+          rule.sourceReferences
+        ),
+
+      status:
+        normalizeEnumIgnoreCase(
+          rule.status,
+          [
+            'ACTIVE',
+            'DRAFT',
+            'DEPRECATED',
+            'HISTORICAL',
+            'SUPERSEDED',
+            'UNKNOWN'
+          ],
+          null
+        ),
+
+      effectiveFrom:
+        normalizeDate(
+          rule.effectiveFrom
+        ),
+
+      effectiveTo:
+        normalizeDate(
+          rule.effectiveTo
+        ),
+
+      mandatory:
+        normalizeOptionalBoolean(
+          rule.mandatory
+        ),
+
+      conditional:
+        normalizeOptionalBoolean(
+          rule.conditional
+        ),
+
+      reviewRequired:
+        normalizeOptionalBoolean(
+          rule.reviewRequired
+        ),
+
+      notes:
+        rule.notes ===
+          undefined
+          ? undefined
+          : normalizeLocalizedText(
+              rule.notes
+            ),
+
+      confidence:
+        normalizeConfidence(
+          rule.confidence
+        ),
+
+      version:
+        cleanNullableString(
+          rule.version ??
+          context.metadata?.version
+        )
+    };
+
+  /*
+   * Do not emit optional non-empty arrays when empty.
+   *
+   * Ordinary idArray properties such as recruitmentIds and dependsOnRuleIds
+   * remain present as empty arrays when explicitly supplied; non-empty schema
+   * arrays do not.
+   */
+  return omitEmptyArrays(
+    removeNullish(
+      result
+    ),
+    [
+      'qualificationIds',
+      'requiredQualificationIds',
+      'subjectIds',
+      'requiredSubjectIds',
+      'degreeNames',
+      'subjectNames',
+      'requiredLanguages',
+      'requiredSkills',
+      'requiredComputerKnowledge',
+      'requiredNationality',
+      'categoryRequirement',
+      'sourceIds'
+    ]
   );
 }
 
 /* -------------------------------------------------------------------------- */
-/* Recruitment and profile normalization                                      */
+/* Recruitment normalization                                                 */
 /* -------------------------------------------------------------------------- */
+
+const RECRUITMENT_MODE_ALIASES =
+  Object.freeze({
+    DIRECT_EXAMINATION:
+      'DIRECT_RECRUITMENT',
+
+    DIRECT_RECRUITMENT:
+      'DIRECT_RECRUITMENT',
+
+    WBPSC_WBCS:
+      'DIRECT_RECRUITMENT',
+
+    CONTRACTUAL:
+      'CONTRACT',
+
+    CONTRACT:
+      'CONTRACT',
+
+    TEMPORARY:
+      'TEMPORARY',
+
+    SCHEME_PROJECT:
+      'SCHEME_PROJECT',
+
+    OUTSOURCED:
+      'OUTSOURCED',
+
+    PROMOTION:
+      'PROMOTION',
+
+    DEPUTATION:
+      'DEPUTATION',
+
+    TRANSFER:
+      'TRANSFER',
+
+    OTHER:
+      'OTHER'
+  });
+
+function normalizeRecruitmentEntityMode(
+  value
+) {
+  const direct =
+    normalizeEnumIgnoreCase(
+      value,
+      RECRUITMENT_MODES,
+      null
+    );
+
+  if (
+    direct
+  ) {
+    return direct;
+  }
+
+  return (
+    RECRUITMENT_MODE_ALIASES[
+      cleanString(
+        value,
+        ''
+      )
+        .toUpperCase()
+        .replace(
+          /[-\s]+/g,
+          '_'
+        )
+    ] ||
+    null
+  );
+}
+
+const RECRUITMENT_STATUS_ALIASES =
+  Object.freeze({
+    UNDER_PROCESS:
+      'UNDER_PROCESS',
+
+    ADMINISTRATIVE_PROCESS_UNDERWAY:
+      'UNDER_PROCESS',
+
+    FINAL_EXAMINATION_PROCESS:
+      'UNDER_PROCESS',
+
+    PRELIMINARY_EXAMINATION_PROCESS:
+      'UNDER_PROCESS',
+
+    MAIN_EXAM_PROCESS:
+      'UNDER_PROCESS',
+
+    WRITTEN_RESULT_STAGE:
+      'UNDER_PROCESS',
+
+    EXAM_SCHEDULED:
+      'UNDER_PROCESS',
+
+    RECRUITMENT_CYCLE:
+      'EXPECTED_PERIODIC',
+
+    RECRUITMENT_FRAMEWORK:
+      'EXPECTED_PERIODIC',
+
+    RECENTLY_COMPLETED:
+      'RECENTLY_COMPLETED',
+
+    POST_SELECTION_ACTIVITY:
+      'RECENTLY_COMPLETED',
+
+    POST_FINAL_EXAMINATION_PROCESS:
+      'RECENTLY_COMPLETED',
+
+    HISTORICAL:
+      'HISTORICAL',
+
+    HISTORICAL_RECRUITMENT_CYCLE:
+      'HISTORICAL',
+
+    HISTORICAL_COMPLETED_OR_POST_PROCESS:
+      'HISTORICAL',
+
+    CANCELLED:
+      'CANCELLED',
+
+    CLOSED:
+      'CLOSED',
+
+    OPEN:
+      'OPEN',
+
+    NOT_VERIFIED:
+      'NOT_VERIFIED',
+
+    IRREGULAR:
+      'IRREGULAR',
+
+    EXPECTED_PERIODIC:
+      'EXPECTED_PERIODIC'
+  });
+
+function normalizeRecruitmentStatus(
+  value
+) {
+  const direct =
+    normalizeEnumIgnoreCase(
+      value,
+      RECRUITMENT_STATUS_VALUES,
+      null
+    );
+
+  if (
+    direct
+  ) {
+    return direct;
+  }
+
+  return (
+    RECRUITMENT_STATUS_ALIASES[
+      cleanString(
+        value,
+        ''
+      )
+        .toUpperCase()
+        .replace(
+          /[-\s]+/g,
+          '_'
+        )
+    ] ||
+    null
+  );
+}
 
 function normalizeRecruitment(
   recruitment,
@@ -5373,10 +6934,20 @@ function normalizeRecruitment(
     return null;
   }
 
+  /*
+   * Recruitment schema is strict. Only schema-authorized fields are emitted.
+   * In particular, legacy jobIds/serviceCadreId/departmentId/organisationId
+   * are NOT copied into canonical Recruitment.
+   */
   return removeNullish({
     id:
       cleanId(
         recruitment.id
+      ),
+
+    authorityId:
+      cleanId(
+        recruitment.authorityId
       ),
 
     examId:
@@ -5384,82 +6955,21 @@ function normalizeRecruitment(
         recruitment.examId
       ),
 
-    jobIds:
+    postIds:
       normalizeIdArray(
-        recruitment.jobIds ??
         recruitment.postIds
       ),
 
-    postIds:
-      normalizeIdArray(
-        recruitment.postIds ??
-        recruitment.jobIds
-      ),
-
-    serviceCadreId:
-      cleanId(
-        recruitment.serviceCadreId
-      ),
-
-    departmentId:
-      cleanId(
-        recruitment.departmentId
-      ),
-
-    organisationId:
-      cleanId(
-        recruitment.organisationId
-      ),
-
     mode:
-      normalizeRecruitmentMode(
+      normalizeRecruitmentEntityMode(
         recruitment.mode ??
         recruitment.recruitmentMode ??
         recruitment.recruitmentRoute
       ),
 
     status:
-      normalizeEnumIgnoreCase(
-        recruitment.status,
-        [
-          'OPEN',
-          'CLOSED',
-          'UNDER_PROCESS',
-          'RECENTLY_COMPLETED',
-          'EXPECTED_PERIODIC',
-          'IRREGULAR',
-          'HISTORICAL',
-          'CANCELLED',
-          'NOT_VERIFIED'
-        ],
-        null
-      ),
-
-    currentness:
-      normalizeCurrentness(
-        recruitment.currentness
-      ),
-
-    sourceIds:
-      normalizeIdArray(
-        recruitment.sourceIds
-      ),
-
-    confidence:
-      normalizeConfidence(
-        recruitment.confidence
-      ),
-
-    lastVerified:
-      normalizeDate(
-        recruitment.lastVerified ??
-        context.metadata?.lastVerified
-      ),
-
-    dataVersion:
-      cleanNullableString(
-        recruitment.dataVersion ??
-        context.metadata?.dataVersion
+      normalizeRecruitmentStatus(
+        recruitment.status
       ),
 
     notificationDate:
@@ -5485,9 +6995,177 @@ function normalizeRecruitment(
     resultDate:
       normalizeDate(
         recruitment.resultDate
+      ),
+
+    /*
+     * Recruitment schema allows integer OR string. The source may legitimately
+     * contain a numeric string, so keep the canonical value numeric when it is
+     * unambiguous and otherwise preserve a non-empty string.
+     */
+    vacancy:
+      normalizeRecruitmentVacancy(
+        recruitment.vacancy
+      ),
+
+    vacancyBreakdown:
+      normalizeRecruitmentVacancyBreakdown(
+        recruitment.vacancyBreakdown
+      ),
+
+    applicationUrl:
+      cleanNullableString(
+        recruitment.applicationUrl
+      ),
+
+    notificationUrl:
+      cleanNullableString(
+        recruitment.notificationUrl
+      ),
+
+    sourceIds:
+      normalizeIdArray(
+        recruitment.sourceIds
+      ),
+
+    currentness:
+      normalizeCurrentness(
+        recruitment.currentness
+      ),
+
+    confidence:
+      normalizeConfidence(
+        recruitment.confidence
+      ),
+
+    notes:
+      cleanNullableString(
+        recruitment.notes
+      ),
+
+    lastVerified:
+      normalizeDate(
+        recruitment.lastVerified ??
+        context.metadata?.lastVerified
+      ),
+
+    dataVersion:
+      cleanNullableString(
+        recruitment.dataVersion ??
+        context.metadata?.dataVersion
       )
   });
 }
+
+function normalizeRecruitmentVacancy(
+  value
+) {
+  if (
+    value === undefined ||
+    value === null ||
+    value === ''
+  ) {
+    return null;
+  }
+
+  if (
+    typeof value ===
+      'boolean'
+  ) {
+    return null;
+  }
+
+  if (
+    typeof value ===
+    'number'
+  ) {
+    return Number.isInteger(
+      value
+    ) &&
+    value >=
+      0
+      ? value
+      : null;
+  }
+
+  const text =
+    cleanString(
+      value,
+      ''
+    );
+
+  if (
+    /^\d+$/.test(
+      text
+    )
+  ) {
+    return Number(
+      text
+    );
+  }
+
+  return text || null;
+}
+
+function normalizeRecruitmentVacancyBreakdown(
+  value
+) {
+  if (
+    !isPlainObject(
+      value
+    )
+  ) {
+    return null;
+  }
+
+  const result =
+    {};
+
+  Object.entries(
+    value
+  ).forEach(
+    ([
+      key,
+      item
+    ]) => {
+      const normalizedKey =
+        cleanString(
+          key,
+          ''
+        );
+
+      if (
+        !normalizedKey
+      ) {
+        return;
+      }
+
+      const normalizedValue =
+        normalizeRecruitmentVacancy(
+          item
+        );
+
+      if (
+        normalizedValue !==
+          null
+      ) {
+        result[
+          normalizedKey
+        ] =
+          normalizedValue;
+      }
+    }
+  );
+
+  return Object.keys(
+    result
+  ).length
+    ? result
+    : null;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Profile metadata                                                           */
+/* -------------------------------------------------------------------------- */
 
 function normalizeProfileSourceMetadata(
   record,
@@ -5518,6 +7196,10 @@ function normalizeProfileSourceMetadata(
   };
 }
 
+/* -------------------------------------------------------------------------- */
+/* Pay                                                                        */
+/* -------------------------------------------------------------------------- */
+
 function normalizePay(
   pay,
   context = {}
@@ -5529,12 +7211,6 @@ function normalizePay(
   ) {
     return null;
   }
-
-  const metadata =
-    normalizeProfileSourceMetadata(
-      pay,
-      context
-    );
 
   return removeNullish({
     id:
@@ -5641,9 +7317,33 @@ function normalizePay(
         null
       ),
 
-    ...metadata
+    sourceIds:
+      normalizeIdArray(
+        pay.sourceIds
+      ),
+
+    confidence:
+      normalizeConfidence(
+        pay.confidence
+      ),
+
+    lastVerified:
+      normalizeDate(
+        pay.lastVerified ??
+        context.metadata?.lastVerified
+      ),
+
+    dataVersion:
+      cleanNullableString(
+        pay.dataVersion ??
+        context.metadata?.dataVersion
+      )
   });
 }
+
+/* -------------------------------------------------------------------------- */
+/* Location                                                                    */
+/* -------------------------------------------------------------------------- */
 
 function normalizeLocation(
   location,
@@ -5657,44 +7357,30 @@ function normalizeLocation(
     return null;
   }
 
-  const metadata =
-    normalizeProfileSourceMetadata(
-      location,
-      context
-    );
-
-  const rawType =
-    cleanString(
-      location.postingCategory ??
-      location.type,
-      ''
-    ).toUpperCase();
-
-  const postingCategory =
-    normalizeEnumIgnoreCase(
-      rawType,
-      [
-        'KOLKATA_CENTRIC',
-        'WEST_BENGAL_WIDE',
-        'DISTRICT_BASED',
-        'RURAL_HEAVY',
-        'URBAN_HEAVY',
-        'ALL_INDIA',
-        'DELHI_HEAVY',
-        'REMOTE',
-        'LOCATION_UNCERTAIN',
-        'NOT_VERIFIED'
-      ],
-      null
-    );
-
   return removeNullish({
     id:
       cleanId(
         location.id
       ),
 
-    postingCategory,
+    postingCategory:
+      normalizeEnumIgnoreCase(
+        location.postingCategory ??
+        location.type,
+        [
+          'KOLKATA_CENTRIC',
+          'WEST_BENGAL_WIDE',
+          'DISTRICT_BASED',
+          'RURAL_HEAVY',
+          'URBAN_HEAVY',
+          'ALL_INDIA',
+          'DELHI_HEAVY',
+          'REMOTE',
+          'LOCATION_UNCERTAIN',
+          'NOT_VERIFIED'
+        ],
+        null
+      ),
 
     stateIds:
       normalizeIdArray(
@@ -5792,9 +7478,33 @@ function normalizeLocation(
         location.notes
       ),
 
-    ...metadata
+    sourceIds:
+      normalizeIdArray(
+        location.sourceIds
+      ),
+
+    confidence:
+      normalizeConfidence(
+        location.confidence
+      ),
+
+    lastVerified:
+      normalizeDate(
+        location.lastVerified ??
+        context.metadata?.lastVerified
+      ),
+
+    dataVersion:
+      cleanNullableString(
+        location.dataVersion ??
+        context.metadata?.dataVersion
+      )
   });
 }
+
+/* -------------------------------------------------------------------------- */
+/* Housing                                                                     */
+/* -------------------------------------------------------------------------- */
 
 function normalizeHousing(
   housing,
@@ -5900,10 +7610,94 @@ function normalizeHousing(
         housing.notes
       ),
 
-    ...normalizeProfileSourceMetadata(
-      housing,
-      context
+    sourceIds:
+      normalizeIdArray(
+        housing.sourceIds
+      ),
+
+    confidence:
+      normalizeConfidence(
+        housing.confidence
+      ),
+
+    lastVerified:
+      normalizeDate(
+        housing.lastVerified ??
+        context.metadata?.lastVerified
+      ),
+
+    dataVersion:
+      cleanNullableString(
+        housing.dataVersion ??
+        context.metadata?.dataVersion
+      )
+  });
+}
+
+/* -------------------------------------------------------------------------- */
+/* Promotion                                                                   */
+/* -------------------------------------------------------------------------- */
+
+function normalizePromotionStep(
+  step
+) {
+  if (
+    !isPlainObject(
+      step
     )
+  ) {
+    return null;
+  }
+
+  return removeNullish({
+    order:
+      normalizeNumber(
+        step.order,
+        {
+          integer:
+            true,
+
+          min:
+            1
+        }
+      ),
+
+    designation:
+      normalizeLocalizedText(
+        step.designation
+      ),
+
+    minimumQualifyingService:
+      cleanNullableString(
+        step.minimumQualifyingService
+      ),
+
+    method:
+      normalizeStringArray(
+        step.method
+      ),
+
+    vacancyDependence:
+      normalizeOptionalBoolean(
+        step.vacancyDependence
+      ),
+
+    certainty:
+      normalizeEnumIgnoreCase(
+        step.certainty,
+        [
+          'RULE_DEFINED',
+          'VACANCY_DEPENDENT',
+          'PRACTICAL_UNCERTAINTY',
+          'NOT_VERIFIED'
+        ],
+        null
+      ),
+
+    notes:
+      cleanNullableString(
+        step.notes
+      )
   });
 }
 
@@ -5920,66 +7714,7 @@ function normalizePromotionSteps(
 
   return steps
     .map(
-      step => {
-        if (
-          !isPlainObject(
-            step
-          )
-        ) {
-          return null;
-        }
-
-        return removeNullish({
-          order:
-            normalizeNumber(
-              step.order,
-              {
-                integer:
-                  true,
-
-                min:
-                  1
-              }
-            ),
-
-          designation:
-            normalizeLocalizedText(
-              step.designation
-            ),
-
-          minimumQualifyingService:
-            cleanNullableString(
-              step.minimumQualifyingService
-            ),
-
-          method:
-            normalizeStringArray(
-              step.method
-            ),
-
-          vacancyDependence:
-            normalizeOptionalBoolean(
-              step.vacancyDependence
-            ),
-
-          certainty:
-            normalizeEnumIgnoreCase(
-              step.certainty,
-              [
-                'RULE_DEFINED',
-                'VACANCY_DEPENDENT',
-                'PRACTICAL_UNCERTAINTY',
-                'NOT_VERIFIED'
-              ],
-              null
-            ),
-
-          notes:
-            cleanNullableString(
-              step.notes
-            )
-        });
-      }
+      normalizePromotionStep
     )
     .filter(Boolean);
 }
@@ -6022,12 +7757,33 @@ function normalizePromotion(
         promotion.trainingRequirements
       ),
 
-    ...normalizeProfileSourceMetadata(
-      promotion,
-      context
-    )
+    sourceIds:
+      normalizeIdArray(
+        promotion.sourceIds
+      ),
+
+    confidence:
+      normalizeConfidence(
+        promotion.confidence
+      ),
+
+    lastVerified:
+      normalizeDate(
+        promotion.lastVerified ??
+        context.metadata?.lastVerified
+      ),
+
+    dataVersion:
+      cleanNullableString(
+        promotion.dataVersion ??
+        context.metadata?.dataVersion
+      )
   });
 }
+
+/* -------------------------------------------------------------------------- */
+/* Benefits                                                                    */
+/* -------------------------------------------------------------------------- */
 
 function normalizeBenefit(
   benefit,
@@ -6116,15 +7872,32 @@ function normalizeBenefit(
         benefit.appointmentDateConditions
       ),
 
-    ...normalizeProfileSourceMetadata(
-      benefit,
-      context
-    )
+    sourceIds:
+      normalizeIdArray(
+        benefit.sourceIds
+      ),
+
+    confidence:
+      normalizeConfidence(
+        benefit.confidence
+      ),
+
+    lastVerified:
+      normalizeDate(
+        benefit.lastVerified ??
+        context.metadata?.lastVerified
+      ),
+
+    dataVersion:
+      cleanNullableString(
+        benefit.dataVersion ??
+        context.metadata?.dataVersion
+      )
   });
 }
 
 /* -------------------------------------------------------------------------- */
-/* Common catalogues                                                          */
+/* Government / State / Qualification / Category                              */
 /* -------------------------------------------------------------------------- */
 
 function normalizeGovernment(
@@ -6154,15 +7927,7 @@ function normalizeGovernment(
     type:
       normalizeEnumIgnoreCase(
         government.type,
-        [
-          'CENTRAL',
-          'STATE',
-          'LOCAL',
-          'PSU',
-          'STATUTORY_BODY',
-          'AUTONOMOUS_BODY',
-          'OTHER'
-        ],
+        GOVERNMENT_TYPES,
         null
       ),
 
@@ -6216,6 +7981,17 @@ function normalizeState(
     return null;
   }
 
+  const typeFallback =
+    context.collectionKey ===
+      'unionTerritories'
+      ? 'UNION_TERRITORY'
+      : (
+          context.collectionKey ===
+            'states'
+            ? 'STATE'
+            : null
+        );
+
   return removeNullish({
     id:
       cleanId(
@@ -6231,20 +8007,17 @@ function normalizeState(
     type:
       normalizeEnumIgnoreCase(
         state.type,
-        [
-          'STATE',
-          'UNION_TERRITORY'
-        ],
-        context.collectionKey ===
-          'unionTerritories'
-          ? 'UNION_TERRITORY'
-          : (
-              context.collectionKey ===
-                'states'
-                ? 'STATE'
-                : null
-            )
+        STATE_TYPES,
+        typeFallback
       ),
+
+    capital:
+      state.capital ===
+        undefined
+        ? undefined
+        : normalizeLocalizedText(
+            state.capital
+          ),
 
     enabled:
       normalizeOptionalBoolean(
@@ -6263,14 +8036,6 @@ function normalizeState(
         ],
         null
       ),
-
-    capital:
-      state.capital ===
-        undefined
-        ? undefined
-        : normalizeLocalizedText(
-            state.capital
-          ),
 
     governmentId:
       cleanId(
@@ -6328,8 +8093,10 @@ function normalizeQualification(
       ),
 
     qualificationType:
-      cleanNullableString(
-        qualification.qualificationType
+      normalizeEnumIgnoreCase(
+        qualification.qualificationType,
+        QUALIFICATION_TYPES,
+        null
       ) ??
       QUALIFICATION_TYPE_BY_COLLECTION[
         context.collectionKey
@@ -6341,25 +8108,9 @@ function normalizeQualification(
         qualification.educationLevel
       ),
 
-    status:
+    degreeType:
       cleanNullableString(
-        qualification.status
-      ),
-
-    dataVersion:
-      cleanNullableString(
-        qualification.dataVersion ??
-        context.metadata?.dataVersion
-      ),
-
-    sourceIds:
-      normalizeIdArray(
-        qualification.sourceIds
-      ),
-
-    aliases:
-      normalizeStringArray(
-        qualification.aliases
+        qualification.degreeType
       ),
 
     subjectIds:
@@ -6367,9 +8118,72 @@ function normalizeQualification(
         qualification.subjectIds
       ),
 
+    specialisation:
+      cleanNullableString(
+        qualification.specialisation
+      ),
+
+    tradeId:
+      cleanId(
+        qualification.tradeId
+      ),
+
+    recognisingAuthority:
+      cleanNullableString(
+        qualification.recognisingAuthority
+      ),
+
+    registrationAuthority:
+      cleanNullableString(
+        qualification.registrationAuthority
+      ),
+
+    registrationRequired:
+      normalizeOptionalBoolean(
+        qualification.registrationRequired
+      ),
+
+    licenceType:
+      cleanNullableString(
+        qualification.licenceType
+      ),
+
+    minimumDuration:
+      cleanNullableString(
+        qualification.minimumDuration
+      ),
+
+    status:
+      normalizeEnumIgnoreCase(
+        qualification.status,
+        QUALIFICATION_STATUSES,
+        null
+      ),
+
+    isSpecialist:
+      normalizeOptionalBoolean(
+        qualification.isSpecialist
+      ),
+
+    aliases:
+      normalizeStringArray(
+        qualification.aliases
+      ),
+
+    sourceIds:
+      normalizeIdArray(
+        qualification.sourceIds
+      ),
+
     confidence:
       normalizeConfidence(
         qualification.confidence
+      ),
+
+    dataVersion:
+      cleanNullableString(
+        qualification.dataVersion ??
+        context.metadata?.dataVersion
       )
   });
 }
@@ -6418,6 +8232,114 @@ function normalizeCategory(
   });
 }
 
+/* -------------------------------------------------------------------------- */
+/* Source normalization                                                       */
+/* -------------------------------------------------------------------------- */
+
+function normalizeSourceDocumentType(
+  value
+) {
+  const direct =
+    normalizeEnumIgnoreCase(
+      value,
+      SOURCE_DOCUMENT_TYPE_VALUES,
+      null
+    );
+
+  if (
+    direct
+  ) {
+    return direct;
+  }
+
+  return (
+    SOURCE_DOCUMENT_TYPE_ALIASES[
+      cleanString(
+        value,
+        ''
+      )
+        .toUpperCase()
+        .replace(
+          /[-\s]+/g,
+          '_'
+        )
+    ] ||
+    null
+  );
+}
+
+function normalizeSourcePriority(
+  source
+) {
+  const explicit =
+    normalizeEnumIgnoreCase(
+      source.sourcePriority,
+      SOURCE_PRIORITY_VALUES,
+      null
+    );
+
+  if (
+    explicit
+  ) {
+    return explicit;
+  }
+
+  return {
+    OFFICIAL_CURRENT:
+      'PRIMARY_CURRENT',
+
+    OFFICIAL_HISTORICAL:
+      'PRIMARY_HISTORICAL',
+
+    OFFICIAL_RULE:
+      'OFFICIAL_GENERAL',
+
+    SECONDARY:
+      'SECONDARY'
+  }[
+    cleanString(
+      source.sourceType,
+      ''
+    ).toUpperCase()
+  ] || null;
+}
+
+function normalizeSourceCurrentness(
+  source
+) {
+  const explicit =
+    normalizeEnumIgnoreCase(
+      source.currentness,
+      SOURCE_CURRENTNESS_VALUES,
+      null
+    );
+
+  if (
+    explicit
+  ) {
+    return explicit;
+  }
+
+  return {
+    OFFICIAL_CURRENT:
+      'CURRENT',
+
+    OFFICIAL_HISTORICAL:
+      'HISTORICAL',
+
+    OFFICIAL_RULE:
+      'CURRENTNESS_UNCLEAR',
+
+    SECONDARY:
+      'CURRENTNESS_UNCLEAR'
+  }[
+    cleanString(
+      source.sourceType,
+      ''
+    ).toUpperCase()
+  ] || null;
+}
+
 function normalizeSource(
   source,
   context = {}
@@ -6430,103 +8352,43 @@ function normalizeSource(
     return null;
   }
 
+  /*
+   * Current repository source records use `relevance` as their source-claim
+   * list. The canonical schema calls this `supportedClaims`, so that explicit
+   * legacy alias is intentionally retained.
+   */
+  const supportedClaims =
+    normalizeNonEmptyStringArray(
+      source.supportedClaims ??
+      source.relevance
+    );
+
   return removeNullish({
     id:
       cleanId(
         source.id
       ),
 
-    name:
-      source.name ===
-        undefined
-        ? undefined
-        : normalizeLocalizedText(
-            source.name
-          ),
+    organisation:
+      cleanString(
+        source.organisation,
+        ''
+      ),
+
+    department:
+      cleanNullableString(
+        source.department
+      ),
 
     title:
-      source.title ===
-        undefined
-        ? undefined
-        : normalizeLocalizedText(
-            source.title
-          ),
-
-    url:
-      cleanNullableString(
-        source.url
+      cleanString(
+        source.title,
+        ''
       ),
 
-    type:
-      cleanNullableString(
-        source.type
-      ),
-
-    sourceTypeId:
-      cleanId(
-        source.sourceTypeId
-      ),
-
-    description:
-      source.description ===
-        undefined
-        ? undefined
-        : normalizeLocalizedText(
-            source.description
-          ),
-
-    status:
-      cleanNullableString(
-        source.status
-      ),
-
-    governmentId:
-      cleanId(
-        source.governmentId ??
-        context.governmentId ??
-        context.metadata?.governmentId
-      ),
-
-    stateId:
-      cleanId(
-        source.stateId ??
-        context.stateId ??
-        context.metadata?.stateId
-      ),
-
-    departmentId:
-      cleanId(
-        source.departmentId
-      ),
-
-    organisationId:
-      cleanId(
-        source.organisationId
-      ),
-
-    examIds:
-      normalizeIdArray(
-        source.examIds
-      ),
-
-    jobIds:
-      normalizeIdArray(
-        source.jobIds
-      ),
-
-    serviceCadreIds:
-      normalizeIdArray(
-        source.serviceCadreIds
-      ),
-
-    sourceIds:
-      normalizeIdArray(
-        source.sourceIds
-      ),
-
-    confidence:
-      normalizeConfidence(
-        source.confidence
+    documentType:
+      normalizeSourceDocumentType(
+        source.documentType
       ),
 
     publicationDate:
@@ -6534,10 +8396,43 @@ function normalizeSource(
         source.publicationDate
       ),
 
-    lastVerified:
+    verificationDate:
       normalizeDate(
+        source.verificationDate ??
         source.lastVerified ??
         context.metadata?.lastVerified
+      ),
+
+    url:
+      cleanNullableString(
+        source.url
+      ),
+
+    archiveUrl:
+      cleanNullableString(
+        source.archiveUrl
+      ),
+
+    sourcePriority:
+      normalizeSourcePriority(
+        source
+      ),
+
+    confidence:
+      normalizeConfidence(
+        source.confidence
+      ),
+
+    currentness:
+      normalizeSourceCurrentness(
+        source
+      ),
+
+    supportedClaims,
+
+    notes:
+      cleanNullableString(
+        source.notes
       ),
 
     dataVersion:
@@ -6548,14 +8443,12 @@ function normalizeSource(
   });
 }
 
-/*
- * statuses.json contains several independent namespaces. A vocabulary marker
- * is retained in runtime representation so identical IDs such as ACTIVE or
- * NOT_VERIFIED are not semantically conflated.
- */
+/* -------------------------------------------------------------------------- */
+/* Status / compatibility reference records                                  */
+/* -------------------------------------------------------------------------- */
+
 function normalizeStatus(
-  status,
-  context = {}
+  status
 ) {
   if (
     !isPlainObject(
@@ -6594,18 +8487,19 @@ function normalizeStatus(
     sourceIds:
       normalizeIdArray(
         status.sourceIds
-      ),
-
-    vocabulary:
-      context.collectionKey ||
-      null
+      )
   });
 }
 
-/* -------------------------------------------------------------------------- */
-/* Generic reference-like collections                                         */
-/* -------------------------------------------------------------------------- */
-
+/*
+ * Generic reference entities are intentionally retained for non-domain
+ * compatibility collections whose canonical schema/runtime contract is not
+ * one of the strict builders above.
+ *
+ * They are NOT used for Job, Exam, Service Cadre, Eligibility Rule,
+ * Recruitment, Profile, Government, State, Qualification, Organisation,
+ * Department or Source canonical objects.
+ */
 function normalizeReferenceEntity(
   record,
   context = {}
@@ -6766,115 +8660,16 @@ function normalizeGeneric(
 }
 
 /* -------------------------------------------------------------------------- */
-/* Cleanup/search compatibility                                               */
+/* Search compatibility utility                                               */
 /* -------------------------------------------------------------------------- */
 
-function removeNullish(
-  value
-) {
-  if (
-    !isPlainObject(
-      value
-    )
-  ) {
-    return value;
-  }
-
-  const result =
-    {};
-
-  Object.entries(
-    value
-  ).forEach(
-    ([
-      key,
-      child
-    ]) => {
-      if (
-        child ===
-          undefined ||
-        child ===
-          null
-      ) {
-        return;
-      }
-
-      if (
-        isPlainObject(
-          child
-        )
-      ) {
-        const nested =
-          removeNullish(
-            child
-          );
-
-        if (
-          Object.keys(
-            nested
-          ).length
-        ) {
-          result[
-            key
-          ] =
-            nested;
-        }
-
-        return;
-      }
-
-      if (
-        Array.isArray(
-          child
-        )
-      ) {
-        result[
-          key
-        ] =
-          child
-            .filter(
-              item =>
-                item !==
-                  null &&
-                item !==
-                  undefined
-            )
-            .map(
-              item =>
-                isPlainObject(
-                  item
-                )
-                  ? removeNullish(
-                      item
-                    )
-                  : item
-            );
-
-        return;
-      }
-
-      result[
-        key
-      ] =
-        child;
-    }
-  );
-
-  return result;
-}
-
-function removeNullishDeepArrays(
-  value
-) {
-  return removeNullish(
-    value
-  );
-}
-
 /*
- * Kept as a deterministic public utility for compatibility with older
- * callers. Search/index builders remain the intended consumers of canonical
- * search representation; normalizeJob does not inject searchText.
+ * Search indexing belongs to the search/index layer. This helper remains only
+ * for compatibility with existing callers and never injects searchText into
+ * canonical records.
+ *
+ * Objects are recursively flattened through values, preventing
+ * "[object Object]" contamination.
  */
 function buildSearchText(
   record,
@@ -6905,39 +8700,16 @@ function buildSearchText(
     .flat(Infinity)
     .filter(
       value =>
-        value !==
-          undefined &&
-        value !==
-          null
+        value !== undefined &&
+        value !== null
     )
     .map(
-      value => {
-        if (
-          typeof value ===
-          'object'
-        ) {
-          return Object.values(
-            value
-          )
-            .flat(Infinity)
-            .filter(
-              item =>
-                item !==
-                  undefined &&
-                item !==
-                  null
-            )
-            .map(
-              String
-            )
-            .join(' ');
-        }
-
-        return String(
+      value =>
+        flattenSearchValue(
           value
-        );
-      }
+        )
     )
+    .filter(Boolean)
     .join(' ')
     .replace(
       /\s+/g,
@@ -6946,8 +8718,63 @@ function buildSearchText(
     .trim();
 }
 
+function flattenSearchValue(
+  value
+) {
+  if (
+    typeof value ===
+    'string'
+  ) {
+    return cleanString(
+      value,
+      ''
+    );
+  }
+
+  if (
+    typeof value ===
+      'number' ||
+    typeof value ===
+      'boolean'
+  ) {
+    return String(
+      value
+    );
+  }
+
+  if (
+    Array.isArray(
+      value
+    )
+  ) {
+    return value
+      .map(
+        flattenSearchValue
+      )
+      .filter(Boolean)
+      .join(' ');
+  }
+
+  if (
+    isPlainObject(
+      value
+    )
+  ) {
+    return Object.values(
+      value
+    )
+      .map(
+        flattenSearchValue
+      )
+      .filter(Boolean)
+      .join(' ');
+  }
+
+  return '';
+}
+
 /* -------------------------------------------------------------------------- */
-/* Public normalization API                                                   */
+/* Public dispatcher                                                          */
 /* -------------------------------------------------------------------------- */
 
 function normalizeByType(
@@ -6971,14 +8798,15 @@ function normalizeByType(
   return extracted.records
     .map(
       entry => {
-        const recordContext = {
-          ...context,
+        const recordContext =
+          {
+            ...context,
 
-          metadata,
+            metadata,
 
-          collectionKey:
-            entry.collectionKey
-        };
+            collectionKey:
+              entry.collectionKey
+          };
 
         switch (
           context.entityType
@@ -7143,22 +8971,20 @@ function normalizeCollection(
     ENTITY_TYPES.UNKNOWN,
   context = {}
 ) {
-  const mergedContext = {
-    ...normalizeContext(
-      entityType
-    ),
-
-    ...context
-  };
-
   return normalizeByType(
     data,
-    mergedContext
+    {
+      ...normalizeContext(
+        entityType
+      ),
+
+      ...context
+    }
   );
 }
 
 /* -------------------------------------------------------------------------- */
-/* Exports                                                                   */
+/* Exports                                                                    */
 /* -------------------------------------------------------------------------- */
 
 export {
@@ -7180,6 +9006,8 @@ export {
 
   normalizeLocalizedText,
 
+  normalizePlainString,
+
   normalizeDate,
 
   normalizeNumber,
@@ -7190,13 +9018,17 @@ export {
 
   normalizeIdArray,
 
-  normalizeSources,
+  normalizeNonEmptyStringArray,
 
-  normalizeRequirements,
+  normalizeNonEmptyIdArray,
+
+  normalizeSources,
 
   normalizeSourceReference,
 
   normalizeRequirement,
+
+  normalizeRequirements,
 
   normalizeRecord,
 
@@ -7241,6 +9073,8 @@ export {
   normalizeCategory,
 
   normalizeSource,
+
+  normalizeStatus,
 
   normalizeGeneric,
 
