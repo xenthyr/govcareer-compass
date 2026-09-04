@@ -503,11 +503,13 @@ function updateScoreBar(
 
   const nextMax =
     max ??
-    Number(
-      element.dataset
-        .scoreMax
-    ) ||
-    DEFAULT_MAX;
+    (
+      Number(
+        element.dataset
+          .scoreMax
+      ) ||
+      DEFAULT_MAX
+    );
 
   const nextMode =
     normalizeMode(
