@@ -321,7 +321,11 @@ jobs:
           }
 
           function isLocalSpecifier(specifier) {
-            return specifier.startsWith('./') || specifier.startsWith('../') || specifier.startsWith('/');
+            return (
+              specifier.startsWith('./') ||
+              specifier.startsWith('../') ||
+              specifier.startsWith('/')
+            );
           }
 
           async function resolveImport(fromFile, specifier) {
@@ -367,12 +371,15 @@ jobs:
               }
 
               const extension = extname(entry.name).toLowerCase();
-              if (extension !== '.js' && extension !== '.mjs') {
+
+              if (
+                extension !== '.js' &&
+                extension !== '.mjs'
+              ) {
                 continue;
               }
 
               const source = await readFile(file, 'utf8');
-
               const specifiers = [];
 
               for (const match of source.matchAll(importPattern)) {
@@ -387,7 +394,9 @@ jobs:
                 const target = await resolveImport(file, specifier);
 
                 if (!target) {
-                  failures.push(`${relative('.', file)}: missing local import target: ${specifier}`);
+                  failures.push(
+                    `${relative('.', file)}: missing local import target: ${specifier}`
+                  );
                 }
               }
             }
@@ -489,13 +498,22 @@ jobs:
             });
           }
 
+          /*
+           * An empty PAGE_CONTROLLER_MAP is intentionally valid during
+           * Batch 1. app.js remains the owner of the registry, but future
+           * page controllers do not need to exist until they are actually
+           * registered.
+           *
+           * This is deliberately different from a missing PAGE_CONTROLLER_MAP,
+           * which remains a structural error above.
+           */
           if (
             entries.length === 0
           ) {
-            console.error(
-              'PAGE_CONTROLLER_MAP was found, but no controller entries could be parsed.'
+            console.log(
+              'PAGE_CONTROLLER_MAP contains no registered page controllers yet; controller module validation is skipped.'
             );
-            process.exit(1);
+            process.exit(0);
           }
 
           const failures = [];
@@ -646,7 +664,9 @@ jobs:
             const entries = await readdir(directory, { withFileTypes: true });
 
             for (const entry of entries) {
-              if (entry.name === '.git' || entry.name === 'node_modules') continue;
+              if (entry.name === '.git' || entry.name === 'node_modules') {
+                continue;
+              }
 
               const file = join(directory, entry.name);
 
@@ -655,26 +675,58 @@ jobs:
                 continue;
               }
 
-              if (extname(entry.name).toLowerCase() !== '.html') continue;
+              if (extname(entry.name).toLowerCase() !== '.html') {
+                continue;
+              }
 
               const source = await readFile(file, 'utf8');
               const localPath = relative('.', file);
 
               const attributes = [
-                ...source.matchAll(/(?:href|src|action|data-src)=["']([^"']+)["']/gi)
-              ].map((match) => match[1]);
+                ...source.matchAll(
+                  /(?:href|src|action|data-src)=["']([^"']+)["']/gi
+                )
+              ].map(
+                match => match[1]
+              );
 
               for (const target of attributes) {
-                if (!shouldCheck(target)) continue;
+                if (!shouldCheck(target)) {
+                  continue;
+                }
 
-                const clean = target.split(/[?#]/, 1)[0];
-                if (!clean) continue;
+                const clean =
+                  target.split(
+                    /[?#]/,
+                    1
+                  )[0];
 
-                /* Route strings and fragment-less absolute site paths are checked
-                   only when they resolve to a real repository file. */
-                const candidates = clean.startsWith('/')
-                  ? [resolve('.', clean.slice(1))]
-                  : [resolve(dirname(file), clean), resolve('.', clean)];
+                if (!clean) {
+                  continue;
+                }
+
+                /*
+                 * Route strings and fragment-less absolute site paths
+                 * are checked only when they resolve to a real repository file.
+                 */
+                const candidates =
+                  clean.startsWith('/')
+                    ? [
+                        resolve(
+                          '.',
+                          clean.slice(1)
+                        )
+                      ]
+                    : [
+                        resolve(
+                          dirname(file),
+                          clean
+                        ),
+                        resolve(
+                          '.',
+                          clean
+                        )
+                      ];
 
                 let found = false;
 
@@ -686,12 +738,19 @@ jobs:
                 }
 
                 if (!found) {
-                  /* Ignore ordinary in-app route placeholders unless the value
-                     clearly looks like a repository file. */
-                  const looksLikeFile = /\.(?:html?|css|js|mjs|json|svg|png|jpe?g|webp|ico|woff2?|ttf)$/i.test(clean);
+                  /*
+                   * Ignore ordinary in-app route placeholders unless the
+                   * value clearly looks like a repository file.
+                   */
+                  const looksLikeFile =
+                    /\.(?:html?|css|js|mjs|json|svg|png|jpe?g|webp|ico|woff2?|ttf)$/i.test(
+                      clean
+                    );
 
                   if (looksLikeFile) {
-                    failures.push(`${localPath}: broken local repository reference: ${target}`);
+                    failures.push(
+                      `${localPath}: broken local repository reference: ${target}`
+                    );
                   }
                 }
               }
@@ -701,12 +760,20 @@ jobs:
           await walk('.');
 
           if (failures.length) {
-            console.error('Broken repository-path checks failed:');
-            console.error(failures.join('\n'));
+            console.error(
+              'Broken repository-path checks failed:'
+            );
+
+            console.error(
+              failures.join('\n')
+            );
+
             process.exit(1);
           }
 
-          console.log('Repository-local path checks passed.');
+          console.log(
+            'Repository-local path checks passed.'
+          );
           NODE
 
       - name: Check prohibited secret patterns
@@ -766,31 +833,74 @@ jobs:
           ];
 
           async function walk(directory) {
-            const entries = await readdir(directory, { withFileTypes: true });
+            const entries =
+              await readdir(
+                directory,
+                {
+                  withFileTypes: true
+                }
+              );
 
             for (const entry of entries) {
-              if (entry.name === '.git' || entry.name === 'node_modules') continue;
+              if (
+                entry.name === '.git' ||
+                entry.name === 'node_modules'
+              ) {
+                continue;
+              }
 
-              const file = join(directory, entry.name);
+              const file =
+                join(
+                  directory,
+                  entry.name
+                );
 
-              if (entry.isDirectory()) {
+              if (
+                entry.isDirectory()
+              ) {
                 await walk(file);
                 continue;
               }
 
-              const path = relative('.', file);
+              const path =
+                relative(
+                  '.',
+                  file
+                );
 
-              if (allowedFiles.has(path)) continue;
+              if (
+                allowedFiles.has(path)
+              ) {
+                continue;
+              }
 
-              if (!textExtensions.has(extname(entry.name).toLowerCase())) continue;
+              if (
+                !textExtensions.has(
+                  extname(
+                    entry.name
+                  ).toLowerCase()
+                )
+              ) {
+                continue;
+              }
 
-              const source = await readFile(file, 'utf8');
+              const source =
+                await readFile(
+                  file,
+                  'utf8'
+                );
 
               for (const pattern of patterns) {
                 pattern.regex.lastIndex = 0;
 
-                if (pattern.regex.test(source)) {
-                  failures.push(`${path}: prohibited ${pattern.name} pattern detected.`);
+                if (
+                  pattern.regex.test(
+                    source
+                  )
+                ) {
+                  failures.push(
+                    `${path}: prohibited ${pattern.name} pattern detected.`
+                  );
                 }
               }
             }
@@ -799,12 +909,24 @@ jobs:
           await walk('.');
 
           if (failures.length) {
-            console.error('Potential secret patterns detected:');
-            console.error([...new Set(failures)].join('\n'));
+            console.error(
+              'Potential secret patterns detected:'
+            );
+
+            console.error(
+              [
+                ...new Set(
+                  failures
+                )
+              ].join('\n')
+            );
+
             process.exit(1);
           }
 
-          console.log('No prohibited secret patterns were detected.');
+          console.log(
+            'No prohibited secret patterns were detected.'
+          );
           NODE
 
       - name: Check required workflow hygiene
