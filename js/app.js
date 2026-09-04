@@ -18,7 +18,7 @@
  *        ↓
  *   Shared UI components
  *        ↓
- *   Database/page controller
+ *   Optional page controller
  *
  * IMPORTANT:
  *   This file coordinates systems.
@@ -33,7 +33,7 @@
  *
  * GLOBAL AI:
  *
- *   CompassAI is initialized through the canonical shared-component
+ *   Compass AI is initialized through the canonical shared-component
  *   layer using initializeCompassAI().
  *
  * PAGE CONTROLLERS:
@@ -41,8 +41,11 @@
  *   PAGE_CONTROLLER_MAP and PAGE_CONTROLLER_CONTRACT together define
  *   the explicit application-level controller dependency surface.
  *
- *   The physical controller modules represented here are expected to
- *   be verified by repository CI / Batch-1 implementation checks.
+ *   During Batch 1, no page controllers are registered because the
+ *   corresponding physical controller modules are not yet implemented.
+ *
+ *   Future batches may register controllers here once those modules
+ *   genuinely exist in the repository.
  */
 
 import config from './config.js';
@@ -490,6 +493,7 @@ function initializeAccessibility() {
     'function'
   ) {
     mediaQuery.addListener(
+      'change',
       applyPreference
     );
   }
@@ -738,10 +742,18 @@ function initializeSharedComponents() {
  *
  * PAGE_CONTROLLER_CONTRACT:
  *   Explicit dependency declaration for verification tooling,
- *   Batch-1 implementation and architectural documentation.
+ *   future implementation batches and architectural documentation.
  *
- * Every declared module is expected to:
- *   1. exist at the exact path below;
+ * Batch 1:
+ *   No page controllers are registered because the physical
+ *   controller modules have not yet been implemented.
+ *
+ * Future batches:
+ *   Controllers may be added only when their modules genuinely
+ *   exist in the repository and conform to the initializer contract.
+ *
+ * Every registered module is expected to:
+ *   1. exist at the exact declared path;
  *   2. be an ES module;
  *   3. export initialize(), init(), or a default function;
  *   4. tolerate receiving the standard controller context.
@@ -755,70 +767,7 @@ function initializeSharedComponents() {
  */
 
 const PAGE_CONTROLLER_MAP =
-  Object.freeze({
-    home:
-      './pages/home.js',
-
-    'career-finder':
-      './pages/career-finder.js',
-
-    'career-results':
-      './pages/results.js',
-
-    jobs:
-      './pages/jobs.js',
-
-    'job-details':
-      './pages/job-details.js',
-
-    exams:
-      './pages/exams.js',
-
-    'exam-details':
-      './pages/exam-details.js',
-
-    compare:
-      './pages/comparison.js',
-
-    rankings:
-      './pages/rankings.js',
-
-    salary:
-      './pages/salary.js',
-
-    eligibility:
-      './pages/eligibility.js',
-
-    family:
-      './pages/family.js',
-
-    parents:
-      './pages/parents.js',
-
-    location:
-      './pages/location.js',
-
-    housing:
-      './pages/housing.js',
-
-    preparation:
-      './pages/preparation.js',
-
-    'confusion-center':
-      './pages/confusion-center.js',
-
-    states:
-      './pages/states.js',
-
-    sources:
-      './pages/sources.js',
-
-    glossary:
-      './pages/glossary.js',
-
-    methodology:
-      './pages/methodology.js'
-  });
+  Object.freeze({});
 
 
 /*
@@ -827,6 +776,9 @@ const PAGE_CONTROLLER_MAP =
  * Keeping this alongside the map avoids maintaining a second
  * source for module paths while still making the contract explicit
  * to repository validation / CI tooling.
+ *
+ * With no currently implemented page controllers this array is empty.
+ * Future registrations will automatically appear here from the map.
  */
 const PAGE_CONTROLLER_CONTRACT =
   Object.freeze(
@@ -861,6 +813,8 @@ const PAGE_CONTROLLER_CONTRACT =
  *
  * This does NOT pretend to verify filesystem existence in the browser.
  * Physical file existence remains a CI / repository-contract concern.
+ *
+ * An empty controller contract is valid during Batch 1.
  */
 function validatePageControllerContract() {
   const errors = [];
@@ -994,11 +948,14 @@ async function initializePageController(
     ];
 
   /*
-   * Pages such as AI, About and Privacy may initially be
-   * static content pages without a JavaScript controller.
+   * Pages without a registered controller are valid.
    *
-   * This is an explicit architectural state, not a failed
-   * dynamic import.
+   * This includes the Batch-1 shell, where no page controller
+   * modules have yet been implemented.
+   *
+   * A missing registration is therefore not treated as an error.
+   * Once a controller is registered, its actual module loading
+   * and initializer contract are enforced below.
    */
   if (
     !modulePath
@@ -1157,6 +1114,8 @@ async function initializeApplication() {
      *
      * This checks the application's declaration itself.
      * CI remains responsible for verifying physical module presence.
+     *
+     * An empty map is a valid Batch-1 state.
      */
     const pageControllerContract =
       validatePageControllerContract();
