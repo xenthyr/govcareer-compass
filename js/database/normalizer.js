@@ -1,5 +1,3 @@
-// COMPLETE FINAL NORMALIZER
-
 /**
  * GovCareer Compass
  * Canonical Database Normalizer
@@ -7,28 +5,31 @@
  * Purpose:
  * - normalize structurally equivalent source representations;
  * - preserve canonical information and legitimate source metadata;
- * - build predictable canonical runtime shapes from supported legacy/source forms;
- * - keep unresolved factual relationships unresolved for validation/migration.
+ * - build predictable canonical runtime entities;
+ * - keep genuinely unresolved factual relationships unresolved.
  *
  * Architectural boundary:
- * - the loader loads data and controls IO/cache behaviour;
+ * - the loader owns loading, fetching and caching;
  * - this module canonicalizes already-loaded values only;
- * - the validator decides whether the resulting runtime representation is valid;
+ * - the validator decides whether the canonical runtime database is valid;
  * - the eligibility engine, not this module, determines candidate eligibility.
  *
  * IMPORTANT:
- * - normalization does not determine eligibility;
+ * - normalization does not determine candidate eligibility;
  * - normalization does not create government facts;
- * - relational IDs are preserved, not fabricated;
- * - dataset envelopes are interpreted explicitly and entity-by-entity;
- * - missing factual relationships remain absent rather than being filled with
- *   UNKNOWN, arbitrary defaults, guessed profile IDs, or name-based matches.
+ * - relational IDs are preserved and never fabricated;
+ * - dataset envelopes are extracted explicitly by entity type;
+ * - missing factual relationships remain missing for validation/migration;
+ * - `baEligibility` / `baEnglishEligibility` is compatibility/research data,
+ *   not an eligibility-engine authority;
+ * - normalization never performs network or filesystem operations.
  */
 
 const UNKNOWN = 'UNKNOWN';
 
 const ENTITY_TYPES = Object.freeze({
-  UNKNOWN: 'UNKNOWN',
+  UNKNOWN:
+    'UNKNOWN',
 
   JOB:
     'JOB',
@@ -79,156 +80,182 @@ const ENTITY_TYPES = Object.freeze({
     'QUALIFICATION',
 
   CATEGORY:
-    'CATEGORY'
+    'CATEGORY',
+
+  STATUS:
+    'STATUS'
 });
 
+/*
+ * Wrapper names are deliberately entity-specific. This prevents a common
+ * catalogue such as qualifications.json from returning whichever array happens
+ * to occur first in the file.
+ */
 const COLLECTION_WRAPPERS = Object.freeze({
-  JOB: Object.freeze([
-    'jobs',
-    'records',
-    'data',
-    'items'
-  ]),
+  JOB:
+    Object.freeze([
+      'jobs',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  EXAM: Object.freeze([
-    'exams',
-    'records',
-    'data',
-    'items'
-  ]),
+  EXAM:
+    Object.freeze([
+      'exams',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  DEPARTMENT: Object.freeze([
-    'departments',
-    'records',
-    'data',
-    'items'
-  ]),
+  DEPARTMENT:
+    Object.freeze([
+      'departments',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  ORGANISATION: Object.freeze([
-    'organisations',
-    'organizations',
-    'records',
-    'data',
-    'items'
-  ]),
+  ORGANISATION:
+    Object.freeze([
+      'organisations',
+      'organizations',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  SERVICE_CADRE: Object.freeze([
-    'serviceCadres',
-    'records',
-    'data',
-    'items'
-  ]),
+  SERVICE_CADRE:
+    Object.freeze([
+      'serviceCadres',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  ELIGIBILITY_RULE: Object.freeze([
-    'eligibilityRules',
-    'records',
-    'data',
-    'items'
-  ]),
+  ELIGIBILITY_RULE:
+    Object.freeze([
+      'eligibilityRules',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  RECRUITMENT: Object.freeze([
-    'recruitments',
-    'records',
-    'data',
-    'items'
-  ]),
+  RECRUITMENT:
+    Object.freeze([
+      'recruitments',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  PAY: Object.freeze([
-    'payStructures',
-    'payProfiles',
-    'records',
-    'data',
-    'items'
-  ]),
+  PAY:
+    Object.freeze([
+      'payStructures',
+      'payProfiles',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  LOCATION: Object.freeze([
-    'locations',
-    'locationProfiles',
-    'records',
-    'data',
-    'items'
-  ]),
+  LOCATION:
+    Object.freeze([
+      'locations',
+      'locationProfiles',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  HOUSING: Object.freeze([
-    'housingProfiles',
-    'housing',
-    'records',
-    'data',
-    'items'
-  ]),
+  HOUSING:
+    Object.freeze([
+      'housingProfiles',
+      'housing',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  PROMOTION: Object.freeze([
-    'promotionProfiles',
-    'promotion',
-    'records',
-    'data',
-    'items'
-  ]),
+  PROMOTION:
+    Object.freeze([
+      'promotionProfiles',
+      'promotion',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  BENEFIT: Object.freeze([
-    'benefitsProfiles',
-    'benefitProfiles',
-    'benefits',
-    'records',
-    'data',
-    'items'
-  ]),
+  BENEFIT:
+    Object.freeze([
+      'benefitsProfiles',
+      'benefitProfiles',
+      'benefits',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  SOURCE: Object.freeze([
-    'sources',
-    'records',
-    'data',
-    'items'
-  ]),
+  SOURCE:
+    Object.freeze([
+      'sources',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  GOVERNMENT: Object.freeze([
-    'governments',
-    'records',
-    'data',
-    'items'
-  ]),
+  GOVERNMENT:
+    Object.freeze([
+      'governments',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  STATE: Object.freeze([
-    'states',
-    'unionTerritories',
-    'records',
-    'data',
-    'items'
-  ]),
+  STATE:
+    Object.freeze([
+      'states',
+      'unionTerritories',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  QUALIFICATION: Object.freeze([
-    'academicQualifications',
-    'teacherEducationQualifications',
-    'technicalQualifications',
-    'computerQualifications',
-    'lawQualifications',
-    'medicalQualifications',
-    'nursingQualifications',
-    'pharmacyQualifications',
-    'engineeringQualifications',
-    'agricultureQualifications',
-    'paramedicalQualifications',
-    'qualifications',
-    'records',
-    'data',
-    'items'
-  ]),
+  QUALIFICATION:
+    Object.freeze([
+      'academicQualifications',
+      'teacherEducationQualifications',
+      'technicalQualifications',
+      'computerQualifications',
+      'lawQualifications',
+      'medicalQualifications',
+      'nursingQualifications',
+      'pharmacyQualifications',
+      'engineeringQualifications',
+      'agricultureQualifications',
+      'paramedicalQualifications',
+      'qualifications',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  CATEGORY: Object.freeze([
-    'categories',
-    'records',
-    'data',
-    'items'
-  ]),
+  CATEGORY:
+    Object.freeze([
+      'categories',
+      'records',
+      'data',
+      'items'
+    ]),
 
-  STATUS: Object.freeze([
-    'careerStatuses',
-    'recruitmentStatuses',
-    'recruitmentModes',
-    'coverageStatuses',
-    'dataStatuses',
-    'sourceCurrentnessStatuses'
-  ])
+  STATUS:
+    Object.freeze([
+      'careerStatuses',
+      'recruitmentStatuses',
+      'recruitmentModes',
+      'coverageStatuses',
+      'dataStatuses',
+      'sourceCurrentnessStatuses'
+    ])
 });
 
 const ENVELOPE_METADATA_KEYS = Object.freeze([
@@ -293,6 +320,19 @@ const LAST_VERIFIED_TYPES = Object.freeze(
   ])
 );
 
+const JOB_EDUCATION_LEVELS = Object.freeze([
+  'CLASS_8',
+  'CLASS_10',
+  'CLASS_12',
+  'DIPLOMA',
+  'ITI',
+  'GRADUATE',
+  'POSTGRADUATE',
+  'DOCTORATE',
+  'PROFESSIONAL',
+  'OTHER'
+]);
+
 const SCORE_FIELDS = Object.freeze([
   'familyCompatibilityBase',
   'parentCareCompatibilityBase',
@@ -313,6 +353,27 @@ const SCORE_FIELDS = Object.freeze([
   'familyCompatibility',
   'parentCareCompatibility',
   'physicalSafety'
+]);
+
+const LIFESTYLE_SCORE_FIELDS = Object.freeze([
+  'publicInteractionScore',
+  'computerWorkScore',
+  'legalWorkScore',
+  'accountsWorkScore',
+  'investigationScore',
+  'inspectionScore',
+  'supervisionScore',
+  'workLifeScore',
+  'predictabilityScore',
+  'stressBurden',
+  'riskBurden',
+  'nightDutyBurden',
+  'shiftDutyBurden',
+  'holidayDutyBurden',
+  'emergencyDutyBurden',
+  'travelBurden',
+  'courtDutyBurden',
+  'uniformScore'
 ]);
 
 const CANONICAL_SERVICE_TYPES = Object.freeze([
@@ -336,9 +397,8 @@ const CANONICAL_SERVICE_TYPES = Object.freeze([
 ]);
 
 /*
- * These mappings are deliberately narrow. They translate a serviceNature
- * value already present in the repository into the canonical service type
- * enum only when the semantic correspondence is explicit.
+ * These are exact semantic mappings from source serviceNature values that
+ * exist in the repository. They are not name-based guesses.
  */
 const SERVICE_TYPE_BY_NATURE = Object.freeze({
   ADMINISTRATIVE:
@@ -389,19 +449,6 @@ const SERVICE_TYPE_BY_NATURE = Object.freeze({
   SECURITY:
     'SECURITY_SERVICE'
 });
-
-const JOB_EDUCATION_LEVELS = Object.freeze([
-  'CLASS_8',
-  'CLASS_10',
-  'CLASS_12',
-  'DIPLOMA',
-  'ITI',
-  'GRADUATE',
-  'POSTGRADUATE',
-  'DOCTORATE',
-  'PROFESSIONAL',
-  'OTHER'
-]);
 
 const ELIGIBILITY_RULE_CONDITION_TYPES =
   Object.freeze([
@@ -457,12 +504,115 @@ const ELIGIBILITY_RULE_CONDITION_TYPES =
     'OTHER'
   ]);
 
+const RECRUITMENT_MODES = Object.freeze([
+  'DIRECT_RECRUITMENT',
+  'PROMOTION',
+  'DEPUTATION',
+  'TRANSFER',
+  'CONTRACT',
+  'TEMPORARY',
+  'SCHEME_PROJECT',
+  'OUTSOURCED',
+  'ABSORPTION',
+  'LATERAL_ENTRY',
+  'DEPARTMENTAL',
+  'OTHER'
+]);
+
+const CAREER_STATUSES = Object.freeze([
+  'ACTIVE_CAREER',
+  'HISTORICAL',
+  'ABOLISHED',
+  'REPLACED',
+  'SUPERSEDED',
+  'NOT_VERIFIED',
+  'UNKNOWN'
+]);
+
+const CURRENTNESS_VALUES = Object.freeze([
+  'CURRENT',
+  'HISTORICAL',
+  'CURRENT_WITH_HISTORICAL_SUPPORT',
+  'CURRENTNESS_UNCLEAR',
+  'REPLACED',
+  'ABOLISHED',
+  'NOT_VERIFIED'
+]);
+
+const CONFIDENCE_VALUES = Object.freeze([
+  'HIGH',
+  'MEDIUM_HIGH',
+  'MEDIUM',
+  'LOW',
+  'ESTIMATE',
+  'NOT_VERIFIED'
+]);
+
+const QUALIFICATION_TYPES = Object.freeze([
+  'ACADEMIC',
+  'PROFESSIONAL',
+  'TECHNICAL',
+  'TEACHER_EDUCATION',
+  'MEDICAL',
+  'NURSING',
+  'PHARMACY',
+  'LAW',
+  'COMPUTER_IT',
+  'ENGINEERING',
+  'AGRICULTURE',
+  'PARAMEDICAL',
+  'TRADE',
+  'LICENCE',
+  'REGISTRATION',
+  'CERTIFICATION',
+  'OTHER'
+]);
+
+const QUALIFICATION_COLLECTION_TYPES = Object.freeze({
+  academicQualifications:
+    'ACADEMIC',
+
+  teacherEducationQualifications:
+    'TEACHER_EDUCATION',
+
+  technicalQualifications:
+    'TECHNICAL',
+
+  computerQualifications:
+    'COMPUTER_IT',
+
+  lawQualifications:
+    'LAW',
+
+  medicalQualifications:
+    'MEDICAL',
+
+  nursingQualifications:
+    'NURSING',
+
+  pharmacyQualifications:
+    'PHARMACY',
+
+  engineeringQualifications:
+    'ENGINEERING',
+
+  agricultureQualifications:
+    'AGRICULTURE',
+
+  paramedicalQualifications:
+    'PARAMEDICAL',
+
+  qualifications:
+    null
+});
+
 function isPlainObject(
   value
 ) {
   if (
     value === null ||
-    typeof value !== 'object'
+    typeof value !==
+      'object'
   ) {
     return false;
   }
@@ -473,7 +623,8 @@ function isPlainObject(
     );
 
   return (
-    prototype === Object.prototype ||
+    prototype ===
+      Object.prototype ||
     prototype === null
   );
 }
@@ -540,9 +691,11 @@ function cleanArray(
     )
   ) {
     return value.filter(
-      (item) =>
-        item !== undefined &&
-        item !== null
+      item =>
+        item !==
+          undefined &&
+        item !==
+          null
     );
   }
 
@@ -552,9 +705,8 @@ function cleanArray(
 }
 
 /*
- * Object-property order should not determine whether two structured values
- * are considered identical. Array order is preserved because it can be
- * semantically meaningful for rule sequences and other ordered structures.
+ * Object-property order must not determine whether two structured values are
+ * identical. Array order is deliberately retained.
  */
 function stableSerialize(
   value
@@ -581,7 +733,7 @@ function stableSerialize(
     )
       .sort()
       .map(
-        (key) =>
+        key =>
           `${JSON.stringify(
             key
           )}:${stableSerialize(
@@ -613,7 +765,7 @@ function uniqueArray(
     [];
 
   items.forEach(
-    (item) => {
+    item => {
       const key =
         stableSerialize(
           item
@@ -874,6 +1026,42 @@ function normalizeBoolean(
   return fallback;
 }
 
+/*
+ * Unlike normalizeBoolean(), this returns null when the source did not provide
+ * a recognized boolean representation. That prevents unknown from becoming
+ * false merely because a property is required by the canonical model.
+ */
+function normalizeOptionalBoolean(
+  value
+) {
+  if (
+    typeof value ===
+    'boolean'
+  ) {
+    return value;
+  }
+
+  if (
+    value === 'true' ||
+    value === 'TRUE' ||
+    value === 1 ||
+    value === '1'
+  ) {
+    return true;
+  }
+
+  if (
+    value === 'false' ||
+    value === 'FALSE' ||
+    value === 0 ||
+    value === '0'
+  ) {
+    return false;
+  }
+
+  return null;
+}
+
 function normalizeEnum(
   value,
   allowedValues,
@@ -896,14 +1084,27 @@ function normalizeEnum(
   return fallback;
 }
 
-function normalizeStringEnumOrNull(
+function normalizeEnumIgnoreCase(
   value,
-  allowedValues
+  allowedValues,
+  fallback = null
 ) {
-  return normalizeEnum(
-    value,
-    allowedValues,
-    null
+  const normalized =
+    cleanString(
+      value,
+      ''
+    ).toUpperCase();
+
+  const match =
+    allowedValues.find(
+      item =>
+        item.toUpperCase() ===
+        normalized
+    );
+
+  return (
+    match ||
+    fallback
   );
 }
 
@@ -915,14 +1116,12 @@ function normalizeIdArray(
       value
     )
       .map(
-        (item) =>
+        item =>
           cleanId(
             item
           )
       )
-      .filter(
-        Boolean
-      )
+      .filter(Boolean)
   );
 }
 
@@ -933,12 +1132,16 @@ function normalizeSourceReference(
     typeof source ===
     'string'
   ) {
-    return {
-      sourceId:
-        cleanId(
-          source
-        )
-    };
+    const sourceId =
+      cleanId(
+        source
+      );
+
+    return sourceId
+      ? {
+          sourceId
+        }
+      : null;
   }
 
   if (
@@ -949,12 +1152,20 @@ function normalizeSourceReference(
     return null;
   }
 
+  const sourceId =
+    cleanId(
+      source.sourceId ??
+      source.id
+    );
+
+  if (
+    !sourceId
+  ) {
+    return null;
+  }
+
   const normalized = {
-    sourceId:
-      cleanId(
-        source.sourceId ??
-        source.id
-      )
+    sourceId
   };
 
   const note =
@@ -962,7 +1173,9 @@ function normalizeSourceReference(
       source.note
     );
 
-  if (note) {
+  if (
+    note
+  ) {
     normalized.note =
       note;
   }
@@ -972,7 +1185,9 @@ function normalizeSourceReference(
       source.claim
     );
 
-  if (claim) {
+  if (
+    claim
+  ) {
     normalized.claim =
       claim;
   }
@@ -990,10 +1205,7 @@ function normalizeSources(
       .map(
         normalizeSourceReference
       )
-      .filter(
-        (item) =>
-          item?.sourceId
-      )
+      .filter(Boolean)
   );
 }
 
@@ -1005,12 +1217,17 @@ function normalizeRequirement(
     'string'
   ) {
     return {
-      id: null,
+      id:
+        null,
+
       type:
         'UNSPECIFIED',
+
       value:
         requirement,
-      hard: true
+
+      hard:
+        true
     };
   }
 
@@ -1060,9 +1277,7 @@ function normalizeRequirements(
     .map(
       normalizeRequirement
     )
-    .filter(
-      Boolean
-    );
+    .filter(Boolean);
 }
 
 function normalizeEntityType(
@@ -1107,10 +1322,19 @@ function normalizeEntityType(
     RECRUITMENTS:
       ENTITY_TYPES.RECRUITMENT,
 
+    RECRUITMENT_RECORDS:
+      ENTITY_TYPES.RECRUITMENT,
+
     PAY_STRUCTURE:
       ENTITY_TYPES.PAY,
 
     PAY_STRUCTURES:
+      ENTITY_TYPES.PAY,
+
+    PAY_PROFILE:
+      ENTITY_TYPES.PAY,
+
+    PAY_PROFILES:
       ENTITY_TYPES.PAY,
 
     LOCATION_PROFILE:
@@ -1141,7 +1365,10 @@ function normalizeEntityType(
       ENTITY_TYPES.QUALIFICATION,
 
     CATEGORIES:
-      ENTITY_TYPES.CATEGORY
+      ENTITY_TYPES.CATEGORY,
+
+    STATUSES:
+      ENTITY_TYPES.STATUS
   };
 
   return (
@@ -1153,12 +1380,12 @@ function normalizeEntityType(
 }
 
 /*
- * Public compatibility:
+ * Backward-compatible context support:
  *
- * Existing loader usage:
+ * Existing loader:
  *   normalizeByType(data, 'JOB')
  *
- * Extended usage:
+ * Context-aware callers:
  *   normalizeByType(data, {
  *     entityType: 'JOB',
  *     datasetName: 'jobs',
@@ -1176,6 +1403,7 @@ function normalizeContext(
     )
   ) {
     return {
+      ...fallbackContext,
       ...entityTypeOrContext,
 
       entityType:
@@ -1210,7 +1438,7 @@ function getDatasetMetadata(
     {};
 
   ENVELOPE_METADATA_KEYS.forEach(
-    (key) => {
+    key => {
       if (
         data[key] !==
           undefined &&
@@ -1219,8 +1447,12 @@ function getDatasetMetadata(
         data[key] !==
           ''
       ) {
-        metadata[key] =
-          data[key];
+        metadata[
+          key
+        ] =
+          data[
+            key
+          ];
       }
     }
   );
@@ -1248,50 +1480,19 @@ function getCollectionKeys(
   );
 }
 
-function getCollectionKeyForEntity(
-  data,
-  entityType
-) {
-  if (
-    !isPlainObject(
-      data
-    )
-  ) {
-    return null;
-  }
-
-  const keys =
-    getCollectionKeys(
-      entityType
-    );
-
-  for (
-    const key of
-    keys
-  ) {
-    if (
-      Array.isArray(
-        data[
-          key
-        ]
-      )
-    ) {
-      return key;
-    }
-  }
-
-  return null;
-}
-
 /*
- * Return every semantically relevant collection for an entity type.
+ * Return every semantically relevant collection for entity types whose source
+ * files legitimately contain multiple independent arrays.
  *
- * Special cases:
- * - STATE preserves states and unionTerritories as distinguishable records.
- * - STATUS preserves each vocabulary through collectionKey.
- * - QUALIFICATION intentionally excludes educationLevels, qualificationTypes,
- *   subjectFamilies and qualificationStatuses because those are vocabularies,
- *   not qualification records.
+ * QUALIFICATION deliberately excludes:
+ *   educationLevels
+ *   qualificationTypes
+ *   itiTrades
+ *   other non-qualification vocabularies
+ *
+ * STATE keeps states and unionTerritories as separate collection entries.
+ *
+ * STATUS keeps each vocabulary identifiable through collectionKey.
  */
 function getCollectionEntries(
   data,
@@ -1304,8 +1505,11 @@ function getCollectionEntries(
   ) {
     return [
       {
-        key: null,
-        records: data
+        key:
+          null,
+
+        records:
+          data
       }
     ];
   }
@@ -1338,6 +1542,7 @@ function getCollectionEntries(
       entries.push({
         key:
           'states',
+
         records:
           data.states
       });
@@ -1351,6 +1556,7 @@ function getCollectionEntries(
       entries.push({
         key:
           'unionTerritories',
+
         records:
           data.unionTerritories
       });
@@ -1365,7 +1571,7 @@ function getCollectionEntries(
 
   if (
     normalizedType ===
-    'STATUS'
+    ENTITY_TYPES.QUALIFICATION
   ) {
     const entries =
       [];
@@ -1373,18 +1579,23 @@ function getCollectionEntries(
     for (
       const key of
       getCollectionKeys(
-        'STATUS'
+        normalizedType
       )
     ) {
       if (
         Array.isArray(
-          data[key]
+          data[
+            key
+          ]
         )
       ) {
         entries.push({
           key,
+
           records:
-            data[key]
+            data[
+              key
+            ]
         });
       }
     }
@@ -1394,7 +1605,7 @@ function getCollectionEntries(
 
   if (
     normalizedType ===
-    ENTITY_TYPES.QUALIFICATION
+    ENTITY_TYPES.STATUS
   ) {
     const entries =
       [];
@@ -1402,18 +1613,23 @@ function getCollectionEntries(
     for (
       const key of
       getCollectionKeys(
-        'QUALIFICATION'
+        normalizedType
       )
     ) {
       if (
         Array.isArray(
-          data[key]
+          data[
+            key
+          ]
         )
       ) {
         entries.push({
           key,
+
           records:
-            data[key]
+            data[
+              key
+            ]
         });
       }
     }
@@ -1421,22 +1637,30 @@ function getCollectionEntries(
     return entries;
   }
 
-  const key =
-    getCollectionKeyForEntity(
-      data,
+  for (
+    const key of
+    getCollectionKeys(
       normalizedType
-    );
-
-  if (
-    key
+    )
   ) {
-    return [
-      {
-        key,
-        records:
-          data[key]
-      }
-    ];
+    if (
+      Array.isArray(
+        data[
+          key
+        ]
+      )
+    ) {
+      return [
+        {
+          key,
+
+          records:
+            data[
+              key
+            ]
+        }
+      ];
+    }
   }
 
   return [];
@@ -1465,8 +1689,9 @@ function extractCollection(
           records
         }) =>
           records.map(
-            (record) => ({
+            record => ({
               record,
+
               collectionKey:
                 key
             })
@@ -1484,9 +1709,18 @@ function getRecordValue(
   record,
   keys
 ) {
+  const candidates =
+    Array.isArray(
+      keys
+    )
+      ? keys
+      : [
+          keys
+        ];
+
   for (
     const key of
-    keys
+    candidates
   ) {
     if (
       record?.[
@@ -1512,8 +1746,14 @@ function getRecordValue(
 }
 
 /*
- * Envelope context is applied only when the relevant entity type can
- * legitimately inherit that metadata. Record-level values always win.
+ * Envelope context is applied only where the entity type legitimately inherits
+ * government/state/version/verification metadata.
+ *
+ * Precedence:
+ *   record value > explicit context > dataset envelope > absent
+ *
+ * `schemaVersion` and `version` are deliberately not used as dataVersion
+ * fallbacks. They describe schema/record versions, not verification metadata.
  */
 function applyEnvelopeContext(
   record,
@@ -1551,8 +1791,7 @@ function applyEnvelopeContext(
 
     dataVersion:
       context?.dataVersion ??
-      metadata.dataVersion ??
-      metadata.version,
+      metadata.dataVersion,
 
     lastVerified:
       context?.lastVerified ??
@@ -1640,6 +1879,11 @@ function normalizeRecord(
     return null;
   }
 
+  const normalizedEntityType =
+    normalizeEntityType(
+      entityType
+    );
+
   const withContext =
     applyEnvelopeContext(
       record,
@@ -1647,22 +1891,22 @@ function normalizeRecord(
       {
         allowGovernment:
           DOMAIN_METADATA_TYPES.has(
-            entityType
+            normalizedEntityType
           ),
 
         allowState:
           DOMAIN_METADATA_TYPES.has(
-            entityType
+            normalizedEntityType
           ),
 
         allowVersion:
           DATA_VERSION_TYPES.has(
-            entityType
+            normalizedEntityType
           ),
 
         allowLastVerified:
           LAST_VERIFIED_TYPES.has(
-            entityType
+            normalizedEntityType
           )
       }
     );
@@ -1677,10 +1921,7 @@ function normalizeRecord(
     );
 
   normalized.entityType =
-    cleanString(
-      record.entityType,
-      entityType
-    );
+    normalizedEntityType;
 
   if (
     record.name !==
@@ -1718,15 +1959,13 @@ function normalizeRecord(
         record.aliases
       )
         .map(
-          (item) =>
+          item =>
             cleanString(
               item,
               ''
             )
         )
-        .filter(
-          Boolean
-        )
+        .filter(Boolean)
     );
 
   normalized.keywords =
@@ -1735,15 +1974,13 @@ function normalizeRecord(
         record.keywords
       )
         .map(
-          (item) =>
+          item =>
             cleanString(
               item,
               ''
             )
         )
-        .filter(
-          Boolean
-        )
+        .filter(Boolean)
     );
 
   normalized.governmentId =
@@ -1803,54 +2040,46 @@ function normalizeRecord(
       record.sources
     );
 
+  normalized.sourceReferences =
+    normalizeSources(
+      record.sourceReferences
+    );
+
   normalized.requirements =
     normalizeRequirements(
       record.requirements
     );
 
-  if (
-    record.createdAt !==
-    undefined
+  for (
+    const field of [
+      'createdAt',
+      'updatedAt',
+      'publicationDate',
+      'effectiveDate'
+    ]
   ) {
-    normalized.createdAt =
-      normalizeDate(
-        record.createdAt
-      );
-  }
-
-  if (
-    record.updatedAt !==
-    undefined
-  ) {
-    normalized.updatedAt =
-      normalizeDate(
-        record.updatedAt
-      );
-  }
-
-  if (
-    record.publicationDate !==
-    undefined
-  ) {
-    normalized.publicationDate =
-      normalizeDate(
-        record.publicationDate
-      );
-  }
-
-  if (
-    record.effectiveDate !==
-    undefined
-  ) {
-    normalized.effectiveDate =
-      normalizeDate(
-        record.effectiveDate
-      );
+    if (
+      record[
+        field
+      ] !==
+        undefined
+    ) {
+      normalized[
+        field
+      ] =
+        normalizeDate(
+          record[
+            field
+          ]
+        );
+    }
   }
 
   if (
     normalized.lastVerified !==
-    undefined
+      undefined &&
+    normalized.lastVerified !==
+      null
   ) {
     normalized.lastVerified =
       normalizeDate(
@@ -1860,14 +2089,14 @@ function normalizeRecord(
 
   if (
     normalized.dataVersion !==
-    undefined
+      undefined &&
+    normalized.dataVersion !==
+      null
   ) {
     normalized.dataVersion =
-      cleanString(
-        normalized.dataVersion,
-        ''
-      ) ||
-      null;
+      cleanNullableString(
+        normalized.dataVersion
+      );
   }
 
   return normalized;
@@ -1879,8 +2108,11 @@ function normalizeScore10(
   return normalizeNumber(
     value,
     {
-      min: 0,
-      max: 10
+      min:
+        0,
+
+      max:
+        10
     }
   );
 }
@@ -1888,17 +2120,9 @@ function normalizeScore10(
 function normalizeCurrentness(
   value
 ) {
-  return normalizeEnum(
+  return normalizeEnumIgnoreCase(
     value,
-    [
-      'CURRENT',
-      'HISTORICAL',
-      'CURRENT_WITH_HISTORICAL_SUPPORT',
-      'CURRENTNESS_UNCLEAR',
-      'REPLACED',
-      'ABOLISHED',
-      'NOT_VERIFIED'
-    ],
+    CURRENTNESS_VALUES,
     null
   );
 }
@@ -1906,16 +2130,9 @@ function normalizeCurrentness(
 function normalizeConfidence(
   value
 ) {
-  return normalizeEnum(
+  return normalizeEnumIgnoreCase(
     value,
-    [
-      'HIGH',
-      'MEDIUM_HIGH',
-      'MEDIUM',
-      'LOW',
-      'ESTIMATE',
-      'NOT_VERIFIED'
-    ],
+    CONFIDENCE_VALUES,
     null
   );
 }
@@ -2060,43 +2277,208 @@ function normalizeJobIdentity(
       );
   }
 
+  const roleType =
+    sourceIdentity.roleType ??
+    job.roleType;
+
   if (
     cleanNullableString(
-      sourceIdentity.roleType ??
-      job.roleType
+      roleType
     )
   ) {
     identity.roleType =
       cleanString(
-        sourceIdentity.roleType ??
-        job.roleType
+        roleType
       );
+  }
+
+  const description =
+    sourceIdentity.description ??
+    job.description;
+
+  if (
+    description !==
+      undefined &&
+    description !==
+      null
+  ) {
+    identity.description =
+      cleanLocalizedText(
+        description
+      );
+  }
+
+  const aliases =
+    normalizeStringArray(
+      sourceIdentity.aliases ??
+      job.aliases
+    );
+
+  if (
+    aliases.length
+  ) {
+    identity.aliases =
+      aliases;
+  }
+
+  const historicalNames =
+    normalizeStringArray(
+      sourceIdentity.historicalNames ??
+      job.historicalNames
+    );
+
+  if (
+    historicalNames.length
+  ) {
+    identity.historicalNames =
+      historicalNames;
   }
 
   return identity;
 }
 
+function normalizeStringArray(
+  value
+) {
+  return uniqueArray(
+    cleanArray(
+      value
+    )
+      .map(
+        item =>
+          cleanString(
+            item,
+            ''
+          )
+      )
+      .filter(Boolean)
+  );
+}
+
 function normalizeRecruitmentMode(
   value
 ) {
-  return normalizeEnum(
+  return normalizeEnumIgnoreCase(
     value,
-    [
-      'DIRECT_RECRUITMENT',
-      'PROMOTION',
-      'DEPUTATION',
-      'TRANSFER',
-      'CONTRACT',
-      'TEMPORARY',
-      'SCHEME_PROJECT',
-      'OUTSOURCED',
-      'ABSORPTION',
-      'LATERAL_ENTRY',
-      'DEPARTMENTAL',
-      'OTHER'
-    ],
+    RECRUITMENT_MODES,
     null
   );
+}
+
+/*
+ * Current repository source uses explicit route values such as
+ * DIRECT_EXAMINATION and WBPSC_WBCS. These exact route values identify a
+ * direct recruitment route; they are not inferred from a job title.
+ */
+const RECRUITMENT_ROUTE_TO_MODE =
+  Object.freeze({
+    DIRECT_EXAMINATION:
+      'DIRECT_RECRUITMENT',
+
+    DIRECT_RECRUITMENT:
+      'DIRECT_RECRUITMENT',
+
+    WBPSC_WBCS:
+      'DIRECT_RECRUITMENT'
+  });
+
+function normalizeRecruitmentModeFromJob(
+  job,
+  source
+) {
+  const explicit =
+    getRecordValue(
+      source,
+      [
+        'mode',
+        'recruitmentMode',
+        'recruitmentType',
+        'entryMode'
+      ]
+    ) ??
+    getRecordValue(
+      job,
+      [
+        'recruitmentMode',
+        'recruitmentType',
+        'entryMode',
+        'mode'
+      ]
+    );
+
+  const normalizedExplicit =
+    normalizeRecruitmentMode(
+      explicit
+    );
+
+  if (
+    normalizedExplicit
+  ) {
+    return normalizedExplicit;
+  }
+
+  const route =
+    getRecordValue(
+      source,
+      [
+        'route',
+        'recruitmentRoute'
+      ]
+    ) ??
+    getRecordValue(
+      job,
+      [
+        'route',
+        'recruitmentRoute'
+      ]
+    );
+
+  const routeKey =
+    cleanString(
+      route,
+      ''
+    ).toUpperCase();
+
+  return (
+    RECRUITMENT_ROUTE_TO_MODE[
+      routeKey
+    ] ||
+    null
+  );
+}
+
+function normalizeCareerStatus(
+  value,
+  {
+    allowRecurringCareer =
+      false
+  } = {}
+) {
+  const direct =
+    normalizeEnumIgnoreCase(
+      value,
+      CAREER_STATUSES,
+      null
+    );
+
+  if (
+    direct
+  ) {
+    return direct;
+  }
+
+  if (
+    allowRecurringCareer &&
+    cleanString(
+      value,
+      ''
+    ).toUpperCase() ===
+      'RECURRING_CAREER'
+  ) {
+    return 'ACTIVE_CAREER';
+  }
+
+  return null;
 }
 
 function normalizeJobRecruitment(
@@ -2115,8 +2497,7 @@ function normalizeJobRecruitment(
   const routeIds =
     normalizeIdArray(
       source.routeIds ??
-      job.routeIds ??
-      job.recruitmentRouteIds
+      job.routeIds
     );
 
   if (
@@ -2126,15 +2507,30 @@ function normalizeJobRecruitment(
       routeIds;
   } else {
     const route =
-      cleanNullableString(
-        job.recruitmentRoute
+      getRecordValue(
+        source,
+        [
+          'route',
+          'recruitmentRoute'
+        ]
+      ) ??
+      getRecordValue(
+        job,
+        [
+          'route',
+          'recruitmentRoute'
+        ]
       );
 
     if (
-      route
+      cleanNullableString(
+        route
+      )
     ) {
       recruitment.routeIds = [
-        route
+        cleanString(
+          route
+        )
       ];
     }
   }
@@ -2168,10 +2564,9 @@ function normalizeJobRecruitment(
   }
 
   const mode =
-    normalizeRecruitmentMode(
-      source.mode ??
-      source.recruitmentMode ??
-      job.recruitmentMode
+    normalizeRecruitmentModeFromJob(
+      job,
+      source
     );
 
   if (
@@ -2182,19 +2577,29 @@ function normalizeJobRecruitment(
   }
 
   const careerStatus =
-    normalizeEnum(
-      source.careerStatus ??
-      job.careerStatus,
-      [
-        'ACTIVE_CAREER',
-        'HISTORICAL',
-        'ABOLISHED',
-        'REPLACED',
-        'SUPERSEDED',
-        'NOT_VERIFIED',
-        'UNKNOWN'
-      ],
-      null
+    normalizeCareerStatus(
+      getRecordValue(
+        source,
+        [
+          'careerStatus'
+        ]
+      ) ??
+      getRecordValue(
+        job,
+        [
+          'careerStatus'
+        ]
+      ) ??
+      getRecordValue(
+        job,
+        [
+          'currentStatus'
+        ]
+      ),
+      {
+        allowRecurringCareer:
+          true
+      }
     );
 
   if (
@@ -2204,59 +2609,90 @@ function normalizeJobRecruitment(
       careerStatus;
   }
 
+  /*
+   * Do not derive freshEntryEligible from a route. A route tells us how a
+   * recruitment may occur; it does not, by itself, establish the required
+   * boolean canonical fact. Only explicit boolean-equivalent source values
+   * are normalized.
+   */
+  const freshEntryValue =
+    getRecordValue(
+      source,
+      [
+        'freshEntryEligible'
+      ]
+    );
+
+  const normalizedFreshEntry =
+    freshEntryValue !==
+      undefined
+      ? normalizeOptionalBoolean(
+          freshEntryValue
+        )
+      : normalizeOptionalBoolean(
+          getRecordValue(
+            job,
+            [
+              'freshEntryEligible'
+            ]
+          )
+        );
+
   if (
-    typeof source.freshEntryEligible ===
-    'boolean'
+    normalizedFreshEntry !==
+      null
   ) {
     recruitment.freshEntryEligible =
-      source.freshEntryEligible;
-  } else if (
-    typeof job.freshEntryEligible ===
-    'boolean'
-  ) {
-    recruitment.freshEntryEligible =
-      job.freshEntryEligible;
+      normalizedFreshEntry;
   }
 
   const currentStatus =
-    cleanNullableString(
-      source.currentRecruitmentStatus ??
-      job.currentRecruitmentStatus
+    getRecordValue(
+      source,
+      [
+        'currentRecruitmentStatus'
+      ]
+    ) ??
+    getRecordValue(
+      job,
+      [
+        'currentRecruitmentStatus'
+      ]
+    );
+
+  const normalizedCurrentStatus =
+    normalizeEnumIgnoreCase(
+      currentStatus,
+      [
+        'OPEN',
+        'NOTIFIED',
+        'RECURRING_ROUTE',
+        'CLOSED',
+        'NOT_CURRENTLY_NOTIFIED',
+        'HISTORICAL',
+        'UNKNOWN'
+      ],
+      null
     );
 
   if (
-    currentStatus
+    normalizedCurrentStatus
   ) {
-    const normalizedStatus =
-      normalizeStringEnumOrNull(
-        currentStatus,
-        [
-          'OPEN',
-          'NOTIFIED',
-          'RECURRING_ROUTE',
-          'CLOSED',
-          'NOT_CURRENTLY_NOTIFIED',
-          'HISTORICAL',
-          'UNKNOWN'
-        ]
-      );
-
-    if (
-      normalizedStatus
-    ) {
-      recruitment.currentRecruitmentStatus =
-        normalizedStatus;
-    }
+    recruitment.currentRecruitmentStatus =
+      normalizedCurrentStatus;
   }
 
+  const recruitmentNotes =
+    source.recruitmentNotes ??
+    job.recruitmentNotes;
+
   if (
-    isPlainObject(
-      source.recruitmentNotes
-    )
+    recruitmentNotes !==
+      undefined
   ) {
     recruitment.recruitmentNotes =
       cleanLocalizedText(
-        source.recruitmentNotes
+        recruitmentNotes
       );
   }
 
@@ -2266,7 +2702,7 @@ function normalizeJobRecruitment(
 function normalizeEducationLevel(
   value
 ) {
-  return normalizeEnum(
+  return normalizeEnumIgnoreCase(
     value,
     JOB_EDUCATION_LEVELS,
     null
@@ -2276,17 +2712,115 @@ function normalizeEducationLevel(
 function normalizeBaEnglishAssessment(
   value
 ) {
-  return normalizeEnum(
-    value,
-    [
-      'DIRECT',
-      'CONDITIONAL',
-      'NOT_ELIGIBLE',
-      'CURRENT_NOTIFICATION_REQUIRED',
-      'NOT_VERIFIED',
-      'NOT_APPLICABLE'
-    ],
-    null
+  const direct =
+    normalizeEnumIgnoreCase(
+      value,
+      [
+        'DIRECT',
+        'CONDITIONAL',
+        'NOT_ELIGIBLE',
+        'CURRENT_NOTIFICATION_REQUIRED',
+        'NOT_VERIFIED',
+        'NOT_APPLICABLE'
+      ],
+      null
+    );
+
+  if (
+    direct
+  ) {
+    return direct;
+  }
+
+  const normalized =
+    cleanString(
+      value,
+      ''
+    ).toUpperCase();
+
+  /*
+   * The existing source contains explicit baseline-assessment values such as:
+   *
+   *   DIRECT_WITH_BENGALI
+   *   DIRECT_ACADEMIC_WITH_MEDICAL_REQUIREMENTS
+   *   DIRECT_ACADEMIC_WITH_PHYSICAL_MEDICAL
+   *
+   * These belong to the source's BA-English-assessment field. Normalizing
+   * them to the canonical DIRECT value preserves that field's semantics;
+   * it does not determine candidate eligibility.
+   */
+  if (
+    normalized ===
+      'DIRECT_WITH_BENGALI' ||
+    normalized.startsWith(
+      'DIRECT_ACADEMIC_'
+    ) ||
+    normalized.startsWith(
+      'DIRECT_WITH_'
+    )
+  ) {
+    return 'DIRECT';
+  }
+
+  if (
+    normalized ===
+    'DIRECT'
+  ) {
+    return 'DIRECT';
+  }
+
+  if (
+    normalized.startsWith(
+      'CONDITIONAL'
+    )
+  ) {
+    return 'CONDITIONAL';
+  }
+
+  if (
+    normalized.startsWith(
+      'NOT_ELIGIBLE'
+    )
+  ) {
+    return 'NOT_ELIGIBLE';
+  }
+
+  if (
+    normalized.includes(
+      'CURRENT_NOTIFICATION_REQUIRED'
+    )
+  ) {
+    return 'CURRENT_NOTIFICATION_REQUIRED';
+  }
+
+  if (
+    normalized ===
+    'NOT_VERIFIED'
+  ) {
+    return 'NOT_VERIFIED';
+  }
+
+  if (
+    normalized ===
+    'NOT_APPLICABLE'
+  ) {
+    return 'NOT_APPLICABLE';
+  }
+
+  return null;
+}
+
+function normalizeQualificationReferenceIds(
+  source,
+  job
+) {
+  return normalizeIdArray(
+    source.qualificationIds ??
+    source.qualificationId ??
+    job.qualificationIds ??
+    job.qualificationId ??
+    source.requiredQualificationIds ??
+    job.requiredQualificationIds
   );
 }
 
@@ -2317,18 +2851,64 @@ function normalizeJobEligibility(
       educationLevel;
   }
 
+  /*
+   * `entryLevel` is deliberately not converted into minimumQualification.
+   * GRADUATE is an education level, not the canonical human-readable
+   * qualification statement required by the job schema.
+   */
   const minimumQualification =
-    cleanNullableString(
-      source.minimumQualification ??
-      job.minimumQualification ??
-      job.minimumQualificationSummary
+    getRecordValue(
+      source,
+      [
+        'minimumQualification',
+        'minimumQualificationSummary',
+        'educationalQualification',
+        'educationRequirement',
+        'requiredQualification'
+      ]
+    ) ??
+    getRecordValue(
+      job,
+      [
+        'minimumQualification',
+        'minimumQualificationSummary',
+        'educationalQualification',
+        'educationRequirement',
+        'requiredQualification'
+      ]
     );
 
   if (
-    minimumQualification
+    typeof minimumQualification ===
+    'string'
   ) {
-    eligibility.minimumQualification =
-      minimumQualification;
+    const normalizedMinimum =
+      cleanNullableString(
+        minimumQualification
+      );
+
+    if (
+      normalizedMinimum
+    ) {
+      eligibility.minimumQualification =
+        normalizedMinimum;
+    }
+  } else if (
+    isPlainObject(
+      minimumQualification
+    )
+  ) {
+    const normalizedMinimum =
+      cleanLocalizedText(
+        minimumQualification
+      );
+
+    if (
+      normalizedMinimum.en
+    ) {
+      eligibility.minimumQualification =
+        normalizedMinimum;
+    }
   }
 
   const minimumQualificationId =
@@ -2345,9 +2925,9 @@ function normalizeJobEligibility(
   }
 
   const qualificationIds =
-    normalizeIdArray(
-      source.qualificationIds ??
-      job.qualificationIds
+    normalizeQualificationReferenceIds(
+      source,
+      job
     );
 
   if (
@@ -2357,9 +2937,17 @@ function normalizeJobEligibility(
       qualificationIds;
   }
 
+  /*
+   * IMPORTANT:
+   * qualificationRuleIds are not silently treated as qualificationIds.
+   * They are semantically distinct from eligibilityRuleIds and are not a safe
+   * canonical qualification relationship without explicit source evidence.
+   */
   const ruleIds =
     normalizeIdArray(
       source.ruleIds ??
+      source.eligibilityRuleIds ??
+      job.ruleIds ??
       job.eligibilityRuleIds
     );
 
@@ -2373,7 +2961,8 @@ function normalizeJobEligibility(
   const baEnglishAssessment =
     normalizeBaEnglishAssessment(
       source.baEnglishAssessment ??
-      job.baEnglishAssessment
+      job.baEnglishAssessment ??
+      job.baEnglishEligibility
     );
 
   if (
@@ -2384,7 +2973,7 @@ function normalizeJobEligibility(
   }
 
   const overqualification =
-    normalizeStringEnumOrNull(
+    normalizeEnumIgnoreCase(
       source.overqualification ??
       job.overqualification,
       [
@@ -2395,7 +2984,8 @@ function normalizeJobEligibility(
         'CURRENT_NOTIFICATION_REQUIRED',
         'NOT_APPLICABLE',
         'NOT_VERIFIED'
-      ]
+      ],
+      null
     );
 
   if (
@@ -2405,58 +2995,35 @@ function normalizeJobEligibility(
       overqualification;
   }
 
+  const summary =
+    source.eligibilitySummary ??
+    job.eligibilitySummary;
+
   if (
-    source.eligibilitySummary !==
+    summary !==
       undefined
   ) {
     eligibility.eligibilitySummary =
       cleanLocalizedText(
-        source.eligibilitySummary
+        summary
       );
   }
 
+  const notes =
+    source.notes ??
+    job.eligibilityNotes;
+
   if (
-    source.notes !==
+    notes !==
       undefined
   ) {
     eligibility.notes =
       cleanLocalizedText(
-        source.notes
+        notes
       );
   }
 
-  /*
-   * Legacy baEligibility/baEnglishEligibility deliberately stays outside the
-   * canonical eligibility object. It cannot be converted into ruleIds.
-   */
   return eligibility;
-}
-
-function copyScoreFields(
-  source,
-  target
-) {
-  for (
-    const field of
-    SCORE_FIELDS
-  ) {
-    const value =
-      normalizeScore10(
-        source?.[
-          field
-        ]
-      );
-
-    if (
-      value !==
-      null
-    ) {
-      target[
-        field
-      ] =
-        value;
-    }
-  }
 }
 
 function normalizeDeskField(
@@ -2466,11 +3033,13 @@ function normalizeDeskField(
     cleanString(
       value,
       ''
-    )
-      .toUpperCase();
+    ).toUpperCase();
 
   const mappings = {
     OFFICE:
+      'MOSTLY_OFFICE',
+
+    OFFICE_HEAVY:
       'MOSTLY_OFFICE',
 
     MOSTLY_OFFICE:
@@ -2479,10 +3048,28 @@ function normalizeDeskField(
     OFFICE_AND_FIELD:
       'OFFICE_PLUS_FIELD',
 
+    FIELD_AND_OFFICE:
+      'OFFICE_PLUS_FIELD',
+
+    OFFICE_AND_INSPECTION:
+      'OFFICE_PLUS_FIELD',
+
+    OFFICE_AND_AUDIT:
+      'OFFICE_PLUS_FIELD',
+
+    OFFICE_AND_PUBLIC_COMMUNICATION:
+      'OFFICE_PLUS_FIELD',
+
+    INVESTIGATION_AND_OFFICE:
+      'OFFICE_PLUS_FIELD',
+
     OFFICE_PLUS_FIELD:
       'OFFICE_PLUS_FIELD',
 
     FIELD:
+      'MOSTLY_FIELD',
+
+    FIELD_HEAVY:
       'MOSTLY_FIELD',
 
     MOSTLY_FIELD:
@@ -2506,6 +3093,34 @@ function normalizeDeskField(
   );
 }
 
+function copyScoreFields(
+  source,
+  target,
+  fields = SCORE_FIELDS
+) {
+  for (
+    const field of
+    fields
+  ) {
+    const value =
+      normalizeScore10(
+        source?.[
+          field
+        ]
+      );
+
+    if (
+      value !==
+      null
+    ) {
+      target[
+        field
+      ] =
+        value;
+    }
+  }
+}
+
 function normalizeLifestyle(
   job
 ) {
@@ -2516,13 +3131,20 @@ function normalizeLifestyle(
       ? job.lifestyle
       : {};
 
+  const work =
+    isPlainObject(
+      job.work
+    )
+      ? job.work
+      : {};
+
   const lifestyle =
     {};
 
   const deskField =
     normalizeDeskField(
       source.deskField ??
-      job.work?.deskField
+      work.deskField
     );
 
   if (
@@ -2532,132 +3154,131 @@ function normalizeLifestyle(
       deskField;
   }
 
-  const scoreAliases = [
-    [
-      'workLifeScore',
-      'workLife'
+  const scoreSources = {
+    publicInteractionScore: [
+      source.publicInteractionScore,
+      job.publicInteractionScore
     ],
-    [
-      'stressBurden',
-      'stress'
+
+    computerWorkScore: [
+      source.computerWorkScore,
+      job.computerWorkScore
     ],
-    [
-      'riskBurden',
-      'physicalRisk'
+
+    legalWorkScore: [
+      source.legalWorkScore,
+      job.legalWorkScore
     ],
-    [
-      'travelBurden',
-      'travelBurden'
+
+    accountsWorkScore: [
+      source.accountsWorkScore,
+      job.accountsWorkScore
     ],
-    [
-      'publicInteractionScore',
-      'publicInteractionScore'
+
+    investigationScore: [
+      source.investigationScore,
+      job.investigationScore
     ],
-    [
-      'computerWorkScore',
-      'computerWorkScore'
+
+    inspectionScore: [
+      source.inspectionScore,
+      job.inspectionScore
     ],
-    [
-      'legalWorkScore',
-      'legalWorkScore'
+
+    supervisionScore: [
+      source.supervisionScore,
+      job.supervisionScore
     ],
-    [
-      'accountsWorkScore',
-      'accountsWorkScore'
+
+    workLifeScore: [
+      source.workLifeScore,
+      job.workLife
     ],
-    [
-      'investigationScore',
-      'investigationScore'
+
+    predictabilityScore: [
+      source.predictabilityScore,
+      job.predictabilityScore
     ],
-    [
-      'inspectionScore',
-      'inspectionScore'
+
+    stressBurden: [
+      source.stressBurden,
+      job.stress
     ],
-    [
-      'supervisionScore',
-      'supervisionScore'
+
+    riskBurden: [
+      source.riskBurden,
+      job.physicalRisk ??
+      job.risk
     ],
-    [
-      'predictabilityScore',
-      'predictabilityScore'
+
+    nightDutyBurden: [
+      source.nightDutyBurden,
+      job.nightDutyBurden
     ],
-    [
-      'nightDutyBurden',
-      'nightDutyBurden'
+
+    shiftDutyBurden: [
+      source.shiftDutyBurden,
+      job.shiftDutyBurden
     ],
-    [
-      'shiftDutyBurden',
-      'shiftDutyBurden'
+
+    holidayDutyBurden: [
+      source.holidayDutyBurden,
+      job.holidayDutyBurden
     ],
-    [
-      'holidayDutyBurden',
-      'holidayDutyBurden'
+
+    emergencyDutyBurden: [
+      source.emergencyDutyBurden,
+      job.emergencyDutyBurden
     ],
-    [
-      'emergencyDutyBurden',
-      'emergencyDutyBurden'
+
+    travelBurden: [
+      source.travelBurden,
+      job.travelBurden
     ],
-    [
-      'courtDutyBurden',
-      'courtDutyBurden'
+
+    courtDutyBurden: [
+      source.courtDutyBurden,
+      job.courtDutyBurden
     ],
-    [
-      'uniformScore',
-      'uniformScore'
+
+    uniformScore: [
+      source.uniformScore,
+      job.uniformScore
     ]
-  ];
+  };
 
   for (
-    const [
-      targetKey,
-      sourceKey
-    ] of scoreAliases
+    const field of
+    LIFESTYLE_SCORE_FIELDS
   ) {
     const value =
+      scoreSources[
+        field
+      ]?.find(
+        candidate =>
+          candidate !==
+            undefined &&
+          candidate !==
+            null
+      );
+
+    const normalizedValue =
       normalizeScore10(
-        source[
-          targetKey
-        ] ??
-        job[
-          sourceKey
-        ]
+        value
       );
 
     if (
-      value !==
+      normalizedValue !==
       null
     ) {
       lifestyle[
-        targetKey
+        field
       ] =
-        value;
+        normalizedValue;
     }
   }
 
-  const statusFields = [
-    [
-      'uniformStatus',
-      'uniformStatus'
-    ],
-    [
-      'nightDutyStatus',
-      'nightDutyStatus'
-    ],
-    [
-      'shiftDutyStatus',
-      'shiftDutyStatus'
-    ],
-    [
-      'holidayDutyStatus',
-      'holidayDutyStatus'
-    ],
-    [
-      'emergencyDutyStatus',
-      'emergencyDutyStatus'
-    ]
-  ];
-
-  const allowed = {
+  const allowedStatusValues = {
     uniformStatus: [
       'REQUIRED',
       'NOT_REQUIRED',
@@ -2709,35 +3330,70 @@ function normalizeLifestyle(
     ]
   };
 
+  const statusSources = {
+    uniformStatus: [
+      source.uniformStatus,
+      job.uniformStatus
+    ],
+
+    nightDutyStatus: [
+      source.nightDutyStatus,
+      job.nightDutyStatus,
+      work.nightDuty
+    ],
+
+    shiftDutyStatus: [
+      source.shiftDutyStatus,
+      job.shiftDutyStatus,
+      work.shiftDuty
+    ],
+
+    holidayDutyStatus: [
+      source.holidayDutyStatus,
+      job.holidayDutyStatus,
+      work.holidayDuty
+    ],
+
+    emergencyDutyStatus: [
+      source.emergencyDutyStatus,
+      job.emergencyDutyStatus,
+      work.emergencyDuty
+    ]
+  };
+
   for (
     const [
-      targetKey,
-      sourceKey
-    ] of statusFields
+      field,
+      values
+    ] of Object.entries(
+      statusSources
+    )
   ) {
     const value =
-      normalizeStringEnumOrNull(
-        source[
-          sourceKey
-        ] ??
-        job[
-          sourceKey
-        ] ??
-        job.work?.[
-          sourceKey
+      values.find(
+        candidate =>
+          candidate !==
+            undefined &&
+          candidate !==
+            null
+      );
+
+    const normalized =
+      normalizeEnumIgnoreCase(
+        value,
+        allowedStatusValues[
+          field
         ],
-        allowed[
-          targetKey
-        ]
+        null
       );
 
     if (
-      value
+      normalized
     ) {
       lifestyle[
-        targetKey
+        field
       ] =
-        value;
+        normalized;
     }
   }
 
@@ -2768,7 +3424,7 @@ function normalizeAnalysis(
   );
 
   const englishAdvantage =
-    normalizeStringEnumOrNull(
+    normalizeEnumIgnoreCase(
       source.englishAdvantage ??
       job.englishAdvantage,
       [
@@ -2779,7 +3435,8 @@ function normalizeAnalysis(
         'NOT_ELIGIBLE',
         'NOT_APPLICABLE',
         'NOT_VERIFIED'
-      ]
+      ],
+      null
     );
 
   if (
@@ -2797,6 +3454,14 @@ function normalizeAnalysis(
       cleanLocalizedText(
         source.analyticalNotes
       );
+  } else if (
+    job.analyticalNotes !==
+      undefined
+  ) {
+    analysis.analyticalNotes =
+      cleanLocalizedText(
+        job.analyticalNotes
+      );
   }
 
   return analysis;
@@ -2812,6 +3477,7 @@ function normalizeJob(
       {
         entityType:
           ENTITY_TYPES.JOB,
+
         context
       }
     );
@@ -2870,13 +3536,16 @@ function normalizeJob(
         base.pay?.payId
       ]
     ],
+
     [
       'locationProfileId',
       [
         base.locationProfileId,
-        base.posting?.locationProfileId
+        base.posting?.locationProfileId,
+        base.posting?.profileId
       ]
     ],
+
     [
       'housingProfileId',
       [
@@ -2884,19 +3553,23 @@ function normalizeJob(
         base.housing?.housingProfileId
       ]
     ],
+
     [
       'promotionProfileId',
       [
         base.promotionProfileId,
-        base.promotion?.promotionProfileId
+        base.promotion?.promotionProfileId,
+        base.promotion?.profileId
       ]
     ],
+
     [
       'benefitProfileId',
       [
         base.benefitProfileId,
         base.benefits?.benefitProfileId,
-        base.benefits?.benefitsProfileId
+        base.benefits?.benefitsProfileId,
+        base.benefits?.profileId
       ]
     ]
   ];
@@ -2910,14 +3583,12 @@ function normalizeJob(
     const value =
       values
         .map(
-          (item) =>
+          item =>
             cleanId(
               item
             )
         )
-        .find(
-          Boolean
-        );
+        .find(Boolean);
 
     if (
       value
@@ -2943,7 +3614,8 @@ function normalizeJob(
 
   const currentness =
     normalizeCurrentness(
-      base.currentness
+      base.currentness ??
+      base.sourceCurrentness
     );
 
   if (
@@ -2965,20 +3637,23 @@ function normalizeJob(
       lastVerified;
   }
 
-  if (
+  const dataVersion =
     cleanNullableString(
       base.dataVersion
-    )
+    );
+
+  if (
+    dataVersion
   ) {
     canonical.dataVersion =
-      cleanString(
-        base.dataVersion
-      );
+      dataVersion;
   }
 
   /*
-   * Compatibility metadata remains non-authoritative. It is intentionally
-   * kept outside canonical eligibility and never becomes a rule relationship.
+   * Compatibility-only legacy metadata.
+   *
+   * These values never populate canonical ruleIds or candidate eligibility
+   * results.
    */
   const legacyBaEligibility =
     getRecordValue(
@@ -3001,20 +3676,27 @@ function normalizeJob(
   }
 
   const legacyStatus =
-    cleanNullableString(
-      base.currentStatus
+    getRecordValue(
+      base,
+      [
+        'currentStatus'
+      ]
     );
 
   if (
-    legacyStatus
+    cleanNullableString(
+      legacyStatus
+    )
   ) {
     canonical.legacyCurrentStatus =
-      legacyStatus;
+      cleanString(
+        legacyStatus
+      );
   }
 
   /*
-   * Keep the stable jobId compatibility property used by older runtime
-   * consumers without allowing it to become a separate relational key.
+   * Preserve the stable compatibility alias used by older consumers without
+   * creating a second relational key.
    */
   canonical.jobId =
     canonical.id;
@@ -3024,6 +3706,7 @@ function normalizeJob(
       canonical,
       [
         base.id,
+        base.post,
         base.postName,
         base.officialName,
         base.shortName,
@@ -3031,7 +3714,9 @@ function normalizeJob(
         base.jobCategory,
         base.aliases,
         base.keywords,
-        canonical.identity.post,
+        base.departmentName,
+        base.organisationName,
+        base.examName,
         legacyStatus,
         legacyBaEligibility
       ]
@@ -3050,6 +3735,7 @@ function normalizeExam(
       {
         entityType:
           ENTITY_TYPES.EXAM,
+
         context
       }
     );
@@ -3064,78 +3750,99 @@ function normalizeExam(
     ...result,
 
     entityType:
-      ENTITY_TYPES.EXAM
+      ENTITY_TYPES.EXAM,
+
+    examId:
+      result.id,
+
+    status:
+      normalizeEnumIgnoreCase(
+        result.status,
+        [
+          'OPEN',
+          'CLOSED',
+          'UNDER_PROCESS',
+          'RECENTLY_COMPLETED',
+          'EXPECTED_PERIODIC',
+          'IRREGULAR',
+          'HISTORICAL',
+          'DISCONTINUED',
+          'UNKNOWN'
+        ],
+        null
+      ),
+
+    difficulty:
+      normalizeEnumIgnoreCase(
+        result.difficulty,
+        [
+          'EASY',
+          'MODERATE',
+          'HARD',
+          'VERY_HARD',
+          'EXTREME',
+          'UNKNOWN'
+        ],
+        null
+      ),
+
+    year:
+      normalizeNumber(
+        result.year,
+        {
+          integer:
+            true
+        }
+      ),
+
+    qualificationLevelIds:
+      normalizeIdArray(
+        result.qualificationLevelIds
+      ),
+
+    qualificationIds:
+      normalizeIdArray(
+        result.qualificationIds
+      ),
+
+    postIds:
+      normalizeIdArray(
+        result.postIds ??
+        result.jobIds
+      ),
+
+    jobIds:
+      normalizeIdArray(
+        result.jobIds ??
+        result.postIds
+      ),
+
+    sourceIds:
+      normalizeIdArray(
+        result.sourceIds
+      )
   };
 
-  canonical.examId =
-    canonical.id;
-
-  canonical.status =
-    normalizeStringEnumOrNull(
-      result.status,
-      [
-        'OPEN',
-        'CLOSED',
-        'UNDER_PROCESS',
-        'RECENTLY_COMPLETED',
-        'EXPECTED_PERIODIC',
-        'IRREGULAR',
-        'HISTORICAL',
-        'DISCONTINUED',
-        'UNKNOWN'
-      ]
-    ) ??
-    result.status;
-
-  canonical.difficulty =
-    normalizeStringEnumOrNull(
-      result.difficulty,
-      [
-        'EASY',
-        'MODERATE',
-        'HARD',
-        'VERY_HARD',
-        'EXTREME',
-        'UNKNOWN'
-      ]
-    ) ??
-    result.difficulty;
-
-  canonical.year =
-    normalizeNumber(
-      result.year,
-      {
-        integer:
-          true
+  Object.keys(
+    canonical
+  ).forEach(
+    key => {
+      if (
+        canonical[
+          key
+        ] ===
+          null ||
+        canonical[
+          key
+        ] ===
+          undefined
+      ) {
+        delete canonical[
+          key
+        ];
       }
-    );
-
-  canonical.qualificationLevelIds =
-    normalizeIdArray(
-      result.qualificationLevelIds
-    );
-
-  canonical.qualificationIds =
-    normalizeIdArray(
-      result.qualificationIds
-    );
-
-  canonical.postIds =
-    normalizeIdArray(
-      result.postIds ??
-      result.jobIds
-    );
-
-  canonical.jobIds =
-    normalizeIdArray(
-      result.jobIds ??
-      result.postIds
-    );
-
-  canonical.sourceIds =
-    normalizeIdArray(
-      result.sourceIds
-    );
+    }
+  );
 
   canonical.searchText =
     buildSearchText(
@@ -3155,6 +3862,7 @@ function normalizeDepartment(
       {
         entityType:
           ENTITY_TYPES.DEPARTMENT,
+
         context
       }
     );
@@ -3165,7 +3873,22 @@ function normalizeDepartment(
     return null;
   }
 
-  return {
+  const status =
+    normalizeEnumIgnoreCase(
+      result.status,
+      [
+        'ACTIVE',
+        'HISTORICAL',
+        'RENAMED',
+        'MERGED',
+        'REORGANISED',
+        'ABOLISHED',
+        'UNKNOWN'
+      ],
+      null
+    );
+
+  const canonical = {
     ...result,
 
     entityType:
@@ -3174,26 +3897,20 @@ function normalizeDepartment(
     departmentId:
       result.id,
 
-    status:
-      normalizeStringEnumOrNull(
-        result.status,
-        [
-          'ACTIVE',
-          'HISTORICAL',
-          'RENAMED',
-          'MERGED',
-          'REORGANISED',
-          'ABOLISHED',
-          'UNKNOWN'
-        ]
-      ) ??
-      result.status,
-
     searchText:
       buildSearchText(
         result
       )
   };
+
+  if (
+    status
+  ) {
+    canonical.status =
+      status;
+  }
+
+  return canonical;
 }
 
 function normalizeOrganisation(
@@ -3206,6 +3923,7 @@ function normalizeOrganisation(
       {
         entityType:
           ENTITY_TYPES.ORGANISATION,
+
         context
       }
     );
@@ -3238,37 +3956,6 @@ function normalizeOrganisation(
   };
 }
 
-function normalizeServiceType(
-  value,
-  serviceNature
-) {
-  const direct =
-    normalizeStringEnumOrNull(
-      value,
-      CANONICAL_SERVICE_TYPES
-    );
-
-  if (
-    direct
-  ) {
-    return direct;
-  }
-
-  const nature =
-    cleanString(
-      serviceNature,
-      ''
-    )
-      .toUpperCase();
-
-  return (
-    SERVICE_TYPE_BY_NATURE[
-      nature
-    ] ||
-    null
-  );
-}
-
 function normalizeCadreScope(
   value
 ) {
@@ -3284,7 +3971,7 @@ function normalizeCadreScope(
     {};
 
   const scopeType =
-    normalizeStringEnumOrNull(
+    normalizeEnumIgnoreCase(
       value.scopeType,
       [
         'STATE',
@@ -3297,7 +3984,8 @@ function normalizeCadreScope(
         'JOINT',
         'OTHER',
         'UNKNOWN'
-      ]
+      ],
+      null
     );
 
   if (
@@ -3320,20 +4008,8 @@ function normalizeCadreScope(
   }
 
   const regionNames =
-    uniqueArray(
-      cleanArray(
-        value.regionNames
-      )
-        .map(
-          (item) =>
-            cleanString(
-              item,
-              ''
-            )
-        )
-        .filter(
-          Boolean
-        )
+    normalizeStringArray(
+      value.regionNames
     );
 
   if (
@@ -3344,20 +4020,8 @@ function normalizeCadreScope(
   }
 
   const districtNames =
-    uniqueArray(
-      cleanArray(
-        value.districtNames
-      )
-        .map(
-          (item) =>
-            cleanString(
-              item,
-              ''
-            )
-        )
-        .filter(
-          Boolean
-        )
+    normalizeStringArray(
+      value.districtNames
     );
 
   if (
@@ -3369,7 +4033,7 @@ function normalizeCadreScope(
 
   if (
     value.description !==
-    undefined
+      undefined
   ) {
     result.description =
       cleanLocalizedText(
@@ -3384,6 +4048,35 @@ function normalizePostingScope(
   value
 ) {
   if (
+    typeof value ===
+    'string'
+  ) {
+    const scopeType =
+      normalizeEnumIgnoreCase(
+        value,
+        [
+          'STATE_WIDE',
+          'ALL_INDIA',
+          'REGIONAL',
+          'ZONE',
+          'DISTRICT',
+          'CITY',
+          'DEPARTMENTAL',
+          'ORGANISATION_SPECIFIC',
+          'OTHER',
+          'UNKNOWN'
+        ],
+        null
+      );
+
+    return scopeType
+      ? {
+          scopeType
+        }
+      : null;
+  }
+
+  if (
     !isPlainObject(
       value
     )
@@ -3395,7 +4088,7 @@ function normalizePostingScope(
     {};
 
   const scopeType =
-    normalizeStringEnumOrNull(
+    normalizeEnumIgnoreCase(
       value.scopeType,
       [
         'STATE_WIDE',
@@ -3408,7 +4101,8 @@ function normalizePostingScope(
         'ORGANISATION_SPECIFIC',
         'OTHER',
         'UNKNOWN'
-      ]
+      ],
+      null
     );
 
   if (
@@ -3444,7 +4138,7 @@ function normalizePostingScope(
 
   if (
     value.description !==
-    undefined
+      undefined
   ) {
     result.description =
       cleanLocalizedText(
@@ -3453,6 +4147,120 @@ function normalizePostingScope(
   }
 
   return result;
+}
+
+function normalizeServiceType(
+  value,
+  serviceNature
+) {
+  const direct =
+    normalizeEnumIgnoreCase(
+      value,
+      CANONICAL_SERVICE_TYPES,
+      null
+    );
+
+  if (
+    direct
+  ) {
+    return direct;
+  }
+
+  const nature =
+    cleanString(
+      serviceNature,
+      ''
+    ).toUpperCase();
+
+  return (
+    SERVICE_TYPE_BY_NATURE[
+      nature
+    ] ||
+    null
+  );
+}
+
+function normalizeEntryRoutes(
+  routes
+) {
+  if (
+    !Array.isArray(
+      routes
+    )
+  ) {
+    return [];
+  }
+
+  return routes
+    .filter(
+      isPlainObject
+    )
+    .map(
+      route => {
+        const normalized =
+          {};
+
+        const routeType =
+          normalizeEnumIgnoreCase(
+            route.routeType,
+            [
+              'DIRECT_RECRUITMENT',
+              'PROMOTION',
+              'DEPUTATION',
+              'LATERAL_ENTRY',
+              'DEPARTMENTAL',
+              'ABSORPTION',
+              'TRANSFER',
+              'CONTRACTUAL',
+              'TEMPORARY',
+              'OTHER'
+            ],
+            null
+          );
+
+        if (
+          routeType
+        ) {
+          normalized.routeType =
+            routeType;
+        }
+
+        for (
+          const field of [
+            'examIds',
+            'recruitmentIds'
+          ]
+        ) {
+          const ids =
+            normalizeIdArray(
+              route[
+                field
+              ]
+            );
+
+          if (
+            ids.length
+          ) {
+            normalized[
+              field
+            ] =
+              ids;
+          }
+        }
+
+        if (
+          route.description !==
+            undefined
+        ) {
+          normalized.description =
+            cleanLocalizedText(
+              route.description
+            );
+        }
+
+        return normalized;
+      }
+    );
 }
 
 function normalizeServiceCadre(
@@ -3465,6 +4273,7 @@ function normalizeServiceCadre(
       {
         entityType:
           ENTITY_TYPES.SERVICE_CADRE,
+
         context
       }
     );
@@ -3481,15 +4290,36 @@ function normalizeServiceCadre(
     entityType:
       ENTITY_TYPES.SERVICE_CADRE,
 
+    id:
+      result.id,
+
     name:
       normalizeLocalizedText(
         result.name
+      ),
+
+    sourceIds:
+      normalizeIdArray(
+        result.sourceIds
       )
   };
 
+  const governmentId =
+    cleanId(
+      result.governmentId ??
+      context.governmentId
+    );
+
+  if (
+    governmentId
+  ) {
+    canonical.governmentId =
+      governmentId;
+  }
+
   if (
     result.shortName !==
-    undefined
+      undefined
   ) {
     canonical.shortName =
       normalizeLocalizedText(
@@ -3497,16 +4327,26 @@ function normalizeServiceCadre(
       );
   }
 
-  canonical.governmentId =
-    cleanId(
-      result.governmentId ??
-      context.governmentId
-    );
+  if (
+    result.fullForm
+  ) {
+    canonical.fullForm =
+      cleanNullableString(
+        result.fullForm
+      );
+  }
 
-  canonical.stateId =
+  const stateId =
     cleanId(
       result.stateId
     );
+
+  if (
+    stateId
+  ) {
+    canonical.stateId =
+      stateId;
+  }
 
   for (
     const field of [
@@ -3546,22 +4386,42 @@ function normalizeServiceCadre(
       type;
   }
 
-  const arrays = [
-    'postIds',
-    'examIds',
-    'recruitmentIds',
-    'recruitmentRouteIds',
-    'eligibilityRuleIds',
-    'payIds',
-    'promotionIds',
-    'benefitIds',
-    'locationIds',
-    'sourceIds'
-  ];
+  for (
+    const field of [
+      'serviceGroup',
+      'cadreControl',
+      'classification'
+    ]
+  ) {
+    const value =
+      cleanNullableString(
+        result[
+          field
+        ]
+      );
+
+    if (
+      value
+    ) {
+      canonical[
+        field
+      ] =
+        value;
+    }
+  }
 
   for (
-    const field of
-    arrays
+    const field of [
+      'postIds',
+      'examIds',
+      'recruitmentIds',
+      'recruitmentRouteIds',
+      'eligibilityRuleIds',
+      'payIds',
+      'promotionIds',
+      'benefitIds',
+      'locationIds'
+    ]
   ) {
     const values =
       normalizeIdArray(
@@ -3604,81 +4464,16 @@ function normalizeServiceCadre(
       cadreScope;
   }
 
-  if (
-    Array.isArray(
+  const entryRoutes =
+    normalizeEntryRoutes(
       result.entryRoutes
-    )
+    );
+
+  if (
+    entryRoutes.length
   ) {
     canonical.entryRoutes =
-      result.entryRoutes
-        .filter(
-          isPlainObject
-        )
-        .map(
-          (route) => {
-            const normalized =
-              {};
-
-            const routeType =
-              normalizeStringEnumOrNull(
-                route.routeType,
-                [
-                  'DIRECT_RECRUITMENT',
-                  'PROMOTION',
-                  'DEPUTATION',
-                  'LATERAL_ENTRY',
-                  'DEPARTMENTAL',
-                  'ABSORPTION',
-                  'TRANSFER',
-                  'CONTRACTUAL',
-                  'TEMPORARY',
-                  'OTHER'
-                ]
-              );
-
-            if (
-              routeType
-            ) {
-              normalized.routeType =
-                routeType;
-            }
-
-            for (
-              const field of [
-                'examIds',
-                'recruitmentIds'
-              ]
-            ) {
-              const ids =
-                normalizeIdArray(
-                  route[
-                    field
-                  ]
-                );
-
-              if (
-                ids.length
-              ) {
-                normalized[
-                  field
-                ] =
-                  ids;
-              }
-            }
-
-            if (
-              route.description !==
-              undefined
-            ) {
-              normalized.description =
-                cleanLocalizedText(
-                  route.description
-                );
-            }
-
-            return normalized;
-          }
-        );
+      entryRoutes;
   }
 
   const sourceReferences =
@@ -3692,11 +4487,6 @@ function normalizeServiceCadre(
     canonical.sourceReferences =
       sourceReferences;
   }
-
-  canonical.sourceIds =
-    normalizeIdArray(
-      result.sourceIds
-    );
 
   const confidence =
     normalizeConfidence(
@@ -3722,7 +4512,7 @@ function normalizeServiceCadre(
   }
 
   const status =
-    normalizeStringEnumOrNull(
+    normalizeEnumIgnoreCase(
       result.status,
       [
         'ACTIVE',
@@ -3732,7 +4522,8 @@ function normalizeServiceCadre(
         'REORGANISED',
         'ABOLISHED',
         'UNKNOWN'
-      ]
+      ],
+      null
     );
 
   if (
@@ -3745,12 +4536,19 @@ function normalizeServiceCadre(
   return canonical;
 }
 
-function mapRuleTarget(
+function mapEligibilityRuleTarget(
   rule
 ) {
   const explicitType =
-    cleanNullableString(
-      rule.targetType
+    normalizeEnumIgnoreCase(
+      rule.targetType,
+      [
+        'JOB',
+        'EXAM',
+        'SERVICE_CADRE',
+        'RECRUITMENT'
+      ],
+      null
     );
 
   const explicitId =
@@ -3771,31 +4569,41 @@ function mapRuleTarget(
     };
   }
 
-  const candidates = [
+  /*
+   * Only explicit relationship fields are eligible here. The function never
+   * searches by name and never infers a target from a rule description.
+   */
+  const explicitCandidates = [
     [
       'JOB',
       rule.jobId
     ],
+
     [
       'JOB',
       rule.targetJobId
     ],
+
     [
       'EXAM',
       rule.examId
     ],
+
     [
       'SERVICE_CADRE',
       rule.serviceCadreId
     ],
+
     [
       'SERVICE_CADRE',
       rule.targetServiceCadreId
     ],
+
     [
       'RECRUITMENT',
       rule.recruitmentId
     ],
+
     [
       'RECRUITMENT',
       rule.targetRecruitmentId
@@ -3806,7 +4614,7 @@ function mapRuleTarget(
     const [
       targetType,
       targetId
-    ] of candidates
+    ] of explicitCandidates
   ) {
     const id =
       cleanId(
@@ -3818,6 +4626,7 @@ function mapRuleTarget(
     ) {
       return {
         targetType,
+
         targetId:
           id
       };
@@ -3830,54 +4639,61 @@ function mapRuleTarget(
 function normalizeRuleClass(
   rule
 ) {
-  const explicit =
-    normalizeStringEnumOrNull(
+  const direct =
+    normalizeEnumIgnoreCase(
       rule.ruleClass,
       [
         'HARD',
         'SOFT'
-      ]
+      ],
+      null
     );
 
   if (
-    explicit
+    direct
   ) {
-    return explicit;
+    return direct;
   }
 
   const ruleType =
     cleanString(
       rule.ruleType,
       ''
-    )
-      .toUpperCase();
+    ).toUpperCase();
 
-  if (
-    ruleType.includes(
-      'HARD'
-    )
-  ) {
-    return 'HARD';
-  }
+  const exactMappings = {
+    HARD_ELIGIBILITY:
+      'HARD',
 
-  if (
-    ruleType.includes(
+    PHYSICAL_REQUIREMENT:
+      'HARD',
+
+    MEDICAL_REQUIREMENT:
+      'HARD',
+
+    SOFT_REQUIREMENT:
+      'SOFT',
+
+    SOFT_ELIGIBILITY:
       'SOFT'
-    )
-  ) {
-    return 'SOFT';
-  }
+  };
 
-  return null;
+  return (
+    exactMappings[
+      ruleType
+    ] ||
+    null
+  );
 }
 
 function normalizeConditionType(
   rule
 ) {
   const explicit =
-    normalizeStringEnumOrNull(
+    normalizeEnumIgnoreCase(
       rule.conditionType,
-      ELIGIBILITY_RULE_CONDITION_TYPES
+      ELIGIBILITY_RULE_CONDITION_TYPES,
+      null
     );
 
   if (
@@ -3892,95 +4708,260 @@ function normalizeConditionType(
       ''
     ).toLowerCase();
 
+  const exactSubjectMappings = {
+    qualifications:
+      'QUALIFICATION',
+
+    qualification:
+      'QUALIFICATION',
+
+    requiredqualifications:
+      'QUALIFICATION',
+
+    physicalprofile:
+      'PHYSICAL_STANDARD',
+
+    physicalstandard:
+      'PHYSICAL_STANDARD',
+
+    medicalprofile:
+      'MEDICAL_STANDARD',
+
+    medicalstandard:
+      'MEDICAL_STANDARD',
+
+    age:
+      'AGE',
+
+    language:
+      'LANGUAGE',
+
+    citizenship:
+      'CITIZENSHIP',
+
+    domicile:
+      'DOMICILE',
+
+    reservation:
+      'RESERVATION',
+
+    category:
+      'CATEGORY',
+
+    gender:
+      'GENDER',
+
+    experience:
+      'EXPERIENCE',
+
+    typing:
+      'TYPING',
+
+    shorthand:
+      'SHORTHAND',
+
+    computerknowledge:
+      'COMPUTER_KNOWLEDGE',
+
+    computercertificate:
+      'COMPUTER_CERTIFICATE'
+  };
+
+  if (
+    exactSubjectMappings[
+      subjectField
+    ]
+  ) {
+    return exactSubjectMappings[
+      subjectField
+    ];
+  }
+
   const ruleType =
     cleanString(
       rule.ruleType,
       ''
-    ).toLowerCase();
+    ).toUpperCase();
 
-  const mappings = [
-    [
-      /qualification|qualifications/,
-      'QUALIFICATION'
-    ],
-    [
-      /education/,
-      'EDUCATION_LEVEL'
-    ],
-    [
-      /physical/,
-      'PHYSICAL_STANDARD'
-    ],
-    [
-      /medical/,
+  const exactRuleTypeMappings = {
+    PHYSICAL_REQUIREMENT:
+      'PHYSICAL_STANDARD',
+
+    MEDICAL_REQUIREMENT:
       'MEDICAL_STANDARD'
-    ],
-    [
-      /age/,
-      'AGE'
-    ],
-    [
-      /language/,
-      'LANGUAGE'
-    ],
-    [
-      /citizenship/,
-      'CITIZENSHIP'
-    ],
-    [
-      /domicile/,
-      'DOMICILE'
-    ],
-    [
-      /reservation/,
-      'RESERVATION'
-    ],
-    [
-      /category/,
-      'CATEGORY'
-    ],
-    [
-      /gender/,
-      'GENDER'
-    ],
-    [
-      /experience/,
-      'EXPERIENCE'
-    ],
-    [
-      /typing/,
-      'TYPING'
-    ],
-    [
-      /shorthand/,
-      'SHORTHAND'
-    ],
-    [
-      /driving.*licen[cs]e|licen[cs]e/,
-      'DRIVING_LICENCE'
-    ],
-    [
-      /computer/,
-      'COMPUTER_KNOWLEDGE'
-    ]
-  ];
+  };
 
-  const combined =
-    `${subjectField} ${ruleType}`;
+  return (
+    exactRuleTypeMappings[
+      ruleType
+    ] ||
+    null
+  );
+}
 
-  for (
-    const [
-      pattern,
-      value
-    ] of mappings
+function normalizeRuleEffect(
+  rule
+) {
+  const direct =
+    normalizeEnumIgnoreCase(
+      rule.effect,
+      [
+        'ALLOW',
+        'DENY',
+        'REQUIRE_VERIFICATION',
+        'CONDITIONAL',
+        'MODIFY'
+      ],
+      null
+    );
+
+  if (
+    direct
   ) {
+    return direct;
+  }
+
+  /*
+   * Narrow structural mappings from explicit source outcomes.
+   *
+   * failureStatus = NOT_ELIGIBLE means the rule's failure effect is denial.
+   * unknownStatus = manual verification means unresolved satisfaction requires
+   * verification. These are rule semantics, not candidate-specific decisions.
+   */
+  const failureStatus =
+    normalizeEnumIgnoreCase(
+      rule.failureStatus,
+      [
+        'NOT_ELIGIBLE'
+      ],
+      null
+    );
+
+  if (
+    failureStatus ===
+    'NOT_ELIGIBLE'
+  ) {
+    return 'DENY';
+  }
+
+  const unknownStatus =
+    cleanString(
+      rule.unknownStatus,
+      ''
+    ).toUpperCase();
+
+  if (
+    [
+      'REQUIRES_MANUAL_VERIFICATION',
+      'REQUIRES_VERIFICATION',
+      'REVIEW_REQUIRED'
+    ].includes(
+      unknownStatus
+    )
+  ) {
+    return 'REQUIRE_VERIFICATION';
+  }
+
+  const conditional =
+    normalizeOptionalBoolean(
+      rule.conditional
+    );
+
+  if (
+    conditional ===
+    true
+  ) {
+    return 'CONDITIONAL';
+  }
+
+  return null;
+}
+
+function normalizeRuleLogic(
+  value
+) {
+  if (
+    isPlainObject(
+      value
+    )
+  ) {
+    const logic =
+      {};
+
+    const mode =
+      normalizeEnumIgnoreCase(
+        value.mode,
+        [
+          'ALL_OF',
+          'ANY_OF',
+          'NONE_OF'
+        ],
+        null
+      );
+
     if (
-      pattern.test(
-        combined
-      )
+      mode
     ) {
-      return value;
+      logic.mode =
+        mode;
     }
+
+    const ruleIds =
+      normalizeIdArray(
+        value.ruleIds
+      );
+
+    if (
+      ruleIds.length
+    ) {
+      logic.ruleIds =
+        ruleIds;
+    }
+
+    return Object.keys(
+      logic
+    ).length
+      ? logic
+      : null;
+  }
+
+  if (
+    typeof value ===
+    'string'
+  ) {
+    const mappings = {
+      ALL:
+        'ALL_OF',
+
+      ANY:
+        'ANY_OF',
+
+      NONE:
+        'NONE_OF',
+
+      ALL_OF:
+        'ALL_OF',
+
+      ANY_OF:
+        'ANY_OF',
+
+      NONE_OF:
+        'NONE_OF'
+    };
+
+    const mode =
+      mappings[
+        cleanString(
+          value,
+          ''
+        ).toUpperCase()
+      ];
+
+    return mode
+      ? {
+          mode
+        }
+      : null;
   }
 
   return null;
@@ -3996,6 +4977,7 @@ function normalizeEligibilityRule(
       {
         entityType:
           ENTITY_TYPES.ELIGIBILITY_RULE,
+
         context
       }
     );
@@ -4007,7 +4989,7 @@ function normalizeEligibilityRule(
   }
 
   const target =
-    mapRuleTarget(
+    mapEligibilityRuleTarget(
       result
     );
 
@@ -4026,34 +5008,31 @@ function normalizeEligibilityRule(
 
   if (
     result.description !==
-    undefined
+      undefined
   ) {
     canonical.description =
       cleanLocalizedText(
         result.description
       );
+  } else if (
+    result.explanation !==
+      undefined
+  ) {
+    canonical.description =
+      cleanLocalizedText(
+        result.explanation
+      );
   }
 
+  /*
+   * If the source does not identify a target, targetType/targetId deliberately
+   * remain absent. The canonical validator must expose that migration need.
+   */
   if (
     target.targetType
   ) {
-    const normalizedTargetType =
-      normalizeStringEnumOrNull(
-        target.targetType,
-        [
-          'JOB',
-          'EXAM',
-          'SERVICE_CADRE',
-          'RECRUITMENT'
-        ]
-      );
-
-    if (
-      normalizedTargetType
-    ) {
-      canonical.targetType =
-        normalizedTargetType;
-    }
+    canonical.targetType =
+      target.targetType;
   }
 
   if (
@@ -4088,7 +5067,7 @@ function normalizeEligibilityRule(
   }
 
   const operator =
-    normalizeStringEnumOrNull(
+    normalizeEnumIgnoreCase(
       result.operator,
       [
         'EQ',
@@ -4104,7 +5083,8 @@ function normalizeEligibilityRule(
         'ALL_OF',
         'ANY_OF',
         'NONE_OF'
-      ]
+      ],
+      null
     );
 
   if (
@@ -4116,96 +5096,148 @@ function normalizeEligibilityRule(
 
   if (
     result.value !==
-    undefined
+      undefined
   ) {
     canonical.value =
       result.value;
   }
 
-  if (
-    isPlainObject(
+  const logic =
+    normalizeRuleLogic(
       result.logic
+    );
+
+  if (
+    logic
+  ) {
+    canonical.logic =
+      logic;
+  }
+
+  const effect =
+    normalizeRuleEffect(
+      result
+    );
+
+  if (
+    effect
+  ) {
+    canonical.effect =
+      effect;
+  }
+
+  /*
+   * Preserve the explicit mandatory/conditional/review semantics where the
+   * source actually expresses them.
+   */
+  if (
+    typeof result.priority ===
+    'number' &&
+    Number.isFinite(
+      result.priority
     )
   ) {
-    const logic =
-      {};
+    const priority =
+      normalizeNumber(
+        result.priority,
+        {
+          integer:
+            true,
 
-    const mode =
-      normalizeStringEnumOrNull(
-        result.logic.mode,
-        [
-          'ALL_OF',
-          'ANY_OF',
-          'NONE_OF'
+          min:
+            0
+        }
+      );
+
+    if (
+      priority !==
+      null
+    ) {
+      canonical.priority =
+        priority;
+    }
+  } else {
+    const priorityText =
+      cleanString(
+        result.priority,
+        ''
+      ).toUpperCase();
+
+    if (
+      priorityText ===
+      'MANDATORY'
+    ) {
+      canonical.mandatory =
+        true;
+    } else if (
+      priorityText ===
+      'OPTIONAL'
+    ) {
+      canonical.mandatory =
+        false;
+    } else if (
+      priorityText ===
+      'CONDITIONAL'
+    ) {
+      canonical.conditional =
+        true;
+    }
+  }
+
+  for (
+    const field of [
+      'mandatory',
+      'conditional',
+      'reviewRequired'
+    ]
+  ) {
+    const booleanValue =
+      normalizeOptionalBoolean(
+        result[
+          field
         ]
       );
 
     if (
-      mode
+      booleanValue !==
+      null
     ) {
-      logic.mode =
-        mode;
+      canonical[
+        field
+      ] =
+        booleanValue;
     }
+  }
 
-    const ruleIds =
-      normalizeIdArray(
-        result.logic.ruleIds
-      );
+  const unknownStatus =
+    cleanString(
+      result.unknownStatus,
+      ''
+    ).toUpperCase();
 
-    if (
-      ruleIds.length
-    ) {
-      logic.ruleIds =
-        ruleIds;
-    }
-
-    if (
-      Object.keys(
-        logic
-      ).length
-    ) {
-      canonical.logic =
-        logic;
-    }
-  } else if (
-    typeof result.logic ===
-    'string'
+  if (
+    [
+      'REQUIRES_MANUAL_VERIFICATION',
+      'REQUIRES_VERIFICATION',
+      'REVIEW_REQUIRED'
+    ].includes(
+      unknownStatus
+    )
   ) {
-    const modeMap = {
-      ALL:
-        'ALL_OF',
-
-      ANY:
-        'ANY_OF',
-
-      NONE:
-        'NONE_OF',
-
-      ALL_OF:
-        'ALL_OF',
-
-      ANY_OF:
-        'ANY_OF',
-
-      NONE_OF:
-        'NONE_OF'
-    };
-
-    const mode =
-      modeMap[
-        cleanString(
-          result.logic,
-          ''
-        )
-          .toUpperCase()
-      ];
+    canonical.verificationRequirement =
+      {
+        required:
+          true
+      };
 
     if (
-      mode
+      result.explanation !==
+        undefined
     ) {
-      canonical.logic = {
-        mode
-      };
+      canonical.verificationRequirement.reason =
+        cleanLocalizedText(
+          result.explanation
+        );
     }
   }
 
@@ -4258,36 +5290,23 @@ function normalizeEligibilityRule(
       requiredSubjectIds;
   }
 
-  const directArrayFields = [
-    'requiredLanguages',
-    'requiredSkills',
-    'requiredComputerKnowledge',
-    'degreeNames',
-    'subjectNames',
-    'requiredNationality',
-    'categoryRequirement'
-  ];
-
   for (
-    const field of
-    directArrayFields
+    const field of [
+      'requiredLanguages',
+      'requiredSkills',
+      'requiredComputerKnowledge',
+      'degreeNames',
+      'subjectNames',
+      'requiredNationality',
+      'categoryRequirement'
+    ]
   ) {
     const values =
-      cleanArray(
+      normalizeStringArray(
         result[
           field
         ]
-      )
-        .map(
-          (item) =>
-            cleanString(
-              item,
-              ''
-            )
-        )
-        .filter(
-          Boolean
-        );
+      );
 
     if (
       values.length
@@ -4295,27 +5314,15 @@ function normalizeEligibilityRule(
       canonical[
         field
       ] =
-        uniqueArray(
-          values
-        );
+        values;
     }
   }
 
   const educationLevel =
-    normalizeStringEnumOrNull(
+    normalizeEnumIgnoreCase(
       result.educationLevel,
-      [
-        'CLASS_8',
-        'CLASS_10',
-        'CLASS_12',
-        'DIPLOMA',
-        'UNDERGRADUATE',
-        'GRADUATE',
-        'POSTGRADUATE',
-        'DOCTORAL',
-        'PROFESSIONAL',
-        'OTHER'
-      ]
+      JOB_EDUCATION_LEVELS,
+      null
     );
 
   if (
@@ -4326,19 +5333,14 @@ function normalizeEligibilityRule(
   }
 
   const minimumEducationLevel =
-    normalizeStringEnumOrNull(
+    normalizeEnumIgnoreCase(
       result.minimumEducationLevel,
-      [
-        'CLASS_8',
-        'CLASS_10',
-        'CLASS_12',
-        'DIPLOMA',
-        'UNDERGRADUATE',
-        'GRADUATE',
-        'POSTGRADUATE',
-        'DOCTORAL',
-        'PROFESSIONAL'
-      ]
+      JOB_EDUCATION_LEVELS.filter(
+        level =>
+          level !==
+          'OTHER'
+      ),
+      null
     );
 
   if (
@@ -4346,6 +5348,53 @@ function normalizeEligibilityRule(
   ) {
     canonical.minimumEducationLevel =
       minimumEducationLevel;
+  }
+
+  const recruitmentRouteTypes =
+    normalizeStringEnumArray(
+      result.recruitmentRouteTypes,
+      [
+        'DIRECT_RECRUITMENT',
+        'PROMOTION',
+        'DEPUTATION',
+        'LATERAL_ENTRY',
+        'DEPARTMENTAL',
+        'CONTRACTUAL',
+        'TEMPORARY',
+        'ABSORPTION',
+        'OTHER'
+      ]
+    );
+
+  if (
+    recruitmentRouteTypes.length
+  ) {
+    canonical.recruitmentRouteTypes =
+      recruitmentRouteTypes;
+  }
+
+  const recruitmentIds =
+    normalizeIdArray(
+      result.recruitmentIds
+    );
+
+  if (
+    recruitmentIds.length
+  ) {
+    canonical.recruitmentIds =
+      recruitmentIds;
+  }
+
+  const dependsOnRuleIds =
+    normalizeIdArray(
+      result.dependsOnRuleIds
+    );
+
+  if (
+    dependsOnRuleIds.length
+  ) {
+    canonical.dependsOnRuleIds =
+      dependsOnRuleIds;
   }
 
   for (
@@ -4411,110 +5460,376 @@ function normalizeEligibilityRule(
     }
   }
 
+  const ageReferenceDate =
+    normalizeDate(
+      result.ageReferenceDate
+    );
+
+  if (
+    ageReferenceDate
+  ) {
+    canonical.ageReferenceDate =
+      ageReferenceDate;
+  }
+
   for (
     const field of [
-      'ageReferenceDate',
-      'sourceDate'
+      'ageRelaxations'
     ]
   ) {
-    const value =
-      normalizeDate(
+    if (
+      Array.isArray(
         result[
           field
         ]
-      );
-
-    if (
-      value
-    ) {
-      canonical[
-        field
-      ] =
-        value;
-    }
-  }
-
-  if (
-    isPlainObject(
-      result.subject
-    )
-  ) {
-    const subject =
-      {};
-
-    for (
-      const [
-        key,
-        value
-      ] of Object.entries(
-        result.subject
       )
     ) {
-      if (
-        key ===
-          'field' ||
-        key ===
-          'profileFieldId'
-      ) {
-        const cleaned =
-          cleanNullableString(
-            value
+      canonical[
+        field
+      ] =
+        result[
+          field
+        ]
+          .filter(
+            isPlainObject
+          )
+          .map(
+            item => {
+              const normalized =
+                {};
+
+              const category =
+                cleanNullableString(
+                  item.category
+                );
+
+              if (
+                category
+              ) {
+                normalized.category =
+                  category;
+              }
+
+              const years =
+                normalizeNumber(
+                  item.maximumRelaxationYears,
+                  {
+                    integer:
+                      true,
+
+                    min:
+                      0
+                  }
+                );
+
+              if (
+                years !==
+                null
+              ) {
+                normalized.maximumRelaxationYears =
+                  years;
+              }
+
+              if (
+                item.description !==
+                  undefined
+              ) {
+                normalized.description =
+                  cleanLocalizedText(
+                    item.description
+                  );
+              }
+
+              return normalized;
+            }
+          )
+          .filter(
+            item =>
+              Object.keys(
+                item
+              ).length > 0
           );
-
-        if (
-          cleaned
-        ) {
-          subject[
-            key
-          ] =
-            cleaned;
-        }
-      }
-    }
-
-    if (
-      Object.keys(
-        subject
-      ).length
-    ) {
-      canonical.subject =
-        subject;
     }
   }
 
   if (
-    result.explanation !==
-      undefined &&
-    canonical.description ===
-      undefined
+    result.citizenship &&
+    isPlainObject(
+      result.citizenship
+    )
   ) {
-    canonical.description =
-      cleanLocalizedText(
-        result.explanation
+    canonical.citizenship =
+      normalizeCitizenshipRequirement(
+        result.citizenship
       );
   }
 
-  for (
-    const field of [
-      'failureStatus',
-      'unknownStatus'
-    ]
-  ) {
-    const value =
-      cleanNullableString(
-        result[
-          field
-        ]
-      );
+  const requiredNationality =
+    normalizeStringArray(
+      result.requiredNationality
+    );
 
-    if (
-      value
-    ) {
-      canonical[
-        field
-      ] =
-        value;
-    }
+  if (
+    requiredNationality.length
+  ) {
+    canonical.requiredNationality =
+      requiredNationality;
+  }
+
+  if (
+    result.domicileRequirement &&
+    isPlainObject(
+      result.domicileRequirement
+    )
+  ) {
+    canonical.domicileRequirement =
+      normalizeDomicileRequirement(
+        result.domicileRequirement
+      );
+  }
+
+  if (
+    result.reservationRequirement &&
+    isPlainObject(
+      result.reservationRequirement
+    )
+  ) {
+    canonical.reservationRequirement =
+      normalizeReservationRequirement(
+        result.reservationRequirement
+      );
+  }
+
+  if (
+    result.typingRequirement &&
+    isPlainObject(
+      result.typingRequirement
+    )
+  ) {
+    canonical.typingRequirement =
+      normalizeTypingRequirement(
+        result.typingRequirement
+      );
+  }
+
+  if (
+    result.shorthandRequirement &&
+    isPlainObject(
+      result.shorthandRequirement
+    )
+  ) {
+    canonical.shorthandRequirement =
+      normalizeShorthandRequirement(
+        result.shorthandRequirement
+      );
+  }
+
+  if (
+    result.licenceRequirements &&
+    isPlainObject(
+      result.licenceRequirements
+    )
+  ) {
+    canonical.licenceRequirements =
+      normalizeLicenceRequirements(
+        result.licenceRequirements
+      );
+  }
+
+  if (
+    result.requiredExperience &&
+    isPlainObject(
+      result.requiredExperience
+    )
+  ) {
+    canonical.requiredExperience =
+      normalizeRequiredExperience(
+        result.requiredExperience
+      );
+  }
+
+  if (
+    result.physicalStandard &&
+    isPlainObject(
+      result.physicalStandard
+    )
+  ) {
+    canonical.physicalStandard =
+      normalizeStructuredRequirementObject(
+        result.physicalStandard
+      );
+  }
+
+  if (
+    result.medicalStandard &&
+    isPlainObject(
+      result.medicalStandard
+    )
+  ) {
+    canonical.medicalStandard =
+      clonePlainObject(
+        result.medicalStandard
+      );
+  }
+
+  if (
+    result.eyesightRequirement &&
+    isPlainObject(
+      result.eyesightRequirement
+    )
+  ) {
+    canonical.eyesightRequirement =
+      clonePlainObject(
+        result.eyesightRequirement
+      );
+  }
+
+  if (
+    result.documentRequirements &&
+    Array.isArray(
+      result.documentRequirements
+    )
+  ) {
+    canonical.documentRequirements =
+      result.documentRequirements
+        .filter(
+          isPlainObject
+        )
+        .map(
+          item => {
+            const normalized =
+              {};
+
+            const documentType =
+              cleanNullableString(
+                item.documentType
+              );
+
+            if (
+              documentType
+            ) {
+              normalized.documentType =
+                documentType;
+            }
+
+            const mandatory =
+              normalizeOptionalBoolean(
+                item.mandatory
+              );
+
+            if (
+              mandatory !==
+              null
+            ) {
+              normalized.mandatory =
+                mandatory;
+            }
+
+            if (
+              item.description !==
+                undefined
+            ) {
+              normalized.description =
+                cleanLocalizedText(
+                  item.description
+                );
+            }
+
+            return normalized;
+          }
+        )
+        .filter(
+          item =>
+            Object.keys(
+              item
+            ).length > 0
+        );
+  }
+
+  if (
+    result.exceptions &&
+    Array.isArray(
+      result.exceptions
+    )
+  ) {
+    canonical.exceptions =
+      result.exceptions
+        .filter(
+          isPlainObject
+        )
+        .map(
+          item => {
+            const normalized =
+              {};
+
+            if (
+              item.condition !==
+                undefined
+            ) {
+              normalized.condition =
+                cleanLocalizedText(
+                  item.condition
+                );
+            }
+
+            const effect =
+              normalizeEnumIgnoreCase(
+                item.effect,
+                [
+                  'ALLOW',
+                  'DISALLOW',
+                  'MODIFY',
+                  'REQUIRES_VERIFICATION'
+                ],
+                null
+              );
+
+            if (
+              effect
+            ) {
+              normalized.effect =
+                effect;
+            }
+
+            if (
+              item.value !==
+                undefined
+            ) {
+              normalized.value =
+                item.value;
+            }
+
+            return normalized;
+          }
+        )
+        .filter(
+          item =>
+            Object.keys(
+              item
+            ).length > 0
+        );
+  }
+
+  if (
+    result.notes !==
+      undefined
+  ) {
+    canonical.notes =
+      cleanLocalizedText(
+        result.notes
+      );
+  }
+
+  const sourceReferences =
+    normalizeSources(
+      result.sourceReferences
+    );
+
+  if (
+    sourceReferences.length
+  ) {
+    canonical.sourceReferences =
+      sourceReferences;
   }
 
   const sourceIds =
@@ -4542,8 +5857,17 @@ function normalizeEligibilityRule(
   }
 
   const status =
-    cleanNullableString(
-      result.status
+    normalizeEnumIgnoreCase(
+      result.status,
+      [
+        'ACTIVE',
+        'DRAFT',
+        'DEPRECATED',
+        'HISTORICAL',
+        'SUPERSEDED',
+        'UNKNOWN'
+      ],
+      null
     );
 
   if (
@@ -4553,15 +5877,40 @@ function normalizeEligibilityRule(
       status;
   }
 
+  const effectiveFrom =
+    normalizeDate(
+      result.effectiveFrom
+    );
+
   if (
+    effectiveFrom
+  ) {
+    canonical.effectiveFrom =
+      effectiveFrom;
+  }
+
+  const effectiveTo =
+    normalizeDate(
+      result.effectiveTo
+    );
+
+  if (
+    effectiveTo
+  ) {
+    canonical.effectiveTo =
+      effectiveTo;
+  }
+
+  const version =
     cleanNullableString(
       result.version
-    )
+    );
+
+  if (
+    version
   ) {
     canonical.version =
-      cleanString(
-        result.version
-      );
+      version;
   }
 
   const lastVerified =
@@ -4576,18 +5925,533 @@ function normalizeEligibilityRule(
       lastVerified;
   }
 
-  if (
+  const dataVersion =
     cleanNullableString(
       result.dataVersion
-    )
+    );
+
+  if (
+    dataVersion
   ) {
     canonical.dataVersion =
-      cleanString(
-        result.dataVersion
+      dataVersion;
+  }
+
+  /*
+   * `sourceDate`, `failureStatus`, `unknownStatus` and the legacy `subject`
+   * object are deliberately not emitted as arbitrary canonical properties.
+   *
+   * Their supported semantics are represented through:
+   * - sourceIds/sourceReferences;
+   * - effect;
+   * - verificationRequirement;
+   * - conditionType and qualification/reference fields.
+   *
+   * This keeps the runtime shape aligned with the canonical rule schema rather
+   * than leaking the entire legacy rule representation into the canonical
+   * entity.
+   */
+
+  return canonical;
+}
+
+function normalizeStringEnumArray(
+  value,
+  allowedValues
+) {
+  return uniqueArray(
+    cleanArray(
+      value
+    )
+      .map(
+        item =>
+          normalizeEnumIgnoreCase(
+            item,
+            allowedValues,
+            null
+          )
+      )
+      .filter(Boolean)
+  );
+}
+
+function clonePlainObject(
+  value
+) {
+  if (
+    !isPlainObject(
+      value
+    )
+  ) {
+    return null;
+  }
+
+  const clone =
+    {};
+
+  Object.entries(
+    value
+  ).forEach(
+    ([
+      key,
+      child
+    ]) => {
+      if (
+        isPlainObject(
+          child
+        )
+      ) {
+        clone[
+          key
+        ] =
+          clonePlainObject(
+            child
+          );
+
+        return;
+      }
+
+      if (
+        Array.isArray(
+          child
+        )
+      ) {
+        clone[
+          key
+        ] =
+          child.map(
+            item =>
+              isPlainObject(
+                item
+              )
+                ? clonePlainObject(
+                    item
+                  )
+                : item
+          );
+
+        return;
+      }
+
+      clone[
+        key
+      ] =
+        child;
+    }
+  );
+
+  return clone;
+}
+
+function normalizeStructuredRequirementObject(
+  value
+) {
+  const clone =
+    clonePlainObject(
+      value
+    );
+
+  return clone ||
+    {};
+}
+
+function normalizeTypingRequirement(
+  value
+) {
+  const result =
+    {};
+
+  const minimumWordsPerMinute =
+    normalizeNumber(
+      value.minimumWordsPerMinute,
+      {
+        min:
+          0
+      }
+    );
+
+  if (
+    minimumWordsPerMinute !==
+      null
+  ) {
+    result.minimumWordsPerMinute =
+      minimumWordsPerMinute;
+  }
+
+  for (
+    const field of [
+      'language',
+      'script'
+    ]
+  ) {
+    const text =
+      cleanNullableString(
+        value[
+          field
+        ]
+      );
+
+    if (
+      text
+    ) {
+      result[
+        field
+      ] =
+        text;
+    }
+  }
+
+  const mode =
+    normalizeEnumIgnoreCase(
+      value.mode,
+      [
+        'TYPING',
+        'TRANSCRIPTION',
+        'DATA_ENTRY',
+        'OTHER'
+      ],
+      null
+    );
+
+  if (
+    mode
+  ) {
+    result.mode =
+      mode;
+  }
+
+  return result;
+}
+
+function normalizeShorthandRequirement(
+  value
+) {
+  const result =
+    {};
+
+  const minimumWordsPerMinute =
+    normalizeNumber(
+      value.minimumWordsPerMinute,
+      {
+        min:
+          0
+      }
+    );
+
+  if (
+    minimumWordsPerMinute !==
+      null
+  ) {
+    result.minimumWordsPerMinute =
+      minimumWordsPerMinute;
+  }
+
+  const language =
+    cleanNullableString(
+      value.language
+    );
+
+  if (
+    language
+  ) {
+    result.language =
+      language;
+  }
+
+  return result;
+}
+
+function normalizeLicenceRequirements(
+  value
+) {
+  const result =
+    {};
+
+  const licenceTypes =
+    normalizeStringArray(
+      value.licenceTypes
+    );
+
+  if (
+    licenceTypes.length
+  ) {
+    result.licenceTypes =
+      licenceTypes;
+  }
+
+  const minimumValidityMonths =
+    normalizeNumber(
+      value.minimumValidityMonths,
+      {
+        min:
+          0
+      }
+    );
+
+  if (
+    minimumValidityMonths !==
+      null
+  ) {
+    result.minimumValidityMonths =
+      minimumValidityMonths;
+  }
+
+  const commercialRequired =
+    normalizeOptionalBoolean(
+      value.commercialRequired
+    );
+
+  if (
+    commercialRequired !==
+      null
+  ) {
+    result.commercialRequired =
+      commercialRequired;
+  }
+
+  return result;
+}
+
+function normalizeRequiredExperience(
+  value
+) {
+  const result =
+    {};
+
+  for (
+    const field of [
+      'minimumYears',
+      'maximumYears'
+    ]
+  ) {
+    const years =
+      normalizeNumber(
+        value[
+          field
+        ],
+        {
+          min:
+            0
+        }
+      );
+
+    if (
+      years !==
+      null
+    ) {
+      result[
+        field
+      ] =
+        years;
+    }
+  }
+
+  const experienceType =
+    cleanNullableString(
+      value.experienceType
+    );
+
+  if (
+    experienceType
+  ) {
+    result.experienceType =
+      experienceType;
+  }
+
+  if (
+    value.specificExperience !==
+      undefined
+  ) {
+    result.specificExperience =
+      cleanLocalizedText(
+        value.specificExperience
       );
   }
 
-  return canonical;
+  for (
+    const field of [
+      'organisationTypes',
+      'experienceDomains'
+    ]
+  ) {
+    const values =
+      normalizeStringArray(
+        value[
+          field
+        ]
+      );
+
+    if (
+      values.length
+    ) {
+      result[
+        field
+      ] =
+        values;
+    }
+  }
+
+  return result;
+}
+
+function normalizeCitizenshipRequirement(
+  value
+) {
+  const result =
+    {};
+
+  const required =
+    normalizeOptionalBoolean(
+      value.required
+    );
+
+  if (
+    required !==
+      null
+  ) {
+    result.required =
+      required;
+  }
+
+  const allowedStatuses =
+    normalizeStringArray(
+      value.allowedStatuses
+    );
+
+  if (
+    allowedStatuses.length
+  ) {
+    result.allowedStatuses =
+      allowedStatuses;
+  }
+
+  return result;
+}
+
+function normalizeDomicileRequirement(
+  value
+) {
+  const result =
+    {};
+
+  const required =
+    normalizeOptionalBoolean(
+      value.required
+    );
+
+  if (
+    required !==
+      null
+  ) {
+    result.required =
+      required;
+  }
+
+  const stateIds =
+    normalizeIdArray(
+      value.stateIds
+    );
+
+  if (
+    stateIds.length
+  ) {
+    result.stateIds =
+      stateIds;
+  }
+
+  const districtNames =
+    normalizeStringArray(
+      value.districtNames
+    );
+
+  if (
+    districtNames.length
+  ) {
+    result.districtNames =
+      districtNames;
+  }
+
+  const localAreaNames =
+    normalizeStringArray(
+      value.localAreaNames
+    );
+
+  if (
+    localAreaNames.length
+  ) {
+    result.localAreaNames =
+      localAreaNames;
+  }
+
+  if (
+    value.description !==
+      undefined
+  ) {
+    result.description =
+      cleanLocalizedText(
+        value.description
+      );
+  }
+
+  return result;
+}
+
+function normalizeReservationRequirement(
+  value
+) {
+  const result =
+    {};
+
+  const categories =
+    normalizeStringArray(
+      value.categories
+    );
+
+  if (
+    categories.length
+  ) {
+    result.categories =
+      categories;
+  }
+
+  const requiresCertificate =
+    normalizeOptionalBoolean(
+      value.requiresCertificate
+    );
+
+  if (
+    requiresCertificate !==
+      null
+  ) {
+    result.requiresCertificate =
+      requiresCertificate;
+  }
+
+  const certificateTypes =
+    normalizeStringArray(
+      value.certificateTypes
+    );
+
+  if (
+    certificateTypes.length
+  ) {
+    result.certificateTypes =
+      certificateTypes;
+  }
+
+  const conditions =
+    normalizeStringArray(
+      value.conditions
+    );
+
+  if (
+    conditions.length
+  ) {
+    result.conditions =
+      conditions;
+  }
+
+  return result;
 }
 
 function normalizeRecruitment(
@@ -4600,6 +6464,7 @@ function normalizeRecruitment(
       {
         entityType:
           ENTITY_TYPES.RECRUITMENT,
+
         context
       }
     );
@@ -4625,22 +6490,27 @@ function normalizeRecruitment(
       )
   };
 
-  if (
-    result.authorityId
+  for (
+    const field of [
+      'authorityId',
+      'examId'
+    ]
   ) {
-    canonical.authorityId =
+    const value =
       cleanId(
-        result.authorityId
+        result[
+          field
+        ]
       );
-  }
 
-  if (
-    result.examId
-  ) {
-    canonical.examId =
-      cleanId(
-        result.examId
-      );
+    if (
+      value
+    ) {
+      canonical[
+        field
+      ] =
+        value;
+    }
   }
 
   const postIds =
@@ -4669,7 +6539,7 @@ function normalizeRecruitment(
   }
 
   const status =
-    normalizeStringEnumOrNull(
+    normalizeEnumIgnoreCase(
       result.status,
       [
         'OPEN',
@@ -4681,7 +6551,8 @@ function normalizeRecruitment(
         'HISTORICAL',
         'CANCELLED',
         'NOT_VERIFIED'
-      ]
+      ],
+      null
     );
 
   if (
@@ -4766,6 +6637,7 @@ function normalizeProfileBase(
       record,
       {
         entityType,
+
         context
       }
     );
@@ -4776,7 +6648,7 @@ function normalizeProfileBase(
     return null;
   }
 
-  const canonical = {
+  return {
     ...result,
 
     entityType,
@@ -4791,61 +6663,6 @@ function normalizeProfileBase(
         result.sourceIds
       )
   };
-
-  if (
-    result.governmentId
-  ) {
-    canonical.governmentId =
-      cleanId(
-        result.governmentId
-      );
-  }
-
-  if (
-    result.stateId
-  ) {
-    canonical.stateId =
-      cleanId(
-        result.stateId
-      );
-  }
-
-  const confidence =
-    normalizeConfidence(
-      result.confidence
-    );
-
-  if (
-    confidence
-  ) {
-    canonical.confidence =
-      confidence;
-  }
-
-  const lastVerified =
-    normalizeDate(
-      result.lastVerified
-    );
-
-  if (
-    lastVerified
-  ) {
-    canonical.lastVerified =
-      lastVerified;
-  }
-
-  if (
-    cleanNullableString(
-      result.dataVersion
-    )
-  ) {
-    canonical.dataVersion =
-      cleanString(
-        result.dataVersion
-      );
-  }
-
-  return canonical;
 }
 
 function normalizePay(
@@ -4867,6 +6684,8 @@ function normalizePay(
 
   for (
     const field of [
+      'governmentId',
+      'stateId',
       'paySystem',
       'payCommission',
       'payLevel',
@@ -4874,21 +6693,28 @@ function normalizePay(
       'officialStatus'
     ]
   ) {
-    if (
-      cleanNullableString(
-        pay[
-          field
-        ]
+    const value =
+      field.endsWith(
+        'Id'
       )
+        ? cleanId(
+            pay[
+              field
+            ]
+          )
+        : cleanNullableString(
+            pay[
+              field
+            ]
+          );
+
+    if (
+      value
     ) {
       canonical[
         field
       ] =
-        cleanString(
-          pay[
-            field
-          ]
-        );
+        value;
     }
   }
 
@@ -4920,6 +6746,106 @@ function normalizePay(
     }
   }
 
+  for (
+    const field of [
+      'da',
+      'hra',
+      'transportAllowance',
+      'grossEstimate',
+      'inHandEstimate'
+    ]
+  ) {
+    if (
+      pay[
+        field
+      ] !==
+        undefined
+    ) {
+      canonical[
+        field
+      ] =
+        clonePlainObject(
+          pay[
+            field
+          ]
+        ) ??
+        pay[
+          field
+        ];
+    }
+  }
+
+  if (
+    Array.isArray(
+      pay.otherAllowances
+    )
+  ) {
+    canonical.otherAllowances =
+      pay.otherAllowances.map(
+        item =>
+          isPlainObject(
+            item
+          )
+            ? clonePlainObject(
+                item
+              )
+            : item
+      );
+  }
+
+  if (
+    Array.isArray(
+      pay.deductions
+    )
+  ) {
+    canonical.deductions =
+      pay.deductions.map(
+        item =>
+          isPlainObject(
+            item
+          )
+            ? clonePlainObject(
+                item
+              )
+            : item
+      );
+  }
+
+  const confidence =
+    normalizeConfidence(
+      pay.confidence
+    );
+
+  if (
+    confidence
+  ) {
+    canonical.confidence =
+      confidence;
+  }
+
+  const lastVerified =
+    normalizeDate(
+      pay.lastVerified
+    );
+
+  if (
+    lastVerified
+  ) {
+    canonical.lastVerified =
+      lastVerified;
+  }
+
+  if (
+    cleanNullableString(
+      pay.dataVersion
+    )
+  ) {
+    canonical.dataVersion =
+      cleanString(
+        pay.dataVersion
+      );
+  }
+
   return canonical;
 }
 
@@ -4940,9 +6866,14 @@ function normalizeLocation(
     return null;
   }
 
+  canonical.id =
+    cleanId(
+      location.id
+    );
+
   if (
     location.name !==
-    undefined
+      undefined
   ) {
     canonical.name =
       normalizeLocalizedText(
@@ -4952,7 +6883,7 @@ function normalizeLocation(
 
   if (
     location.type !==
-    undefined
+      undefined
   ) {
     canonical.type =
       cleanString(
@@ -4963,12 +6894,24 @@ function normalizeLocation(
 
   if (
     location.description !==
-    undefined
+      undefined
   ) {
     canonical.description =
       normalizeLocalizedText(
         location.description
       );
+  }
+
+  const parentLocationId =
+    cleanId(
+      location.parentLocationId
+    );
+
+  if (
+    parentLocationId
+  ) {
+    canonical.parentLocationId =
+      parentLocationId;
   }
 
   return canonical;
@@ -5017,6 +6960,7 @@ function normalizeGovernment(
       {
         entityType:
           ENTITY_TYPES.GOVERNMENT,
+
         context
       }
     );
@@ -5039,6 +6983,11 @@ function normalizeGovernment(
     name:
       normalizeLocalizedText(
         result.name
+      ),
+
+    searchText:
+      buildSearchText(
+        result
       )
   };
 }
@@ -5053,6 +7002,7 @@ function normalizeState(
       {
         entityType:
           ENTITY_TYPES.STATE,
+
         context
       }
     );
@@ -5079,12 +7029,13 @@ function normalizeState(
   };
 
   const explicitType =
-    normalizeStringEnumOrNull(
+    normalizeEnumIgnoreCase(
       result.type,
       [
         'STATE',
         'UNION_TERRITORY'
-      ]
+      ],
+      null
     );
 
   if (
@@ -5115,7 +7066,7 @@ function normalizeState(
   }
 
   const coverage =
-    normalizeStringEnumOrNull(
+    normalizeEnumIgnoreCase(
       result.coverage,
       [
         'ACTIVE',
@@ -5123,7 +7074,8 @@ function normalizeState(
         'RESEARCHING',
         'PARTIAL',
         'TEMPORARILY_DISABLED'
-      ]
+      ],
+      null
     );
 
   if (
@@ -5133,10 +7085,17 @@ function normalizeState(
       coverage;
   }
 
-  canonical.governmentId =
+  const governmentId =
     cleanId(
       result.governmentId
     );
+
+  if (
+    governmentId
+  ) {
+    canonical.governmentId =
+      governmentId;
+  }
 
   canonical.sourceIds =
     normalizeIdArray(
@@ -5145,45 +7104,6 @@ function normalizeState(
 
   return canonical;
 }
-
-const QUALIFICATION_COLLECTION_TYPES =
-  Object.freeze({
-    academicQualifications:
-      'ACADEMIC',
-
-    teacherEducationQualifications:
-      'TEACHER_EDUCATION',
-
-    technicalQualifications:
-      'TECHNICAL',
-
-    computerQualifications:
-      'COMPUTER_IT',
-
-    lawQualifications:
-      'LAW',
-
-    medicalQualifications:
-      'MEDICAL',
-
-    nursingQualifications:
-      'NURSING',
-
-    pharmacyQualifications:
-      'PHARMACY',
-
-    engineeringQualifications:
-      'ENGINEERING',
-
-    agricultureQualifications:
-      'AGRICULTURE',
-
-    paramedicalQualifications:
-      'PARAMEDICAL',
-
-    qualifications:
-      null
-  });
 
 function normalizeQualification(
   qualification,
@@ -5195,6 +7115,7 @@ function normalizeQualification(
       {
         entityType:
           ENTITY_TYPES.QUALIFICATION,
+
         context
       }
     );
@@ -5222,32 +7143,14 @@ function normalizeQualification(
   };
 
   const qualificationType =
-    normalizeStringEnumOrNull(
+    normalizeEnumIgnoreCase(
       result.qualificationType,
-      [
-        'ACADEMIC',
-        'PROFESSIONAL',
-        'TECHNICAL',
-        'TEACHER_EDUCATION',
-        'MEDICAL',
-        'NURSING',
-        'PHARMACY',
-        'LAW',
-        'COMPUTER_IT',
-        'ENGINEERING',
-        'AGRICULTURE',
-        'PARAMEDICAL',
-        'TRADE',
-        'LICENCE',
-        'REGISTRATION',
-        'CERTIFICATION',
-        'OTHER'
-      ]
-    ) ||
-    QUALIFICATION_COLLECTION_TYPES[
-      context.collectionKey
-    ] ||
-    null;
+      QUALIFICATION_TYPES,
+      QUALIFICATION_COLLECTION_TYPES[
+        context.collectionKey
+      ] ||
+        null
+    );
 
   if (
     qualificationType
@@ -5313,14 +7216,15 @@ function normalizeQualification(
   }
 
   const status =
-    normalizeStringEnumOrNull(
+    normalizeEnumIgnoreCase(
       result.status,
       [
         'COMPLETED',
         'FINAL_YEAR',
         'PURSUING',
         'NOT_HELD'
-      ]
+      ],
+      null
     );
 
   if (
@@ -5344,20 +7248,8 @@ function normalizeQualification(
     );
 
   canonical.aliases =
-    uniqueArray(
-      cleanArray(
-        result.aliases
-      )
-        .map(
-          (item) =>
-            cleanString(
-              item,
-              ''
-            )
-        )
-        .filter(
-          Boolean
-        )
+    normalizeStringArray(
+      result.aliases
     );
 
   canonical.sourceIds =
@@ -5401,6 +7293,7 @@ function normalizeCategory(
       {
         entityType:
           ENTITY_TYPES.CATEGORY,
+
         context
       }
     );
@@ -5411,7 +7304,7 @@ function normalizeCategory(
     return null;
   }
 
-  const canonical = {
+  return {
     ...result,
 
     entityType:
@@ -5427,8 +7320,6 @@ function normalizeCategory(
         result.title
       )
   };
-
-  return canonical;
 }
 
 function normalizeSource(
@@ -5441,6 +7332,7 @@ function normalizeSource(
       {
         entityType:
           ENTITY_TYPES.SOURCE,
+
         context
       }
     );
@@ -5478,10 +7370,17 @@ function normalizeSource(
       confidence;
   }
 
-  canonical.sourceTypeId =
+  const sourceTypeId =
     cleanId(
       result.sourceTypeId
     );
+
+  if (
+    sourceTypeId
+  ) {
+    canonical.sourceTypeId =
+      sourceTypeId;
+  }
 
   if (
     cleanNullableString(
@@ -5494,15 +7393,16 @@ function normalizeSource(
       );
   }
 
-  if (
+  const publicationDate =
     normalizeDate(
       result.publicationDate
-    )
+    );
+
+  if (
+    publicationDate
   ) {
     canonical.publicationDate =
-      normalizeDate(
-        result.publicationDate
-      );
+      publicationDate;
   }
 
   canonical.searchText =
@@ -5522,7 +7422,8 @@ function normalizeStatus(
       status,
       {
         entityType:
-          'STATUS',
+          ENTITY_TYPES.STATUS,
+
         context
       }
     );
@@ -5537,7 +7438,7 @@ function normalizeStatus(
     ...result,
 
     entityType:
-      'STATUS',
+      ENTITY_TYPES.STATUS,
 
     vocabulary:
       context.collectionKey ||
@@ -5545,20 +7446,20 @@ function normalizeStatus(
   };
 
   if (
-    !cleanNullableString(
-      canonical.id
-    )
-  ) {
-    return null;
-  }
-
-  if (
-    canonical.label !==
-    undefined
+    result.label !==
+      undefined
   ) {
     canonical.label =
       normalizeLocalizedText(
-        canonical.label
+        result.label
+      );
+  } else if (
+    result.name !==
+      undefined
+  ) {
+    canonical.label =
+      normalizeLocalizedText(
+        result.name
       );
   }
 
@@ -5584,8 +7485,8 @@ function normalizeGeneric(
 }
 
 /*
- * Search text intentionally flattens localized/structured values instead of
- * relying on String(object), which would produce [object Object].
+ * Search text intentionally flattens localized/structured values rather than
+ * converting objects into the useless "[object Object]" representation.
  */
 function buildSearchText(
   record,
@@ -5616,7 +7517,7 @@ function buildSearchText(
     values
       .flat(Infinity)
       .filter(
-        (value) =>
+        value =>
           value !==
             undefined &&
           value !==
@@ -5625,7 +7526,7 @@ function buildSearchText(
 
   return flattened
     .map(
-      (value) => {
+      value => {
         if (
           typeof value ===
           'object'
@@ -5635,14 +7536,17 @@ function buildSearchText(
           )
             .flat(Infinity)
             .filter(
-              (item) =>
+              item =>
                 item !==
                   undefined &&
                 item !==
                   null
             )
             .map(
-              String
+              item =>
+                String(
+                  item
+                )
             )
             .join(' ');
         }
@@ -5661,9 +7565,18 @@ function buildSearchText(
 }
 
 /*
- * Main dispatch remains intentionally explicit. The loader may continue
- * passing only (data, entityType); callers with richer context can pass an
- * object as the second argument without breaking the existing API.
+ * Main entity-aware dispatch.
+ *
+ * The existing loader remains compatible with:
+ *   normalizeByType(data, 'JOB')
+ *
+ * A future context-aware caller can use:
+ *   normalizeByType(data, {
+ *     entityType: 'JOB',
+ *     datasetName: 'jobs',
+ *     scope: 'CENTRAL',
+ *     path: 'central/jobs.json'
+ *   })
  */
 function normalizeByType(
   data,
@@ -5685,7 +7598,7 @@ function normalizeByType(
 
   return extracted.records
     .map(
-      (entry) => {
+      entry => {
         const recordContext = {
           ...context,
 
@@ -5800,7 +7713,7 @@ function normalizeByType(
               recordContext
             );
 
-          case 'STATUS':
+          case ENTITY_TYPES.STATUS:
             return normalizeStatus(
               entry.record,
               recordContext
@@ -5815,25 +7728,26 @@ function normalizeByType(
         }
       }
     )
-    .filter(
-      Boolean
-    );
+    .filter(Boolean);
 }
 
 /*
- * Keep normalizeCollection as a public compatibility utility. It performs
- * entity-aware extraction but intentionally returns a normalized generic
- * record shape; normalizeByType is the canonical specialized entry point.
+ * Public compatibility helper.
+ *
+ * It retains the original API while using the same entity-aware extraction
+ * rules as normalizeByType(). It never falls back to an arbitrary first array.
  */
 function normalizeCollection(
   data,
-  entityType = ENTITY_TYPES.UNKNOWN,
+  entityType =
+    ENTITY_TYPES.UNKNOWN,
   context = {}
 ) {
   const normalizedContext = {
     ...normalizeContext(
       entityType
     ),
+
     ...context
   };
 
@@ -5845,7 +7759,7 @@ function normalizeCollection(
 
   return extracted.records
     .map(
-      (entry) =>
+      entry =>
         normalizeRecord(
           entry.record,
           {
@@ -5864,9 +7778,7 @@ function normalizeCollection(
           }
         )
     )
-    .filter(
-      Boolean
-    );
+    .filter(Boolean);
 }
 
 export {
